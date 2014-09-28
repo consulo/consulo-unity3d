@@ -1,0 +1,13 @@
+<idea-plugin>
+	<id>org.mustbe.consulo.unity3d</id>
+	<name>Unity3D</name>
+	<vendor>Must-Be</vendor>
+	<version>SNAPSHOT</version>
+
+	<depends>org.mustbe.consulo.dotnet.core</depends>
+
+	<extensions defaultExtensionNs="com.intellij">
+		<sdkType implementation="org.mustbe.consulo.unity3d.bundle.Unity3dBundleType" />
+		<bundledSdkProvider implementation="org.mustbe.consulo.unity3d.bundle.Unity3dBundleProvider" />
+	</extensions>
+</idea-plugin>
