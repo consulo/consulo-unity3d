@@ -70,6 +70,10 @@ public class Unity3dBundleType extends SdkType
 		{
 			return "/Applications/Unity/Unity.app";
 		}
+		else if(SystemInfo.isWindows)
+		{
+			return "C:/Program Files (x86)/Unity";
+		}
 		return null;
 	}
 
