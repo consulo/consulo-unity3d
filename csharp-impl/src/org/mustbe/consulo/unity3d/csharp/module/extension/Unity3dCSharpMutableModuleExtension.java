@@ -4,7 +4,6 @@ import javax.swing.JComponent;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.mustbe.consulo.csharp.module.extension.CSharpConfigurationPanel;
 import org.mustbe.consulo.csharp.module.extension.CSharpMutableModuleExtension;
 import com.intellij.openapi.roots.ModuleRootLayer;
 
@@ -23,7 +22,7 @@ public class Unity3dCSharpMutableModuleExtension extends Unity3dCSharpModuleExte
 	@Override
 	public JComponent createConfigurablePanel(@NotNull Runnable runnable)
 	{
-		return new CSharpConfigurationPanel(this);
+		return null;
 	}
 
 	@Override
