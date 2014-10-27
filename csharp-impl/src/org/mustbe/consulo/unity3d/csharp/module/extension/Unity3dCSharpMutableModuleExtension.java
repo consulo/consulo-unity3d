@@ -34,6 +34,6 @@ public class Unity3dCSharpMutableModuleExtension extends Unity3dCSharpModuleExte
 	@Override
 	public boolean isModified(@NotNull Unity3dCSharpModuleExtension unity3dCSharpModuleExtension)
 	{
-		return isModifiedImpl(unity3dCSharpModuleExtension);
+		return isEnabled() != unity3dCSharpModuleExtension.isEnabled();
 	}
 }
