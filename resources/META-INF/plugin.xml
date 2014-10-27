@@ -25,5 +25,7 @@
 				icon="/icons/unity3d.png"
 				immutableClass="org.mustbe.consulo.unity3d.csharp.module.extension.Unity3dCSharpModuleExtension"
 				mutableClass="org.mustbe.consulo.unity3d.csharp.module.extension.Unity3dCSharpMutableModuleExtension"/>
+
+		<newModuleBuilder implementation="org.mustbe.consulo.unity3d.ide.newProjectOrModule.Unity3dNewModuleBuilder" />
 	</extensions>
 </idea-plugin>
