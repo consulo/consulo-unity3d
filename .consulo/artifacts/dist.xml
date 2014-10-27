@@ -1,6 +1,6 @@
 <component name="ArtifactManager">
   <artifact name="dist">
-    <output-path>$PROJECT_DIR$/out/artifacts/unnamed</output-path>
+    <output-path>$PROJECT_DIR$/out/artifacts/dist</output-path>
     <root id="root">
       <element id="directory" name="unity3d">
         <element id="directory" name="lib">
@@ -10,6 +10,9 @@
           <element id="zip-archive" name="unity3d-dotnet.jar">
             <element id="module-production-resource-output" name="consulo-unity3d" />
             <element id="module-output" name="consulo-unity3d" />
+          </element>
+          <element id="zip-archive" name="unity3d-csharp.jar">
+            <element id="module-output" name="csharp-impl" />
           </element>
         </element>
       </element>

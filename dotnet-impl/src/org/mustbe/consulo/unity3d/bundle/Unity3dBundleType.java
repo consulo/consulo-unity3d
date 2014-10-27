@@ -17,29 +17,29 @@ import com.intellij.openapi.util.SystemInfo;
 public class Unity3dBundleType extends SdkType
 {
 	@NotNull
-	public static String getPathForMono(@NotNull String sdkPath)
+	public static String getPathForMono(@NotNull String sdkPath, @NotNull String suffix)
 	{
 		if(SystemInfo.isMac)
 		{
-			return sdkPath + "/Contents/Frameworks/Mono/lib/mono/unity";
+			return sdkPath + "/Contents/Frameworks/Mono/lib/mono/" + suffix;
 		}
 		else if(SystemInfo.isWindows)
 		{
-			return sdkPath + "/Editor/Data/Mono/lib/mono/unity";
+			return sdkPath + "/Editor/Data/Mono/lib/mono/" + suffix;
 		}
 		throw new IllegalArgumentException("Unknown system " + SystemInfo.OS_NAME);
 	}
 
 	@NotNull
-	public static String getPathForMonoWeb(@NotNull String sdkPath)
+	public static String getManagedPath(@NotNull String sdkPath, @NotNull String suffix)
 	{
 		if(SystemInfo.isMac)
 		{
-			return sdkPath + "/Contents/Frameworks/Mono/lib/mono/unity_web";
+			return sdkPath + "/Contents/Frameworks/Managed";
 		}
 		else if(SystemInfo.isWindows)
 		{
-			return sdkPath + "/Editor/Data/Mono/lib/mono/unity_web";
+			return sdkPath + "/Editor/Data/Managed";
 		}
 		throw new IllegalArgumentException("Unknown system " + SystemInfo.OS_NAME);
 	}
@@ -80,7 +80,7 @@ public class Unity3dBundleType extends SdkType
 	@Override
 	public boolean isValidSdkHome(String s)
 	{
-		return new File(getPathForMono(s)).exists();
+		return new File(getPathForMono(s, "unity")).exists();
 	}
 
 	@Nullable
