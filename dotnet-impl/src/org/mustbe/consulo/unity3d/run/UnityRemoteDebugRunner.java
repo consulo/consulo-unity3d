@@ -96,14 +96,7 @@ public class UnityRemoteDebugRunner extends DefaultProgramRunner
 					{
 						DebugConnectionInfo debugConnectionInfo = new DebugConnectionInfo(firstItem.getIp(), firstItem.getDebuggerPort(), true);
 						UnityDebugProcess process = new UnityDebugProcess(session, debugConnectionInfo, environment.getRunProfile());
-						if(!debugConnectionInfo.isServer())
-						{
-							process.start();
-						}
-						if(debugConnectionInfo.isServer())
-						{
-							process.start();
-						}
+						process.start();
 						return process;
 					}
 				});
