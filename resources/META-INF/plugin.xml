@@ -7,10 +7,19 @@
 	<depends>org.mustbe.consulo.dotnet.core</depends>
 	<depends>org.mustbe.consulo.csharp</depends>
 
+	<application-components>
+		<component>
+			<implementation-class>org.mustbe.consulo.unity3d.run.debugger.UnityPlayerService</implementation-class>
+		</component>
+	</application-components>
+
 	<extensions defaultExtensionNs="com.intellij">
 		<sdkType implementation="org.mustbe.consulo.unity3d.bundle.Unity3dBundleType" />
 		<bundledSdkProvider implementation="org.mustbe.consulo.unity3d.bundle.Unity3dBundleProvider" />
 
+		<configurationType implementation="org.mustbe.consulo.unity3d.run.UnityRemoteDebugApplication" />
+
+		<programRunner implementation="org.mustbe.consulo.unity3d.run.UnityRemoteDebugRunner" />
 		<moduleExtensionProvider
 				key="unity3d"
 				name="Unity3D"
