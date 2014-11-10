@@ -7,7 +7,9 @@ import javax.swing.Icon;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.mustbe.consulo.dotnet.execution.DebugConnectionInfo;
 import org.mustbe.consulo.unity3d.Unity3dIcons;
+import org.mustbe.consulo.unity3d.run.debugger.UnityDebugProcess;
 import org.mustbe.consulo.unity3d.run.debugger.UnityPlayer;
 import org.mustbe.consulo.unity3d.run.debugger.UnityPlayerService;
 import com.intellij.execution.ExecutionException;
@@ -16,9 +18,15 @@ import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.executors.DefaultDebugExecutor;
 import com.intellij.execution.runners.DefaultProgramRunner;
 import com.intellij.execution.runners.ExecutionEnvironment;
+import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.ide.util.ChooseElementsDialog;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.util.Condition;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.xdebugger.XDebugProcess;
+import com.intellij.xdebugger.XDebugProcessStarter;
+import com.intellij.xdebugger.XDebugSession;
+import com.intellij.xdebugger.XDebuggerManager;
 
 /**
  * @author VISTALL
@@ -39,10 +47,10 @@ public class UnityRemoteDebugRunner extends DefaultProgramRunner
 		return executorId.equals(DefaultDebugExecutor.EXECUTOR_ID) && profile instanceof UnityRemoteDebugConfiguration;
 	}
 
+	@Nullable
 	@Override
-	protected void execute(@NotNull ExecutionEnvironment environment,
-			@Nullable Callback callback,
-			@NotNull RunProfileState state) throws ExecutionException
+	protected RunContentDescriptor doExecute(@NotNull RunProfileState state, @NotNull final ExecutionEnvironment environment) throws
+			ExecutionException
 	{
 		Collection<UnityPlayer> players = UnityPlayerService.getInstance().getPlayers();
 		List<UnityPlayer> debugPlayers = ContainerUtil.filter(players, new Condition<UnityPlayer>()
@@ -53,8 +61,8 @@ public class UnityRemoteDebugRunner extends DefaultProgramRunner
 				return unityPlayer.isSupportDebugging();
 			}
 		});
-		ChooseElementsDialog<UnityPlayer> dialog = new ChooseElementsDialog<UnityPlayer>(environment.getProject(),
-				debugPlayers, "Select Unity Player", "", true)
+		ChooseElementsDialog<UnityPlayer> dialog = new ChooseElementsDialog<UnityPlayer>(environment.getProject(), debugPlayers,
+				"Select Unity Player", "", true)
 		{
 			@Override
 			protected String getItemText(UnityPlayer item)
@@ -71,5 +79,35 @@ public class UnityRemoteDebugRunner extends DefaultProgramRunner
 		};
 
 		List<UnityPlayer> unityPlayers = dialog.showAndGetResult();
+
+		final UnityPlayer firstItem = ContainerUtil.getFirstItem(unityPlayers);
+		if(firstItem == null)
+		{
+			return null;
+		}
+
+		FileDocumentManager.getInstance().saveAllDocuments();
+		final XDebugSession debugSession = XDebuggerManager.getInstance(environment.getProject()).startSession(environment,
+				new XDebugProcessStarter()
+				{
+					@NotNull
+					@Override
+					public XDebugProcess start(@NotNull XDebugSession session) throws ExecutionException
+					{
+						DebugConnectionInfo debugConnectionInfo = new DebugConnectionInfo(firstItem.getIp(), firstItem.getDebuggerPort(), true);
+						UnityDebugProcess process = new UnityDebugProcess(session, debugConnectionInfo, environment.getRunProfile());
+						if(!debugConnectionInfo.isServer())
+						{
+							process.start();
+						}
+						if(debugConnectionInfo.isServer())
+						{
+							process.start();
+						}
+						return process;
+					}
+				});
+
+		return debugSession.getRunContentDescriptor();
 	}
 }

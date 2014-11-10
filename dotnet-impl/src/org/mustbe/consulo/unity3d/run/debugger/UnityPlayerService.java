@@ -72,7 +72,7 @@ public class UnityPlayerService implements ApplicationComponent
 					{
 						try
 						{
-							Thread.sleep(5000L);
+							Thread.sleep(2000L);
 						}
 						catch(InterruptedException ignored)
 						{
