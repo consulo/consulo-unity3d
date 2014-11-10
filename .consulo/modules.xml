@@ -55,9 +55,6 @@
                 <root url="jar://$MODULE_DIR$/../dep/dotnet/lib/joou-0.9.2-SNAPSHOT.jar!/" />
                 <root url="jar://$MODULE_DIR$/../dep/dotnet/lib/mono-soft-debugging.jar!/" />
               </binaries>
-              <sources>
-                <root url="file://F:/consulo-dotnet/dotnet-debugger-impl/src" />
-              </sources>
             </library>
           </orderEntry>
           <orderEntry type="module" module-name="consulo-unity3d" />
