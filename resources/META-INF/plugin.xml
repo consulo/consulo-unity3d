@@ -5,7 +5,6 @@
 	<version>SNAPSHOT</version>
 
 	<depends>org.mustbe.consulo.dotnet.core</depends>
-	<depends>org.mustbe.consulo.dotnet.mono</depends>
 	<depends>org.mustbe.consulo.csharp</depends>
 
 	<application-components>
