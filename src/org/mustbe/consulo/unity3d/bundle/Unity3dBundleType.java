@@ -17,6 +17,20 @@ import com.intellij.openapi.util.SystemInfo;
 public class Unity3dBundleType extends SdkType
 {
 	@NotNull
+	public static String getApplicationPath(@NotNull String sdkPath)
+	{
+		if(SystemInfo.isMac)
+		{
+			return sdkPath + "/Contents/MacOS/Unity";
+		}
+		else if(SystemInfo.isWindows)
+		{
+			return sdkPath + "/Editor/Unity.exe";
+		}
+		throw new IllegalArgumentException("Unknown system " + SystemInfo.OS_NAME);
+	}
+
+	@NotNull
 	public static String getPathForMono(@NotNull String sdkPath, @NotNull String suffix)
 	{
 		if(SystemInfo.isMac)

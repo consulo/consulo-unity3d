@@ -21,6 +21,11 @@ public class Unity3dMutableModuleExtension extends Unity3dModuleExtension implem
 		super(id, rootModel);
 	}
 
+	public void setBuildTarget(Unity3dTarget target)
+	{
+		myBuildTarget = target;
+	}
+
 	@NotNull
 	@Override
 	public MutableModuleInheritableNamedPointer<Sdk> getInheritableSdk()
@@ -44,6 +49,6 @@ public class Unity3dMutableModuleExtension extends Unity3dModuleExtension implem
 	@Override
 	public boolean isModified(@NotNull Unity3dModuleExtension unity3dModuleExtension)
 	{
-		return isModifiedImpl(unity3dModuleExtension);
+		return isModifiedImpl(unity3dModuleExtension) || myBuildTarget != unity3dModuleExtension.getBuildTarget();
 	}
 }

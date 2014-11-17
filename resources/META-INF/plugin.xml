@@ -14,12 +14,14 @@
 	</application-components>
 
 	<extensions defaultExtensionNs="com.intellij">
-		<sdkType implementation="org.mustbe.consulo.unity3d.bundle.Unity3dBundleType" />
-		<bundledSdkProvider implementation="org.mustbe.consulo.unity3d.bundle.Unity3dBundleProvider" />
+		<macro implementation="org.mustbe.consulo.unity3d.module.UnityFileNameMacro"/>
+		<compiler implementation="org.mustbe.consulo.unity3d.compiler.UnityCompiler" order="last"/>
+		<sdkType implementation="org.mustbe.consulo.unity3d.bundle.Unity3dBundleType"/>
+		<bundledSdkProvider implementation="org.mustbe.consulo.unity3d.bundle.Unity3dBundleProvider"/>
 
-		<configurationType implementation="org.mustbe.consulo.unity3d.run.UnityRemoteDebugApplication" />
+		<configurationType implementation="org.mustbe.consulo.unity3d.run.UnityRemoteDebugApplication"/>
 
-		<programRunner implementation="org.mustbe.consulo.unity3d.run.UnityRemoteDebugRunner" />
+		<programRunner implementation="org.mustbe.consulo.unity3d.run.UnityRemoteDebugRunner"/>
 		<moduleExtensionProvider
 				key="unity3d"
 				name="Unity3D"
@@ -35,6 +37,6 @@
 				immutableClass="org.mustbe.consulo.unity3d.csharp.module.extension.Unity3dCSharpModuleExtension"
 				mutableClass="org.mustbe.consulo.unity3d.csharp.module.extension.Unity3dCSharpMutableModuleExtension"/>
 
-		<newModuleBuilder implementation="org.mustbe.consulo.unity3d.ide.newProjectOrModule.Unity3dNewModuleBuilder" />
+		<newModuleBuilder implementation="org.mustbe.consulo.unity3d.ide.newProjectOrModule.Unity3dNewModuleBuilder"/>
 	</extensions>
 </idea-plugin>
