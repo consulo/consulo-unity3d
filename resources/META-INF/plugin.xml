@@ -19,7 +19,8 @@
 		<sdkType implementation="org.mustbe.consulo.unity3d.bundle.Unity3dBundleType"/>
 		<bundledSdkProvider implementation="org.mustbe.consulo.unity3d.bundle.Unity3dBundleProvider"/>
 
-		<configurationType implementation="org.mustbe.consulo.unity3d.run.UnityRemoteDebugApplication"/>
+		<configurationType implementation="org.mustbe.consulo.unity3d.run.UnityConfigurationType"/>
+		<configurationType implementation="org.mustbe.consulo.unity3d.run.UnityRemoteDebugApplicationType"/>
 
 		<programRunner implementation="org.mustbe.consulo.unity3d.run.UnityRemoteDebugRunner"/>
 		<moduleExtensionProvider

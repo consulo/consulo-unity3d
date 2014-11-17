@@ -6,10 +6,14 @@ import org.consulo.module.extension.impl.ModuleInheritableNamedPointerImpl;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.mustbe.consulo.dotnet.compiler.DotNetMacroUtil;
 import org.mustbe.consulo.dotnet.execution.DebugConnectionInfo;
 import org.mustbe.consulo.dotnet.module.extension.BaseDotNetModuleExtension;
 import org.mustbe.consulo.unity3d.bundle.Unity3dBundleType;
+import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.GeneralCommandLine;
+import com.intellij.ide.macro.Macro;
+import com.intellij.ide.macro.MacroManager;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkType;
 import com.intellij.openapi.roots.ModuleRootLayer;
@@ -147,9 +151,27 @@ public class Unity3dModuleExtension extends BaseDotNetModuleExtension<Unity3dMod
 
 	@NotNull
 	@Override
-	public GeneralCommandLine createDefaultCommandLine(@NotNull String s, @Nullable DebugConnectionInfo debugConnectionInfo)
+	public GeneralCommandLine createDefaultCommandLine(@NotNull String s, @Nullable DebugConnectionInfo debugConnectionInfo) throws ExecutionException
 	{
-		return new GeneralCommandLine();
+		GeneralCommandLine commandLine = new GeneralCommandLine();
+
+		String fileName = getOutputDir() + "/" + myBuildTarget.getFileNameTemplate();
+
+		try
+		{
+			String file = MacroManager.getInstance().expandSilentMarcos(fileName, true, DotNetMacroUtil.createContext(getModule(), false));
+
+			if(!new File(file).exists())
+			{
+				throw new ExecutionException("Executable not exists");
+			}
+			commandLine.setExePath(file);
+		}
+		catch(Macro.ExecutionCancelledException e)
+		{
+			throw new ExecutionException(e);
+		}
+		return commandLine;
 	}
 
 	@NotNull

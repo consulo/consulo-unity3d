@@ -17,14 +17,14 @@ import lombok.val;
  * @author VISTALL
  * @since 10.11.14
  */
-public class UnityRemoteDebugApplication extends ConfigurationTypeBase
+public class UnityRemoteDebugApplicationType extends ConfigurationTypeBase
 {
-	public static UnityRemoteDebugApplication getInstance()
+	public static UnityRemoteDebugApplicationType getInstance()
 	{
-		return CONFIGURATION_TYPE_EP.findExtension(UnityRemoteDebugApplication.class);
+		return CONFIGURATION_TYPE_EP.findExtension(UnityRemoteDebugApplicationType.class);
 	}
 
-	public UnityRemoteDebugApplication()
+	public UnityRemoteDebugApplicationType()
 	{
 		super("#UnityRemoteDebugApplication", "Unity Debug", "", Unity3dIcons.Unity3d);
 
