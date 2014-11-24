@@ -1,5 +1,5 @@
-/**
- * Copyright (C) 2012-2013 The named-regexp Authors
+/*
+ * Copyright 2013-2014 must-be.org
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
