@@ -49,6 +49,7 @@ public class Unity3dModuleExtension extends BaseDotNetModuleExtension<Unity3dMod
 	public Unity3dModuleExtension(@NotNull String id, @NotNull ModuleRootLayer rootModel)
 	{
 		super(id, rootModel);
+		myFileName = FILE_NAME;
 	}
 
 	@Override
@@ -167,7 +168,7 @@ public class Unity3dModuleExtension extends BaseDotNetModuleExtension<Unity3dMod
 
 	@NotNull
 	@Override
-	public GeneralCommandLine createDefaultCommandLine(@NotNull String s, @Nullable DebugConnectionInfo debugConnectionInfo) throws ExecutionException
+	public GeneralCommandLine createDefaultCommandLine(@NotNull Sdk sdk, @Nullable DebugConnectionInfo debugConnectionInfo) throws ExecutionException
 	{
 		GeneralCommandLine commandLine = new GeneralCommandLine();
 
@@ -177,10 +178,6 @@ public class Unity3dModuleExtension extends BaseDotNetModuleExtension<Unity3dMod
 		{
 			String file = MacroManager.getInstance().expandSilentMarcos(fileName, true, DotNetMacroUtil.createContext(getModule(), false));
 
-			if(!new File(file).exists())
-			{
-				throw new ExecutionException("Executable not exists");
-			}
 			commandLine.setExePath(file);
 		}
 		catch(Macro.ExecutionCancelledException e)
