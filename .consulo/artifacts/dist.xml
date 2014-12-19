@@ -5,14 +5,8 @@
       <element id="directory" name="unity3d">
         <element id="directory" name="lib">
           <element id="zip-archive" name="unity3d.jar">
-            <element id="module-output" name="dotnet-impl" />
-          </element>
-          <element id="zip-archive" name="unity3d-dotnet.jar">
             <element id="module-production-resource-output" name="consulo-unity3d" />
             <element id="module-output" name="consulo-unity3d" />
-          </element>
-          <element id="zip-archive" name="unity3d-csharp.jar">
-            <element id="module-output" name="csharp-impl" />
           </element>
         </element>
       </element>
