@@ -6,6 +6,7 @@
         <module-layer name="Default">
           <extension id="consulo-plugin" sdk-module-name="" sdk-name="Consulo 1.SNAPSHOT" custom-plugin-dir-url="file://$MODULE_DIR$/dep" />
           <extension id="java" sdk-module-name="" sdk-name="1.6" language-level-module-name="" language-level-name="JDK_1_6" special-dir-location="SOURCE_DIR" />
+          <extension id="lombok" />
           <content url="file://$MODULE_DIR$">
             <content-folder type="EXCLUDED" url="file://$MODULE_DIR$/dep" />
             <content-folder type="PRODUCTION_RESOURCE" url="file://$MODULE_DIR$/resources" />
@@ -25,9 +26,12 @@
             </library>
           </orderEntry>
           <orderEntry type="module-library">
-            <library name="consulo:Mono .NET">
+            <library name="consulo:C#">
               <binaries>
-                <root url="jar://$MODULE_DIR$/dep/mono-dotnet/lib/mono-dotnet.jar!/" />
+                <root url="jar://$MODULE_DIR$/dep/csharp/lib/csharp.jar!/" />
+                <root url="jar://$MODULE_DIR$/dep/csharp/lib/jel.jar!/" />
+                <root url="jar://$MODULE_DIR$/dep/csharp/lib/microsoft-csharp.jar!/" />
+                <root url="jar://$MODULE_DIR$/dep/csharp/lib/mono-csharp.jar!/" />
               </binaries>
             </library>
           </orderEntry>
