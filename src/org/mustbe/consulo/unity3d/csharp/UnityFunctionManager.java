@@ -19,6 +19,7 @@ package org.mustbe.consulo.unity3d.csharp;
 import gnu.trove.THashMap;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -55,6 +56,11 @@ public class UnityFunctionManager
 					myParameters.put(parameters.getAttributeValue("name"), parameters.getAttributeValue("type"));
 				}
 			}
+		}
+
+		public String getName()
+		{
+			return myName;
 		}
 
 		public Map<String, String> getParameters()
@@ -96,6 +102,12 @@ public class UnityFunctionManager
 		{
 			LOGGER.error(e);
 		}
+	}
+
+	@NotNull
+	public Collection<FunctionInfo> getFunctionInfos()
+	{
+		return myFunctions.values();
 	}
 
 	public FunctionInfo getFunctionInfo(String name)
