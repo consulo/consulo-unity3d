@@ -14,18 +14,16 @@
  * limitations under the License.
  */
 
-package org.mustbe.consulo.unity3d;
-
-import javax.swing.Icon;
-
-import com.intellij.openapi.util.IconLoader;
+package org.mustbe.consulo.unity3d.csharp;
 
 /**
  * @author VISTALL
- * @since 28.09.14
+ * @since 19.12.14
  */
-public interface Unity3dIcons
+public interface UnityTypes
 {
-	Icon EventMethod = IconLoader.findIcon("/icons/eventMethod.png");
-	Icon Unity3d = IconLoader.findIcon("/icons/unity3d.png");
+	public interface UnityEngine
+	{
+		String MonoBehaviour = "UnityEngine.MonoBehaviour";
+	}
 }
