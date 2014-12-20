@@ -103,6 +103,10 @@ public class UnityLineMarkerProvider implements LineMarkerProvider
 	private static boolean isEqualParameters(Map<String, String> funcParameters, DotNetParameterListOwner parameterListOwner)
 	{
 		DotNetParameter[] parameters = parameterListOwner.getParameters();
+		if(parameters.length == 0)
+		{
+			return true;
+		}
 		if(parameters.length != funcParameters.size())
 		{
 			return false;

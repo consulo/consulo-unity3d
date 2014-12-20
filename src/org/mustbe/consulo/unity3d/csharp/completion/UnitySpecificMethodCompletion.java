@@ -22,7 +22,6 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.mustbe.consulo.csharp.CSharpIcons;
 import org.mustbe.consulo.csharp.lang.psi.CSharpMethodDeclaration;
 import org.mustbe.consulo.csharp.lang.psi.CSharpTypeDeclaration;
@@ -95,18 +94,19 @@ public class UnitySpecificMethodCompletion extends CompletionContributor
 				Collection<UnityFunctionManager.FunctionInfo> functionInfos = UnityFunctionManager.getInstance().getFunctionInfos();
 				for(UnityFunctionManager.FunctionInfo functionInfo : functionInfos)
 				{
-					LookupElementBuilder builder = buildLookupItem(functionInfo, typeDeclaration);
-
-					if(builder != null)
+					UnityFunctionManager.FunctionInfo nonParameterListCopy = functionInfo.createNonParameterListCopy();
+					if(nonParameterListCopy != null)
 					{
-						result.addElement(builder);
+						result.addElement(buildLookupItem(nonParameterListCopy, typeDeclaration));
 					}
+
+					result.addElement(buildLookupItem(functionInfo, typeDeclaration));
 				}
 			}
 		});
 	}
 
-	@Nullable
+	@NotNull
 	private static LookupElementBuilder buildLookupItem(UnityFunctionManager.FunctionInfo functionInfo, CSharpTypeDeclaration scope)
 	{
 		StringBuilder builder = new StringBuilder();

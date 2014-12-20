@@ -58,6 +58,12 @@ public class UnityFunctionManager
 			}
 		}
 
+		FunctionInfo(String name, String description)
+		{
+			myName = name;
+			myDescription = description;
+		}
+
 		public String getName()
 		{
 			return myName;
@@ -71,6 +77,16 @@ public class UnityFunctionManager
 		public String getDescription()
 		{
 			return myDescription;
+		}
+
+		public FunctionInfo createNonParameterListCopy()
+		{
+			if(myParameters.isEmpty())
+			{
+				return null;
+			}
+
+			return new FunctionInfo(myName, myDescription);
 		}
 	}
 
