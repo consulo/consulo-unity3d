@@ -70,7 +70,6 @@ public class Unity3dNewModuleBuilder implements NewModuleBuilder
 				Sdk sdk = panel.getSdk();
 				if(sdk != null)
 				{
-
 					unityExtension.getInheritableSdk().set(null, sdk);
 				}
 
