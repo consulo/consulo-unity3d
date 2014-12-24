@@ -16,32 +16,26 @@
 
 package org.mustbe.consulo.unity3d.csharp.completion;
 
-import static com.intellij.patterns.StandardPatterns.psiElement;
-
 import java.util.Collection;
 import java.util.Map;
 
 import org.jetbrains.annotations.NotNull;
 import org.mustbe.consulo.csharp.CSharpIcons;
+import org.mustbe.consulo.csharp.ide.completion.CSharpMemberAddByCompletionContributor;
 import org.mustbe.consulo.csharp.lang.psi.CSharpMethodDeclaration;
 import org.mustbe.consulo.csharp.lang.psi.CSharpTypeDeclaration;
 import org.mustbe.consulo.csharp.lang.psi.CSharpTypeRefPresentationUtil;
 import org.mustbe.consulo.csharp.lang.psi.impl.source.CSharpBlockStatementImpl;
 import org.mustbe.consulo.csharp.lang.psi.impl.source.resolve.type.CSharpTypeRefByQName;
 import org.mustbe.consulo.dotnet.psi.DotNetInheritUtil;
-import org.mustbe.consulo.dotnet.psi.DotNetQualifiedElement;
 import org.mustbe.consulo.dotnet.psi.DotNetStatement;
 import org.mustbe.consulo.dotnet.psi.DotNetVirtualImplementOwner;
 import org.mustbe.consulo.unity3d.Unity3dIcons;
 import org.mustbe.consulo.unity3d.csharp.UnityFunctionManager;
 import org.mustbe.consulo.unity3d.csharp.UnityTypes;
 import org.mustbe.consulo.unity3d.module.Unity3dModuleExtension;
-import com.intellij.codeInsight.completion.CompletionContributor;
 import com.intellij.codeInsight.completion.CompletionParameters;
-import com.intellij.codeInsight.completion.CompletionProvider;
 import com.intellij.codeInsight.completion.CompletionResultSet;
-import com.intellij.codeInsight.completion.CompletionType;
-import com.intellij.codeInsight.completion.CompletionUtilCore;
 import com.intellij.codeInsight.completion.InsertHandler;
 import com.intellij.codeInsight.completion.InsertionContext;
 import com.intellij.codeInsight.lookup.LookupElement;
@@ -58,52 +52,37 @@ import com.intellij.util.ProcessingContext;
 /**
  * @author VISTALL
  * @since 19.12.14
- * <p/>
- * Variant of {@link org.mustbe.consulo.csharp.ide.completion.CSharpOverrideOrImplementCompletionContributor}
  */
-public class UnitySpecificMethodCompletion extends CompletionContributor
+public class UnitySpecificMethodCompletion extends CSharpMemberAddByCompletionContributor
 {
-	public UnitySpecificMethodCompletion()
+	@Override
+	public void processCompletion(@NotNull CompletionParameters completionParameters,
+			ProcessingContext processingContext,
+			@NotNull CompletionResultSet completionResultSet,
+			@NotNull CSharpTypeDeclaration typeDeclaration)
 	{
-		extend(CompletionType.BASIC, psiElement().withSuperParent(4, CSharpTypeDeclaration.class), new CompletionProvider<CompletionParameters>()
+		Unity3dModuleExtension extension = ModuleUtilCore.getExtension(typeDeclaration, Unity3dModuleExtension.class);
+		if(extension == null)
 		{
-			@Override
-			protected void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext context, @NotNull CompletionResultSet result)
+			return;
+		}
+
+		if(!DotNetInheritUtil.isParent(UnityTypes.UnityEngine.MonoBehaviour, typeDeclaration, true))
+		{
+			return;
+		}
+
+		Collection<UnityFunctionManager.FunctionInfo> functionInfos = UnityFunctionManager.getInstance().getFunctionInfos();
+		for(UnityFunctionManager.FunctionInfo functionInfo : functionInfos)
+		{
+			UnityFunctionManager.FunctionInfo nonParameterListCopy = functionInfo.createNonParameterListCopy();
+			if(nonParameterListCopy != null)
 			{
-				DotNetQualifiedElement currentElement = PsiTreeUtil.getParentOfType(parameters.getPosition(), DotNetQualifiedElement.class);
-				assert currentElement != null;
-				if(!currentElement.getText().contains(CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED))
-				{
-					return;
-				}
-
-				CSharpTypeDeclaration typeDeclaration = PsiTreeUtil.getParentOfType(parameters.getPosition(), CSharpTypeDeclaration.class);
-				assert typeDeclaration != null;
-
-				Unity3dModuleExtension extension = ModuleUtilCore.getExtension(typeDeclaration, Unity3dModuleExtension.class);
-				if(extension == null)
-				{
-					return;
-				}
-
-				if(!DotNetInheritUtil.isParent(UnityTypes.UnityEngine.MonoBehaviour, typeDeclaration, true))
-				{
-					return;
-				}
-
-				Collection<UnityFunctionManager.FunctionInfo> functionInfos = UnityFunctionManager.getInstance().getFunctionInfos();
-				for(UnityFunctionManager.FunctionInfo functionInfo : functionInfos)
-				{
-					UnityFunctionManager.FunctionInfo nonParameterListCopy = functionInfo.createNonParameterListCopy();
-					if(nonParameterListCopy != null)
-					{
-						result.addElement(buildLookupItem(nonParameterListCopy, typeDeclaration));
-					}
-
-					result.addElement(buildLookupItem(functionInfo, typeDeclaration));
-				}
+				completionResultSet.addElement(buildLookupItem(nonParameterListCopy, typeDeclaration));
 			}
-		});
+
+			completionResultSet.addElement(buildLookupItem(functionInfo, typeDeclaration));
+		}
 	}
 
 	@NotNull
