@@ -29,9 +29,6 @@
 		</component>
 	</application-components>
 
-	<extensions defaultExtensionNs="org.mustbe.consulo.dotnet.core">
-		<debuggerHelper implementation="org.mustbe.consulo.unity3d.run.debugger.UnityDebugHelper" />
-	</extensions>
 	<extensions defaultExtensionNs="com.intellij">
 		<completion.contributor language="C#" implementationClass="org.mustbe.consulo.unity3d.csharp.completion.UnitySpecificMethodCompletion" />
 		<codeInsight.lineMarkerProvider language="C#" implementationClass="org.mustbe.consulo.unity3d.csharp.codeInsight.UnityLineMarkerProvider"/>

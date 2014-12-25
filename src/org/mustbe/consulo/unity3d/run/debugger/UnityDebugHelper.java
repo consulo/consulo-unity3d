@@ -11,7 +11,7 @@ import mono.debugger.TypeMirror;
  * @author VISTALL
  * @since 21.12.14
  */
-public class UnityDebugHelper extends DotNetDebugHelper
+public class UnityDebugHelper implements DotNetDebugHelper
 {
 	@Nullable
 	@Override
