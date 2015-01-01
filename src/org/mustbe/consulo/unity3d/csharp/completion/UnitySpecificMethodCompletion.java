@@ -106,8 +106,7 @@ public class UnitySpecificMethodCompletion extends CSharpMemberAddByCompletionCo
 				builder.append(", ");
 			}
 
-			builder.append(CSharpTypeRefPresentationUtil.buildText(new CSharpTypeRefByQName(entry.getValue()), scope,
-					CSharpTypeRefPresentationUtil.TYPE_KEYWORD));
+			builder.append(CSharpTypeRefPresentationUtil.buildShortText(new CSharpTypeRefByQName(entry.getValue()), scope));
 			builder.append(" ");
 			builder.append(entry.getKey());
 		}
