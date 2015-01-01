@@ -56,5 +56,8 @@
 				mutableClass="org.mustbe.consulo.unity3d.csharp.module.extension.Unity3dCSharpMutableModuleExtension"/>
 
 		<newModuleBuilder implementation="org.mustbe.consulo.unity3d.ide.newProjectOrModule.Unity3dNewModuleBuilder"/>
+
+		<projectImportProvider implementation="org.mustbe.consulo.unity3d.projectImport.Unity3dProjectImportProvider" />
+		<projectImportBuilder implementation="org.mustbe.consulo.unity3d.projectImport.Unity3dProjectImportBuilder" />
 	</extensions>
 </idea-plugin>
