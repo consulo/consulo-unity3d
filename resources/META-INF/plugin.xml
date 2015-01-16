@@ -19,6 +19,7 @@
 	<name>Unity3D</name>
 	<vendor>Must-Be</vendor>
 	<version>SNAPSHOT</version>
+	<category>Game Frameworks</category>
 
 	<depends>org.mustbe.consulo.dotnet.core</depends>
 	<depends>org.mustbe.consulo.csharp</depends>
