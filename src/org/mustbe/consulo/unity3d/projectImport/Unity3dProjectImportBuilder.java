@@ -192,7 +192,7 @@ public class Unity3dProjectImportBuilder extends ProjectImportBuilder
 		}
 
 		modifiableModel.addInvalidModuleEntry("Assembly-CSharp-firstpass");
-		modifiableModel.addInvalidModuleEntry("Assembly-CSharp-Editor");
+		modifiableModel.addInvalidModuleEntry("Assembly-CSharp");
 
 		new WriteAction<Object>()
 		{
