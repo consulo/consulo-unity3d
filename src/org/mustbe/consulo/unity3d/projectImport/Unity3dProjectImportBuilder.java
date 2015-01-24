@@ -24,6 +24,7 @@ import javax.swing.Icon;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.mustbe.consulo.dotnet.dll.DotNetModuleFileType;
 import org.mustbe.consulo.dotnet.module.roots.DotNetLibraryOrderEntryImpl;
 import org.mustbe.consulo.roots.impl.ExcludedContentFolderTypeProvider;
 import org.mustbe.consulo.unity3d.Unity3dIcons;
@@ -42,8 +43,12 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkTable;
 import com.intellij.openapi.roots.ContentEntry;
+import com.intellij.openapi.roots.LibraryOrderEntry;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.impl.ModuleRootLayerImpl;
+import com.intellij.openapi.roots.libraries.Library;
+import com.intellij.openapi.roots.types.BinariesOrderRootType;
+import com.intellij.openapi.roots.types.DocumentationOrderRootType;
 import com.intellij.openapi.roots.ui.configuration.ModulesProvider;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
@@ -53,6 +58,7 @@ import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.vfs.VirtualFileVisitor;
+import com.intellij.openapi.vfs.util.ArchiveVfsUtil;
 import com.intellij.packaging.artifacts.ModifiableArtifactModel;
 import com.intellij.projectImport.ProjectImportBuilder;
 import com.intellij.util.ArrayUtil;
@@ -154,9 +160,9 @@ public class Unity3dProjectImportBuilder extends ProjectImportBuilder
 		});
 	}
 
-	private static Module createAssemblyCSharpModuleFirstPass(Project project, ModifiableModuleModel newModel, final Sdk unityBundle)
+	private static Module createAssemblyCSharpModuleFirstPass(final Project project, ModifiableModuleModel newModel, final Sdk unityBundle)
 	{
-		String[] paths = new String[]{
+		val paths = new String[]{
 				"Assets/Standard Assets",
 				"Assets/Pro Standard Assets",
 				"Assets/Plugins"
@@ -167,6 +173,17 @@ public class Unity3dProjectImportBuilder extends ProjectImportBuilder
 			@Override
 			public void consume(ModuleRootLayerImpl layer)
 			{
+				for(String path : paths)
+				{
+					VirtualFile dirFile = LocalFileSystem.getInstance().findFileByPath(path);
+					if(dirFile != null)
+					{
+						for(VirtualFile virtualFile : dirFile.getChildren())
+						{
+							addAsLibrary(virtualFile, layer);
+						}
+					}
+				}
 			}
 		});
 	}
@@ -197,16 +214,34 @@ public class Unity3dProjectImportBuilder extends ProjectImportBuilder
 			});
 		}
 
-		return createAndSetupModule("Assembly-CSharp-Editor", project, newModel, ArrayUtil.toStringArray(paths), unityBundle, new Consumer<ModuleRootLayerImpl>()
+		val pathsAsArray = ArrayUtil.toStringArray(paths);
+		return createAndSetupModule("Assembly-CSharp-Editor", project, newModel, pathsAsArray, unityBundle, new Consumer<ModuleRootLayerImpl>()
 
 		{
 			@Override
-			public void consume(ModuleRootLayerImpl layer)
+			public void consume(final ModuleRootLayerImpl layer)
 			{
 				layer.addInvalidModuleEntry("Assembly-CSharp-firstpass");
 				layer.addInvalidModuleEntry("Assembly-CSharp");
 
 				layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEditor.Graphs"));
+
+				for(String path : pathsAsArray)
+				{
+					VirtualFile dirFile = LocalFileSystem.getInstance().findFileByPath(path);
+					if(dirFile != null)
+					{
+						VfsUtil.visitChildrenRecursively(dirFile, new VirtualFileVisitor()
+						{
+							@Override
+							public boolean visitFile(@NotNull VirtualFile file)
+							{
+								addAsLibrary(file, layer);
+								return true;
+							}
+						});
+					}
+				}
 			}
 		});
 	}
@@ -301,6 +336,30 @@ public class Unity3dProjectImportBuilder extends ProjectImportBuilder
 			}
 		}.execute();
 		return module;
+	}
+
+	private static void addAsLibrary(VirtualFile virtualFile, ModuleRootLayerImpl layer)
+	{
+		if(virtualFile.getFileType() == DotNetModuleFileType.INSTANCE)
+		{
+			VirtualFile archiveRootForLocalFile = ArchiveVfsUtil.getArchiveRootForLocalFile(virtualFile);
+			if(archiveRootForLocalFile != null)
+			{
+				Library library = layer.getModuleLibraryTable().createLibrary();
+				Library.ModifiableModel modifiableModel = library.getModifiableModel();
+				modifiableModel.addRoot(archiveRootForLocalFile, BinariesOrderRootType.getInstance());
+				VirtualFile docFile = virtualFile.getParent().findChild(virtualFile.getNameWithoutExtension() + ".xml");
+				if(docFile != null)
+				{
+					modifiableModel.addRoot(docFile, DocumentationOrderRootType.getInstance());
+				}
+				modifiableModel.commit();
+
+				LibraryOrderEntry libraryOrderEntry = layer.findLibraryOrderEntry(library);
+				assert libraryOrderEntry != null;
+				libraryOrderEntry.setExported(true);
+			}
+		}
 	}
 
 	private static Unity3dTarget getDefaultTarget()
