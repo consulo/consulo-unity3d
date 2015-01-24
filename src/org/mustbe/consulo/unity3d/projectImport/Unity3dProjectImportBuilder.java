@@ -16,6 +16,7 @@
 
 package org.mustbe.consulo.unity3d.projectImport;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,13 +34,20 @@ import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ContentEntry;
+import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.ui.configuration.ModulesProvider;
+import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.vfs.VirtualFileVisitor;
 import com.intellij.packaging.artifacts.ModifiableArtifactModel;
 import com.intellij.projectImport.ProjectImportBuilder;
+import com.intellij.util.ArrayUtil;
+import com.intellij.util.containers.ContainerUtil;
 import lombok.val;
 
 /**
@@ -98,13 +106,13 @@ public class Unity3dProjectImportBuilder extends ProjectImportBuilder
 
 		List<Module> modules = new ArrayList<Module>(5);
 
-		modules.add(createRootModule(project, newModel));
+		ContainerUtil.addIfNotNull(modules, createRootModule(project, newModel));
 
-		modules.add(createAssemblyCSharpModuleFirstPass(project, newModel));
+		ContainerUtil.addIfNotNull(modules, createAssemblyCSharpModuleFirstPass(project, newModel));
 
-		modules.add(createAssemblyCSharpModule(project, newModel));
+		ContainerUtil.addIfNotNull(modules, createAssemblyCSharpModule(project, newModel));
 
-		modules.add(createAssemblyCSharpModuleEditor(project, newModel));
+		ContainerUtil.addIfNotNull(modules, createAssemblyCSharpModuleEditor(project, newModel));
 
 		//TODO [VISTALL] Assembly-UnityScript-firstpass??
 
@@ -124,10 +132,12 @@ public class Unity3dProjectImportBuilder extends ProjectImportBuilder
 
 	private static Module createAssemblyCSharpModule(Project project, ModifiableModuleModel newModel)
 	{
-		Module assemblyCSharpModule = newModel.newModule("Assembly-CSharp", project.getBasePath() + "/Assets");
+		val modifiableModel = createAndSetupModule("Assembly-CSharp", project, newModel, new String[]{"Assets"});
+		if(modifiableModel == null)
+		{
+			return null;
+		}
 
-		val modifiableModel = ModuleRootManager.getInstance(assemblyCSharpModule).getModifiableModel();
-		modifiableModel.addContentEntry(project.getBaseDir().getUrl()  + "/Assets");
 		modifiableModel.addInvalidModuleEntry("Assembly-CSharp-firstpass");
 
 		new WriteAction<Object>()
@@ -138,17 +148,21 @@ public class Unity3dProjectImportBuilder extends ProjectImportBuilder
 				modifiableModel.commit();
 			}
 		}.execute();
-		return assemblyCSharpModule;
+		return modifiableModel.getModule();
 	}
 
 	private static Module createAssemblyCSharpModuleFirstPass(Project project, ModifiableModuleModel newModel)
 	{
-		Module assemblyCSharpModule = newModel.newModule("Assembly-CSharp-firstpass", project.getBasePath() + "/Assets/Standard Assets");
+		String[] paths = new String[]{
+				"Assets/Standard Assets",
+				"Assets/Pro Standard Assets",
+				"Assets/Plugins"
+		};
 
-		val modifiableModel = ModuleRootManager.getInstance(assemblyCSharpModule).getModifiableModel();
-		for(String path : new String[]{"Standard Assets", "Pro Standard Assets", "Plugins"})
+		val modifiableModel = createAndSetupModule("Assembly-CSharp-firstpass", project, newModel, paths);
+		if(modifiableModel == null)
 		{
-			modifiableModel.addContentEntry(project.getBaseDir().getUrl()  + "/Assets/" + path);
+			return null;
 		}
 
 		new WriteAction<Object>()
@@ -159,22 +173,19 @@ public class Unity3dProjectImportBuilder extends ProjectImportBuilder
 				modifiableModel.commit();
 			}
 		}.execute();
-		return assemblyCSharpModule;
+		return modifiableModel.getModule();
 	}
 
 	private static Module createAssemblyCSharpModuleEditor(final Project project, ModifiableModuleModel newModel)
 	{
-		Module assemblyCSharpModule = newModel.newModule("Assembly-CSharp-Editor", project.getBasePath() + "/Assets/Standard Assets/Editor");
+		val paths = new ArrayList<String>();
+		paths.add("Assets/Standard Assets/Editor");
+		paths.add("Assets/Pro Standard Assets/Editor");
+		paths.add("Assets/Plugins/Editor");
 
-		val modifiableModel = ModuleRootManager.getInstance(assemblyCSharpModule).getModifiableModel();
-		for(String path : new String[]{"Standard Assets/Editor", "Pro Standard Assets/Editor", "Plugins/Editor"})
-		{
-			modifiableModel.addContentEntry(project.getBaseDir().getUrl()  + "/Assets/" + path);
-		}
+		val baseDir = project.getBaseDir();
 
-		VirtualFile baseDir = project.getBaseDir();
-
-		VirtualFile assetsDir = baseDir.findFileByRelativePath("Assets");
+		val assetsDir = baseDir.findFileByRelativePath("Assets");
 		if(assetsDir != null)
 		{
 			VfsUtil.visitChildrenRecursively(assetsDir, new VirtualFileVisitor()
@@ -184,11 +195,17 @@ public class Unity3dProjectImportBuilder extends ProjectImportBuilder
 				{
 					if(file.isDirectory() && "Editor".equals(file.getName()))
 					{
-						modifiableModel.addContentEntry(file.getUrl());
+						paths.add(VfsUtil.getRelativePath(file, baseDir, '/'));
 					}
 					return true;
 				}
 			});
+		}
+
+		val modifiableModel = createAndSetupModule("Assembly-CSharp-Editor", project, newModel, ArrayUtil.toStringArray(paths));
+		if(modifiableModel == null)
+		{
+			return null;
 		}
 
 		modifiableModel.addInvalidModuleEntry("Assembly-CSharp-firstpass");
@@ -202,7 +219,48 @@ public class Unity3dProjectImportBuilder extends ProjectImportBuilder
 				modifiableModel.commit();
 			}
 		}.execute();
-		return assemblyCSharpModule;
+		return modifiableModel.getModule();
+	}
+
+	private static ModifiableRootModel createAndSetupModule(String moduleName, Project project, ModifiableModuleModel modifiableModuleModels, String[] paths)
+	{
+		for(int i = 0; i < paths.length; i++)
+		{
+			paths[i] = project.getBasePath() + "/" + paths[i];
+		}
+
+		VirtualFile targetDir = null;
+		for(String path : paths)
+		{
+			VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByPath(path);
+			if(virtualFile != null)
+			{
+				targetDir = virtualFile;
+				break;
+			}
+		}
+
+		if(targetDir == null)
+		{
+			File file = new File(project.getBasePath(), paths[0]);
+
+			FileUtil.createDirectory(file);
+			targetDir = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(file);
+		}
+
+		if(targetDir == null)
+		{
+			return null;
+		}
+
+		Module module = modifiableModuleModels.newModule(moduleName, targetDir.getPath());
+		ModuleRootManager moduleRootManager = ModuleRootManager.getInstance(module);
+		ModifiableRootModel modifiableModel = moduleRootManager.getModifiableModel();
+		for(String path : paths)
+		{
+			modifiableModel.addContentEntry(VirtualFileManager.constructUrl(StandardFileSystems.FILE_PROTOCOL, path));
+		}
+		return modifiableModel;
 	}
 
 	private static Module createRootModule(Project project, ModifiableModuleModel newModel)
