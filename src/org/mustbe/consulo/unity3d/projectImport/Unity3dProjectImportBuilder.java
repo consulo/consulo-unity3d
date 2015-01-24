@@ -28,6 +28,7 @@ import org.mustbe.consulo.dotnet.module.roots.DotNetLibraryOrderEntryImpl;
 import org.mustbe.consulo.roots.impl.ExcludedContentFolderTypeProvider;
 import org.mustbe.consulo.unity3d.Unity3dIcons;
 import org.mustbe.consulo.unity3d.bundle.Unity3dBundleType;
+import org.mustbe.consulo.unity3d.bundle.UnityDefineByVersion;
 import org.mustbe.consulo.unity3d.csharp.module.extension.Unity3dCSharpMutableModuleExtension;
 import org.mustbe.consulo.unity3d.module.Unity3dMutableModuleExtension;
 import org.mustbe.consulo.unity3d.module.Unity3dTarget;
@@ -271,6 +272,14 @@ public class Unity3dProjectImportBuilder extends ProjectImportBuilder
 			ext.setBuildTarget(unity3dTarget);
 			ext.getVariables().add(unity3dTarget.getDefineName());
 
+			if(unitySdk != null)
+			{
+				UnityDefineByVersion unityDefineByVersion = UnityDefineByVersion.find(unitySdk.getVersionString());
+				if(unityDefineByVersion != UnityDefineByVersion.UNKNOWN)
+				{
+					ext.getVariables().add(unityDefineByVersion.name());
+				}
+			}
 
 			layer.getExtensionWithoutCheck(Unity3dCSharpMutableModuleExtension.class).setEnabled(true);
 

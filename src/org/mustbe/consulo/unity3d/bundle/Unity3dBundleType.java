@@ -117,13 +117,17 @@ public class Unity3dBundleType extends SdkType
 	@Override
 	public String getVersionString(String s)
 	{
+		if(SystemInfo.isWindows)
+		{
+			return WindowsVersionHelper.getVersion(s + "/Editor/Unity.exe");
+		}
 		return "0.0"; //TODO [VISTALL] get version
 	}
 
 	@Override
-	public String suggestSdkName(String s, String s2)
+	public String suggestSdkName(String s, String sdkHome)
 	{
-		return getPresentableName();
+		return getPresentableName() + " " + getVersionString(sdkHome);
 	}
 
 	@NotNull
