@@ -83,6 +83,7 @@ public class Unity3dNewModuleBuilder implements NewModuleBuilder
 				layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "System"));
 				layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "System.Core"));
 				layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEngine"));
+				layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEditor"));
 			}
 		});
 	}

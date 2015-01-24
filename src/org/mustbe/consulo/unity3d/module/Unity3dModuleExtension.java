@@ -33,6 +33,8 @@ import com.intellij.ide.macro.MacroManager;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkType;
 import com.intellij.openapi.roots.ModuleRootLayer;
+import com.intellij.openapi.util.SystemInfo;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtil;
 
@@ -172,13 +174,25 @@ public class Unity3dModuleExtension extends BaseDotNetModuleExtension<Unity3dMod
 	{
 		GeneralCommandLine commandLine = new GeneralCommandLine();
 
-		String fileName = getOutputDir() + "/" + myBuildTarget.getFileNameTemplate();
+		String templateFilePath = getOutputDir() + "/" + myBuildTarget.getFileNameTemplate();
 
 		try
 		{
-			String file = MacroManager.getInstance().expandSilentMarcos(fileName, true, DotNetMacroUtil.createContext(getModule(), false));
+			String filePath = MacroManager.getInstance().expandSilentMarcos(templateFilePath, true, DotNetMacroUtil.createContext(getModule(), false));
 
-			commandLine.setExePath(file);
+			if(SystemInfo.isMac)
+			{
+				// need get app dir, like 'TestProject.app'
+				String fileName = StringUtil.getShortName(filePath, '/');
+				// cut '.app'
+				String nameWithoutExtension = FileUtil.getNameWithoutExtension(fileName);
+
+				commandLine.setExePath(filePath + "/Contents/MacOS/" + nameWithoutExtension);
+			}
+			else
+			{
+				commandLine.setExePath(filePath);
+			}
 		}
 		catch(Macro.ExecutionCancelledException e)
 		{
