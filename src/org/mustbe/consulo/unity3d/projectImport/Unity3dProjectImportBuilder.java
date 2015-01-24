@@ -24,8 +24,13 @@ import javax.swing.Icon;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.mustbe.consulo.dotnet.module.roots.DotNetLibraryOrderEntryImpl;
 import org.mustbe.consulo.roots.impl.ExcludedContentFolderTypeProvider;
 import org.mustbe.consulo.unity3d.Unity3dIcons;
+import org.mustbe.consulo.unity3d.bundle.Unity3dBundleType;
+import org.mustbe.consulo.unity3d.csharp.module.extension.Unity3dCSharpMutableModuleExtension;
+import org.mustbe.consulo.unity3d.module.Unity3dMutableModuleExtension;
+import org.mustbe.consulo.unity3d.module.Unity3dTarget;
 import com.intellij.openapi.application.Result;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.module.ModifiableModuleModel;
@@ -33,10 +38,13 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.projectRoots.SdkTable;
 import com.intellij.openapi.roots.ContentEntry;
-import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
+import com.intellij.openapi.roots.impl.ModuleRootLayerImpl;
 import com.intellij.openapi.roots.ui.configuration.ModulesProvider;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.StandardFileSystems;
@@ -47,6 +55,7 @@ import com.intellij.openapi.vfs.VirtualFileVisitor;
 import com.intellij.packaging.artifacts.ModifiableArtifactModel;
 import com.intellij.projectImport.ProjectImportBuilder;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.Consumer;
 import com.intellij.util.containers.ContainerUtil;
 import lombok.val;
 
@@ -106,13 +115,15 @@ public class Unity3dProjectImportBuilder extends ProjectImportBuilder
 
 		List<Module> modules = new ArrayList<Module>(5);
 
+		Sdk unitySdkType = SdkTable.getInstance().findMostRecentSdkOfType(Unity3dBundleType.getInstance());
+
 		ContainerUtil.addIfNotNull(modules, createRootModule(project, newModel));
 
-		ContainerUtil.addIfNotNull(modules, createAssemblyCSharpModuleFirstPass(project, newModel));
+		ContainerUtil.addIfNotNull(modules, createAssemblyCSharpModuleEditor(project, newModel, unitySdkType));
 
-		ContainerUtil.addIfNotNull(modules, createAssemblyCSharpModule(project, newModel));
+		ContainerUtil.addIfNotNull(modules, createAssemblyCSharpModuleFirstPass(project, newModel, unitySdkType));
 
-		ContainerUtil.addIfNotNull(modules, createAssemblyCSharpModuleEditor(project, newModel));
+		ContainerUtil.addIfNotNull(modules, createAssemblyCSharpModule(project, newModel, unitySdkType));
 
 		//TODO [VISTALL] Assembly-UnityScript-firstpass??
 
@@ -130,28 +141,19 @@ public class Unity3dProjectImportBuilder extends ProjectImportBuilder
 		return modules;
 	}
 
-	private static Module createAssemblyCSharpModule(Project project, ModifiableModuleModel newModel)
+	private static Module createAssemblyCSharpModule(Project project, ModifiableModuleModel newModel, final Sdk unityBundle)
 	{
-		val modifiableModel = createAndSetupModule("Assembly-CSharp", project, newModel, new String[]{"Assets"});
-		if(modifiableModel == null)
-		{
-			return null;
-		}
-
-		modifiableModel.addInvalidModuleEntry("Assembly-CSharp-firstpass");
-
-		new WriteAction<Object>()
+		return createAndSetupModule("Assembly-CSharp", project, newModel, new String[]{"Assets"}, unityBundle, new Consumer<ModuleRootLayerImpl>()
 		{
 			@Override
-			protected void run(Result<Object> result) throws Throwable
+			public void consume(ModuleRootLayerImpl layer)
 			{
-				modifiableModel.commit();
+				layer.addInvalidModuleEntry("Assembly-CSharp-firstpass");
 			}
-		}.execute();
-		return modifiableModel.getModule();
+		});
 	}
 
-	private static Module createAssemblyCSharpModuleFirstPass(Project project, ModifiableModuleModel newModel)
+	private static Module createAssemblyCSharpModuleFirstPass(Project project, ModifiableModuleModel newModel, final Sdk unityBundle)
 	{
 		String[] paths = new String[]{
 				"Assets/Standard Assets",
@@ -159,24 +161,16 @@ public class Unity3dProjectImportBuilder extends ProjectImportBuilder
 				"Assets/Plugins"
 		};
 
-		val modifiableModel = createAndSetupModule("Assembly-CSharp-firstpass", project, newModel, paths);
-		if(modifiableModel == null)
-		{
-			return null;
-		}
-
-		new WriteAction<Object>()
+		return createAndSetupModule("Assembly-CSharp-firstpass", project, newModel, paths, unityBundle, new Consumer<ModuleRootLayerImpl>()
 		{
 			@Override
-			protected void run(Result<Object> result) throws Throwable
+			public void consume(ModuleRootLayerImpl layer)
 			{
-				modifiableModel.commit();
 			}
-		}.execute();
-		return modifiableModel.getModule();
+		});
 	}
 
-	private static Module createAssemblyCSharpModuleEditor(final Project project, ModifiableModuleModel newModel)
+	private static Module createAssemblyCSharpModuleEditor(final Project project, ModifiableModuleModel newModel, final Sdk unityBundle)
 	{
 		val paths = new ArrayList<String>();
 		paths.add("Assets/Standard Assets/Editor");
@@ -202,27 +196,24 @@ public class Unity3dProjectImportBuilder extends ProjectImportBuilder
 			});
 		}
 
-		val modifiableModel = createAndSetupModule("Assembly-CSharp-Editor", project, newModel, ArrayUtil.toStringArray(paths));
-		if(modifiableModel == null)
-		{
-			return null;
-		}
+		return createAndSetupModule("Assembly-CSharp-Editor", project, newModel, ArrayUtil.toStringArray(paths), unityBundle, new Consumer<ModuleRootLayerImpl>()
 
-		modifiableModel.addInvalidModuleEntry("Assembly-CSharp-firstpass");
-		modifiableModel.addInvalidModuleEntry("Assembly-CSharp");
-
-		new WriteAction<Object>()
 		{
 			@Override
-			protected void run(Result<Object> result) throws Throwable
+			public void consume(ModuleRootLayerImpl layer)
 			{
-				modifiableModel.commit();
+				layer.addInvalidModuleEntry("Assembly-CSharp-firstpass");
+				layer.addInvalidModuleEntry("Assembly-CSharp");
+
+				layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEditor.Graphs"));
 			}
-		}.execute();
-		return modifiableModel.getModule();
+		});
 	}
 
-	private static ModifiableRootModel createAndSetupModule(String moduleName, Project project, ModifiableModuleModel modifiableModuleModels, String[] paths)
+	private static Module createAndSetupModule(String moduleName,
+			Project project,
+			ModifiableModuleModel modifiableModuleModels,
+			String[] paths, Sdk unitySdk, Consumer<ModuleRootLayerImpl> setupConsumer)
 	{
 		for(int i = 0; i < paths.length; i++)
 		{
@@ -255,12 +246,69 @@ public class Unity3dProjectImportBuilder extends ProjectImportBuilder
 
 		Module module = modifiableModuleModels.newModule(moduleName, targetDir.getPath());
 		ModuleRootManager moduleRootManager = ModuleRootManager.getInstance(module);
-		ModifiableRootModel modifiableModel = moduleRootManager.getModifiableModel();
-		for(String path : paths)
+
+		val modifiableModel = moduleRootManager.getModifiableModel();
+
+		modifiableModel.removeLayer("Default", false);
+
+		for(Unity3dTarget unity3dTarget : Unity3dTarget.values())
 		{
-			modifiableModel.addContentEntry(VirtualFileManager.constructUrl(StandardFileSystems.FILE_PROTOCOL, path));
+			ModuleRootLayerImpl layer = (ModuleRootLayerImpl) modifiableModel.addLayer(unity3dTarget.getPresentation(), null,
+					getDefaultTarget() == unity3dTarget);
+
+			for(String path : paths)
+			{
+				modifiableModel.addContentEntry(VirtualFileManager.constructUrl(StandardFileSystems.FILE_PROTOCOL, path));
+			}
+
+			setupConsumer.consume(layer);
+
+			Unity3dMutableModuleExtension ext = layer.getExtensionWithoutCheck(Unity3dMutableModuleExtension.class);
+			assert ext != null;
+
+			ext.getInheritableSdk().set(null, unitySdk);
+			ext.setEnabled(true);
+			ext.setBuildTarget(unity3dTarget);
+			ext.getVariables().add(unity3dTarget.getDefineName());
+
+
+			layer.getExtensionWithoutCheck(Unity3dCSharpMutableModuleExtension.class).setEnabled(true);
+
+			layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "mscorlib"));
+			layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEditor"));
+			layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEngine"));
+			layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "System"));
+			layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "System.Core"));
+			layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "System.Xml"));
+			layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "System.Xml.Linq"));
 		}
-		return modifiableModel;
+
+		new WriteAction<Object>()
+		{
+			@Override
+			protected void run(Result<Object> result) throws Throwable
+			{
+				modifiableModel.commit();
+			}
+		}.execute();
+		return module;
+	}
+
+	private static Unity3dTarget getDefaultTarget()
+	{
+		if(SystemInfo.isWindows)
+		{
+			return Unity3dTarget.Windows;
+		}
+		else if(SystemInfo.isLinux)
+		{
+			return Unity3dTarget.LinuxUniversal;
+		}
+		else if(SystemInfo.isMac)
+		{
+			return Unity3dTarget.OSXUniversal;
+		}
+		throw new IllegalArgumentException(SystemInfo.OS_NAME);
 	}
 
 	private static Module createRootModule(Project project, ModifiableModuleModel newModel)
