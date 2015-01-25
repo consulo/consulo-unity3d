@@ -294,7 +294,7 @@ public class Unity3dProjectImportBuilder extends ProjectImportBuilder
 
 			for(String path : paths)
 			{
-				modifiableModel.addContentEntry(VirtualFileManager.constructUrl(StandardFileSystems.FILE_PROTOCOL, path));
+				layer.addContentEntry(VirtualFileManager.constructUrl(StandardFileSystems.FILE_PROTOCOL, path));
 			}
 
 			setupConsumer.consume(layer);
