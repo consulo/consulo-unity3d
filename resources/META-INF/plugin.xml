@@ -30,6 +30,13 @@
 		</component>
 	</application-components>
 
+	<project-components>
+		<component>
+			<implementation-class>org.mustbe.consulo.unity3d.module.UnitySubscriber</implementation-class>
+			<skipForDefaultProject/>
+		</component>
+	</project-components>
+
 	<extensions defaultExtensionNs="com.intellij">
 		<completion.contributor language="C#" implementationClass="org.mustbe.consulo.unity3d.csharp.completion.UnitySpecificMethodCompletion" />
 		<codeInsight.lineMarkerProvider language="C#" implementationClass="org.mustbe.consulo.unity3d.csharp.codeInsight.UnityLineMarkerProvider"/>
