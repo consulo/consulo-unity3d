@@ -45,9 +45,13 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.util.Comparing;
+import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.containers.ContainerUtil;
+import lombok.val;
 
 /**
  * @author VISTALL
@@ -109,57 +113,70 @@ public class UnityCompiler implements PackagingCompiler
 	public ProcessingItem[] process(CompileContext compileContext, ProcessingItem[] processingItems)
 	{
 		ModuleManager moduleManager = ModuleManager.getInstance(compileContext.getProject());
-		for(Module module : moduleManager.getModules())
+
+		val baseDir = compileContext.getProject().getBaseDir();
+		Module rootModule = ContainerUtil.find(moduleManager.getModules(), new Condition<Module>()
 		{
-			Unity3dModuleExtension unity3dModuleExtension = ModuleUtilCore.getExtension(module, Unity3dModuleExtension.class);
-			if(unity3dModuleExtension == null)
+			@Override
+			public boolean value(Module module)
 			{
-				continue;
+				return Comparing.equal(baseDir, module.getModuleDir());
 			}
+		});
 
-			Sdk sdk = unity3dModuleExtension.getSdk();
-			if(sdk == null)
+		if(rootModule == null)
+		{
+			return ProcessingItem.EMPTY_ARRAY;
+		}
+
+		Unity3dModuleExtension unity3dModuleExtension = ModuleUtilCore.getExtension(rootModule, Unity3dModuleExtension.class);
+		if(unity3dModuleExtension == null)
+		{
+			return ProcessingItem.EMPTY_ARRAY;
+		}
+
+		Sdk sdk = unity3dModuleExtension.getSdk();
+		if(sdk == null)
+		{
+			return ProcessingItem.EMPTY_ARRAY;
+		}
+
+		String applicationPath = Unity3dBundleType.getApplicationPath(sdk.getHomePath());
+
+		List<String> args = new ArrayList<String>();
+		args.add(applicationPath);
+		args.add("-batchmode");
+		args.add("-projectPath");
+		args.add(rootModule.getModuleDirPath());
+
+		Unity3dTarget buildTarget = unity3dModuleExtension.getBuildTarget();
+		args.add(buildTarget.getCompilerOption());
+
+		try
+		{
+			DataContext context = DotNetMacroUtil.createContext(rootModule, false);
+			String newFile = MacroManager.getInstance().expandSilentMarcos(buildTarget.getFileNameTemplate(), true, context);
+			String newPath = MacroManager.getInstance().expandSilentMarcos(unity3dModuleExtension.getOutputDir(), true, context);
+
+			args.add(FileUtilRt.toSystemIndependentName(newPath + "/" + newFile));
+			args.add("-quit");
+
+			String workDir = FileUtilRt.toSystemIndependentName(newPath);
+			FileUtil.createDirectory(new File(workDir));
+			compileContext.addMessage(CompilerMessageCategory.INFORMATION, "Arguments: " + args, null, -1, -1);
+			ProcessOutput processOutput = ExecUtil.execAndGetOutput(args, workDir);
+			if(processOutput.getExitCode() != 0)
 			{
-				continue;
+				compileContext.addMessage(CompilerMessageCategory.ERROR, "Unity compilation error. Check log file", null, -1, -1);
 			}
-
-			String applicationPath = Unity3dBundleType.getApplicationPath(sdk.getHomePath());
-
-			List<String> args = new ArrayList<String>();
-			args.add(applicationPath);
-			args.add("-batchmode");
-			args.add("-projectPath");
-			args.add(module.getModuleDirPath());
-
-			Unity3dTarget buildTarget = unity3dModuleExtension.getBuildTarget();
-			args.add(buildTarget.getCompilerOption());
-
-			try
-			{
-				DataContext context = DotNetMacroUtil.createContext(module, false);
-				String newFile = MacroManager.getInstance().expandSilentMarcos(buildTarget.getFileNameTemplate(), true, context);
-				String newPath = MacroManager.getInstance().expandSilentMarcos(unity3dModuleExtension.getOutputDir(), true, context);
-
-				args.add(FileUtilRt.toSystemIndependentName(newPath + "/" + newFile));
-				args.add("-quit");
-
-				String workDir = FileUtilRt.toSystemIndependentName(newPath);
-				FileUtil.createDirectory(new File(workDir));
-				compileContext.addMessage(CompilerMessageCategory.INFORMATION, "Arguments: " + args, null, -1, -1);
-				ProcessOutput processOutput = ExecUtil.execAndGetOutput(args, workDir);
-				if(processOutput.getExitCode() != 0)
-				{
-					compileContext.addMessage(CompilerMessageCategory.ERROR, "Unity compilation error. Check log file", null, -1, -1);
-				}
-			}
-			catch(Macro.ExecutionCancelledException e)
-			{
-				e.printStackTrace();
-			}
-			catch(ExecutionException e)
-			{
-				e.printStackTrace();
-			}
+		}
+		catch(Macro.ExecutionCancelledException e)
+		{
+			e.printStackTrace();
+		}
+		catch(ExecutionException e)
+		{
+			e.printStackTrace();
 		}
 		return processingItems;
 	}

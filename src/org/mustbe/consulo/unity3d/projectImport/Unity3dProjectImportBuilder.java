@@ -122,15 +122,15 @@ public class Unity3dProjectImportBuilder extends ProjectImportBuilder
 
 		List<Module> modules = new ArrayList<Module>(5);
 
-		Sdk unitySdkType = SdkTable.getInstance().findMostRecentSdkOfType(Unity3dBundleType.getInstance());
+		Sdk unityBundle = SdkTable.getInstance().findMostRecentSdkOfType(Unity3dBundleType.getInstance());
 
-		ContainerUtil.addIfNotNull(modules, createRootModule(project, newModel));
+		ContainerUtil.addIfNotNull(modules, createRootModule(project, newModel, unityBundle));
 
-		ContainerUtil.addIfNotNull(modules, createAssemblyCSharpModuleEditor(project, newModel, unitySdkType));
+		ContainerUtil.addIfNotNull(modules, createAssemblyCSharpModuleEditor(project, newModel, unityBundle));
 
-		ContainerUtil.addIfNotNull(modules, createAssemblyCSharpModuleFirstPass(project, newModel, unitySdkType));
+		ContainerUtil.addIfNotNull(modules, createAssemblyCSharpModuleFirstPass(project, newModel, unityBundle));
 
-		ContainerUtil.addIfNotNull(modules, createAssemblyCSharpModule(project, newModel, unitySdkType));
+		ContainerUtil.addIfNotNull(modules, createAssemblyCSharpModule(project, newModel, unityBundle));
 
 		//TODO [VISTALL] Assembly-UnityScript-firstpass??
 
@@ -379,7 +379,7 @@ public class Unity3dProjectImportBuilder extends ProjectImportBuilder
 		throw new IllegalArgumentException(SystemInfo.OS_NAME);
 	}
 
-	private static Module createRootModule(Project project, ModifiableModuleModel newModel)
+	private static Module createRootModule(Project project, ModifiableModuleModel newModel, Sdk unityBundle)
 	{
 		Module rootModule = newModel.newModule(project.getName(), project.getBasePath());
 
@@ -387,6 +387,11 @@ public class Unity3dProjectImportBuilder extends ProjectImportBuilder
 
 		val rootModifiableModel = ModuleRootManager.getInstance(rootModule).getModifiableModel();
 		ContentEntry contentEntry = rootModifiableModel.addContentEntry(projectUrl);
+
+		Unity3dMutableModuleExtension extension = rootModifiableModel.getExtensionWithoutCheck(Unity3dMutableModuleExtension.class);
+		assert extension != null;
+		extension.setEnabled(true);
+		extension.getInheritableSdk().set(null, unityBundle);
 
 		// exclude temp dirs
 		contentEntry.addFolder(projectUrl + "/" + Project.DIRECTORY_STORE_FOLDER, ExcludedContentFolderTypeProvider.getInstance());
