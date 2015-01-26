@@ -18,13 +18,13 @@ package org.mustbe.consulo.unity3d.module;
 
 import java.io.File;
 
-import org.consulo.module.extension.impl.ModuleInheritableNamedPointerImpl;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.mustbe.consulo.dotnet.compiler.DotNetMacroUtil;
 import org.mustbe.consulo.dotnet.execution.DebugConnectionInfo;
 import org.mustbe.consulo.dotnet.module.extension.BaseDotNetModuleExtension;
+import org.mustbe.consulo.dotnet.module.extension.DotNetModuleSdkPointer;
 import org.mustbe.consulo.unity3d.bundle.Unity3dBundleType;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.GeneralCommandLine;
@@ -64,7 +64,7 @@ public class Unity3dModuleExtension extends BaseDotNetModuleExtension<Unity3dMod
 	@Override
 	protected void getStateImpl(@NotNull Element element)
 	{
-		((ModuleInheritableNamedPointerImpl) getInheritableSdk()).toXml(element);
+		((DotNetModuleSdkPointer) getInheritableSdk()).toXml(element);
 		element.setAttribute("output-dir", myOutputDirectory);
 		element.setAttribute("namespace-prefix", getNamespacePrefix());
 		element.setAttribute("build-target", myBuildTarget.name());
@@ -79,7 +79,7 @@ public class Unity3dModuleExtension extends BaseDotNetModuleExtension<Unity3dMod
 	@Override
 	protected void loadStateImpl(@NotNull Element element)
 	{
-		((ModuleInheritableNamedPointerImpl) getInheritableSdk()).fromXml(element);
+		((DotNetModuleSdkPointer) getInheritableSdk()).fromXml(element);
 
 		myFileName = element.getAttributeValue("file-name", FILE_NAME);
 		myOutputDirectory = element.getAttributeValue("output-dir", DEFAULT_OUTPUT_DIR);
