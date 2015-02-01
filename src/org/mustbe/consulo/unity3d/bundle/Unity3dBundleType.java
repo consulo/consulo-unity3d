@@ -60,19 +60,6 @@ public class Unity3dBundleType extends SdkType
 		throw new IllegalArgumentException("Unknown system " + SystemInfo.OS_NAME);
 	}
 
-	@NotNull
-	public static String getManagedPath(@NotNull String sdkPath, @NotNull String suffix)
-	{
-		if(SystemInfo.isMac)
-		{
-			return sdkPath + "/Contents/Frameworks/Managed";
-		}
-		else if(SystemInfo.isWindows)
-		{
-			return sdkPath + "/Editor/Data/Managed";
-		}
-		throw new IllegalArgumentException("Unknown system " + SystemInfo.OS_NAME);
-	}
 
 	@NotNull
 	public static Unity3dBundleType getInstance()

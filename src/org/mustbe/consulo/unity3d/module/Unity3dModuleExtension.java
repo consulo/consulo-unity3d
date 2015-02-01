@@ -17,6 +17,7 @@
 package org.mustbe.consulo.unity3d.module;
 
 import java.io.File;
+import java.util.List;
 
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -37,6 +38,7 @@ import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.SmartList;
 
 /**
  * @author VISTALL
@@ -127,32 +129,50 @@ public class Unity3dModuleExtension extends BaseDotNetModuleExtension<Unity3dMod
 			return EMPTY_FILE_ARRAY;
 		}
 
-		String pathForMono = Unity3dBundleType.getPathForMono(homePath, getLibrarySuffix());
+		List<String> pathsForLibraries = getPathsForLibraries(homePath);
 
 		File[] array = EMPTY_FILE_ARRAY;
-
-		File dir = new File(pathForMono);
-		if(dir.exists())
+		for(String pathsForLibrary : pathsForLibraries)
 		{
-			File[] files = dir.listFiles();
-			if(files != null)
+			File dir = new File(pathsForLibrary);
+			if(dir.exists())
 			{
-				array = ArrayUtil.mergeArrays(array, files);
-			}
-		}
-
-		String managedPath = Unity3dBundleType.getManagedPath(homePath, getLibrarySuffix());
-
-		dir = new File(managedPath);
-		if(dir.exists())
-		{
-			File[] files = dir.listFiles();
-			if(files != null)
-			{
-				array = ArrayUtil.mergeArrays(array, files);
+				File[] files = dir.listFiles();
+				if(files != null)
+				{
+					array = ArrayUtil.mergeArrays(array, files);
+				}
 			}
 		}
 		return array;
+	}
+
+	@NotNull
+	private List<String> getPathsForLibraries(String homePath)
+	{
+		List<String> list = new SmartList<String>();
+		list.add(Unity3dBundleType.getPathForMono(homePath, getLibrarySuffix()));
+		if(SystemInfo.isMac)
+		{
+			list.add(homePath + "/Contents/Frameworks/Managed");
+			// UnityUI 4.6.2 specific
+			list.add(homePath + "/Contents/Frameworks/UnityExtensions/Unity/GUISystem/4.6.2");
+			list.add(homePath + "/Contents/Frameworks/UnityExtensions/Unity/GUISystem/4.6.2/Editor");
+			// UnityUI 5.0 specific
+			list.add(homePath + "/Contents/Frameworks/UnityExtensions/Unity/GUISystem/");
+			list.add(homePath + "/Contents/Frameworks/UnityExtensions/Unity/GUISystem/Editor");
+		}
+		else if(SystemInfo.isWindows)
+		{
+			list.add(homePath + "/Editor/Data/Managed");
+			// UnityUI 4.6.2 specific
+			list.add(homePath + "/Editor/Data/UnityExtensions/Unity/GUISystem/4.6.2");
+			list.add(homePath + "/Editor/Data/UnityExtensions/Unity/GUISystem/4.6.2/Editor");
+			// UnityUI 5.0 specific
+			list.add(homePath + "/Editor/Data/UnityExtensions/Unity/GUISystem/");
+			list.add(homePath + "/Editor/Data/UnityExtensions/Unity/GUISystem/Editor");
+		}
+		return list;
 	}
 
 	@NotNull
