@@ -20,6 +20,9 @@ import javax.swing.Icon;
 
 import org.jetbrains.annotations.Nullable;
 import org.mustbe.consulo.unity3d.Unity3dIcons;
+import org.mustbe.consulo.unity3d.projectImport.ui.Unity3dWizardStep;
+import com.intellij.ide.util.projectWizard.ModuleWizardStep;
+import com.intellij.ide.util.projectWizard.WizardContext;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.projectImport.ProjectImportProvider;
@@ -37,7 +40,8 @@ public class Unity3dProjectImportProvider extends ProjectImportProvider
 
 	@Nullable
 	@Override
-	public String getFileSample() {
+	public String getFileSample()
+	{
 		return "<b>Unity3D</b> project";
 	}
 
@@ -45,6 +49,14 @@ public class Unity3dProjectImportProvider extends ProjectImportProvider
 	public boolean canImport(VirtualFile fileOrDirectory, @Nullable Project project)
 	{
 		return fileOrDirectory.isDirectory() && fileOrDirectory.findFileByRelativePath("ProjectSettings/ProjectSettings.asset") != null;
+	}
+
+	@Override
+	public ModuleWizardStep[] createSteps(WizardContext context)
+	{
+		return new ModuleWizardStep[]{
+				new Unity3dWizardStep(context)
+		};
 	}
 
 	@Nullable

@@ -28,11 +28,11 @@ import org.mustbe.consulo.dotnet.dll.DotNetModuleFileType;
 import org.mustbe.consulo.dotnet.module.roots.DotNetLibraryOrderEntryImpl;
 import org.mustbe.consulo.roots.impl.ExcludedContentFolderTypeProvider;
 import org.mustbe.consulo.unity3d.Unity3dIcons;
-import org.mustbe.consulo.unity3d.bundle.Unity3dBundleType;
 import org.mustbe.consulo.unity3d.bundle.UnityDefineByVersion;
 import org.mustbe.consulo.unity3d.csharp.module.extension.Unity3dCSharpMutableModuleExtension;
 import org.mustbe.consulo.unity3d.module.Unity3dMutableModuleExtension;
 import org.mustbe.consulo.unity3d.module.Unity3dTarget;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.Result;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.module.ModifiableModuleModel;
@@ -41,7 +41,6 @@ import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.projectRoots.SdkTable;
 import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.LibraryOrderEntry;
 import com.intellij.openapi.roots.ModuleRootManager;
@@ -72,6 +71,13 @@ import lombok.val;
  */
 public class Unity3dProjectImportBuilder extends ProjectImportBuilder
 {
+	private Sdk myUnitySdk;
+
+	public void setUnitySdk(Sdk unitySdk)
+	{
+		myUnitySdk = unitySdk;
+	}
+
 	@NotNull
 	@Override
 	public String getName()
@@ -122,29 +128,30 @@ public class Unity3dProjectImportBuilder extends ProjectImportBuilder
 
 		List<Module> modules = new ArrayList<Module>(5);
 
-		Sdk unityBundle = SdkTable.getInstance().findMostRecentSdkOfType(Unity3dBundleType.getInstance());
+		ContainerUtil.addIfNotNull(modules, createRootModule(project, newModel, myUnitySdk));
 
-		ContainerUtil.addIfNotNull(modules, createRootModule(project, newModel, unityBundle));
+		ContainerUtil.addIfNotNull(modules, createAssemblyCSharpModuleEditor(project, newModel, myUnitySdk));
 
-		ContainerUtil.addIfNotNull(modules, createAssemblyCSharpModuleEditor(project, newModel, unityBundle));
+		ContainerUtil.addIfNotNull(modules, createAssemblyCSharpModuleFirstPass(project, newModel, myUnitySdk));
 
-		ContainerUtil.addIfNotNull(modules, createAssemblyCSharpModuleFirstPass(project, newModel, unityBundle));
+		ContainerUtil.addIfNotNull(modules, createAssemblyCSharpModule(project, newModel, myUnitySdk));
 
-		ContainerUtil.addIfNotNull(modules, createAssemblyCSharpModule(project, newModel, unityBundle));
+		// we need drop link to sdk
+		myUnitySdk = null;
 
 		//TODO [VISTALL] Assembly-UnityScript-firstpass??
 
-		new WriteAction<Object>()
+		ApplicationManager.getApplication().runWriteAction(new Runnable()
 		{
 			@Override
-			protected void run(Result<Object> result) throws Throwable
+			public void run()
 			{
 				if(!fromProjectStructure)
 				{
 					newModel.commit();
 				}
 			}
-		}.execute();
+		});
 		return modules;
 	}
 
