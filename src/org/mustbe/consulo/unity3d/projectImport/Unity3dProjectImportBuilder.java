@@ -51,6 +51,7 @@ import com.intellij.openapi.roots.types.DocumentationOrderRootType;
 import com.intellij.openapi.roots.ui.configuration.ModulesProvider;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VfsUtil;
@@ -233,6 +234,10 @@ public class Unity3dProjectImportBuilder extends ProjectImportBuilder
 
 				layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEditor.Graphs"));
 
+				if(isVersionHigherOrEqual(unityBundle, "4.6.0.0"))
+				{
+					layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEditor.UI"));
+				}
 				for(String path : pathsAsArray)
 				{
 					VirtualFile dirFile = LocalFileSystem.getInstance().findFileByPath(path);
@@ -328,6 +333,10 @@ public class Unity3dProjectImportBuilder extends ProjectImportBuilder
 			layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "mscorlib"));
 			layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEditor"));
 			layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEngine"));
+			if(isVersionHigherOrEqual(unitySdk, "4.6.0.0"))
+			{
+				layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEngine.UI"));
+			}
 			layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "System"));
 			layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "System.Core"));
 			layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "System.Xml"));
@@ -343,6 +352,13 @@ public class Unity3dProjectImportBuilder extends ProjectImportBuilder
 			}
 		}.execute();
 		return module;
+	}
+
+	private static boolean isVersionHigherOrEqual(@Nullable Sdk unityBundle, @NotNull String requiredVersion)
+	{
+		String versionString = unityBundle == null ? "0.0.0.0" : unityBundle.getVersionString();
+		int compareValue = StringUtil.compareVersionNumbers(versionString, requiredVersion);
+		return compareValue >= 0;
 	}
 
 	private static void addAsLibrary(VirtualFile virtualFile, ModuleRootLayerImpl layer)
