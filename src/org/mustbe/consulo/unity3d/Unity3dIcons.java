@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2014 must-be.org
+ * Copyright 2013-2015 must-be.org
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,12 +20,9 @@ import javax.swing.Icon;
 
 import com.intellij.openapi.util.IconLoader;
 
-/**
- * @author VISTALL
- * @since 28.09.14
- */
+// Generated Consulo DevKit plugin 
 public interface Unity3dIcons
 {
-	Icon EventMethod = IconLoader.findIcon("/icons/eventMethod.png");
-	Icon Unity3d = IconLoader.findIcon("/icons/unity3d.png");
+	Icon EventMethod = IconLoader.getIcon("/icons/eventMethod.png");  // 12x12
+	Icon Unity3d = IconLoader.getIcon("/icons/unity3d.png");  // 16x16
 }
