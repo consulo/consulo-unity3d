@@ -43,7 +43,6 @@
 		<macro implementation="org.mustbe.consulo.unity3d.module.UnityFileNameMacro"/>
 		<compiler implementation="org.mustbe.consulo.unity3d.compiler.UnityCompiler" order="last"/>
 		<sdkType implementation="org.mustbe.consulo.unity3d.bundle.Unity3dBundleType"/>
-		<bundledSdkProvider implementation="org.mustbe.consulo.unity3d.bundle.Unity3dBundleProvider"/>
 
 		<configurationType implementation="org.mustbe.consulo.unity3d.run.UnityRemoteDebugApplicationType"/>
 

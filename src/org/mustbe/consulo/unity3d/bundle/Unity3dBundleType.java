@@ -17,6 +17,8 @@
 package org.mustbe.consulo.unity3d.bundle;
 
 import java.io.File;
+import java.util.Collection;
+import java.util.List;
 
 import javax.swing.Icon;
 
@@ -25,6 +27,7 @@ import org.jetbrains.annotations.Nullable;
 import org.mustbe.consulo.unity3d.Unity3dIcons;
 import com.intellij.openapi.projectRoots.SdkType;
 import com.intellij.openapi.util.SystemInfo;
+import com.intellij.util.SmartList;
 
 /**
  * @author VISTALL
@@ -79,19 +82,29 @@ public class Unity3dBundleType extends SdkType
 		return Unity3dIcons.Unity3d;
 	}
 
-	@Nullable
+	@NotNull
 	@Override
-	public String suggestHomePath()
+	public Collection<String> suggestHomePaths()
 	{
+		List<String> paths = new SmartList<String>();
 		if(SystemInfo.isMac)
 		{
-			return "/Applications/Unity/Unity.app";
+			paths.add("/Applications/Unity/Unity.app");
 		}
 		else if(SystemInfo.isWindows)
 		{
-			return "C:/Program Files (x86)/Unity";
+			// x64 windows
+			paths.add("C:/Program Files (x86)/Unity");
+			// x32 windows
+			paths.add("C:/Program Files/Unity");
 		}
-		return null;
+		return paths;
+	}
+
+	@Override
+	public boolean canCreatePredefinedSdks()
+	{
+		return true;
 	}
 
 	@Override
