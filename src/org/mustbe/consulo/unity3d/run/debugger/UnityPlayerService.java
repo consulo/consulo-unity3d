@@ -123,6 +123,8 @@ public class UnityPlayerService implements ApplicationComponent
 	{
 		try
 		{
+			int succBinds = 0;
+			int failBinds = 0;
 			InetAddress groupAddress = InetAddress.getByName(ourUdpGroupIp);
 
 			Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces();
@@ -149,13 +151,18 @@ public class UnityPlayerService implements ApplicationComponent
 						UnityUdpThread udpThread = new UnityUdpThread(this, serverSocket, playerMulticastPort, networkInterface);
 						udpThread.start();
 						myThreads.add(udpThread);
+
+						succBinds++;
+						LOGGER.info("Successfully binding network interface " + networkInterface + ", port: " + playerMulticastPort);
 					}
 					catch(Exception e)
 					{
+						failBinds ++;
 						LOGGER.warn(e);
 					}
 				}
 			}
+			LOGGER.info("Port status: " + succBinds + " vs " + failBinds);
 		}
 		catch(Exception e)
 		{
