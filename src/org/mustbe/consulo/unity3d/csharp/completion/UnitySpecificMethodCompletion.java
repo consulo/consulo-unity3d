@@ -26,10 +26,10 @@ import org.mustbe.consulo.csharp.lang.psi.CSharpMethodDeclaration;
 import org.mustbe.consulo.csharp.lang.psi.CSharpTypeDeclaration;
 import org.mustbe.consulo.csharp.lang.psi.CSharpTypeRefPresentationUtil;
 import org.mustbe.consulo.csharp.lang.psi.impl.source.CSharpBlockStatementImpl;
-import org.mustbe.consulo.csharp.lang.psi.impl.source.resolve.type.CSharpTypeRefByQName;
 import org.mustbe.consulo.dotnet.psi.DotNetInheritUtil;
 import org.mustbe.consulo.dotnet.psi.DotNetStatement;
 import org.mustbe.consulo.dotnet.psi.DotNetVirtualImplementOwner;
+import org.mustbe.consulo.dotnet.resolve.DotNetTypeRef;
 import org.mustbe.consulo.unity3d.Unity3dIcons;
 import org.mustbe.consulo.unity3d.csharp.UnityFunctionManager;
 import org.mustbe.consulo.unity3d.csharp.UnityTypes;
@@ -95,7 +95,7 @@ public class UnitySpecificMethodCompletion extends CSharpMemberAddByCompletionCo
 		builder.append("(");
 
 		boolean first = true;
-		for(Map.Entry<String, String> entry : functionInfo.getParameters().entrySet())
+		for(Map.Entry<String, DotNetTypeRef> entry : functionInfo.getParameters().entrySet())
 		{
 			if(first)
 			{
@@ -106,7 +106,7 @@ public class UnitySpecificMethodCompletion extends CSharpMemberAddByCompletionCo
 				builder.append(", ");
 			}
 
-			builder.append(CSharpTypeRefPresentationUtil.buildShortText(new CSharpTypeRefByQName(entry.getValue()), scope));
+			builder.append(CSharpTypeRefPresentationUtil.buildShortText(entry.getValue(), scope));
 			builder.append(" ");
 			builder.append(entry.getKey());
 		}

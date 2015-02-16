@@ -25,11 +25,12 @@ import org.jetbrains.annotations.Nullable;
 import org.mustbe.consulo.csharp.lang.psi.CSharpMethodDeclaration;
 import org.mustbe.consulo.csharp.lang.psi.CSharpTokens;
 import org.mustbe.consulo.csharp.lang.psi.CSharpTypeDeclaration;
+import org.mustbe.consulo.csharp.lang.psi.impl.CSharpTypeUtil;
 import org.mustbe.consulo.dotnet.psi.DotNetInheritUtil;
 import org.mustbe.consulo.dotnet.psi.DotNetParameter;
 import org.mustbe.consulo.dotnet.psi.DotNetParameterListOwner;
 import org.mustbe.consulo.dotnet.psi.DotNetTypeDeclaration;
-import org.mustbe.consulo.dotnet.resolve.DotNetTypeRefUtil;
+import org.mustbe.consulo.dotnet.resolve.DotNetTypeRef;
 import org.mustbe.consulo.unity3d.Unity3dIcons;
 import org.mustbe.consulo.unity3d.csharp.UnityFunctionManager;
 import org.mustbe.consulo.unity3d.csharp.UnityTypes;
@@ -46,7 +47,7 @@ import com.intellij.util.ConstantFunction;
  * @author VISTALL
  * @since 19.12.14
  */
-public class UnityLineMarkerProvider implements LineMarkerProvider
+public class UnityCSharpLineMarkerProvider implements LineMarkerProvider
 {
 	@Nullable
 	@Override
@@ -100,7 +101,7 @@ public class UnityLineMarkerProvider implements LineMarkerProvider
 		return null;
 	}
 
-	private static boolean isEqualParameters(Map<String, String> funcParameters, DotNetParameterListOwner parameterListOwner)
+	private static boolean isEqualParameters(Map<String, DotNetTypeRef> funcParameters, DotNetParameterListOwner parameterListOwner)
 	{
 		DotNetParameter[] parameters = parameterListOwner.getParameters();
 		if(parameters.length == 0)
@@ -113,11 +114,11 @@ public class UnityLineMarkerProvider implements LineMarkerProvider
 		}
 
 		int i = 0;
-		for(String expectedType : funcParameters.values())
+		for(DotNetTypeRef expectedTypeRef : funcParameters.values())
 		{
 			DotNetParameter parameter = parameters[i++];
 
-			if(!DotNetTypeRefUtil.isVmQNameEqual(parameter.toTypeRef(true), parameter, expectedType))
+			if(!CSharpTypeUtil.isTypeEqual(parameter.toTypeRef(true), expectedTypeRef, parameter))
 			{
 				return false;
 			}

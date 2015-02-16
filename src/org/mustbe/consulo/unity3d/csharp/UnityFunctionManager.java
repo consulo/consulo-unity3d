@@ -29,6 +29,9 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.NotNull;
+import org.mustbe.consulo.csharp.lang.psi.impl.source.resolve.type.CSharpArrayTypeRef;
+import org.mustbe.consulo.csharp.lang.psi.impl.source.resolve.type.CSharpTypeRefByQName;
+import org.mustbe.consulo.dotnet.resolve.DotNetTypeRef;
 import com.intellij.openapi.util.JDOMUtil;
 
 /**
@@ -40,7 +43,7 @@ public class UnityFunctionManager
 {
 	public static class FunctionInfo
 	{
-		private final Map<String, String> myParameters = new LinkedHashMap<String, String>();
+		private final Map<String, DotNetTypeRef> myParameters = new LinkedHashMap<String, DotNetTypeRef>();
 		private final String myDescription;
 		private final String myName;
 
@@ -53,7 +56,9 @@ public class UnityFunctionManager
 			{
 				for(Element parameters : parametersElement.getChildren())
 				{
-					myParameters.put(parameters.getAttributeValue("name"), parameters.getAttributeValue("type"));
+					String name = parameters.getAttributeValue("name");
+					String type = parameters.getAttributeValue("type");
+					myParameters.put(name, createTypeRef(type));
 				}
 			}
 		}
@@ -69,7 +74,8 @@ public class UnityFunctionManager
 			return myName;
 		}
 
-		public Map<String, String> getParameters()
+		@NotNull
+		public Map<String, DotNetTypeRef> getParameters()
 		{
 			return myParameters;
 		}
@@ -87,6 +93,25 @@ public class UnityFunctionManager
 			}
 
 			return new FunctionInfo(myName, myDescription);
+		}
+
+		@NotNull
+		private static DotNetTypeRef createTypeRef(@NotNull String type)
+		{
+			int count = 0;
+			int i = 0;
+			while((i = type.lastIndexOf("[]")) != -1)
+			{
+				type = type.substring(0, i);
+				count ++;
+			}
+			DotNetTypeRef typeRef = new CSharpTypeRefByQName(type);
+
+			for(int j = 0; j < count; j++)
+			{
+				typeRef = new CSharpArrayTypeRef(typeRef, 0);
+			}
+			return typeRef;
 		}
 	}
 
