@@ -14,7 +14,7 @@
   ~ limitations under the License.
   -->
 <list>
-	<!--See http://docs.unity3d.ru/ScriptReference/MonoBehaviour.html-->
+	<!--See http://docs.unity3d.com/ScriptReference/MonoBehaviour.html-->
 	<function name="Awake">
 		<description>Awake is called when the script instance is being loaded.</description>
 	</function>
@@ -24,6 +24,18 @@
 	<function name="LateUpdate">
 		<description>LateUpdate is called every frame, if the Behaviour is enabled.</description>
 	</function>
+	<function name="OnAnimatorIK">
+		<parameters>
+			<parameter name="layerIndex" type="System.Int32" />
+		</parameters>
+		<description>Callback for setting up animation IK (inverse kinematics).</description>
+	</function>
+	<function name="OnAnimatorMove">
+		<description>Callback for processing animation movements for modifying root motion.</description>
+	</function>
+	<function name="OnApplicationFocus">
+		<description>Sent to all game objects when the player gets or loses focus.</description>
+	</function>
 	<function name="OnApplicationPause">
 		<parameters>
 			<parameter type="System.Bool" name="pause"/>
@@ -32,6 +44,13 @@
 	</function>
 	<function name="OnApplicationQuit">
 		<description>Sent to all game objects before the application is quit.</description>
+	</function>
+	<function name="OnAudioFilterRead">
+		<parameters>
+			<parameter name="data" type="System.Single[]" />
+			<parameter name="channels" type="System.Int32" />
+		</parameters>
+		<description>If OnAudioFilterRead is implemented, Unity will insert a custom filter into the audio DSP chain.</description>
 	</function>
 	<function name="OnBecameInvisible">
 		<description>OnBecameInvisible is called when the renderer is no longer visible by any camera.</description>
@@ -45,17 +64,35 @@
 		</parameters>
 		<description>OnCollisionEnter is called when this collider/rigidbody has begun touching another rigidbody/collider.</description>
 	</function>
+	<function name="OnCollisionEnter2D">
+		<parameters>
+			<parameter name="collisionInfo" type="UnityEngine.Collision2D"/>
+		</parameters>
+		<description>Sent when an incoming collider makes contact with this object's collider (2D physics only).</description>
+	</function>
 	<function name="OnCollisionExit">
 		<parameters>
 			<parameter name="collisionInfo" type="UnityEngine.Collision"/>
 		</parameters>
 		<description>OnCollisionEnter is called when this collider/rigidbody has stopped touching another rigidbody/collider.</description>
 	</function>
+	<function name="OnCollisionExit2D">
+		<parameters>
+			<parameter name="collisionInfo" type="UnityEngine.Collision2D"/>
+		</parameters>
+		<description>Sent when a collider on another object stops touching this object's collider (2D physics only).</description>
+	</function>
 	<function name="OnCollisionStay">
 		<parameters>
 			<parameter name="collisionInfo" type="UnityEngine.Collision"/>
 		</parameters>
 		<description>OnCollisionEnter is called once per frame for every collider/rigidbody that is touching rigidbody/collider.</description>
+	</function>
+	<function name="OnCollisionStay2D">
+		<parameters>
+			<parameter name="collisionInfo" type="UnityEngine.Collision2D"/>
+		</parameters>
+		<description>Sent each frame where a collider on another object is touching this object's collider (2D physics only).</description>
 	</function>
 	<function name="OnConnectedToServer">
 		<description>Called on the client when you have successfully connected to a server</description>
@@ -65,6 +102,9 @@
 			<parameter name="hit" type="UnityEngine.ControllerColliderHit"/>
 		</parameters>
 		<description>OnControllerColliderHit is called when the controller hits a collider while performing a Move.</description>
+	</function>
+	<function name="OnDestroy">
+		<description>This function is called when the MonoBehaviour will be destroyed.</description>
 	</function>
 	<function name="OnDisable">
 		<description>This function is called when the behaviour becomes disabled () or inactive.</description>
@@ -111,6 +151,12 @@
 		</parameters>
 		<description>This function is called after a new level was loaded.</description>
 	</function>
+	<function name="OnMasterServerEvent">
+		<parameters>
+			<parameter name="msEvent" type="UnityEngine.MasterServerEvent" />
+		</parameters>
+		<description>Called on clients or servers when reporting events from the MasterServer.</description>
+	</function>
 	<function name="OnMouseDown">
 		<description>OnMouseDown is called when the user has pressed the mouse button while over the GUIElement or Collider.</description>
 	</function>
@@ -128,6 +174,9 @@
 	</function>
 	<function name="OnMouseUp">
 		<description>OnMouseUp is called when the user has released the mouse button.</description>
+	</function>
+	<function name="OnMouseUpAsButton">
+		<description>OnMouseUpAsButton is only called when the mouse is released over the same GUIElement or Collider as it was pressed.</description>
 	</function>
 	<function name="OnNetworkInstantiate">
 		<parameters>
@@ -185,11 +234,23 @@
 	<function name="OnServerInitialized">
 		<description>Called on the server whenever a Network.InitializeServer was invoked and has completed.</description>
 	</function>
+	<function name="OnTransformChildrenChanged">
+		<description>This function is called when the list of children of the transform of the GameObject has changed.</description>
+	</function>
+	<function name="OnTransformParentChanged">
+		<description>This function is called when the parent property of the transform of the GameObject has changed.</description>
+	</function>
 	<function name="OnTriggerEnter">
 		<parameters>
 			<parameter name="other" type="UnityEngine.Collider"/>
 		</parameters>
 		<description>OnTriggerEnter is called when the Collider other enters the trigger.</description>
+	</function>
+	<function name="OnTriggerEnter2D">
+		<parameters>
+			<parameter name="other" type="UnityEngine.Collider2D"/>
+		</parameters>
+		<description>Sent when another object enters a trigger collider attached to this object (2D physics only).</description>
 	</function>
 	<function name="OnTriggerExit">
 		<parameters>
@@ -197,11 +258,26 @@
 		</parameters>
 		<description>OnTriggerExit is called when the Collider other has stopped touching the trigger.</description>
 	</function>
+	<function name="OnTriggerExit2D">
+		<parameters>
+			<parameter name="other" type="UnityEngine.Collider2D"/>
+		</parameters>
+		<description>Sent when another object leaves a trigger collider attached to this object (2D physics only).</description>
+	</function>
 	<function name="OnTriggerStay">
 		<parameters>
 			<parameter name="other" type="UnityEngine.Collider"/>
 		</parameters>
 		<description>OnTriggerStay is called once per frame for every Collider other that is touching the trigger.</description>
+	</function>
+	<function name="OnTriggerStay2D">
+		<parameters>
+			<parameter name="other" type="UnityEngine.Collider2D"/>
+		</parameters>
+		<description>Sent each frame where another object is within a trigger collider attached to this object (2D physics only).</description>
+	</function>
+	<function name="OnValidate">
+		<description>This function is called when the script is loaded or a value is changed in the inspector (Called in the editor only).</description>
 	</function>
 	<function name="OnWillRenderObject">
 		<description>OnWillRenderObject is called once for each camera if the object is visible.</description>
