@@ -37,6 +37,8 @@ import com.intellij.openapi.roots.ModuleRootLayer;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.SmartList;
 
@@ -155,24 +157,50 @@ public class Unity3dModuleExtension extends BaseDotNetModuleExtension<Unity3dMod
 		if(SystemInfo.isMac)
 		{
 			list.add(homePath + "/Contents/Frameworks/Managed");
-			// UnityUI 4.6.2 specific
-			list.add(homePath + "/Contents/Frameworks/UnityExtensions/Unity/GUISystem/4.6.2");
-			list.add(homePath + "/Contents/Frameworks/UnityExtensions/Unity/GUISystem/4.6.2/Editor");
-			// UnityUI 5.0 specific
-			list.add(homePath + "/Contents/Frameworks/UnityExtensions/Unity/GUISystem/");
-			list.add(homePath + "/Contents/Frameworks/UnityExtensions/Unity/GUISystem/Editor");
+
+			addUnityExtensions(list, homePath + "/Contents/Frameworks/UnityExtensions/Unity/GUISystem");
 		}
 		else if(SystemInfo.isWindows)
 		{
 			list.add(homePath + "/Editor/Data/Managed");
-			// UnityUI 4.6.2 specific
-			list.add(homePath + "/Editor/Data/UnityExtensions/Unity/GUISystem/4.6.2");
-			list.add(homePath + "/Editor/Data/UnityExtensions/Unity/GUISystem/4.6.2/Editor");
-			// UnityUI 5.0 specific
-			list.add(homePath + "/Editor/Data/UnityExtensions/Unity/GUISystem/");
-			list.add(homePath + "/Editor/Data/UnityExtensions/Unity/GUISystem/Editor");
+
+			addUnityExtensions(list, homePath + "/Editor/Data/UnityExtensions/Unity/GUISystem");
 		}
 		return list;
+	}
+
+	private static void addUnityExtensions(List<String> list, String baseDir)
+	{
+		// UnityUI 4.6.2 specific
+		// UnityUI 4.6.3 specific
+		// {VERSION}/Editor
+
+		// UnityUI 5.0 specific
+		// Editor
+
+		VirtualFile dir = LocalFileSystem.getInstance().findFileByPath(baseDir);
+		if(dir != null)
+		{
+			VirtualFile editorDir = dir.findChild("Editor");
+			if(editorDir != null)
+			{
+				list.add(dir.getPath());
+				list.add(editorDir.getPath());
+			}
+			else
+			{
+				for(VirtualFile file : dir.getChildren())
+				{
+					editorDir = file.findChild("Editor");
+					if(editorDir != null)
+					{
+						list.add(file.getPath());
+						list.add(editorDir.getPath());
+						break;
+					}
+				}
+			}
+		}
 	}
 
 	@NotNull
@@ -198,7 +226,8 @@ public class Unity3dModuleExtension extends BaseDotNetModuleExtension<Unity3dMod
 
 		try
 		{
-			String filePath = MacroManager.getInstance().expandSilentMarcos(templateFilePath, true, DotNetMacroUtil.createContext(getModule(), false));
+			String filePath = MacroManager.getInstance().expandSilentMarcos(templateFilePath, true, DotNetMacroUtil.createContext(getModule(),
+					false));
 
 			if(SystemInfo.isMac)
 			{
