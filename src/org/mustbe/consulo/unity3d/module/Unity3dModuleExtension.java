@@ -160,7 +160,7 @@ public class Unity3dModuleExtension extends BaseDotNetModuleExtension<Unity3dMod
 
 			addUnityExtensions(list, homePath + "/Contents/Frameworks/UnityExtensions/Unity/GUISystem");
 		}
-		else if(SystemInfo.isWindows)
+		else if(SystemInfo.isWindows || SystemInfo.isLinux)
 		{
 			list.add(homePath + "/Editor/Data/Managed");
 

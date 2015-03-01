@@ -35,7 +35,7 @@ import com.intellij.util.SmartList;
  */
 public class Unity3dBundleType extends SdkType
 {
-	@NotNull
+	@Nullable
 	public static String getApplicationPath(@NotNull String sdkPath)
 	{
 		if(SystemInfo.isMac)
@@ -46,7 +46,7 @@ public class Unity3dBundleType extends SdkType
 		{
 			return sdkPath + "/Editor/Unity.exe";
 		}
-		throw new IllegalArgumentException("Unknown system " + SystemInfo.OS_NAME);
+		return null;
 	}
 
 	@NotNull
@@ -56,13 +56,12 @@ public class Unity3dBundleType extends SdkType
 		{
 			return sdkPath + "/Contents/Frameworks/Mono/lib/mono/" + suffix;
 		}
-		else if(SystemInfo.isWindows)
+		else if(SystemInfo.isWindows || SystemInfo.isLinux)
 		{
 			return sdkPath + "/Editor/Data/Mono/lib/mono/" + suffix;
 		}
 		throw new IllegalArgumentException("Unknown system " + SystemInfo.OS_NAME);
 	}
-
 
 	@NotNull
 	public static Unity3dBundleType getInstance()

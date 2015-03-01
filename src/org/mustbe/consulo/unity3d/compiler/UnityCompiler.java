@@ -142,6 +142,10 @@ public class UnityCompiler implements PackagingCompiler
 		}
 
 		String applicationPath = Unity3dBundleType.getApplicationPath(sdk.getHomePath());
+		if(applicationPath == null)
+		{
+			return ProcessingItem.EMPTY_ARRAY;
+		}
 
 		List<String> args = new ArrayList<String>();
 		args.add(applicationPath);
