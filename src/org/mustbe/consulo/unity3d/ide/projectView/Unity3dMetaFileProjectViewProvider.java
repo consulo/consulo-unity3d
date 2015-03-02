@@ -22,11 +22,15 @@ import java.util.List;
 
 import org.jetbrains.annotations.Nullable;
 import org.mustbe.consulo.unity3d.Unity3dMetaFileType;
+import org.mustbe.consulo.unity3d.module.Unity3dModuleExtension;
 import com.intellij.ide.projectView.ProjectViewNode;
 import com.intellij.ide.projectView.TreeStructureProvider;
 import com.intellij.ide.projectView.ViewSettings;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.DumbAware;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 
 /**
@@ -35,6 +39,13 @@ import com.intellij.openapi.vfs.VirtualFile;
  */
 public class Unity3dMetaFileProjectViewProvider implements TreeStructureProvider, DumbAware
 {
+	private final Project myProject;
+
+	public Unity3dMetaFileProjectViewProvider(Project project)
+	{
+		myProject = project;
+	}
+
 	@Override
 	public Collection<AbstractTreeNode> modify(AbstractTreeNode parent, Collection<AbstractTreeNode> children, ViewSettings settings)
 	{
@@ -46,7 +57,11 @@ public class Unity3dMetaFileProjectViewProvider implements TreeStructureProvider
 				VirtualFile virtualFile = ((ProjectViewNode)child).getVirtualFile();
 				if(virtualFile != null && virtualFile.getFileType() == Unity3dMetaFileType.INSTANCE)
 				{
-					continue;
+					Module moduleForFile = ModuleUtilCore.findModuleForFile(virtualFile, myProject);
+					if(moduleForFile != null && ModuleUtilCore.getExtension(moduleForFile, Unity3dModuleExtension.class) != null)
+					{
+						continue;
+					}
 				}
 			}
 
