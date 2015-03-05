@@ -17,6 +17,7 @@
 package org.mustbe.consulo.unity3d.csharp.module.extension;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.mustbe.consulo.csharp.module.extension.BaseCSharpModuleExtension;
 import org.mustbe.consulo.csharp.module.extension.CSharpLanguageVersion;
 import org.mustbe.consulo.dotnet.compiler.DotNetCompilerOptionsBuilder;
@@ -31,6 +32,13 @@ public class Unity3dCSharpModuleExtension extends BaseCSharpModuleExtension<Unit
 	public Unity3dCSharpModuleExtension(@NotNull String id, @NotNull ModuleRootLayer module)
 	{
 		super(id, module);
+	}
+
+	@Nullable
+	@Override
+	public String getAssemblyTitle()
+	{
+		return getModule().getName();
 	}
 
 	@NotNull
