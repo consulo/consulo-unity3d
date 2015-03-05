@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.mustbe.consulo.unity3d.ide.newProjectOrModule;
+package org.mustbe.consulo.unity3d.projectImport.ui;
 
 import javax.swing.JPanel;
 
@@ -32,11 +32,11 @@ import com.intellij.openapi.ui.VerticalFlowLayout;
  * @author VISTALL
  * @since 27.10.14
  */
-public class Unity3dNewModuleBuilderPanel extends JPanel
+public class Unity3dSdkPanel extends JPanel
 {
 	private ComboBox myComboBox;
 
-	public Unity3dNewModuleBuilderPanel()
+	public Unity3dSdkPanel()
 	{
 		super(new VerticalFlowLayout());
 

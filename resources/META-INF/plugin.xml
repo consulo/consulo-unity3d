@@ -62,8 +62,6 @@
 				immutableClass="org.mustbe.consulo.unity3d.csharp.module.extension.Unity3dCSharpModuleExtension"
 				mutableClass="org.mustbe.consulo.unity3d.csharp.module.extension.Unity3dCSharpMutableModuleExtension"/>
 
-		<newModuleBuilder implementation="org.mustbe.consulo.unity3d.ide.newProjectOrModule.Unity3dNewModuleBuilder"/>
-
 		<projectImportProvider implementation="org.mustbe.consulo.unity3d.projectImport.Unity3dProjectImportProvider" />
 
 		<fileTypeFactory implementation="org.mustbe.consulo.unity3d.Unity3dFileTypeFactory"/>

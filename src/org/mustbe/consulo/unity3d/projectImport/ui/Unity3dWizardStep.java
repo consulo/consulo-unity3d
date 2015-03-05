@@ -19,7 +19,6 @@ package org.mustbe.consulo.unity3d.projectImport.ui;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 
-import org.mustbe.consulo.unity3d.ide.newProjectOrModule.Unity3dNewModuleBuilderPanel;
 import org.mustbe.consulo.unity3d.projectImport.Unity3dProjectImportBuilder;
 import com.intellij.ide.util.newProjectWizard.ProjectNameStep;
 import com.intellij.ide.util.projectWizard.WizardContext;
@@ -30,12 +29,12 @@ import com.intellij.ide.util.projectWizard.WizardContext;
  */
 public class Unity3dWizardStep extends ProjectNameStep
 {
-	private Unity3dNewModuleBuilderPanel mySdkPanel;
+	private Unity3dSdkPanel mySdkPanel;
 
 	public Unity3dWizardStep(WizardContext context)
 	{
 		super(context, null);
-		mySdkPanel = new Unity3dNewModuleBuilderPanel();
+		mySdkPanel = new Unity3dSdkPanel();
 		myAdditionalContentPanel.add(mySdkPanel, new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 1, 1, GridBagConstraints.NORTHWEST,
 				GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
 	}
