@@ -24,19 +24,22 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.event.DocumentEvent;
 
+import org.consulo.module.extension.MutableModuleInheritableNamedPointer;
+import org.consulo.module.extension.ui.ModuleExtensionSdkBoxBuilder;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.mustbe.consulo.RequiredDispatchThread;
 import org.mustbe.consulo.dotnet.DotNetBundle;
 import org.mustbe.consulo.dotnet.module.extension.DotNetModuleExtension;
-import org.mustbe.consulo.dotnet.module.extension.DotNetModuleExtensionWithSdkPanel;
 import org.mustbe.consulo.unity3d.module.Unity3dModuleExtension;
 import org.mustbe.consulo.unity3d.module.Unity3dMutableModuleExtension;
 import org.mustbe.consulo.unity3d.module.Unity3dTarget;
+import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.InputValidator;
 import com.intellij.openapi.ui.LabeledComponent;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.VerticalFlowLayout;
-import com.intellij.openapi.util.EmptyRunnable;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.AnActionButton;
 import com.intellij.ui.AnActionButtonRunnable;
@@ -48,6 +51,7 @@ import com.intellij.ui.ToolbarDecorator;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBList;
 import com.intellij.ui.components.JBTextField;
+import com.intellij.util.NullableFunction;
 import lombok.val;
 
 /**
@@ -57,10 +61,22 @@ import lombok.val;
  */
 public class UnityConfigurationPanel extends JPanel
 {
+	@RequiredDispatchThread
 	public UnityConfigurationPanel(final Unity3dMutableModuleExtension extension, final List<String> variables, final Runnable updater)
 	{
 		super(new VerticalFlowLayout(VerticalFlowLayout.TOP, 0, 0, true, true));
-		add(DotNetModuleExtensionWithSdkPanel.create(extension, EmptyRunnable.INSTANCE));
+		ModuleExtensionSdkBoxBuilder<Unity3dMutableModuleExtension> sdkBoxBuilder = ModuleExtensionSdkBoxBuilder.create(extension, updater);
+		sdkBoxBuilder.sdkTypeClass(extension.getSdkTypeClass());
+		sdkBoxBuilder.sdkPointerFunc(new NullableFunction<Unity3dMutableModuleExtension, MutableModuleInheritableNamedPointer<Sdk>>()
+		{
+			@Nullable
+			@Override
+			public MutableModuleInheritableNamedPointer<Sdk> fun(Unity3dMutableModuleExtension mutableModuleExtension)
+			{
+				return mutableModuleExtension.getInheritableSdk();
+			}
+		});
+		add(sdkBoxBuilder.build());
 
 		final ComboBox target = new ComboBox(Unity3dTarget.values());
 		target.setRenderer(new ColoredListCellRendererWrapper<Unity3dTarget>()

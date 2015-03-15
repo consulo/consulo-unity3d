@@ -21,6 +21,7 @@ import javax.swing.JComponent;
 import org.consulo.module.extension.MutableModuleInheritableNamedPointer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.mustbe.consulo.RequiredDispatchThread;
 import org.mustbe.consulo.dotnet.module.extension.DotNetMutableModuleExtension;
 import org.mustbe.consulo.unity3d.module.ui.UnityConfigurationPanel;
 import com.intellij.openapi.projectRoots.Sdk;
@@ -51,6 +52,7 @@ public class Unity3dMutableModuleExtension extends Unity3dModuleExtension implem
 
 	@Nullable
 	@Override
+	@RequiredDispatchThread
 	public JComponent createConfigurablePanel(@NotNull Runnable runnable)
 	{
 		return new UnityConfigurationPanel(this, getVariables(), runnable);
