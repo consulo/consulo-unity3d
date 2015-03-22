@@ -64,7 +64,7 @@ public class UnityConfigurationPanel extends JPanel
 	@RequiredDispatchThread
 	public UnityConfigurationPanel(final Unity3dMutableModuleExtension extension, final List<String> variables, final Runnable updater)
 	{
-		super(new VerticalFlowLayout(VerticalFlowLayout.TOP, 0, 0, true, true));
+		super(new VerticalFlowLayout(true, true));
 		ModuleExtensionSdkBoxBuilder<Unity3dMutableModuleExtension> sdkBoxBuilder = ModuleExtensionSdkBoxBuilder.create(extension, updater);
 		sdkBoxBuilder.sdkTypeClass(extension.getSdkTypeClass());
 		sdkBoxBuilder.sdkPointerFunc(new NullableFunction<Unity3dMutableModuleExtension, MutableModuleInheritableNamedPointer<Sdk>>()
