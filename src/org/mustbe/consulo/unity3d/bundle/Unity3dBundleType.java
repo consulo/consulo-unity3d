@@ -44,8 +44,12 @@ public class Unity3dBundleType extends SdkType
 	public static final String UNKNOWN_VERSION = "0.0.0";
 
 	@Nullable
-	public static String getApplicationPath(@NotNull String sdkPath)
+	public static String getApplicationPath(@Nullable String sdkPath)
 	{
+		if(sdkPath == null)
+		{
+			return null;
+		}
 		if(SystemInfo.isMac)
 		{
 			return sdkPath + "/Contents/MacOS/Unity";
