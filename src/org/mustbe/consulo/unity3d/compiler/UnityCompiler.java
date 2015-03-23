@@ -144,7 +144,7 @@ public class UnityCompiler implements PackagingCompiler
 		String applicationPath = Unity3dBundleType.getApplicationPath(sdk.getHomePath());
 		if(applicationPath == null)
 		{
-			compileContext.addMessage(CompilerMessageCategory.ERROR, "Compilation if not available", null, -1, -1);
+			compileContext.addMessage(CompilerMessageCategory.ERROR, "Compilation is not available", null, -1, -1);
 			return ProcessingItem.EMPTY_ARRAY;
 		}
 
