@@ -8,6 +8,7 @@
             <element id="module-production-resource-output" name="consulo-unity3d" />
             <element id="module-output" name="consulo-unity3d" />
           </element>
+          <element id="library" level="project" name="dd-plist" />
         </element>
       </element>
     </root>

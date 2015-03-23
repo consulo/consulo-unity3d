@@ -16,7 +16,7 @@
 
 package org.mustbe.consulo.unity3d.bundle;
 
-import org.consulo.lombok.annotations.Logger;
+import org.jetbrains.annotations.NotNull;
 import com.intellij.openapi.util.io.FileUtil;
 import com.sun.jna.Library;
 import com.sun.jna.Memory;
@@ -30,7 +30,6 @@ import com.sun.jna.win32.W32APIOptions;
  * @author VISTALL
  * @since 24.01.15
  */
-@Logger
 public class WindowsVersionHelper
 {
 	public interface Version extends Library
@@ -68,35 +67,28 @@ public class WindowsVersionHelper
 		}
 	}
 
-	public static String getVersion(String path)
+	@NotNull
+	public static String getVersion(String path) throws Exception
 	{
-		try
-		{
-			path = FileUtil.toSystemDependentName(path);
-			int dwDummy = 0;
-			int versionlength = Version.INSTANCE.GetFileVersionInfoSizeW(path, dwDummy);
+		path = FileUtil.toSystemDependentName(path);
+		int dwDummy = 0;
+		int versionlength = Version.INSTANCE.GetFileVersionInfoSizeW(path, dwDummy);
 
-			Pointer lpData = new Memory(versionlength);
+		Pointer lpData = new Memory(versionlength);
 
-			PointerByReference lplpBuffer = new PointerByReference();
-			IntByReference puLen = new IntByReference();
-			Version.INSTANCE.GetFileVersionInfoW(path, 0, versionlength, lpData);
-			Version.INSTANCE.VerQueryValueW(lpData, "\\", lplpBuffer, puLen);
+		PointerByReference lplpBuffer = new PointerByReference();
+		IntByReference puLen = new IntByReference();
+		Version.INSTANCE.GetFileVersionInfoW(path, 0, versionlength, lpData);
+		Version.INSTANCE.VerQueryValueW(lpData, "\\", lplpBuffer, puLen);
 
-			VS_FIXEDFILEINFO lplpBufStructure = new VS_FIXEDFILEINFO(lplpBuffer.getValue());
-			lplpBufStructure.read();
+		VS_FIXEDFILEINFO lplpBufStructure = new VS_FIXEDFILEINFO(lplpBuffer.getValue());
+		lplpBufStructure.read();
 
-			int[] rtnData = new int[4];
-			rtnData[0] = lplpBufStructure.dwFileVersionMS >> 16;
-			rtnData[1] = lplpBufStructure.dwFileVersionMS & 0xffff;
-			rtnData[2] = lplpBufStructure.dwFileVersionLS >> 16;
-			rtnData[3] = lplpBufStructure.dwFileVersionLS & 0xffff;
-			return rtnData[0] + "." + rtnData[1] + "." + rtnData[2] + "." + rtnData[3];
-		}
-		catch(Exception e)
-		{
-			LOGGER.warn(e);
-			return "0.0.0.0";
-		}
+		int[] rtnData = new int[4];
+		rtnData[0] = lplpBufStructure.dwFileVersionMS >> 16;
+		rtnData[1] = lplpBufStructure.dwFileVersionMS & 0xffff;
+		rtnData[2] = lplpBufStructure.dwFileVersionLS >> 16;
+		rtnData[3] = lplpBufStructure.dwFileVersionLS & 0xffff;
+		return rtnData[0] + "." + rtnData[1] + "." + rtnData[2];
 	}
 }

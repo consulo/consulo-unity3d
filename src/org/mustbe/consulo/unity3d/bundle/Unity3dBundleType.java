@@ -22,9 +22,14 @@ import java.util.List;
 
 import javax.swing.Icon;
 
+import org.consulo.lombok.annotations.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.mustbe.consulo.unity3d.Unity3dIcons;
+import com.dd.plist.NSDictionary;
+import com.dd.plist.NSObject;
+import com.dd.plist.NSString;
+import com.dd.plist.PropertyListParser;
 import com.intellij.openapi.projectRoots.SdkType;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.util.SmartList;
@@ -33,8 +38,11 @@ import com.intellij.util.SmartList;
  * @author VISTALL
  * @since 28.09.14
  */
+@Logger
 public class Unity3dBundleType extends SdkType
 {
+	public static final String UNKNOWN_VERSION = "0.0.0";
+
 	@Nullable
 	public static String getApplicationPath(@NotNull String sdkPath)
 	{
@@ -114,13 +122,51 @@ public class Unity3dBundleType extends SdkType
 
 	@Nullable
 	@Override
-	public String getVersionString(String s)
+	public String getVersionString(String sdkHome)
 	{
-		if(SystemInfo.isWindows)
+		try
 		{
-			return WindowsVersionHelper.getVersion(s + "/Editor/Unity.exe");
+			if(SystemInfo.isWindows)
+			{
+				return WindowsVersionHelper.getVersion(sdkHome + "/Editor/Unity.exe");
+			}
+			else if(SystemInfo.isMac)
+			{
+				NSObject rootObject = PropertyListParser.parse(sdkHome + "/Contents/Info.plist");
+				if(rootObject instanceof NSDictionary)
+				{
+					NSString version = (NSString) ((NSDictionary) rootObject).get("CFBundleVersion");
+					assert version != null;
+					return filterReleaseInfo(version.getContent());
+				}
+			}
 		}
-		return "0.0"; //TODO [VISTALL] get version
+		catch(Exception e)
+		{
+			LOGGER.error(e);
+		}
+		return UNKNOWN_VERSION;
+	}
+
+	/**
+	 * We need cut full version before 5.0.0f4 after 5.0.0
+	 */
+	private static String filterReleaseInfo(String version)
+	{
+		char[] chars = version.toCharArray();
+		StringBuilder builder = new StringBuilder();
+		for(char aChar : chars)
+		{
+			if(Character.isDigit(aChar) || aChar == '.')
+			{
+				builder.append(aChar);
+			}
+			else
+			{
+				break;
+			}
+		}
+		return builder.toString();
 	}
 
 	@Override

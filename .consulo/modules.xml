@@ -35,6 +35,7 @@
               </binaries>
             </library>
           </orderEntry>
+          <orderEntry type="library" name="dd-plist" level="project" />
         </module-layer>
       </module>
     </modules>

@@ -28,7 +28,8 @@ import org.mustbe.consulo.dotnet.dll.DotNetModuleFileType;
 import org.mustbe.consulo.dotnet.module.roots.DotNetLibraryOrderEntryImpl;
 import org.mustbe.consulo.roots.impl.ExcludedContentFolderTypeProvider;
 import org.mustbe.consulo.unity3d.Unity3dIcons;
-import org.mustbe.consulo.unity3d.bundle.UnityDefineByVersion;
+import org.mustbe.consulo.unity3d.bundle.Unity3dBundleType;
+import org.mustbe.consulo.unity3d.bundle.Unity3dDefineByVersion;
 import org.mustbe.consulo.unity3d.csharp.module.extension.Unity3dCSharpMutableModuleExtension;
 import org.mustbe.consulo.unity3d.module.Unity3dMutableModuleExtension;
 import org.mustbe.consulo.unity3d.module.Unity3dTarget;
@@ -43,6 +44,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.LibraryOrderEntry;
+import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.impl.ModuleRootLayerImpl;
 import com.intellij.openapi.roots.libraries.Library;
@@ -50,6 +52,7 @@ import com.intellij.openapi.roots.types.BinariesOrderRootType;
 import com.intellij.openapi.roots.types.DocumentationOrderRootType;
 import com.intellij.openapi.roots.ui.configuration.ModulesProvider;
 import com.intellij.openapi.util.SystemInfo;
+import com.intellij.openapi.util.Version;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -234,7 +237,7 @@ public class Unity3dProjectImportBuilder extends ProjectImportBuilder
 
 				layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEditor.Graphs"));
 
-				if(isVersionHigherOrEqual(unityBundle, "4.6.0.0"))
+				if(isVersionHigherOrEqual(unityBundle, "4.6.0"))
 				{
 					layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEditor.UI"));
 				}
@@ -261,7 +264,9 @@ public class Unity3dProjectImportBuilder extends ProjectImportBuilder
 	private static Module createAndSetupModule(String moduleName,
 			Project project,
 			ModifiableModuleModel modifiableModuleModels,
-			String[] paths, Sdk unitySdk, Consumer<ModuleRootLayerImpl> setupConsumer)
+			String[] paths,
+			Sdk unitySdk,
+			Consumer<ModuleRootLayerImpl> setupConsumer)
 	{
 		for(int i = 0; i < paths.length; i++)
 		{
@@ -297,7 +302,7 @@ public class Unity3dProjectImportBuilder extends ProjectImportBuilder
 
 		val modifiableModel = moduleRootManager.getModifiableModel();
 
-		modifiableModel.removeLayer("Default", false);
+		modifiableModel.removeLayer(ModifiableRootModel.DEFAULT_LAYER_NAME, false);
 
 		for(Unity3dTarget unity3dTarget : Unity3dTarget.values())
 		{
@@ -319,13 +324,11 @@ public class Unity3dProjectImportBuilder extends ProjectImportBuilder
 			ext.setBuildTarget(unity3dTarget);
 			ext.getVariables().add(unity3dTarget.getDefineName());
 
-			if(unitySdk != null)
+			Version currentBundleVersion = parseBundleVersion(unitySdk);
+			Unity3dDefineByVersion unity3dDefineByVersion = Unity3dDefineByVersion.find(currentBundleVersion.toString());
+			if(unity3dDefineByVersion != Unity3dDefineByVersion.UNKNOWN)
 			{
-				UnityDefineByVersion unityDefineByVersion = UnityDefineByVersion.find(unitySdk.getVersionString());
-				if(unityDefineByVersion != UnityDefineByVersion.UNKNOWN)
-				{
-					ext.getVariables().add(unityDefineByVersion.name());
-				}
+				ext.getVariables().add(unity3dDefineByVersion.name());
 			}
 
 			layer.getExtensionWithoutCheck(Unity3dCSharpMutableModuleExtension.class).setEnabled(true);
@@ -333,7 +336,7 @@ public class Unity3dProjectImportBuilder extends ProjectImportBuilder
 			layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "mscorlib"));
 			layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEditor"));
 			layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEngine"));
-			if(isVersionHigherOrEqual(unitySdk, "4.6.0.0"))
+			if(isVersionHigherOrEqual(unitySdk, "4.6.0"))
 			{
 				layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEngine.UI"));
 			}
@@ -354,11 +357,39 @@ public class Unity3dProjectImportBuilder extends ProjectImportBuilder
 		return module;
 	}
 
-	private static boolean isVersionHigherOrEqual(@Nullable Sdk unityBundle, @NotNull String requiredVersion)
+	@NotNull
+	private static Version parseBundleVersion(@Nullable Sdk unityBundle)
 	{
-		String versionString = unityBundle == null ? "0.0.0.0" : unityBundle.getVersionString();
-		int compareValue = StringUtil.compareVersionNumbers(versionString, requiredVersion);
-		return compareValue >= 0;
+		String currentVersionString = unityBundle == null ? Unity3dBundleType.UNKNOWN_VERSION : unityBundle.getVersionString();
+		return parseVersion(currentVersionString);
+	}
+
+	private static boolean isVersionHigherOrEqual(@Nullable Sdk unityBundle, @NotNull String requiredVersionString)
+	{
+		Version currentVersion = parseBundleVersion(unityBundle);
+		Version requiredVersion = parseVersion(requiredVersionString);
+		return currentVersion.isOrGreaterThan(requiredVersion.major, requiredVersion.minor, requiredVersion.bugfix);
+	}
+
+	@NotNull
+	private static Version parseVersion(@Nullable String versionString)
+	{
+		if(versionString == null)
+		{
+			return new Version(0, 0, 0);
+		}
+		List<String> list = StringUtil.split(versionString, ".");
+		if(list.size() >= 3)
+		{
+			try
+			{
+				return new Version(Integer.parseInt(list.get(0)), Integer.parseInt(list.get(1)), Integer.parseInt(list.get(2)));
+			}
+			catch(NumberFormatException ignored)
+			{
+			}
+		}
+		return new Version(0, 0, 0);
 	}
 
 	private static void addAsLibrary(VirtualFile virtualFile, ModuleRootLayerImpl layer)
