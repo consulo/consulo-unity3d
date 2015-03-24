@@ -159,6 +159,7 @@ public class Unity3dModuleExtension extends BaseDotNetModuleExtension<Unity3dMod
 			list.add(homePath + "/Contents/Frameworks/Managed");
 
 			addUnityExtensions(list, homePath + "/Contents/UnityExtensions/Unity/GUISystem");
+			addUnityExtensions(list, homePath + "/Contents/Frameworks/UnityExtensions/Unity/GUISystem");
 		}
 		else if(SystemInfo.isWindows || SystemInfo.isLinux)
 		{
