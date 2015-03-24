@@ -10,6 +10,7 @@
           </element>
           <element id="library" level="project" name="dd-plist" />
         </element>
+        <element id="dir-copy" path="$PROJECT_DIR$/dist" />
       </element>
     </root>
   </artifact>
