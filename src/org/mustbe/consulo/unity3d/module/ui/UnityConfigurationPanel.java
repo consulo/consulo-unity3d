@@ -31,8 +31,8 @@ import org.jetbrains.annotations.Nullable;
 import org.mustbe.consulo.RequiredDispatchThread;
 import org.mustbe.consulo.dotnet.DotNetBundle;
 import org.mustbe.consulo.dotnet.module.extension.DotNetModuleExtension;
-import org.mustbe.consulo.unity3d.module.Unity3dModuleExtension;
-import org.mustbe.consulo.unity3d.module.Unity3dMutableModuleExtension;
+import org.mustbe.consulo.unity3d.module.Unity3dRootModuleExtension;
+import org.mustbe.consulo.unity3d.module.Unity3dRootMutableModuleExtension;
 import org.mustbe.consulo.unity3d.module.Unity3dTarget;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.ui.ComboBox;
@@ -62,16 +62,16 @@ import lombok.val;
 public class UnityConfigurationPanel extends JPanel
 {
 	@RequiredDispatchThread
-	public UnityConfigurationPanel(final Unity3dMutableModuleExtension extension, final List<String> variables, final Runnable updater)
+	public UnityConfigurationPanel(final Unity3dRootMutableModuleExtension extension, final List<String> variables, final Runnable updater)
 	{
 		super(new VerticalFlowLayout(true, true));
-		ModuleExtensionSdkBoxBuilder<Unity3dMutableModuleExtension> sdkBoxBuilder = ModuleExtensionSdkBoxBuilder.create(extension, updater);
+		ModuleExtensionSdkBoxBuilder<Unity3dRootMutableModuleExtension> sdkBoxBuilder = ModuleExtensionSdkBoxBuilder.create(extension, updater);
 		sdkBoxBuilder.sdkTypeClass(extension.getSdkTypeClass());
-		sdkBoxBuilder.sdkPointerFunc(new NullableFunction<Unity3dMutableModuleExtension, MutableModuleInheritableNamedPointer<Sdk>>()
+		sdkBoxBuilder.sdkPointerFunc(new NullableFunction<Unity3dRootMutableModuleExtension, MutableModuleInheritableNamedPointer<Sdk>>()
 		{
 			@Nullable
 			@Override
-			public MutableModuleInheritableNamedPointer<Sdk> fun(Unity3dMutableModuleExtension mutableModuleExtension)
+			public MutableModuleInheritableNamedPointer<Sdk> fun(Unity3dRootMutableModuleExtension mutableModuleExtension)
 			{
 				return mutableModuleExtension.getInheritableSdk();
 			}
@@ -111,7 +111,7 @@ public class UnityConfigurationPanel extends JPanel
 		});
 
 		val fileNameField = new JBTextField(extension.getFileName());
-		fileNameField.getEmptyText().setText(Unity3dModuleExtension.FILE_NAME);
+		fileNameField.getEmptyText().setText(Unity3dRootModuleExtension.FILE_NAME);
 		fileNameField.getDocument().addDocumentListener(new DocumentAdapter()
 		{
 			@Override

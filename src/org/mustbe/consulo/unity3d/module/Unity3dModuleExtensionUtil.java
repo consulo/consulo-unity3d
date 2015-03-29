@@ -47,16 +47,13 @@ public class Unity3dModuleExtensionUtil
 
 	@Nullable
 	@RequiredReadAction
-	public static Unity3dModuleExtension getRootModuleExtension(@NotNull Project project)
+	public static Unity3dRootModuleExtension getRootModuleExtension(@NotNull Project project)
 	{
-		ModuleManager moduleManager = ModuleManager.getInstance(project);
-		for(Module module : moduleManager.getModules())
+		Module rootModule = getRootModule(project);
+		if(rootModule == null)
 		{
-			if(project.getBaseDir().equals(module.getModuleDir()))
-			{
-				return ModuleUtilCore.getExtension(module, Unity3dModuleExtension.class);
-			}
+			return null;
 		}
-		return null;
+		return ModuleUtilCore.getExtension(rootModule, Unity3dRootModuleExtension.class);
 	}
 }

@@ -27,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
 import org.mustbe.consulo.RequiredDispatchThread;
 import org.mustbe.consulo.dotnet.compiler.DotNetMacroUtil;
 import org.mustbe.consulo.unity3d.bundle.Unity3dBundleType;
-import org.mustbe.consulo.unity3d.module.Unity3dModuleExtension;
+import org.mustbe.consulo.unity3d.module.Unity3dRootModuleExtension;
 import org.mustbe.consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import org.mustbe.consulo.unity3d.module.Unity3dTarget;
 import com.intellij.execution.ExecutionException;
@@ -109,7 +109,7 @@ public class UnityCompiler implements PackagingCompiler
 	@RequiredDispatchThread
 	public ProcessingItem[] process(CompileContext compileContext, ProcessingItem[] processingItems)
 	{
-		Unity3dModuleExtension rootModuleExtension = Unity3dModuleExtensionUtil.getRootModuleExtension(compileContext.getProject());
+		Unity3dRootModuleExtension rootModuleExtension = Unity3dModuleExtensionUtil.getRootModuleExtension(compileContext.getProject());
 		if(rootModuleExtension == null)
 		{
 			return ProcessingItem.EMPTY_ARRAY;

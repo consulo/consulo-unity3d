@@ -52,8 +52,15 @@
 				key="unity3d"
 				name="Unity3D"
 				icon="/icons/unity3d.png"
-				immutableClass="org.mustbe.consulo.unity3d.module.Unity3dModuleExtension"
-				mutableClass="org.mustbe.consulo.unity3d.module.Unity3dMutableModuleExtension"/>
+				immutableClass="org.mustbe.consulo.unity3d.module.Unity3dRootModuleExtension"
+				mutableClass="org.mustbe.consulo.unity3d.module.Unity3dRootMutableModuleExtension"/>
+
+		<moduleExtensionProvider
+				key="unity3d-child"
+				name="Unity3D (child)"
+				icon="/icons/unity3d.png"
+				immutableClass="org.mustbe.consulo.unity3d.module.Unity3dChildModuleExtension"
+				mutableClass="org.mustbe.consulo.unity3d.module.Unity3dChildMutableModuleExtension"/>
 
 		<moduleExtensionProvider
 				key="unity3d-csharp"
@@ -62,6 +69,16 @@
 				icon="/icons/unity3d.png"
 				immutableClass="org.mustbe.consulo.unity3d.csharp.module.extension.Unity3dCSharpModuleExtension"
 				mutableClass="org.mustbe.consulo.unity3d.csharp.module.extension.Unity3dCSharpMutableModuleExtension"/>
+
+		<moduleExtensionProvider
+				key="unity3d-csharp-child"
+				parentKey="unity3d-child"
+				name="C# (child)"
+				icon="/icons/unity3d.png"
+				immutableClass="org.mustbe.consulo.unity3d.csharp.module.extension.Unity3dCSharpModuleExtension"
+				mutableClass="org.mustbe.consulo.unity3d.csharp.module.extension.Unity3dCSharpMutableModuleExtension"/>
+
+		<moduleRootsProcessor implementation="org.mustbe.consulo.unity3d.csharp.module.Unity3dCSharpModuleRootsProcessor" />
 
 		<projectImportProvider implementation="org.mustbe.consulo.unity3d.projectImport.Unity3dProjectImportProvider" />
 

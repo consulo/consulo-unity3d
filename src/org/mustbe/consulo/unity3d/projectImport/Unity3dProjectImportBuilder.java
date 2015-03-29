@@ -31,7 +31,8 @@ import org.mustbe.consulo.unity3d.Unity3dIcons;
 import org.mustbe.consulo.unity3d.bundle.Unity3dBundleType;
 import org.mustbe.consulo.unity3d.bundle.Unity3dDefineByVersion;
 import org.mustbe.consulo.unity3d.csharp.module.extension.Unity3dCSharpMutableModuleExtension;
-import org.mustbe.consulo.unity3d.module.Unity3dMutableModuleExtension;
+import org.mustbe.consulo.unity3d.module.Unity3dChildMutableModuleExtension;
+import org.mustbe.consulo.unity3d.module.Unity3dRootMutableModuleExtension;
 import org.mustbe.consulo.unity3d.module.Unity3dTarget;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.Result;
@@ -316,22 +317,9 @@ public class Unity3dProjectImportBuilder extends ProjectImportBuilder
 
 			setupConsumer.consume(layer);
 
-			Unity3dMutableModuleExtension ext = layer.getExtensionWithoutCheck(Unity3dMutableModuleExtension.class);
-			assert ext != null;
-
-			ext.getInheritableSdk().set(null, unitySdk);
-			ext.setEnabled(true);
-			ext.setBuildTarget(unity3dTarget);
-			ext.getVariables().add(unity3dTarget.getDefineName());
-
-			Version currentBundleVersion = parseBundleVersion(unitySdk);
-			Unity3dDefineByVersion unity3dDefineByVersion = Unity3dDefineByVersion.find(currentBundleVersion.toString());
-			if(unity3dDefineByVersion != Unity3dDefineByVersion.UNKNOWN)
-			{
-				ext.getVariables().add(unity3dDefineByVersion.name());
-			}
-
-			layer.getExtensionWithoutCheck(Unity3dCSharpMutableModuleExtension.class).setEnabled(true);
+			layer.getExtensionWithoutCheck(Unity3dChildMutableModuleExtension.class).setEnabled(true);
+			// enable correct unity C# extension
+			layer.<Unity3dCSharpMutableModuleExtension>getExtensionWithoutCheck("unity3d-csharp-child").setEnabled(true);
 
 			layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "mscorlib"));
 			layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEditor"));
@@ -433,32 +421,50 @@ public class Unity3dProjectImportBuilder extends ProjectImportBuilder
 		throw new IllegalArgumentException(SystemInfo.OS_NAME);
 	}
 
+	@NotNull
 	private static Module createRootModule(Project project, ModifiableModuleModel newModel, Sdk unityBundle)
 	{
 		Module rootModule = newModel.newModule(project.getName(), project.getBasePath());
 
 		String projectUrl = project.getBaseDir().getUrl();
 
-		val rootModifiableModel = ModuleRootManager.getInstance(rootModule).getModifiableModel();
-		ContentEntry contentEntry = rootModifiableModel.addContentEntry(projectUrl);
+		val modifiableModel = ModuleRootManager.getInstance(rootModule).getModifiableModel();
+		modifiableModel.removeLayer(ModifiableRootModel.DEFAULT_LAYER_NAME, false);
 
-		Unity3dMutableModuleExtension extension = rootModifiableModel.getExtensionWithoutCheck(Unity3dMutableModuleExtension.class);
-		assert extension != null;
-		extension.setEnabled(true);
-		extension.getInheritableSdk().set(null, unityBundle);
+		for(Unity3dTarget unity3dTarget : Unity3dTarget.values())
+		{
+			ModuleRootLayerImpl layer = (ModuleRootLayerImpl) modifiableModel.addLayer(unity3dTarget.getPresentation(), null,
+					getDefaultTarget() == unity3dTarget);
 
-		// exclude temp dirs
-		contentEntry.addFolder(projectUrl + "/" + Project.DIRECTORY_STORE_FOLDER, ExcludedContentFolderTypeProvider.getInstance());
-		contentEntry.addFolder(projectUrl + "/Library", ExcludedContentFolderTypeProvider.getInstance());
-		contentEntry.addFolder(projectUrl + "/Temp", ExcludedContentFolderTypeProvider.getInstance());
-		contentEntry.addFolder(projectUrl + "/test_Data", ExcludedContentFolderTypeProvider.getInstance());
+			ContentEntry contentEntry = layer.addContentEntry(projectUrl);
+
+			Unity3dRootMutableModuleExtension extension = layer.getExtensionWithoutCheck(Unity3dRootMutableModuleExtension.class);
+			assert extension != null;
+			extension.setEnabled(true);
+			extension.getInheritableSdk().set(null, unityBundle);
+
+			extension.getVariables().add(unity3dTarget.getDefineName());
+
+			Version currentBundleVersion = parseBundleVersion(unityBundle);
+			Unity3dDefineByVersion unity3dDefineByVersion = Unity3dDefineByVersion.find(currentBundleVersion.toString());
+			if(unity3dDefineByVersion != Unity3dDefineByVersion.UNKNOWN)
+			{
+				extension.getVariables().add(unity3dDefineByVersion.name());
+			}
+
+			// exclude temp dirs
+			contentEntry.addFolder(projectUrl + "/" + Project.DIRECTORY_STORE_FOLDER, ExcludedContentFolderTypeProvider.getInstance());
+			contentEntry.addFolder(projectUrl + "/Library", ExcludedContentFolderTypeProvider.getInstance());
+			contentEntry.addFolder(projectUrl + "/Temp", ExcludedContentFolderTypeProvider.getInstance());
+			contentEntry.addFolder(projectUrl + "/test_Data", ExcludedContentFolderTypeProvider.getInstance());
+		}
 
 		new WriteAction<Object>()
 		{
 			@Override
 			protected void run(Result<Object> result) throws Throwable
 			{
-				rootModifiableModel.commit();
+				modifiableModel.commit();
 			}
 		}.execute();
 		return rootModule;

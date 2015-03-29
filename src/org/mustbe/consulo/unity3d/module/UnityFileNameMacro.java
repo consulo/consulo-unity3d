@@ -49,7 +49,7 @@ public class UnityFileNameMacro extends Macro
 		{
 			return null;
 		}
-		Unity3dModuleExtension rootModuleExtension = Unity3dModuleExtensionUtil.getRootModuleExtension(project);
+		Unity3dRootModuleExtension rootModuleExtension = Unity3dModuleExtensionUtil.getRootModuleExtension(project);
 		if(rootModuleExtension != null)
 		{
 			return rootModuleExtension.getFileName();

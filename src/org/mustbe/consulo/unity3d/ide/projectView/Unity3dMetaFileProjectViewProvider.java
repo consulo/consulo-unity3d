@@ -22,7 +22,7 @@ import java.util.List;
 
 import org.jetbrains.annotations.Nullable;
 import org.mustbe.consulo.unity3d.Unity3dMetaFileType;
-import org.mustbe.consulo.unity3d.module.Unity3dModuleExtension;
+import org.mustbe.consulo.unity3d.module.Unity3dRootModuleExtension;
 import com.intellij.ide.projectView.ProjectViewNode;
 import com.intellij.ide.projectView.TreeStructureProvider;
 import com.intellij.ide.projectView.ViewSettings;
@@ -58,7 +58,7 @@ public class Unity3dMetaFileProjectViewProvider implements TreeStructureProvider
 				if(virtualFile != null && virtualFile.getFileType() == Unity3dMetaFileType.INSTANCE)
 				{
 					Module moduleForFile = ModuleUtilCore.findModuleForFile(virtualFile, myProject);
-					if(moduleForFile != null && ModuleUtilCore.getExtension(moduleForFile, Unity3dModuleExtension.class) != null)
+					if(moduleForFile != null && ModuleUtilCore.getExtension(moduleForFile, Unity3dRootModuleExtension.class) != null)
 					{
 						continue;
 					}
