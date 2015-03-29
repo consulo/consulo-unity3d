@@ -44,9 +44,10 @@
 		<compiler implementation="org.mustbe.consulo.unity3d.compiler.UnityCompiler" order="last"/>
 		<sdkType implementation="org.mustbe.consulo.unity3d.bundle.Unity3dBundleType"/>
 
-		<configurationType implementation="org.mustbe.consulo.unity3d.run.UnityRemoteDebugApplicationType"/>
+		<configurationType implementation="org.mustbe.consulo.unity3d.run.Unity3dApplicationType"/>
+		<configurationType implementation="org.mustbe.consulo.unity3d.run.Unity3dAttachApplicationType"/>
 
-		<programRunner implementation="org.mustbe.consulo.unity3d.run.UnityRemoteDebugRunner"/>
+		<programRunner implementation="org.mustbe.consulo.unity3d.run.Unity3dAttachRunner"/>
 		<moduleExtensionProvider
 				key="unity3d"
 				name="Unity3D"

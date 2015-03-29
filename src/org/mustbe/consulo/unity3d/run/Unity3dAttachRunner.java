@@ -48,19 +48,19 @@ import mono.debugger.VirtualMachine;
  * @author VISTALL
  * @since 10.11.14
  */
-public class UnityRemoteDebugRunner extends DefaultProgramRunner
+public class Unity3dAttachRunner extends DefaultProgramRunner
 {
 	@NotNull
 	@Override
 	public String getRunnerId()
 	{
-		return "UnityRemoteDebugRunner";
+		return "Unity3dAttachRunner";
 	}
 
 	@Override
 	public boolean canRun(@NotNull String executorId, @NotNull RunProfile profile)
 	{
-		return executorId.equals(DefaultDebugExecutor.EXECUTOR_ID) && profile instanceof UnityRemoteDebugConfiguration;
+		return executorId.equals(DefaultDebugExecutor.EXECUTOR_ID) && profile instanceof Unity3dAttachConfiguration;
 	}
 
 	@Nullable
