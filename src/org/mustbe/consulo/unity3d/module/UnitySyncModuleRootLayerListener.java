@@ -17,6 +17,7 @@
 package org.mustbe.consulo.unity3d.module;
 
 import org.jetbrains.annotations.NotNull;
+import org.mustbe.consulo.RequiredReadAction;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
@@ -32,6 +33,7 @@ import lombok.val;
 public class UnitySyncModuleRootLayerListener extends ModuleRootLayerListener.Adapter
 {
 	@Override
+	@RequiredReadAction
 	public void currentLayerChanged(@NotNull Module module,
 			@NotNull String oldName,
 			@NotNull ModuleRootLayer moduleRootLayer,
@@ -42,6 +44,13 @@ public class UnitySyncModuleRootLayerListener extends ModuleRootLayerListener.Ad
 		{
 			return;
 		}
+
+		// if we dont have unity extension dont try sync switch
+		if(moduleRootLayer.getExtension(Unity3dModuleExtension.class) == null)
+		{
+			return;
+		}
+
 		ModuleManager moduleManager = ModuleManager.getInstance(module.getProject());
 		for(Module anotherModule : moduleManager.getModules())
 		{
