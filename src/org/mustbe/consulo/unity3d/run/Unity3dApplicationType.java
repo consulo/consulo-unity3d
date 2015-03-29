@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.mustbe.consulo.RequiredReadAction;
 import org.mustbe.consulo.unity3d.Unity3dIcons;
 import org.mustbe.consulo.unity3d.module.Unity3dModuleExtensionUtil;
-import com.intellij.execution.configurations.ConfigurationFactory;
+import com.intellij.execution.configuration.ConfigurationFactoryEx;
 import com.intellij.execution.configurations.ConfigurationTypeBase;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.openapi.project.Project;
@@ -40,12 +40,21 @@ public class Unity3dApplicationType extends ConfigurationTypeBase
 	{
 		super("#UnityApplication", "Unity Application", "", Unity3dIcons.Unity3d);
 
-		addFactory(new ConfigurationFactory(this)
+		addFactory(new ConfigurationFactoryEx(this)
 		{
 			@Override
 			public RunConfiguration createTemplateConfiguration(Project project)
 			{
 				return new Unity3dApplicationConfiguration(project, this, null);
+			}
+
+			@Override
+			public void onNewConfigurationCreated(@NotNull RunConfiguration configuration)
+			{
+				if(configuration instanceof Unity3dApplicationConfiguration)
+				{
+					((Unity3dApplicationConfiguration) configuration).setGeneratedName();
+				}
 			}
 
 			@Override

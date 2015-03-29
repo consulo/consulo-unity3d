@@ -19,7 +19,7 @@ package org.mustbe.consulo.unity3d.run;
 import org.jetbrains.annotations.NotNull;
 import org.mustbe.consulo.RequiredReadAction;
 import org.mustbe.consulo.dotnet.compiler.DotNetMacroUtil;
-import org.mustbe.consulo.unity3d.module.Unity3dModuleExtension;
+import org.mustbe.consulo.unity3d.module.Unity3dRootModuleExtension;
 import org.mustbe.consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.CommandLineState;
@@ -49,7 +49,7 @@ public class Unity3dApplicationRunState extends CommandLineState
 	@RequiredReadAction
 	protected ProcessHandler startProcess() throws ExecutionException
 	{
-		Unity3dModuleExtension rootModuleExtension = Unity3dModuleExtensionUtil.getRootModuleExtension(getEnvironment().getProject());
+		Unity3dRootModuleExtension rootModuleExtension = Unity3dModuleExtensionUtil.getRootModuleExtension(getEnvironment().getProject());
 		if(rootModuleExtension == null)
 		{
 			throw new ExecutionException("Unity3d setup is required");
