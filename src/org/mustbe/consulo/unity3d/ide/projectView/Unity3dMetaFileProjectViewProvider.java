@@ -21,14 +21,14 @@ import java.util.Collection;
 import java.util.List;
 
 import org.jetbrains.annotations.Nullable;
+import org.mustbe.consulo.RequiredDispatchThread;
 import org.mustbe.consulo.unity3d.Unity3dMetaFileType;
+import org.mustbe.consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import org.mustbe.consulo.unity3d.module.Unity3dRootModuleExtension;
 import com.intellij.ide.projectView.ProjectViewNode;
 import com.intellij.ide.projectView.TreeStructureProvider;
 import com.intellij.ide.projectView.ViewSettings;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -47,8 +47,18 @@ public class Unity3dMetaFileProjectViewProvider implements TreeStructureProvider
 	}
 
 	@Override
+	@RequiredDispatchThread
 	public Collection<AbstractTreeNode> modify(AbstractTreeNode parent, Collection<AbstractTreeNode> children, ViewSettings settings)
 	{
+		if(!myProject.isInitialized())
+		{
+			return children;
+		}
+		Unity3dRootModuleExtension rootModuleExtension = Unity3dModuleExtensionUtil.getRootModuleExtension(myProject);
+		if(rootModuleExtension == null)
+		{
+			return children;
+		}
 		List<AbstractTreeNode> nodes = new ArrayList<AbstractTreeNode>(children.size());
 		for(AbstractTreeNode child : children)
 		{
@@ -57,11 +67,7 @@ public class Unity3dMetaFileProjectViewProvider implements TreeStructureProvider
 				VirtualFile virtualFile = ((ProjectViewNode)child).getVirtualFile();
 				if(virtualFile != null && virtualFile.getFileType() == Unity3dMetaFileType.INSTANCE)
 				{
-					Module moduleForFile = ModuleUtilCore.findModuleForFile(virtualFile, myProject);
-					if(moduleForFile != null && ModuleUtilCore.getExtension(moduleForFile, Unity3dRootModuleExtension.class) != null)
-					{
-						continue;
-					}
+					continue;
 				}
 			}
 
