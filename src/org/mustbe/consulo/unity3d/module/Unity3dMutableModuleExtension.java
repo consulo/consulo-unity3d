@@ -22,16 +22,17 @@ import org.consulo.module.extension.MutableModuleInheritableNamedPointer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.mustbe.consulo.RequiredDispatchThread;
-import org.mustbe.consulo.dotnet.module.extension.DotNetMutableModuleExtension;
+import org.mustbe.consulo.dotnet.module.extension.DotNetSimpleMutableModuleExtension;
 import org.mustbe.consulo.unity3d.module.ui.UnityConfigurationPanel;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ModuleRootLayer;
+import com.intellij.openapi.util.Comparing;
 
 /**
  * @author VISTALL
  * @since 27.10.14
  */
-public class Unity3dMutableModuleExtension extends Unity3dModuleExtension implements DotNetMutableModuleExtension<Unity3dModuleExtension>
+public class Unity3dMutableModuleExtension extends Unity3dModuleExtension implements DotNetSimpleMutableModuleExtension<Unity3dModuleExtension>
 {
 	public Unity3dMutableModuleExtension(@NotNull String id, @NotNull ModuleRootLayer rootModel)
 	{
@@ -41,6 +42,16 @@ public class Unity3dMutableModuleExtension extends Unity3dModuleExtension implem
 	public void setBuildTarget(Unity3dTarget target)
 	{
 		myBuildTarget = target;
+	}
+
+	public void setFileName(@NotNull String name)
+	{
+		myFileName = name;
+	}
+
+	public void setOutputDir(@NotNull String dir)
+	{
+		myOutputDirectory = dir;
 	}
 
 	@NotNull
@@ -65,8 +76,11 @@ public class Unity3dMutableModuleExtension extends Unity3dModuleExtension implem
 	}
 
 	@Override
-	public boolean isModified(@NotNull Unity3dModuleExtension unity3dModuleExtension)
+	public boolean isModified(@NotNull Unity3dModuleExtension ex)
 	{
-		return isModifiedImpl(unity3dModuleExtension) || myBuildTarget != unity3dModuleExtension.getBuildTarget();
+		return isModifiedImpl(ex) ||
+				myBuildTarget != ex.getBuildTarget() ||
+				!Comparing.equal(getFileName(), ex.getFileName()) ||
+				!Comparing.equal(getOutputDir(), ex.getOutputDir());
 	}
 }

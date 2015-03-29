@@ -135,21 +135,7 @@ public class UnityConfigurationPanel extends JPanel
 		});
 
 		add(LabeledComponent.left(outputDirectoryField, DotNetBundle.message("output.dir.label")));
-
-		val namespacePrefixField = new JBTextField(extension.getNamespacePrefix());
-		namespacePrefixField.getDocument().addDocumentListener(new DocumentAdapter()
-		{
-			@Override
-			protected void textChanged(DocumentEvent documentEvent)
-			{
-				extension.setNamespacePrefix(namespacePrefixField.getText());
-			}
-		});
-
-		final LabeledComponent<JBTextField> namespaceComponent = LabeledComponent.left(namespacePrefixField, "Namespace:");
-
 		add(LabeledComponent.left(target, "Target:"));
-		add(namespaceComponent);
 
 		val dataModel = new CollectionListModel<String>(variables)
 		{

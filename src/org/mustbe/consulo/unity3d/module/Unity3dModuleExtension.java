@@ -24,8 +24,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.mustbe.consulo.dotnet.compiler.DotNetMacroUtil;
 import org.mustbe.consulo.dotnet.execution.DebugConnectionInfo;
-import org.mustbe.consulo.dotnet.module.extension.BaseDotNetModuleExtension;
-import org.mustbe.consulo.dotnet.module.extension.DotNetModuleSdkPointer;
+import org.mustbe.consulo.dotnet.module.extension.BaseDotNetSimpleModuleExtension;
+import org.mustbe.consulo.dotnet.module.extension.DotNetModuleExtension;
 import org.mustbe.consulo.unity3d.bundle.Unity3dBundleType;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.GeneralCommandLine;
@@ -46,16 +46,17 @@ import com.intellij.util.SmartList;
  * @author VISTALL
  * @since 28.09.14
  */
-public class Unity3dModuleExtension extends BaseDotNetModuleExtension<Unity3dModuleExtension>
+public class Unity3dModuleExtension extends BaseDotNetSimpleModuleExtension<Unity3dModuleExtension>
 {
-	public static final String FILE_NAME = MODULE_NAME;
+	public static final String FILE_NAME = "$ModuleName$";
 
 	protected Unity3dTarget myBuildTarget = Unity3dTarget.Windows;
+	protected String myFileName = FILE_NAME;
+	protected String myOutputDirectory = DotNetModuleExtension.DEFAULT_OUTPUT_DIR;
 
 	public Unity3dModuleExtension(@NotNull String id, @NotNull ModuleRootLayer rootModel)
 	{
 		super(id, rootModel);
-		myFileName = FILE_NAME;
 	}
 
 	@Override
@@ -63,44 +64,40 @@ public class Unity3dModuleExtension extends BaseDotNetModuleExtension<Unity3dMod
 	{
 		super.commit(mutableModuleExtension);
 		myBuildTarget = mutableModuleExtension.getBuildTarget();
+		myFileName = mutableModuleExtension.myFileName;
+		myOutputDirectory = mutableModuleExtension.myOutputDirectory;
 	}
 
 	@Override
 	protected void getStateImpl(@NotNull Element element)
 	{
-		((DotNetModuleSdkPointer) getInheritableSdk()).toXml(element);
+		super.getStateImpl(element);
+
 		element.setAttribute("output-dir", myOutputDirectory);
-		element.setAttribute("namespace-prefix", getNamespacePrefix());
 		element.setAttribute("build-target", myBuildTarget.name());
 		element.setAttribute("file-name", myFileName);
-
-		for(String variable : myVariables)
-		{
-			element.addContent(new Element("define").setText(variable));
-		}
 	}
 
 	@Override
 	protected void loadStateImpl(@NotNull Element element)
 	{
-		((DotNetModuleSdkPointer) getInheritableSdk()).fromXml(element);
+		super.loadStateImpl(element);
 
 		myFileName = element.getAttributeValue("file-name", FILE_NAME);
-		myOutputDirectory = element.getAttributeValue("output-dir", DEFAULT_OUTPUT_DIR);
-		myNamespacePrefix = element.getAttributeValue("namespace-prefix");
+		myOutputDirectory = element.getAttributeValue("output-dir", DotNetModuleExtension.DEFAULT_OUTPUT_DIR);
 		myBuildTarget = Unity3dTarget.valueOf(element.getAttributeValue("build-target", Unity3dTarget.Windows.name()));
-
-		for(Element defineElement : element.getChildren("define"))
-		{
-			myVariables.add(defineElement.getText());
-		}
 	}
 
 	@NotNull
-	@Override
 	public String getFileName()
 	{
 		return StringUtil.notNullizeIfEmpty(myFileName, FILE_NAME);
+	}
+
+	@NotNull
+	public String getOutputDir()
+	{
+		return StringUtil.notNullizeIfEmpty(myOutputDirectory, DotNetModuleExtension.DEFAULT_OUTPUT_DIR);
 	}
 
 	@NotNull
@@ -218,7 +215,6 @@ public class Unity3dModuleExtension extends BaseDotNetModuleExtension<Unity3dMod
 	}
 
 	@NotNull
-	@Override
 	public GeneralCommandLine createDefaultCommandLine(@NotNull Sdk sdk, @Nullable DebugConnectionInfo debugConnectionInfo) throws ExecutionException
 	{
 		GeneralCommandLine commandLine = new GeneralCommandLine();
@@ -249,12 +245,5 @@ public class Unity3dModuleExtension extends BaseDotNetModuleExtension<Unity3dMod
 			throw new ExecutionException(e);
 		}
 		return commandLine;
-	}
-
-	@NotNull
-	@Override
-	public String getDebugFileExtension()
-	{
-		return ".mdb";
 	}
 }

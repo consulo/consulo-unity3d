@@ -24,9 +24,11 @@ import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.mustbe.consulo.RequiredDispatchThread;
 import org.mustbe.consulo.dotnet.compiler.DotNetMacroUtil;
 import org.mustbe.consulo.unity3d.bundle.Unity3dBundleType;
 import org.mustbe.consulo.unity3d.module.Unity3dModuleExtension;
+import org.mustbe.consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import org.mustbe.consulo.unity3d.module.Unity3dTarget;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.process.ProcessOutput;
@@ -42,16 +44,10 @@ import com.intellij.openapi.compiler.EmptyValidityState;
 import com.intellij.openapi.compiler.PackagingCompiler;
 import com.intellij.openapi.compiler.ValidityState;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleManager;
-import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.util.Comparing;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.containers.ContainerUtil;
-import lombok.val;
 
 /**
  * @author VISTALL
@@ -110,32 +106,18 @@ public class UnityCompiler implements PackagingCompiler
 	}
 
 	@Override
+	@RequiredDispatchThread
 	public ProcessingItem[] process(CompileContext compileContext, ProcessingItem[] processingItems)
 	{
-		ModuleManager moduleManager = ModuleManager.getInstance(compileContext.getProject());
-
-		val baseDir = compileContext.getProject().getBaseDir();
-		Module rootModule = ContainerUtil.find(moduleManager.getModules(), new Condition<Module>()
-		{
-			@Override
-			public boolean value(Module module)
-			{
-				return Comparing.equal(baseDir, module.getModuleDir());
-			}
-		});
-
-		if(rootModule == null)
+		Unity3dModuleExtension rootModuleExtension = Unity3dModuleExtensionUtil.getRootModuleExtension(compileContext.getProject());
+		if(rootModuleExtension == null)
 		{
 			return ProcessingItem.EMPTY_ARRAY;
 		}
 
-		Unity3dModuleExtension unity3dModuleExtension = ModuleUtilCore.getExtension(rootModule, Unity3dModuleExtension.class);
-		if(unity3dModuleExtension == null)
-		{
-			return ProcessingItem.EMPTY_ARRAY;
-		}
+		final Module rootModule = rootModuleExtension.getModule();
 
-		Sdk sdk = unity3dModuleExtension.getSdk();
+		Sdk sdk = rootModuleExtension.getSdk();
 		if(sdk == null)
 		{
 			return ProcessingItem.EMPTY_ARRAY;
@@ -154,14 +136,14 @@ public class UnityCompiler implements PackagingCompiler
 		args.add("-projectPath");
 		args.add(rootModule.getModuleDirPath());
 
-		Unity3dTarget buildTarget = unity3dModuleExtension.getBuildTarget();
+		Unity3dTarget buildTarget = rootModuleExtension.getBuildTarget();
 		args.add(buildTarget.getCompilerOption());
 
 		try
 		{
 			DataContext context = DotNetMacroUtil.createContext(rootModule, false);
 			String newFile = MacroManager.getInstance().expandSilentMarcos(buildTarget.getFileNameTemplate(), true, context);
-			String newPath = MacroManager.getInstance().expandSilentMarcos(unity3dModuleExtension.getOutputDir(), true, context);
+			String newPath = MacroManager.getInstance().expandSilentMarcos(rootModuleExtension.getOutputDir(), true, context);
 
 			args.add(FileUtilRt.toSystemIndependentName(newPath + "/" + newFile));
 			args.add("-quit");

@@ -16,11 +16,11 @@
 
 package org.mustbe.consulo.unity3d.module;
 
+import org.mustbe.consulo.RequiredReadAction;
 import com.intellij.ide.macro.Macro;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.LangDataKeys;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtilCore;
+import com.intellij.openapi.project.Project;
 
 /**
  * @author VISTALL
@@ -41,17 +41,18 @@ public class UnityFileNameMacro extends Macro
 	}
 
 	@Override
+	@RequiredReadAction
 	public String expand(DataContext dataContext)
 	{
-		final Module module = LangDataKeys.MODULE.getData(dataContext);
-		if(module == null)
+		final Project project = LangDataKeys.PROJECT.getData(dataContext);
+		if(project == null)
 		{
 			return null;
 		}
-		Unity3dModuleExtension extension = ModuleUtilCore.getExtension(module, Unity3dModuleExtension.class);
-		if(extension != null)
+		Unity3dModuleExtension rootModuleExtension = Unity3dModuleExtensionUtil.getRootModuleExtension(project);
+		if(rootModuleExtension != null)
 		{
-			return extension.getFileName();
+			return rootModuleExtension.getFileName();
 		}
 		return null;
 	}
