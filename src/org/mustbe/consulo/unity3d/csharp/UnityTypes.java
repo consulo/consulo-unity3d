@@ -25,5 +25,7 @@ public interface UnityTypes
 	public interface UnityEngine
 	{
 		String MonoBehaviour = "UnityEngine.MonoBehaviour";
+		String Color = "UnityEngine.Color";
+		String Color32 = "UnityEngine.Color32";
 	}
 }

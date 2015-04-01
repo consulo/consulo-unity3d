@@ -40,6 +40,7 @@
 	<extensions defaultExtensionNs="com.intellij">
 		<completion.contributor language="C#" implementationClass="org.mustbe.consulo.unity3d.csharp.completion.UnitySpecificMethodCompletion" />
 		<codeInsight.lineMarkerProvider language="C#" implementationClass="org.mustbe.consulo.unity3d.csharp.codeInsight.UnityCSharpLineMarkerProvider"/>
+		<colorProvider implementation="org.mustbe.consulo.unity3d.csharp.codeInsight.UnityCSharpStaticElementColorProvider" />
 		<macro implementation="org.mustbe.consulo.unity3d.module.UnityFileNameMacro"/>
 		<compiler implementation="org.mustbe.consulo.unity3d.compiler.UnityCompiler" order="last"/>
 		<sdkType implementation="org.mustbe.consulo.unity3d.bundle.Unity3dBundleType"/>
