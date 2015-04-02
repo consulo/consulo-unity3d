@@ -21,6 +21,7 @@ import java.util.List;
 
 import javax.swing.Icon;
 
+import org.consulo.module.extension.MutableModuleExtension;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.mustbe.consulo.csharp.lang.CSharpFileType;
@@ -28,16 +29,16 @@ import org.mustbe.consulo.dotnet.dll.DotNetModuleFileType;
 import org.mustbe.consulo.dotnet.module.roots.DotNetLibraryOrderEntryImpl;
 import org.mustbe.consulo.roots.impl.ExcludedContentFolderTypeProvider;
 import org.mustbe.consulo.unity3d.Unity3dIcons;
-import org.mustbe.consulo.unity3d.Unity3dMetaFileType;
 import org.mustbe.consulo.unity3d.bundle.Unity3dBundleType;
 import org.mustbe.consulo.unity3d.bundle.Unity3dDefineByVersion;
-import org.mustbe.consulo.unity3d.csharp.module.extension.Unity3dCSharpMutableModuleExtension;
 import org.mustbe.consulo.unity3d.module.Unity3dChildMutableModuleExtension;
 import org.mustbe.consulo.unity3d.module.Unity3dRootMutableModuleExtension;
 import org.mustbe.consulo.unity3d.module.Unity3dTarget;
+import com.intellij.lang.javascript.JavaScriptFileType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.Result;
 import com.intellij.openapi.application.WriteAction;
+import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.module.ModifiableModuleModel;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
@@ -133,28 +134,28 @@ public class Unity3dProjectImportBuilder extends ProjectImportBuilder
 
 		ContainerUtil.addIfNotNull(modules, createRootModule(project, newModel, myUnitySdk));
 
-		ContainerUtil.addIfNotNull(modules, createAssemblyCSharpModuleEditor(project, newModel, myUnitySdk));
-
 		ContainerUtil.addIfNotNull(modules, createAssemblyCSharpModuleFirstPass(project, newModel, myUnitySdk));
+
+		ContainerUtil.addIfNotNull(modules, createAssemblyUnityScriptModuleFirstPass(project, newModel, myUnitySdk));
+
+		ContainerUtil.addIfNotNull(modules, createAssemblyCSharpModuleEditor(project, newModel, myUnitySdk));
 
 		ContainerUtil.addIfNotNull(modules, createAssemblyCSharpModule(project, newModel, myUnitySdk));
 
 		// we need drop link to sdk
 		myUnitySdk = null;
 
-		//TODO [VISTALL] Assembly-UnityScript-firstpass??
-
-		ApplicationManager.getApplication().runWriteAction(new Runnable()
+		if(!fromProjectStructure)
 		{
-			@Override
-			public void run()
+			ApplicationManager.getApplication().runWriteAction(new Runnable()
 			{
-				if(!fromProjectStructure)
+				@Override
+				public void run()
 				{
 					newModel.commit();
 				}
-			}
-		});
+			});
+		}
 		return modules;
 	}
 
@@ -165,9 +166,38 @@ public class Unity3dProjectImportBuilder extends ProjectImportBuilder
 			@Override
 			public void consume(ModuleRootLayerImpl layer)
 			{
+				layer.addInvalidModuleEntry("Assembly-UnityScript-firstpass");
 				layer.addInvalidModuleEntry("Assembly-CSharp-firstpass");
 			}
-		});
+		}, "unity3d-csharp-child", CSharpFileType.INSTANCE);
+	}
+
+	private static Module createAssemblyUnityScriptModuleFirstPass(final Project project, ModifiableModuleModel newModel, final Sdk unityBundle)
+	{
+		val paths = new String[]{
+				"Assets/Standard Assets",
+				"Assets/Pro Standard Assets",
+				"Assets/Plugins"
+		};
+
+		return createAndSetupModule("Assembly-UnityScript-firstpass", project, newModel, paths, unityBundle, new Consumer<ModuleRootLayerImpl>()
+		{
+			@Override
+			public void consume(ModuleRootLayerImpl layer)
+			{
+				for(String path : paths)
+				{
+					VirtualFile dirFile = LocalFileSystem.getInstance().findFileByPath(path);
+					if(dirFile != null)
+					{
+						for(VirtualFile virtualFile : dirFile.getChildren())
+						{
+							addAsLibrary(virtualFile, layer);
+						}
+					}
+				}
+			}
+		}, "unity3d-unityscript-child", JavaScriptFileType.INSTANCE);
 	}
 
 	private static Module createAssemblyCSharpModuleFirstPass(final Project project, ModifiableModuleModel newModel, final Sdk unityBundle)
@@ -195,7 +225,7 @@ public class Unity3dProjectImportBuilder extends ProjectImportBuilder
 					}
 				}
 			}
-		});
+		}, "unity3d-csharp-child", CSharpFileType.INSTANCE);
 	}
 
 	private static Module createAssemblyCSharpModuleEditor(final Project project, ModifiableModuleModel newModel, final Sdk unityBundle)
@@ -226,11 +256,11 @@ public class Unity3dProjectImportBuilder extends ProjectImportBuilder
 
 		val pathsAsArray = ArrayUtil.toStringArray(paths);
 		return createAndSetupModule("Assembly-CSharp-Editor", project, newModel, pathsAsArray, unityBundle, new Consumer<ModuleRootLayerImpl>()
-
 		{
 			@Override
 			public void consume(final ModuleRootLayerImpl layer)
 			{
+				layer.addInvalidModuleEntry("Assembly-UnityScript-firstpass");
 				layer.addInvalidModuleEntry("Assembly-CSharp-firstpass");
 				layer.addInvalidModuleEntry("Assembly-CSharp");
 
@@ -257,15 +287,18 @@ public class Unity3dProjectImportBuilder extends ProjectImportBuilder
 					}
 				}
 			}
-		});
+		}, "unity3d-csharp-child", CSharpFileType.INSTANCE);
 	}
 
+	@NotNull
 	private static Module createAndSetupModule(String moduleName,
-			Project project,
-			ModifiableModuleModel modifiableModuleModels,
-			String[] paths,
-			Sdk unitySdk,
-			Consumer<ModuleRootLayerImpl> setupConsumer)
+			@NotNull Project project,
+			@NotNull ModifiableModuleModel modifiableModuleModels,
+			@NotNull String[] paths,
+			@Nullable Sdk unitySdk,
+			@NotNull Consumer<ModuleRootLayerImpl> setupConsumer,
+			@NotNull String moduleExtensionId,
+			@NotNull final FileType fileType)
 	{
 		for(int i = 0; i < paths.length; i++)
 		{
@@ -293,7 +326,7 @@ public class Unity3dProjectImportBuilder extends ProjectImportBuilder
 						@Override
 						public boolean visitFile(@NotNull VirtualFile file)
 						{
-							if(file.getFileType() == CSharpFileType.INSTANCE || file.getFileType() == Unity3dMetaFileType.INSTANCE)
+							if(file.getFileType() == fileType)
 							{
 								layer.addContentEntry(file);
 							}
@@ -307,7 +340,7 @@ public class Unity3dProjectImportBuilder extends ProjectImportBuilder
 
 			layer.getExtensionWithoutCheck(Unity3dChildMutableModuleExtension.class).setEnabled(true);
 			// enable correct unity C# extension
-			layer.<Unity3dCSharpMutableModuleExtension>getExtensionWithoutCheck("unity3d-csharp-child").setEnabled(true);
+			layer.<MutableModuleExtension>getExtensionWithoutCheck(moduleExtensionId).setEnabled(true);
 
 			layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "mscorlib"));
 			layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEditor"));

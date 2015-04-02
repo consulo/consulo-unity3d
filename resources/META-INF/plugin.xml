@@ -23,6 +23,7 @@
 
 	<depends>org.mustbe.consulo.dotnet.core</depends>
 	<depends>org.mustbe.consulo.csharp</depends>
+	<depends>org.mustbe.consulo.javascript</depends>
 
 	<application-components>
 		<component>
@@ -63,6 +64,7 @@
 				immutableClass="org.mustbe.consulo.unity3d.module.Unity3dChildModuleExtension"
 				mutableClass="org.mustbe.consulo.unity3d.module.Unity3dChildMutableModuleExtension"/>
 
+		<!--legacy deprecated -->
 		<moduleExtensionProvider
 				key="unity3d-csharp"
 				parentKey="unity3d"
@@ -74,10 +76,18 @@
 		<moduleExtensionProvider
 				key="unity3d-csharp-child"
 				parentKey="unity3d-child"
-				name="C# (child)"
+				name="C#"
 				icon="/icons/unity3d.png"
 				immutableClass="org.mustbe.consulo.unity3d.csharp.module.extension.Unity3dCSharpModuleExtension"
 				mutableClass="org.mustbe.consulo.unity3d.csharp.module.extension.Unity3dCSharpMutableModuleExtension"/>
+
+		<moduleExtensionProvider
+				key="unity3d-unityscript-child"
+				parentKey="unity3d-child"
+				name="UnityScript"
+				icon="/icons/unity3d.png"
+				immutableClass="org.mustbe.consulo.unity3d.unityscript.module.extension.Unity3dScriptModuleExtension"
+				mutableClass="org.mustbe.consulo.unity3d.unityscript.module.extension.Unity3dScriptMutableModuleExtension"/>
 
 		<projectImportProvider implementation="org.mustbe.consulo.unity3d.projectImport.Unity3dProjectImportProvider" />
 

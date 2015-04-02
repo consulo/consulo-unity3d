@@ -36,6 +36,18 @@
             </library>
           </orderEntry>
           <orderEntry type="library" name="dd-plist" level="project" />
+          <orderEntry type="module-library">
+            <library name="consulo:JavaScript Support">
+              <binaries>
+                <root url="jar://$MODULE_DIR$/dep/javascript/lib/debugger-impl.jar!/" />
+                <root url="jar://$MODULE_DIR$/dep/javascript/lib/javascript.jar!/" />
+                <root url="jar://$MODULE_DIR$/dep/javascript/lib/json-impl.jar!/" />
+                <root url="jar://$MODULE_DIR$/dep/javascript/lib/json_simple-1.1.jar!/" />
+                <root url="jar://$MODULE_DIR$/dep/javascript/lib/lib.org.chromium.sdk.jar!/" />
+                <root url="jar://$MODULE_DIR$/dep/javascript/lib/lib.org.chromium.sdk.wipbackend.protocol_1_0.jar!/" />
+              </binaries>
+            </library>
+          </orderEntry>
         </module-layer>
       </module>
     </modules>
