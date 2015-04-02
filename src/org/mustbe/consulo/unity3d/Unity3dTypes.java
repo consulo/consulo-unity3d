@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package org.mustbe.consulo.unity3d.csharp;
+package org.mustbe.consulo.unity3d;
 
 /**
  * @author VISTALL
  * @since 19.12.14
  */
-public interface UnityTypes
+public interface Unity3dTypes
 {
 	public interface UnityEngine
 	{

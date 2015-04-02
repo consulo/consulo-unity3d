@@ -31,8 +31,8 @@ import org.mustbe.consulo.dotnet.psi.DotNetStatement;
 import org.mustbe.consulo.dotnet.psi.DotNetVirtualImplementOwner;
 import org.mustbe.consulo.dotnet.resolve.DotNetTypeRef;
 import org.mustbe.consulo.unity3d.Unity3dIcons;
+import org.mustbe.consulo.unity3d.Unity3dTypes;
 import org.mustbe.consulo.unity3d.csharp.UnityFunctionManager;
-import org.mustbe.consulo.unity3d.csharp.UnityTypes;
 import org.mustbe.consulo.unity3d.module.Unity3dModuleExtension;
 import com.intellij.codeInsight.completion.CompletionParameters;
 import com.intellij.codeInsight.completion.CompletionResultSet;
@@ -67,7 +67,7 @@ public class UnitySpecificMethodCompletion extends CSharpMemberAddByCompletionCo
 			return;
 		}
 
-		if(!DotNetInheritUtil.isParent(UnityTypes.UnityEngine.MonoBehaviour, typeDeclaration, true))
+		if(!DotNetInheritUtil.isParent(Unity3dTypes.UnityEngine.MonoBehaviour, typeDeclaration, true))
 		{
 			return;
 		}

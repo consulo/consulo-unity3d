@@ -22,7 +22,7 @@ import org.mustbe.consulo.csharp.lang.psi.impl.source.resolve.util.CSharpResolve
 import org.mustbe.consulo.dotnet.psi.DotNetExpression;
 import org.mustbe.consulo.dotnet.psi.DotNetType;
 import org.mustbe.consulo.dotnet.psi.DotNetVariable;
-import org.mustbe.consulo.unity3d.csharp.UnityTypes;
+import org.mustbe.consulo.unity3d.Unity3dTypes;
 import com.intellij.openapi.editor.ElementColorProvider;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveResult;
@@ -86,7 +86,7 @@ public class UnityCSharpStaticElementColorProvider implements ElementColorProvid
 					PsiElement resolvedElement = ((CSharpReferenceExpression) parent).resolve();
 					if(resolvedElement instanceof DotNetVariable)
 					{
-						if(parentIsColorType(resolvedElement, UnityTypes.UnityEngine.Color))
+						if(parentIsColorType(resolvedElement, Unity3dTypes.UnityEngine.Color))
 						{
 							return color;
 						}
@@ -114,7 +114,7 @@ public class UnityCSharpStaticElementColorProvider implements ElementColorProvid
 				return null;
 			}
 
-			if(parentIsColorType(resolvedElementMaybeConstructor, UnityTypes.UnityEngine.Color))
+			if(parentIsColorType(resolvedElementMaybeConstructor, Unity3dTypes.UnityEngine.Color))
 			{
 				ResolveResult validResult = CSharpResolveUtil.findFirstValidResult(((CSharpNewExpression) parent).multiResolve(false));
 				if(!(validResult instanceof MethodResolveResult))
@@ -163,7 +163,7 @@ public class UnityCSharpStaticElementColorProvider implements ElementColorProvid
 					return new Color(map.get("r"), map.get("g"), map.get("b"), ObjectUtils.<Float>notNull(map.get("a"), 1f));
 				}
 			}
-			else if(parentIsColorType(resolvedElementMaybeConstructor, UnityTypes.UnityEngine.Color32))
+			else if(parentIsColorType(resolvedElementMaybeConstructor, Unity3dTypes.UnityEngine.Color32))
 			{
 				ResolveResult validResult = CSharpResolveUtil.findFirstValidResult(((CSharpNewExpression) parent).multiResolve(false));
 				if(!(validResult instanceof MethodResolveResult))

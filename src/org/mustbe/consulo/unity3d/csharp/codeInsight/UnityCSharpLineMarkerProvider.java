@@ -32,8 +32,8 @@ import org.mustbe.consulo.dotnet.psi.DotNetParameterListOwner;
 import org.mustbe.consulo.dotnet.psi.DotNetTypeDeclaration;
 import org.mustbe.consulo.dotnet.resolve.DotNetTypeRef;
 import org.mustbe.consulo.unity3d.Unity3dIcons;
+import org.mustbe.consulo.unity3d.Unity3dTypes;
 import org.mustbe.consulo.unity3d.csharp.UnityFunctionManager;
-import org.mustbe.consulo.unity3d.csharp.UnityTypes;
 import org.mustbe.consulo.unity3d.module.Unity3dModuleExtension;
 import com.intellij.codeHighlighting.Pass;
 import com.intellij.codeInsight.daemon.LineMarkerInfo;
@@ -86,7 +86,7 @@ public class UnityCSharpLineMarkerProvider implements LineMarkerProvider
 			}
 			CSharpMethodDeclaration methodDeclaration = (CSharpMethodDeclaration) element.getParent();
 			PsiElement maybeTypeDeclaration = methodDeclaration.getParent();
-			if(maybeTypeDeclaration instanceof CSharpTypeDeclaration && DotNetInheritUtil.isParent(UnityTypes.UnityEngine.MonoBehaviour,
+			if(maybeTypeDeclaration instanceof CSharpTypeDeclaration && DotNetInheritUtil.isParent(Unity3dTypes.UnityEngine.MonoBehaviour,
 					(DotNetTypeDeclaration) maybeTypeDeclaration, true))
 			{
 				if(!isEqualParameters(functionInfo.getParameters(), methodDeclaration))
