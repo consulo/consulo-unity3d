@@ -16,7 +16,6 @@
 
 package org.mustbe.consulo.unity3d.projectImport;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,10 +23,12 @@ import javax.swing.Icon;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.mustbe.consulo.csharp.lang.CSharpFileType;
 import org.mustbe.consulo.dotnet.dll.DotNetModuleFileType;
 import org.mustbe.consulo.dotnet.module.roots.DotNetLibraryOrderEntryImpl;
 import org.mustbe.consulo.roots.impl.ExcludedContentFolderTypeProvider;
 import org.mustbe.consulo.unity3d.Unity3dIcons;
+import org.mustbe.consulo.unity3d.Unity3dMetaFileType;
 import org.mustbe.consulo.unity3d.bundle.Unity3dBundleType;
 import org.mustbe.consulo.unity3d.bundle.Unity3dDefineByVersion;
 import org.mustbe.consulo.unity3d.csharp.module.extension.Unity3dCSharpMutableModuleExtension;
@@ -54,13 +55,10 @@ import com.intellij.openapi.roots.types.DocumentationOrderRootType;
 import com.intellij.openapi.roots.ui.configuration.ModulesProvider;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.Version;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.vfs.VirtualFileVisitor;
 import com.intellij.openapi.vfs.util.ArchiveVfsUtil;
 import com.intellij.packaging.artifacts.ModifiableArtifactModel;
@@ -274,31 +272,7 @@ public class Unity3dProjectImportBuilder extends ProjectImportBuilder
 			paths[i] = project.getBasePath() + "/" + paths[i];
 		}
 
-		VirtualFile targetDir = null;
-		for(String path : paths)
-		{
-			VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByPath(path);
-			if(virtualFile != null)
-			{
-				targetDir = virtualFile;
-				break;
-			}
-		}
-
-		if(targetDir == null)
-		{
-			File file = new File(project.getBasePath(), paths[0]);
-
-			FileUtil.createDirectory(file);
-			targetDir = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(file);
-		}
-
-		if(targetDir == null)
-		{
-			return null;
-		}
-
-		Module module = modifiableModuleModels.newModule(moduleName, targetDir.getPath());
+		Module module = modifiableModuleModels.newModule(moduleName, null);
 		ModuleRootManager moduleRootManager = ModuleRootManager.getInstance(module);
 
 		val modifiableModel = moduleRootManager.getModifiableModel();
@@ -307,12 +281,26 @@ public class Unity3dProjectImportBuilder extends ProjectImportBuilder
 
 		for(Unity3dTarget unity3dTarget : Unity3dTarget.values())
 		{
-			ModuleRootLayerImpl layer = (ModuleRootLayerImpl) modifiableModel.addLayer(unity3dTarget.getPresentation(), null,
-					getDefaultTarget() == unity3dTarget);
+			val layer = (ModuleRootLayerImpl) modifiableModel.addLayer(unity3dTarget.getPresentation(), null, getDefaultTarget() == unity3dTarget);
 
 			for(String path : paths)
 			{
-				layer.addContentEntry(VirtualFileManager.constructUrl(StandardFileSystems.FILE_PROTOCOL, path));
+				VirtualFile fileByPath = LocalFileSystem.getInstance().findFileByPath(path);
+				if(fileByPath != null)
+				{
+					VfsUtil.visitChildrenRecursively(fileByPath, new VirtualFileVisitor()
+					{
+						@Override
+						public boolean visitFile(@NotNull VirtualFile file)
+						{
+							if(file.getFileType() == CSharpFileType.INSTANCE || file.getFileType() == Unity3dMetaFileType.INSTANCE)
+							{
+								layer.addContentEntry(file);
+							}
+							return true;
+						}
+					});
+				}
 			}
 
 			setupConsumer.consume(layer);
