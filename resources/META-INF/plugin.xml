@@ -100,6 +100,8 @@
 				immutableClass="org.mustbe.consulo.unity3d.unityscript.module.extension.Unity3dScriptModuleExtension"
 				mutableClass="org.mustbe.consulo.unity3d.unityscript.module.extension.Unity3dScriptMutableModuleExtension"/>
 
+		<lang.defineVersion language="JavaScript" implementationClass="org.mustbe.consulo.unity3d.unityscript.lang.UnityScriptLanguageVersion" />
+
 		<projectImportProvider implementation="org.mustbe.consulo.unity3d.projectImport.Unity3dProjectImportProvider" />
 
 		<fileTypeFactory implementation="org.mustbe.consulo.unity3d.Unity3dFileTypeFactory"/>
