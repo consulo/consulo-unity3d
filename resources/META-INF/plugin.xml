@@ -20,10 +20,21 @@
 	<vendor>Must-Be</vendor>
 	<version>SNAPSHOT</version>
 	<category>Game Frameworks</category>
+	<resource-bundle>messages.Unity3dBundle</resource-bundle>
 
 	<depends>org.mustbe.consulo.dotnet.core</depends>
 	<depends>org.mustbe.consulo.csharp</depends>
 	<depends>org.mustbe.consulo.javascript</depends>
+
+	<actions>
+		<group id="Unity3dProjectGroup">
+			<separator/>
+			<action id="SyncUnity3dProject" class="org.mustbe.consulo.unity3d.action.SyncUnity3dProjectAction"
+					can-use-project-as-default="false"
+					require-module-extensions="unity3d"/>
+			<add-to-group anchor="last" group-id="ProjectViewPopupMenuSettingsGroup"/>
+		</group>
+	</actions>
 
 	<application-components>
 		<component>
