@@ -106,5 +106,6 @@
 
 		<fileTypeFactory implementation="org.mustbe.consulo.unity3d.Unity3dFileTypeFactory"/>
 		<treeStructureProvider implementation="org.mustbe.consulo.unity3d.ide.projectView.Unity3dMetaFileProjectViewProvider" />
+		<possibleModuleForFileResolver implementation="org.mustbe.consulo.unity3d.projectImport.Unity3dPossibleModuleForFileResolver" />
 	</extensions>
 </idea-plugin>
