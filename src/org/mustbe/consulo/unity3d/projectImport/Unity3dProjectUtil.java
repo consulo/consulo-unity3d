@@ -3,6 +3,7 @@ package org.mustbe.consulo.unity3d.projectImport;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.consulo.lombok.annotations.Logger;
 import org.consulo.module.extension.MutableModuleExtension;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -53,6 +54,7 @@ import lombok.val;
  * @author VISTALL
  * @since 03.04.2015
  */
+@Logger
 public class Unity3dProjectUtil
 {
 	@NotNull
@@ -267,34 +269,41 @@ public class Unity3dProjectUtil
 
 		modifiableModel.removeAllLayers(false);
 
-		for(Unity3dTarget unity3dTarget : Unity3dTarget.values())
+		final List<VirtualFile> toAdd = new ArrayList<VirtualFile>();
+
+		for(String path : paths)
+		{
+			VirtualFile fileByPath = LocalFileSystem.getInstance().findFileByPath(path);
+			if(fileByPath != null)
+			{
+				VfsUtil.visitChildrenRecursively(fileByPath, new VirtualFileVisitor()
+				{
+					@Override
+					public boolean visitFile(@NotNull VirtualFile file)
+					{
+						if(file.getFileType() == fileType)
+						{
+							if(virtualFilesByModule.containsScalarValue(file))
+							{
+								return true;
+							}
+
+							virtualFilesByModule.putValue(module, file);
+							toAdd.add(file);
+						}
+						return true;
+					}
+				});
+			}
+		}
+
+		for(final Unity3dTarget unity3dTarget : Unity3dTarget.values())
 		{
 			val layer = (ModuleRootLayerImpl) modifiableModel.addLayer(unity3dTarget.getPresentation(), null, getDefaultTarget() == unity3dTarget);
 
-			for(String path : paths)
+			for(VirtualFile virtualFile : toAdd)
 			{
-				VirtualFile fileByPath = LocalFileSystem.getInstance().findFileByPath(path);
-				if(fileByPath != null)
-				{
-					VfsUtil.visitChildrenRecursively(fileByPath, new VirtualFileVisitor()
-					{
-						@Override
-						public boolean visitFile(@NotNull VirtualFile file)
-						{
-							if(file.getFileType() == fileType)
-							{
-								if(virtualFilesByModule.containsScalarValue(file))
-								{
-									return true;
-								}
-
-								virtualFilesByModule.putValue(module, file);
-								layer.addContentEntry(file);
-							}
-							return true;
-						}
-					});
-				}
+				layer.addContentEntry(virtualFile);
 			}
 
 			setupConsumer.consume(layer);
