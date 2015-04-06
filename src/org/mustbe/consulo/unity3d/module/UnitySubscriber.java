@@ -16,9 +16,21 @@
 
 package org.mustbe.consulo.unity3d.module;
 
+import java.io.IOException;
+
+import org.jetbrains.annotations.NotNull;
+import org.mustbe.consulo.RequiredReadAction;
+import org.mustbe.consulo.unity3d.Unity3dMetaFileType;
 import com.intellij.ProjectTopics;
+import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.components.AbstractProjectComponent;
+import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileAdapter;
+import com.intellij.openapi.vfs.VirtualFileEvent;
+import com.intellij.openapi.vfs.VirtualFileManager;
+import lombok.val;
 
 /**
  * @author VISTALL
@@ -35,5 +47,48 @@ public class UnitySubscriber extends AbstractProjectComponent
 	public void initComponent()
 	{
 		myProject.getMessageBus().connect().subscribe(ProjectTopics.MODULE_LAYERS, new UnitySyncModuleRootLayerListener());
+
+		VirtualFileAdapter virtualFileAdapter = new VirtualFileAdapter()
+		{
+			@Override
+			@RequiredReadAction
+			public void beforeFileDeletion(@NotNull VirtualFileEvent event)
+			{
+				VirtualFile parent = event.getParent();
+				if(parent == null)
+				{
+					return;
+				}
+
+				Module module = Unity3dModuleExtensionUtil.getRootModule(myProject);
+				if(module == null)
+				{
+					return;
+				}
+
+				val metaFile = parent.findChild(event.getFile().getNameWithoutExtension() + "." + Unity3dMetaFileType.INSTANCE.getDefaultExtension
+						());
+				if(metaFile == null)
+				{
+					return;
+				}
+
+				WriteCommandAction.runWriteCommandAction(myProject, new Runnable()
+				{
+					@Override
+					public void run()
+					{
+						try
+						{
+							metaFile.delete(null);
+						}
+						catch(IOException ignored)
+						{
+						}
+					}
+				});
+			}
+		};
+		VirtualFileManager.getInstance().addVirtualFileListener(virtualFileAdapter, myProject);
 	}
 }
