@@ -248,7 +248,7 @@ public class Unity3dProjectUtil
 			@NotNull final FileType fileType,
 			@NotNull final MultiMap<Module, VirtualFile> virtualFilesByModule)
 	{
-			for(int i = 0; i < paths.length; i++)
+		for(int i = 0; i < paths.length; i++)
 		{
 			paths[i] = project.getBasePath() + "/" + paths[i];
 		}
