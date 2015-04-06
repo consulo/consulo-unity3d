@@ -77,9 +77,6 @@ public class Unity3dProjectUtil
 
 		ContainerUtil.addIfNotNull(modules, createAssemblyCSharpModule(project, newModel, unitySdk, virtualFilesByModule));
 
-		// we need drop link to sdk
-		unitySdk = null;
-
 		if(!fromProjectStructure)
 		{
 			ApplicationManager.getApplication().runWriteAction(new Runnable()
