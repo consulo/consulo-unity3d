@@ -29,7 +29,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileAdapter;
 import com.intellij.openapi.vfs.VirtualFileEvent;
-import com.intellij.openapi.vfs.VirtualFileManager;
 import lombok.val;
 
 /**
@@ -89,6 +88,6 @@ public class UnitySubscriber extends AbstractProjectComponent
 				});
 			}
 		};
-		VirtualFileManager.getInstance().addVirtualFileListener(virtualFileAdapter, myProject);
+		//VirtualFileManager.getInstance().addVirtualFileListener(virtualFileAdapter, myProject);
 	}
 }
