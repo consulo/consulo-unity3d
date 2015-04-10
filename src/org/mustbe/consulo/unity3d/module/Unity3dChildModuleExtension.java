@@ -73,6 +73,7 @@ public class Unity3dChildModuleExtension extends ModuleExtensionImpl<Unity3dChil
 
 	@Override
 	@RequiredReadAction
+	@NotNull
 	public List<String> getVariables()
 	{
 		Unity3dRootModuleExtension rootModuleExtension = Unity3dModuleExtensionUtil.getRootModuleExtension(getProject());
@@ -80,7 +81,7 @@ public class Unity3dChildModuleExtension extends ModuleExtensionImpl<Unity3dChil
 		{
 			return rootModuleExtension.getVariables();
 		}
-		return null;
+		return Collections.emptyList();
 	}
 
 	@Override
