@@ -17,7 +17,7 @@
 package org.mustbe.consulo.unity3d.run.debugger;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Collection;
 import java.util.List;
 
 import javax.swing.Icon;
@@ -26,38 +26,81 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.mustbe.consulo.unity3d.Unity3dIcons;
 import com.intellij.ide.util.ChooseElementsDialog;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ui.UIUtil;
+import com.jezhumble.javasysmon.JavaSysMon;
+import com.jezhumble.javasysmon.ProcessInfo;
 
 /**
  * @author VISTALL
  * @since 18.11.14
  */
-public class UnityProcessDialog extends ChooseElementsDialog<UnityPlayer>
+public class UnityProcessDialog extends ChooseElementsDialog<UnityProcess>
 {
-	private UnityPlayerService.UpdateListener myListener;
+	private boolean myClosed;
 
 	public UnityProcessDialog(@NotNull Project project)
 	{
-		super(project, new ArrayList<UnityPlayer>(UnityPlayerService.getInstance().getPlayers()), "Select Unity Player", "", true);
+		super(project, new ArrayList<UnityProcess>(), "Select Unity Process", "", true);
 
-		myListener = new UnityPlayerService.UpdateListener()
+		ApplicationManager.getApplication().executeOnPooledThread(new Runnable()
 		{
 			@Override
-			public void update(@NotNull final List<UnityPlayer> unityPlayers)
+			public void run()
 			{
-				UIUtil.invokeLaterIfNeeded(new Runnable()
+				while(!myClosed)
 				{
-					@Override
-					public void run()
+					try
 					{
-						UnityProcessDialog.this.setElements(unityPlayers, Collections.<UnityPlayer>emptyList());
+						UIUtil.invokeLaterIfNeeded(new Runnable()
+						{
+							@Override
+							public void run()
+							{
+								List<UnityProcess> selectedElements = myChooser.getSelectedElements();
+								UnityProcessDialog.this.setElements(collectItems(), selectedElements);
+							}
+						});
 					}
-				});
+					finally
+					{
+						try
+						{
+							Thread.sleep(1000L);
+						}
+						catch(InterruptedException e)
+						{
+							//
+						}
+					}
+				}
 			}
-		};
+		});
+	}
 
-		UnityPlayerService.getInstance().addUpdateListener(myListener);
+	@NotNull
+	private static List<UnityProcess> collectItems()
+	{
+		Collection<UnityPlayer> players = UnityPlayerService.getInstance().getPlayers();
+		List<UnityProcess> items = new ArrayList<UnityProcess>(players.size() + 1);
+		for(UnityPlayer player : players)
+		{
+			items.add(new UnityProcess((int) player.getGuid(), player.getId(), player.getIp(), player.getDebuggerPort()));
+		}
+		JavaSysMon javaSysMon = new JavaSysMon();
+		ProcessInfo[] processInfos = javaSysMon.processTable();
+		for(ProcessInfo processInfo : processInfos)
+		{
+			String name = processInfo.getName();
+			if(StringUtil.startsWithIgnoreCase(name, "unity") || StringUtil.containsIgnoreCase(name, "Unity.app") && !StringUtil.containsIgnoreCase
+					(name, "UnityShader"))
+			{
+				items.add(new UnityProcess(processInfo.getPid(), name, "localhost", 56000 + processInfo.getPid() % 1000));
+			}
+		}
+		return items;
 	}
 
 	@Nullable
@@ -70,19 +113,19 @@ public class UnityProcessDialog extends ChooseElementsDialog<UnityPlayer>
 	@Override
 	protected void dispose()
 	{
-		UnityPlayerService.getInstance().removeUpdateListener(myListener);
+		myClosed = true;
 		super.dispose();
 	}
 
 	@Override
-	protected String getItemText(UnityPlayer item)
+	protected String getItemText(UnityProcess item)
 	{
-		return item.getId() + " (" + item.getIp() + ":" + item.getDebuggerPort() + ")";
+		return item.getName() + " (" + item.getHost() + ":" + item.getPort() + ")";
 	}
 
 	@Nullable
 	@Override
-	protected Icon getItemIcon(UnityPlayer item)
+	protected Icon getItemIcon(UnityProcess item)
 	{
 		return Unity3dIcons.Unity3d;
 	}

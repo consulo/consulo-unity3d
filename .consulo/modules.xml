@@ -48,6 +48,7 @@
               </binaries>
             </library>
           </orderEntry>
+          <orderEntry type="library" name="javasysmon" level="project" />
         </module-layer>
       </module>
     </modules>

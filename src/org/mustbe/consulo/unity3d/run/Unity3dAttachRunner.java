@@ -23,7 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import org.mustbe.consulo.dotnet.debugger.DotNetVirtualMachineListener;
 import org.mustbe.consulo.dotnet.execution.DebugConnectionInfo;
 import org.mustbe.consulo.unity3d.run.debugger.UnityDebugProcess;
-import org.mustbe.consulo.unity3d.run.debugger.UnityPlayer;
+import org.mustbe.consulo.unity3d.run.debugger.UnityProcess;
 import org.mustbe.consulo.unity3d.run.debugger.UnityProcessDialog;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.actions.StopProcessAction;
@@ -70,9 +70,9 @@ public class Unity3dAttachRunner extends DefaultProgramRunner
 	{
 		UnityProcessDialog dialog = new UnityProcessDialog(environment.getProject());
 
-		List<UnityPlayer> unityPlayers = dialog.showAndGetResult();
+		List<UnityProcess> unityProcesses = dialog.showAndGetResult();
 
-		final UnityPlayer firstItem = ContainerUtil.getFirstItem(unityPlayers);
+		final UnityProcess firstItem = ContainerUtil.getFirstItem(unityProcesses);
 		if(firstItem == null)
 		{
 			return null;
@@ -86,15 +86,15 @@ public class Unity3dAttachRunner extends DefaultProgramRunner
 			@Override
 			public XDebugProcess start(@NotNull final XDebugSession session) throws ExecutionException
 			{
-				DebugConnectionInfo debugConnectionInfo = new DebugConnectionInfo(firstItem.getIp(), firstItem.getDebuggerPort(), true);
+				DebugConnectionInfo debugConnectionInfo = new DebugConnectionInfo(firstItem.getHost(), firstItem.getPort(), true);
 				val process = new UnityDebugProcess(session, debugConnectionInfo, environment.getRunProfile());
 				process.getDebugThread().addListener(new DotNetVirtualMachineListener()
 				{
 					@Override
 					public void connectionSuccess(@NotNull VirtualMachine machine)
 					{
-						session.getConsoleView().print(String.format("Success attach to Unity process at %s:%d", firstItem.getIp(),
-								firstItem.getDebuggerPort()), ConsoleViewContentType.SYSTEM_OUTPUT);
+						session.getConsoleView().print(String.format("Success attach to '%s' at %s:%d", firstItem.getName(), firstItem.getHost(),
+								firstItem.getPort()), ConsoleViewContentType.SYSTEM_OUTPUT);
 					}
 
 					@Override
@@ -106,8 +106,8 @@ public class Unity3dAttachRunner extends DefaultProgramRunner
 					public void connectionFailed()
 					{
 						ProcessHandler processHandler = process.getProcessHandler();
-						session.getConsoleView().print(String.format("Failed attach to Unity process at %s:%d", firstItem.getIp(),
-								firstItem.getDebuggerPort()), ConsoleViewContentType.ERROR_OUTPUT);
+						session.getConsoleView().print(String.format("Failed attach to '%s' at %s:%d", firstItem.getName(), firstItem.getHost(),
+								firstItem.getPort()), ConsoleViewContentType.ERROR_OUTPUT);
 						StopProcessAction.stopProcess(processHandler);
 					}
 				});

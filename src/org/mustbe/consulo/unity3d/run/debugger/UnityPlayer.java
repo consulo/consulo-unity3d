@@ -47,7 +47,7 @@ public class UnityPlayer
 			String debuggerPort = matcher.group("debuggerPort");
 			if(debuggerPort == null)
 			{
-				myDebuggerPort = 56000 + (int)(myGuid % 1000);
+				myDebuggerPort = 56000 + (int) (myGuid % 1000);
 			}
 			else
 			{
