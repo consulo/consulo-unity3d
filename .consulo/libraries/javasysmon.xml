@@ -1,7 +1,7 @@
 <component name="libraryTable">
   <library name="javasysmon">
     <binaries>
-      <root url="jar://$PROJECT_DIR$/lib/javasysmon-0.3.5.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/javasysmon-0.3.6.jar!/" />
     </binaries>
   </library>
 </component>
