@@ -34,6 +34,10 @@
 					require-module-extensions="unity3d"/>
 			<add-to-group anchor="last" group-id="ProjectViewPopupMenuSettingsGroup"/>
 		</group>
+		<action id="Unity3Attach" class="org.mustbe.consulo.unity3d.action.Unity3dAttachAction" can-use-project-as-default="true"
+				require-module-extensions="unity3d">
+			<add-to-group group-id="ToolbarRunGroup" anchor="after" relative-to-action="RunnerActions"/>
+		</action>
 	</actions>
 
 	<application-components>
@@ -50,17 +54,16 @@
 	</project-components>
 
 	<extensions defaultExtensionNs="com.intellij">
-		<completion.contributor language="C#" implementationClass="org.mustbe.consulo.unity3d.csharp.completion.UnitySpecificMethodCompletion" />
-		<codeInsight.lineMarkerProvider language="C#" implementationClass="org.mustbe.consulo.unity3d.csharp.codeInsight.UnityCSharpLineMarkerProvider"/>
-		<colorProvider implementation="org.mustbe.consulo.unity3d.csharp.codeInsight.UnityCSharpStaticElementColorProvider" />
+		<completion.contributor language="C#" implementationClass="org.mustbe.consulo.unity3d.csharp.completion.UnitySpecificMethodCompletion"/>
+		<codeInsight.lineMarkerProvider language="C#"
+										implementationClass="org.mustbe.consulo.unity3d.csharp.codeInsight.UnityCSharpLineMarkerProvider"/>
+		<colorProvider implementation="org.mustbe.consulo.unity3d.csharp.codeInsight.UnityCSharpStaticElementColorProvider"/>
 		<macro implementation="org.mustbe.consulo.unity3d.module.UnityFileNameMacro"/>
 		<compiler implementation="org.mustbe.consulo.unity3d.compiler.UnityCompiler" order="last"/>
 		<sdkType implementation="org.mustbe.consulo.unity3d.bundle.Unity3dBundleType"/>
 
 		<configurationType implementation="org.mustbe.consulo.unity3d.run.Unity3dApplicationType"/>
-		<configurationType implementation="org.mustbe.consulo.unity3d.run.Unity3dAttachApplicationType"/>
 
-		<programRunner implementation="org.mustbe.consulo.unity3d.run.Unity3dAttachRunner"/>
 		<moduleExtensionProvider
 				key="unity3d"
 				name="Unity3D"
@@ -100,12 +103,12 @@
 				immutableClass="org.mustbe.consulo.unity3d.unityscript.module.extension.Unity3dScriptModuleExtension"
 				mutableClass="org.mustbe.consulo.unity3d.unityscript.module.extension.Unity3dScriptMutableModuleExtension"/>
 
-		<lang.defineVersion language="JavaScript" implementationClass="org.mustbe.consulo.unity3d.unityscript.lang.UnityScriptLanguageVersion" />
+		<lang.defineVersion language="JavaScript" implementationClass="org.mustbe.consulo.unity3d.unityscript.lang.UnityScriptLanguageVersion"/>
 
-		<projectImportProvider implementation="org.mustbe.consulo.unity3d.projectImport.Unity3dProjectImportProvider" />
+		<projectImportProvider implementation="org.mustbe.consulo.unity3d.projectImport.Unity3dProjectImportProvider"/>
 
 		<fileTypeFactory implementation="org.mustbe.consulo.unity3d.Unity3dFileTypeFactory"/>
-		<treeStructureProvider implementation="org.mustbe.consulo.unity3d.ide.projectView.Unity3dMetaFileProjectViewProvider" />
-		<possibleModuleForFileResolver implementation="org.mustbe.consulo.unity3d.projectImport.Unity3dPossibleModuleForFileResolver" />
+		<treeStructureProvider implementation="org.mustbe.consulo.unity3d.ide.projectView.Unity3dMetaFileProjectViewProvider"/>
+		<possibleModuleForFileResolver implementation="org.mustbe.consulo.unity3d.projectImport.Unity3dPossibleModuleForFileResolver"/>
 	</extensions>
 </idea-plugin>

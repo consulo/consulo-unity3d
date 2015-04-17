@@ -17,9 +17,7 @@
 package org.mustbe.consulo.unity3d.run;
 
 import org.jetbrains.annotations.NotNull;
-import org.mustbe.consulo.RequiredReadAction;
 import org.mustbe.consulo.unity3d.Unity3dIcons;
-import org.mustbe.consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import com.intellij.execution.configuration.ConfigurationFactoryEx;
 import com.intellij.execution.configurations.ConfigurationTypeBase;
 import com.intellij.execution.configurations.RunConfiguration;
@@ -31,10 +29,7 @@ import com.intellij.openapi.project.Project;
  */
 public class Unity3dAttachApplicationType extends ConfigurationTypeBase
 {
-	public static Unity3dAttachApplicationType getInstance()
-	{
-		return CONFIGURATION_TYPE_EP.findExtension(Unity3dAttachApplicationType.class);
-	}
+	public static final Unity3dAttachApplicationType ourDummyInstance = new Unity3dAttachApplicationType();
 
 	public Unity3dAttachApplicationType()
 	{
@@ -49,19 +44,9 @@ public class Unity3dAttachApplicationType extends ConfigurationTypeBase
 			}
 
 			@Override
-			public void onNewConfigurationCreated(@NotNull RunConfiguration configuration)
-			{
-				if(configuration instanceof Unity3dApplicationConfiguration)
-				{
-					((Unity3dApplicationConfiguration) configuration).setGeneratedName();
-				}
-			}
-
-			@Override
-			@RequiredReadAction
 			public boolean isApplicable(@NotNull Project project)
 			{
-				return Unity3dModuleExtensionUtil.getRootModuleExtension(project) != null;
+				throw new UnsupportedOperationException();
 			}
 		});
 	}
