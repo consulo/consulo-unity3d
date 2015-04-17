@@ -40,7 +40,6 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.xdebugger.XDebugProcess;
 import com.intellij.xdebugger.XDebugProcessStarter;
 import com.intellij.xdebugger.XDebugSession;
-import com.intellij.xdebugger.XDebugSessionAdapter;
 import com.intellij.xdebugger.XDebuggerManager;
 import lombok.val;
 import mono.debugger.VirtualMachine;
@@ -52,13 +51,6 @@ import mono.debugger.VirtualMachine;
 public class Unity3dAttachRunner extends DefaultProgramRunner
 {
 	public static final Unity3dAttachRunner ourDummyInstance = new Unity3dAttachRunner();
-
-	private boolean myIsRunning;
-
-	public boolean isRunning()
-	{
-		return myIsRunning;
-	}
 
 	@NotNull
 	@Override
@@ -96,8 +88,6 @@ public class Unity3dAttachRunner extends DefaultProgramRunner
 			@Override
 			public XDebugProcess start(@NotNull final XDebugSession session) throws ExecutionException
 			{
-				myIsRunning = true;
-
 				DebugConnectionInfo debugConnectionInfo = new DebugConnectionInfo(firstItem.getHost(), firstItem.getPort(), true);
 				val process = new UnityDebugProcess(session, debugConnectionInfo, environment.getRunProfile());
 				process.getDebugThread().addListener(new DotNetVirtualMachineListener()
@@ -125,14 +115,6 @@ public class Unity3dAttachRunner extends DefaultProgramRunner
 				});
 				process.start();
 				return process;
-			}
-		});
-		debugSession.addSessionListener(new XDebugSessionAdapter()
-		{
-			@Override
-			public void sessionStopped()
-			{
-				myIsRunning = false;
 			}
 		});
 

@@ -41,13 +41,6 @@ public class Unity3dAttachAction extends AnAction
 	}
 
 	@Override
-	public void update(AnActionEvent e)
-	{
-		super.update(e);
-		e.getPresentation().setEnabled(!Unity3dAttachRunner.ourDummyInstance.isRunning());
-	}
-
-	@Override
 	public void actionPerformed(final AnActionEvent anActionEvent)
 	{
 		final Project project = anActionEvent.getProject();
