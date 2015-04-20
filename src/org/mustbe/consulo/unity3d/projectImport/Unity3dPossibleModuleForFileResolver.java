@@ -24,6 +24,14 @@ public class Unity3dPossibleModuleForFileResolver implements ContentEntryFileLis
 	@RequiredReadAction
 	public Module resolve(@NotNull Project project, @NotNull VirtualFile virtualFile)
 	{
+		Module module = resolveImpl(project, virtualFile);
+		return module != null && module.getModuleDirUrl() != null ? null : module;
+	}
+
+	@RequiredReadAction
+	@Nullable
+	private Module resolveImpl(Project project, VirtualFile virtualFile)
+	{
 		if(virtualFile.getFileType() == CSharpFileType.INSTANCE)
 		{
 			Module module = Unity3dModuleExtensionUtil.getRootModule(project);
