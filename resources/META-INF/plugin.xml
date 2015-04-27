@@ -53,8 +53,15 @@
 		</component>
 	</project-components>
 
+	<extensions defaultExtensionNs="org.mustbe.consulo.dotnet.core">
+		<debugger.provider implementation="org.mustbe.consulo.unity3d.unityscript.debugger.UnityScriptDebuggerProvider" />
+	</extensions>
+
 	<extensions defaultExtensionNs="com.intellij">
 		<errorHandler implementation="com.intellij.diagnostic.ITNReporter" />
+		<xdebugger.lineBreakpointResolver filetype="JavaScript"
+										  implementationClass="org.mustbe.consulo.unity3d.unityscript.debugger.UnityScriptLineBreakpointResolver"
+										  order="before javascript" />
 		<completion.contributor language="C#" implementationClass="org.mustbe.consulo.unity3d.csharp.completion.UnitySpecificMethodCompletion"/>
 		<codeInsight.lineMarkerProvider language="C#"
 										implementationClass="org.mustbe.consulo.unity3d.csharp.codeInsight.UnityCSharpLineMarkerProvider"/>
