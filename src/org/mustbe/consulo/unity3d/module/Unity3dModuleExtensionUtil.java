@@ -23,6 +23,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 
 /**
  * @author VISTALL
@@ -37,7 +38,13 @@ public class Unity3dModuleExtensionUtil
 		ModuleManager moduleManager = ModuleManager.getInstance(project);
 		for(Module module : moduleManager.getModules())
 		{
-			if(project.getBaseDir().equals(module.getModuleDir()))
+			VirtualFile baseDir = project.getBaseDir();
+			if(baseDir == null)
+			{
+				continue;
+			}
+
+			if(baseDir.equals(module.getModuleDir()))
 			{
 				return module;
 			}
