@@ -309,7 +309,7 @@ public class Unity3dProjectUtil
 			setupConsumer.consume(layer);
 
 			layer.getExtensionWithoutCheck(Unity3dChildMutableModuleExtension.class).setEnabled(true);
-			// enable correct unity C# extension
+			// enable correct unity lang extension
 			layer.<MutableModuleExtension>getExtensionWithoutCheck(moduleExtensionId).setEnabled(true);
 
 			layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "mscorlib"));
