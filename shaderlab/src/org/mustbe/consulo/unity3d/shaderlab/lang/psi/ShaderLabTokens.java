@@ -58,15 +58,9 @@ public interface ShaderLabTokens extends TokenType
 
 	IElementType CONSTANT_COLOR_KEYWORD = new IElementType("CONSTANT_COLOR_KEYWORD", ShaderLabLanguage.INSTANCE);
 
-	IElementType FRONT_KEYWORD = new IElementType("FRONT_KEYWORD", ShaderLabLanguage.INSTANCE);
+	IElementType VALUE_KEYWORD = new IElementType("VALUE_KEYWORD", ShaderLabLanguage.INSTANCE);
+                                                                                                  	IElementType COLOR_KEYWORD = new IElementType("COLOR_KEYWORD", ShaderLabLanguage.INSTANCE);
 
-	IElementType BACK_KEYWORD = new IElementType("BACK_KEYWORD", ShaderLabLanguage.INSTANCE);
-
-	IElementType COLOR_KEYWORD = new IElementType("COLOR_KEYWORD", ShaderLabLanguage.INSTANCE);
-
-	IElementType ON_KEYWORD = new IElementType("ON_KEYWORD", ShaderLabLanguage.INSTANCE);
-
-	IElementType OFF_KEYWORD = new IElementType("OFF_KEYWORD", ShaderLabLanguage.INSTANCE);
 
 	IElementType PROPERTIES_KEYWORD = new IElementType("PROPERTIES_KEYWORD", ShaderLabLanguage.INSTANCE);
 

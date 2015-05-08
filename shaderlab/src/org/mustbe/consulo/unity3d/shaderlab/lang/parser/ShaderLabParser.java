@@ -31,7 +31,6 @@ import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiBuilderUtil;
 import com.intellij.lang.PsiParser;
 import com.intellij.psi.tree.IElementType;
-import com.intellij.psi.tree.TokenSet;
 import com.intellij.util.ThreeState;
 
 /**
@@ -40,13 +39,22 @@ import com.intellij.util.ThreeState;
  */
 public class ShaderLabParser implements PsiParser
 {
-	private static final Map<IElementType, TokenSet> ourValidValues = new HashMap<IElementType, TokenSet>()
+	private static final Map<IElementType, String[]> ourValidValues = new HashMap<IElementType, String[]>()
 	{
 		{
-			put(ShaderLabTokens.LIGHTING_KEYWORD, TokenSet.create(ShaderLabTokens.ON_KEYWORD, ShaderLabTokens.OFF_KEYWORD));
-			put(ShaderLabTokens.ZWRITE_KEYWORD, TokenSet.create(ShaderLabTokens.ON_KEYWORD, ShaderLabTokens.OFF_KEYWORD));
-			put(ShaderLabTokens.CULL_KEYWORD, TokenSet.create(ShaderLabTokens.OFF_KEYWORD, ShaderLabTokens.BACK_KEYWORD,
-					ShaderLabTokens.FRONT_KEYWORD));
+			put(ShaderLabTokens.LIGHTING_KEYWORD, new String[]{
+					"on",
+					"off"
+			});
+			put(ShaderLabTokens.ZWRITE_KEYWORD, new String[]{
+					"on",
+					"off"
+			});
+			put(ShaderLabTokens.CULL_KEYWORD, new String[]{
+					"back",
+					"front",
+					"off"
+			});
 		}
 	};
 
@@ -179,19 +187,15 @@ public class ShaderLabParser implements PsiParser
 			builder.advanceLexer();
 
 			IElementType valueTokenType = builder.getTokenType();
-			if(valueTokenType == ShaderLabTokens.OFF_KEYWORD)
+			if(valueTokenType == ShaderLabTokens.IDENTIFIER)
 			{
-				builder.advanceLexer();
+				validateIdentifier(builder, "off");
 			}
 			else if(valueTokenType == ShaderLabTokens.STRING_LITERAL)
 			{
 				PsiBuilder.Marker refMarker = builder.mark();
 				builder.advanceLexer();
 				refMarker.done(ShaderLabElements.REFERENCE);
-			}
-			else
-			{
-				doneError(builder, "Wrong value");
 			}
 
 			mark.done(ShaderLabElements.SIMPLE_VALUE);
@@ -451,25 +455,51 @@ public class ShaderLabParser implements PsiParser
 	private static PsiBuilder.Marker parsePassOrSubShaderInner(PsiBuilder builder)
 	{
 		IElementType tokenType = builder.getTokenType();
-		TokenSet tokenSet = ourValidValues.get(tokenType);
+		String[] tokenSet = ourValidValues.get(tokenType);
 		if(tokenSet != null)
 		{
 			PsiBuilder.Marker mark = builder.mark();
 			builder.advanceLexer();
 
-			IElementType valueTokenType = builder.getTokenType();
-			if(tokenSet.contains(valueTokenType))
+			if(builder.getTokenType() == ShaderLabTokens.IDENTIFIER)
 			{
-				builder.advanceLexer();
+				validateIdentifier(builder, tokenSet);
 			}
 			else
 			{
 				doneError(builder, "Wrong value");
 			}
+
 			mark.done(ShaderLabElements.SIMPLE_VALUE);
 			return mark;
 		}
 		return null;
+	}
+
+	private static boolean validateIdentifier(@NotNull PsiBuilder builder, String... values)
+	{
+		assert builder.getTokenType() == ShaderLabTokens.IDENTIFIER;
+		String tokenText = builder.getTokenText();
+		boolean found = false;
+		for(String s : values)
+		{
+			if(s.equalsIgnoreCase(tokenText))
+			{
+				found = true;
+				break;
+			}
+		}
+
+		if(found)
+		{
+			builder.remapCurrentToken(ShaderLabTokens.VALUE_KEYWORD);
+			return true;
+		}
+		else
+		{
+			doneError(builder, "Wrong value");
+			return false;
+		}
 	}
 
 	@NotNull

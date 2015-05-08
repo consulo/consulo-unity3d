@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.mustbe.consulo.RequiredReadAction;
 import org.mustbe.consulo.unity3d.shaderlab.lang.ShaderLabPropertyType;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderLabFile;
+import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderLabTokens;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderPropertyElement;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderPropertyTypeElement;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderReference;
@@ -28,6 +29,7 @@ import com.intellij.codeInsight.daemon.impl.HighlightInfo;
 import com.intellij.codeInsight.daemon.impl.HighlightInfoType;
 import com.intellij.codeInsight.daemon.impl.HighlightVisitor;
 import com.intellij.codeInsight.daemon.impl.analysis.HighlightInfoHolder;
+import com.intellij.lang.ASTNode;
 import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.psi.PsiElement;
@@ -103,6 +105,19 @@ public class SharpLabHighlightVisitor extends SharpLabElementVisitor implements 
 				myHolder.add(HighlightInfo.newHighlightInfo(HighlightInfoType.INFORMATION).range(reference.getReferenceElement())
 						.textAttributes(key).create());
 			}
+		}
+	}
+
+	@Override
+	public void visitElement(PsiElement element)
+	{
+		super.visitElement(element);
+
+		ASTNode node = element.getNode();
+		if(node != null && node.getElementType() == ShaderLabTokens.VALUE_KEYWORD)
+		{
+			myHolder.add(HighlightInfo.newHighlightInfo(HighlightInfoType.INFORMATION).range(node)
+					.textAttributes(DefaultLanguageHighlighterColors.MACRO_KEYWORD).create());
 		}
 	}
 
