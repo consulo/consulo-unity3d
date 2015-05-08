@@ -30,10 +30,10 @@ ESCAPE_SEQUENCE=\\[^\r\n]
 IDENTIFIER=[:jletter:] [:jletterdigit:]* | {INTEGER_LITERAL} [:jletter:]
 
 DIGIT = [0-9]
-DIGITS = {DIGIT}*
+DIGITS = {DIGIT}+
 
 INTEGER_PREFIX = "+" | "-"
-INTEGER_LITERAL = {INTEGER_PREFIX}? ({DIGITS} | {DIGITS} "." {DIGITS})
+INTEGER_LITERAL = {INTEGER_PREFIX}? ({DIGITS} | {DIGIT}* "." {DIGITS})
 
 %%
 
