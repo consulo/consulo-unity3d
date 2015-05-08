@@ -41,7 +41,7 @@ INTEGER_LITERAL = {INTEGER_PREFIX}? ({DIGITS} | {DIGITS} "." {DIGITS})
 {
 	{SINGLE_LINE_COMMENT}      { return ShaderLabTokens.LINE_COMMENT; }
 
-	{MULTI_LINE_STYLE_COMMENT} { return ShaderLabTokens.LINE_COMMENT; }
+	{MULTI_LINE_STYLE_COMMENT} { return ShaderLabTokens.BLOCK_COMMENT; }
 
 	"Shader"                   { return ShaderLabTokens.SHADER_KEYWORD; }
 
