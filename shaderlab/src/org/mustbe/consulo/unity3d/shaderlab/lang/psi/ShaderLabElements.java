@@ -35,4 +35,8 @@ public interface ShaderLabElements
 	IElementType PROPERTY_TYPE = new ElementTypeAsPsiFactory("PROPERTY_TYPE", ShaderLabLanguage.INSTANCE, ShaderPropertyType.class);
 
 	IElementType PROPERTY_VALUE = new ElementTypeAsPsiFactory("PROPERTY_VALUE", ShaderLabLanguage.INSTANCE, ShaderPropertyValue.class);
+
+	IElementType PROPERTY_ATTRIBUTE = new ElementTypeAsPsiFactory("PROPERTY_ATTRIBUTE", ShaderLabLanguage.INSTANCE, ShaderPropertyAttribute.class);
+
+	IElementType REFERENCE = new ElementTypeAsPsiFactory("REFERENCE", ShaderLabLanguage.INSTANCE, ShaderReference.class);
 }

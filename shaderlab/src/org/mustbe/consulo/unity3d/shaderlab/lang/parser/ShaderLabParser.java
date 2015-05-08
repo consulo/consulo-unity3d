@@ -123,7 +123,8 @@ public class ShaderLabParser implements PsiParser
 			{
 				int balanceCount = 0;
 
-				loop:while(!builder.eof())
+				loop:
+				while(!builder.eof())
 				{
 					ThreeState threeState = parseProperty(builder);
 					switch(threeState)
@@ -133,13 +134,13 @@ public class ShaderLabParser implements PsiParser
 							{
 								break loop;
 							}
-							balanceCount --;
+							balanceCount--;
 							doneError(builder, "Unexpected token");
 							break;
 						case UNSURE:
 							if(builder.getTokenType() == ShaderLabTokens.LBRACE)
 							{
-								balanceCount ++;
+								balanceCount++;
 							}
 
 							doneError(builder, "Unexpected token");
@@ -161,10 +162,29 @@ public class ShaderLabParser implements PsiParser
 	{
 		IElementType tokenType = builder.getTokenType();
 
+		PsiBuilder.Marker propertyMark = null;
+		if(tokenType == ShaderLabTokens.LBRACKET)
+		{
+			propertyMark = builder.mark();
+			builder.advanceLexer();
+
+			if(!parseReference(builder))
+			{
+				builder.error("Expected identifier");
+			}
+
+			expectWithError(builder, ShaderLabTokens.RBRACKET, "']' expected");
+
+			propertyMark.done(ShaderLabElements.PROPERTY_ATTRIBUTE);
+
+			propertyMark = propertyMark.precede();
+
+			tokenType = builder.getTokenType();
+		}
 
 		if(tokenType == ShaderLabTokens.IDENTIFIER)
 		{
-			PsiBuilder.Marker mark = builder.mark();
+			PsiBuilder.Marker mark = propertyMark == null ? builder.mark() : propertyMark;
 
 			builder.advanceLexer();
 
@@ -218,7 +238,24 @@ public class ShaderLabParser implements PsiParser
 		{
 			return ThreeState.YES;
 		}
+
+		if(propertyMark != null)
+		{
+			propertyMark.error("Expected identifier");
+		}
 		return ThreeState.UNSURE;
+	}
+
+	private static boolean parseReference(PsiBuilder builder)
+	{
+		if(builder.getTokenType() == ShaderLabTokens.IDENTIFIER)
+		{
+			PsiBuilder.Marker mark = builder.mark();
+			builder.advanceLexer();
+			mark.done(ShaderLabElements.REFERENCE);
+			return true;
+		}
+		return false;
 	}
 
 	@Nullable

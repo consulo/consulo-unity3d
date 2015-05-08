@@ -17,16 +17,19 @@
 package org.mustbe.consulo.unity3d.shaderlab.ide.highlight;
 
 import org.jetbrains.annotations.NotNull;
+import org.mustbe.consulo.RequiredReadAction;
 import org.mustbe.consulo.unity3d.shaderlab.lang.ShaderLabPropertyType;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderLabFile;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderProperty;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderPropertyType;
+import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderReference;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.SharpLabElementVisitor;
 import com.intellij.codeInsight.daemon.impl.HighlightInfo;
 import com.intellij.codeInsight.daemon.impl.HighlightInfoType;
 import com.intellij.codeInsight.daemon.impl.HighlightVisitor;
 import com.intellij.codeInsight.daemon.impl.analysis.HighlightInfoHolder;
 import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
+import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 
@@ -67,6 +70,36 @@ public class SharpLabHighlightVisitor extends SharpLabElementVisitor implements 
 		{
 			myHolder.add(HighlightInfo.newHighlightInfo(HighlightInfoType.INFORMATION).range(element).textAttributes
 					(DefaultLanguageHighlighterColors.TYPE_ALIAS_NAME).create());
+		}
+	}
+
+	@Override
+	@RequiredReadAction
+	public void visitReference(ShaderReference reference)
+	{
+		if(!reference.isSoft())
+		{
+			PsiElement resolve = reference.resolve();
+			if(resolve == null)
+			{
+				myHolder.add(HighlightInfo.newHighlightInfo(HighlightInfoType.WRONG_REF).range(reference.getReferenceElement())
+						.descriptionAndTooltip("'" + reference.getReferenceName() + "' is not resolved").create());
+			}
+			else
+			{
+				ShaderReference.ResolveKind kind = reference.kind();
+				TextAttributesKey key = null;
+				switch(kind)
+				{
+					case ATTRIBUTE:
+						key = DefaultLanguageHighlighterColors.METADATA;
+						break;
+					default:
+						return;
+				}
+				myHolder.add(HighlightInfo.newHighlightInfo(HighlightInfoType.INFORMATION).range(reference.getReferenceElement())
+						.textAttributes(key).create());
+			}
 		}
 	}
 

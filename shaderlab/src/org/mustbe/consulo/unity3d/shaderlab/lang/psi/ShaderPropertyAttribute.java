@@ -16,46 +16,30 @@
 
 package org.mustbe.consulo.unity3d.shaderlab.lang.psi;
 
-import com.intellij.psi.PsiElementVisitor;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import com.intellij.lang.ASTNode;
 
 /**
  * @author VISTALL
  * @since 08.05.2015
  */
-public class SharpLabElementVisitor extends PsiElementVisitor
+public class ShaderPropertyAttribute extends ShaderLabElement
 {
-	public void visitShaderDef(ShaderDef shaderDef)
+	public ShaderPropertyAttribute(@NotNull ASTNode node)
 	{
-		visitElement(shaderDef);
+		super(node);
 	}
 
-	public void visitProperty(ShaderProperty p)
+	@Nullable
+	public ShaderReference getReferenceExpression()
 	{
-		visitElement(p);
+		return findChildByClass(ShaderReference.class);
 	}
 
-	public void visitPropertyList(ShaderPropertyList list)
+	@Override
+	public void accept(SharpLabElementVisitor visitor)
 	{
-		visitElement(list);
-	}
-
-	public void visitPropertyType(ShaderPropertyType type)
-	{
-		visitElement(type);
-	}
-
-	public void visitPropertyValue(ShaderPropertyValue value)
-	{
-		visitElement(value);
-	}
-
-	public void visitPropertyAttribute(ShaderPropertyAttribute attribute)
-	{
-		visitElement(attribute);
-	}
-
-	public void visitReference(ShaderReference reference)
-	{
-		visitElement(reference);
+		visitor.visitPropertyAttribute(this);
 	}
 }

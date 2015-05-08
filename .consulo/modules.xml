@@ -53,7 +53,7 @@
       </module>
       <module name="shaderlab" dirurl="file://$PROJECT_DIR$/shaderlab" current-layer="Default">
         <module-layer name="Default">
-          <extension id="consulo-plugin" sdk-module-name="consulo-unity3d" sdk-name="" />
+          <extension id="consulo-plugin" sdk-module-name="consulo-unity3d" sdk-name="" custom-plugin-dir-url="file://$MODULE_DIR$/../dep" />
           <extension id="java" sdk-module-name="consulo-unity3d" sdk-name="" language-level-module-name="consulo-unity3d" language-level-name="" special-dir-location="SOURCE_DIR" />
           <content url="file://$MODULE_DIR$">
             <content-folder type="PRODUCTION" url="file://$MODULE_DIR$/src" />
@@ -62,6 +62,26 @@
           <orderEntry type="module-extension-sdk" extension-id="java" />
           <orderEntry type="sourceFolder" />
           <orderEntry type="module" module-name="consulo-unity3d" />
+          <orderEntry type="module-library">
+            <library name="consulo:C#">
+              <binaries>
+                <root url="jar://$MODULE_DIR$/../dep/csharp/lib/csharp.jar!/" />
+                <root url="jar://$MODULE_DIR$/../dep/csharp/lib/jel.jar!/" />
+                <root url="jar://$MODULE_DIR$/../dep/csharp/lib/microsoft-csharp.jar!/" />
+                <root url="jar://$MODULE_DIR$/../dep/csharp/lib/mono-csharp.jar!/" />
+              </binaries>
+            </library>
+          </orderEntry>
+          <orderEntry type="module-library">
+            <library name="consulo:.NET Core">
+              <binaries>
+                <root url="jar://$MODULE_DIR$/../dep/dotnet/lib/dotnet-asm.jar!/" />
+                <root url="jar://$MODULE_DIR$/../dep/dotnet/lib/dotnet.jar!/" />
+                <root url="jar://$MODULE_DIR$/../dep/dotnet/lib/joou-0.9.2-SNAPSHOT.jar!/" />
+                <root url="jar://$MODULE_DIR$/../dep/dotnet/lib/mono-soft-debugging.jar!/" />
+              </binaries>
+            </library>
+          </orderEntry>
         </module-layer>
       </module>
     </modules>
