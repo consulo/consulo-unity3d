@@ -19,15 +19,31 @@ package org.mustbe.consulo.unity3d.shaderlab.lang.psi;
 import org.jetbrains.annotations.NotNull;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElementVisitor;
 
 /**
  * @author VISTALL
  * @since 08.05.2015
  */
-public class ShaderLabElement extends ASTWrapperPsiElement
+public abstract class ShaderLabElement extends ASTWrapperPsiElement
 {
 	public ShaderLabElement(@NotNull ASTNode node)
 	{
 		super(node);
+	}
+
+	public abstract void accept(SharpLabElementVisitor visitor);
+
+	@Override
+	public void accept(@NotNull PsiElementVisitor visitor)
+	{
+		if(visitor instanceof SharpLabElementVisitor)
+		{
+			accept((SharpLabElementVisitor)visitor);
+		}
+		else
+		{
+			super.accept(visitor);
+		}
 	}
 }

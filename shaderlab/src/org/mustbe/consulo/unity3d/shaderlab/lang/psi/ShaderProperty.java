@@ -36,6 +36,12 @@ public class ShaderProperty extends ShaderLabElement implements PsiNameIdentifie
 	}
 
 	@Override
+	public void accept(SharpLabElementVisitor visitor)
+	{
+		visitor.visitProperty(this);
+	}
+
+	@Override
 	public String getName()
 	{
 		PsiElement nameIdentifier = getNameIdentifier();

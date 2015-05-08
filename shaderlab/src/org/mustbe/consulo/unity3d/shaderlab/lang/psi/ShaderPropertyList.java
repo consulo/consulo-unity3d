@@ -29,4 +29,10 @@ public class ShaderPropertyList extends ShaderLabElement
 	{
 		super(node);
 	}
+
+	@Override
+	public void accept(SharpLabElementVisitor visitor)
+	{
+		visitor.visitPropertyList(this);
+	}
 }

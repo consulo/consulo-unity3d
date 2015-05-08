@@ -29,4 +29,10 @@ public class ShaderDef extends ShaderLabElement
 	{
 		super(node);
 	}
+
+	@Override
+	public void accept(SharpLabElementVisitor visitor)
+	{
+		visitor.visitShaderDef(this);
+	}
 }
