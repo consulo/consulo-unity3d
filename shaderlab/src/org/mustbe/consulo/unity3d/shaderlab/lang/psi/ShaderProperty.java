@@ -36,6 +36,13 @@ public class ShaderProperty extends ShaderLabElement implements PsiNameIdentifie
 	}
 
 	@Override
+	public int getTextOffset()
+	{
+		PsiElement nameIdentifier = getNameIdentifier();
+		return nameIdentifier == null ? super.getTextOffset() : nameIdentifier.getTextOffset();
+	}
+
+	@Override
 	public void accept(SharpLabElementVisitor visitor)
 	{
 		visitor.visitProperty(this);

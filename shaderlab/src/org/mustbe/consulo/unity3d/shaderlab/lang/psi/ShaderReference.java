@@ -17,6 +17,7 @@
 package org.mustbe.consulo.unity3d.shaderlab.lang.psi;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
@@ -26,6 +27,7 @@ import org.mustbe.consulo.csharp.lang.psi.impl.msil.CSharpTransform;
 import org.mustbe.consulo.dotnet.psi.DotNetTypeDeclaration;
 import org.mustbe.consulo.dotnet.resolve.DotNetPsiSearcher;
 import org.mustbe.consulo.unity3d.shaderlab.lang.ShaderMaterialAttribute;
+import org.mustbe.consulo.unity3d.shaderlab.lang.psi.stub.index.ShaderDefIndex;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.icons.AllIcons;
 import com.intellij.lang.ASTNode;
@@ -36,6 +38,7 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.util.IncorrectOperationException;
+import com.intellij.util.containers.ContainerUtil;
 
 /**
  * @author VISTALL
@@ -102,6 +105,7 @@ public class ShaderReference extends ShaderLabElement implements PsiQualifiedRef
 	@RequiredReadAction
 	public PsiElement resolve()
 	{
+		GlobalSearchScope scope = GlobalSearchScope.allScope(getProject());
 		ResolveKind kind = kind();
 		switch(kind)
 		{
@@ -109,8 +113,7 @@ public class ShaderReference extends ShaderLabElement implements PsiQualifiedRef
 				try
 				{
 					ShaderMaterialAttribute attribute = ShaderMaterialAttribute.valueOf(getReferenceName());
-					DotNetTypeDeclaration type = DotNetPsiSearcher.getInstance(getProject()).findType(attribute.getType(),
-							GlobalSearchScope.allScope(getProject()), DotNetPsiSearcher.TypeResoleKind.UNKNOWN, CSharpTransform.INSTANCE);
+					DotNetTypeDeclaration type = DotNetPsiSearcher.getInstance(getProject()).findType(attribute.getType(), scope, DotNetPsiSearcher.TypeResoleKind.UNKNOWN, CSharpTransform.INSTANCE);
 					if(type != null)
 					{
 						return type;
@@ -121,6 +124,9 @@ public class ShaderReference extends ShaderLabElement implements PsiQualifiedRef
 					//
 				}
 				break;
+			case ANOTHER_SHADER:
+				Collection<ShaderDef> shaderDefs = ShaderDefIndex.getInstance().get(getReferenceName(), getProject(), scope);
+				return ContainerUtil.getFirstItem(shaderDefs);
 		}
 		return null;
 	}

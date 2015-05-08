@@ -16,23 +16,77 @@
 
 package org.mustbe.consulo.unity3d.shaderlab.lang.psi;
 
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.mustbe.consulo.unity3d.shaderlab.lang.psi.stub.ShaderDefStub;
+import com.intellij.extapi.psi.StubBasedPsiElementBase;
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.PsiNameIdentifierOwner;
+import com.intellij.psi.StubBasedPsiElement;
+import com.intellij.psi.stubs.IStubElementType;
+import com.intellij.util.IncorrectOperationException;
 
 /**
  * @author VISTALL
  * @since 08.05.2015
  */
-public class ShaderDef extends ShaderLabElement
+public class ShaderDef extends StubBasedPsiElementBase<ShaderDefStub> implements PsiNameIdentifierOwner, StubBasedPsiElement<ShaderDefStub>
 {
 	public ShaderDef(@NotNull ASTNode node)
 	{
 		super(node);
 	}
 
-	@Override
-	public void accept(SharpLabElementVisitor visitor)
+	public ShaderDef(@NotNull ShaderDefStub stub, @NotNull IStubElementType nodeType)
 	{
-		visitor.visitShaderDef(this);
+		super(stub, nodeType);
+	}
+
+	@Override
+	public int getTextOffset()
+	{
+		PsiElement nameIdentifier = getNameIdentifier();
+		return nameIdentifier == null ? super.getTextOffset() : nameIdentifier.getTextOffset();
+	}
+
+	@Override
+	public String getName()
+	{
+		ShaderDefStub stub = getStub();
+		if(stub != null)
+		{
+			return stub.getName();
+		}
+		PsiElement nameIdentifier = getNameIdentifier();
+		return nameIdentifier == null ? null : nameIdentifier.getText();
+	}
+
+	@Override
+	public PsiElement setName(@NonNls @NotNull String name) throws IncorrectOperationException
+	{
+		return null;
+	}
+
+	@Override
+	public void accept(@NotNull PsiElementVisitor visitor)
+	{
+		if(visitor instanceof SharpLabElementVisitor)
+		{
+			((SharpLabElementVisitor) visitor).visitShaderDef(this);
+		}
+		else
+		{
+			super.accept(visitor);
+		}
+	}
+
+	@Nullable
+	@Override
+	public PsiElement getNameIdentifier()
+	{
+		return findChildByType(ShaderLabTokens.STRING_LITERAL);
 	}
 }

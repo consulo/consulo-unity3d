@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.mustbe.consulo.unity3d.shaderlab.lang.lexer.ShaderLabLexer;
 import org.mustbe.consulo.unity3d.shaderlab.lang.parser.ShaderLabParser;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderLabFile;
+import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderLabStubElements;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderLabTokenSets;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
@@ -41,8 +42,6 @@ import com.intellij.psi.tree.TokenSet;
  */
 public class ShaderLabParserDefinition implements ParserDefinition
 {
-	private static final IFileElementType FILE_ELEMENT_TYPE = new IFileElementType("SHADERLAB_FILE", ShaderLabLanguage.INSTANCE);
-
 	@NotNull
 	@Override
 	public Lexer createLexer(@Nullable Project project, @NotNull LanguageVersion languageVersion)
@@ -61,7 +60,7 @@ public class ShaderLabParserDefinition implements ParserDefinition
 	@Override
 	public IFileElementType getFileNodeType()
 	{
-		return FILE_ELEMENT_TYPE;
+		return ShaderLabStubElements.FILE;
 	}
 
 	@NotNull

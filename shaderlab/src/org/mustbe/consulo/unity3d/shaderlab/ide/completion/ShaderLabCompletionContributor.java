@@ -17,9 +17,11 @@
 package org.mustbe.consulo.unity3d.shaderlab.ide.completion;
 
 import org.jetbrains.annotations.NotNull;
+import org.mustbe.consulo.unity3d.shaderlab.lang.ShaderLabFileType;
 import org.mustbe.consulo.unity3d.shaderlab.lang.ShaderLabPropertyType;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderLabTokens;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderPropertyType;
+import org.mustbe.consulo.unity3d.shaderlab.lang.psi.stub.index.ShaderDefIndex;
 import com.intellij.codeInsight.completion.CompletionContributor;
 import com.intellij.codeInsight.completion.CompletionParameters;
 import com.intellij.codeInsight.completion.CompletionProvider;
@@ -28,6 +30,7 @@ import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.patterns.StandardPatterns;
 import com.intellij.util.ProcessingContext;
+import com.intellij.util.Processor;
 
 /**
  * @author VISTALL
@@ -50,6 +53,27 @@ public class ShaderLabCompletionContributor extends CompletionContributor
 
 					result.addElement(builder);
 				}
+			}
+		});
+
+		extend(CompletionType.BASIC, StandardPatterns.psiElement().afterLeaf(StandardPatterns.psiElement().withElementType(ShaderLabTokens
+				.FALLBACK_KEYWORD)), new CompletionProvider<CompletionParameters>()
+		{
+			@Override
+			protected void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext context,
+					@NotNull final CompletionResultSet result)
+			{
+				ShaderDefIndex.getInstance().processAllKeys(parameters.getPosition().getProject(), new Processor<String>()
+				{
+					@Override
+					public boolean process(String s)
+					{
+						LookupElementBuilder builder = LookupElementBuilder.create(s);
+						builder = builder.withIcon(ShaderLabFileType.INSTANCE.getIcon());
+						result.addElement(builder);
+						return true;
+					}
+				});
 			}
 		});
 	}

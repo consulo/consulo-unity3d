@@ -21,6 +21,9 @@
 		<completion.contributor language="SHADERLAB"
 								implementationClass="org.mustbe.consulo.unity3d.shaderlab.ide.completion.ShaderLabCompletionContributor"/>
 
+		<stubElementTypeHolder class="org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderLabStubElements" />
+		<stubIndex implementation="org.mustbe.consulo.unity3d.shaderlab.lang.psi.stub.index.ShaderDefIndex" />
+
 		<highlightVisitor implementation="org.mustbe.consulo.unity3d.shaderlab.ide.highlight.SharpLabHighlightVisitor"/>
 		<lang.parserDefinition language="SHADERLAB" implementationClass="org.mustbe.consulo.unity3d.shaderlab.lang.ShaderLabParserDefinition"/>
 		<lang.syntaxHighlighterFactory key="SHADERLAB"
