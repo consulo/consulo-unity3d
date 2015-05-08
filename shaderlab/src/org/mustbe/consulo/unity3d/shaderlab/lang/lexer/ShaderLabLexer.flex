@@ -32,7 +32,8 @@ IDENTIFIER=[:jletter:] [:jletterdigit:]* | {INTEGER_LITERAL} [:jletter:]
 DIGIT = [0-9]
 DIGITS = {DIGIT}*
 
-INTEGER_LITERAL = {DIGITS} | {DIGITS} "." {DIGITS}*
+INTEGER_PREFIX = "+" | "-"
+INTEGER_LITERAL = {INTEGER_PREFIX}? ({DIGITS} | {DIGITS} "." {DIGITS})
 
 %%
 
