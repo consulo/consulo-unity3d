@@ -18,10 +18,13 @@
 	<extensions defaultExtensionNs="com.intellij">
 		<fileTypeFactory implementation="org.mustbe.consulo.unity3d.shaderlab.lang.ShaderLabFileTypeFactory"/>
 
-		<highlightVisitor implementation="org.mustbe.consulo.unity3d.shaderlab.ide.highlight.SharpLabHighlightVisitor" />
+		<completion.contributor language="SHADERLAB"
+								implementationClass="org.mustbe.consulo.unity3d.shaderlab.ide.completion.ShaderLabCompletionContributor"/>
+
+		<highlightVisitor implementation="org.mustbe.consulo.unity3d.shaderlab.ide.highlight.SharpLabHighlightVisitor"/>
 		<lang.parserDefinition language="SHADERLAB" implementationClass="org.mustbe.consulo.unity3d.shaderlab.lang.ShaderLabParserDefinition"/>
 		<lang.syntaxHighlighterFactory key="SHADERLAB"
 									   implementationClass="org.mustbe.consulo.unity3d.shaderlab.ide.highlight.ShaderLabHighlighterFactory"/>
-		<lang.braceMatcher language="SHADERLAB" implementationClass="org.mustbe.consulo.unity3d.shaderlab.lang.ShaderLabPairedBraceMatcher" />
+		<lang.braceMatcher language="SHADERLAB" implementationClass="org.mustbe.consulo.unity3d.shaderlab.lang.ShaderLabPairedBraceMatcher"/>
 	</extensions>
 </idea-plugin>

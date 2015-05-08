@@ -23,7 +23,7 @@ import org.jetbrains.annotations.Nullable;
  * @author VISTALL
  * @since 08.05.2015
  */
-public enum ShaderType
+public enum ShaderLabPropertyType
 {
 	Float,
 	Range,
@@ -34,20 +34,27 @@ public enum ShaderType
 	_2D,
 	_3D;
 
-	@Nullable
-	public static ShaderType find(@NotNull String value)
+	@NotNull
+	public String getPresentableName()
 	{
-		for(ShaderType shaderType : values())
+		String name = name();
+		if(name.charAt(0) == '_')
 		{
-			String name = shaderType.name();
-			if(name.charAt(0) == '_')
-			{
-				name = name.substring(1, name.length());
-			}
+			name = name.substring(1, name.length());
+		}
+		return name;
+	}
+
+	@Nullable
+	public static ShaderLabPropertyType find(@NotNull String value)
+	{
+		for(ShaderLabPropertyType shaderLabPropertyType : values())
+		{
+			String name = shaderLabPropertyType.getPresentableName();
 
 			if(value.equals(name))
 			{
-				return shaderType;
+				return shaderLabPropertyType;
 			}
 		}
 		return null;

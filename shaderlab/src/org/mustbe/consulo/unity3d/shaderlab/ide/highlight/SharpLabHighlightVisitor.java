@@ -17,7 +17,7 @@
 package org.mustbe.consulo.unity3d.shaderlab.ide.highlight;
 
 import org.jetbrains.annotations.NotNull;
-import org.mustbe.consulo.unity3d.shaderlab.lang.ShaderType;
+import org.mustbe.consulo.unity3d.shaderlab.lang.ShaderLabPropertyType;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderLabFile;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderProperty;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderPropertyType;
@@ -58,8 +58,8 @@ public class SharpLabHighlightVisitor extends SharpLabElementVisitor implements 
 
 		PsiElement element = type.getTargetElement();
 
-		ShaderType shaderType = ShaderType.find(element.getText());
-		if(shaderType == null)
+		ShaderLabPropertyType shaderLabPropertyType = ShaderLabPropertyType.find(element.getText());
+		if(shaderLabPropertyType == null)
 		{
 			myHolder.add(HighlightInfo.newHighlightInfo(HighlightInfoType.WRONG_REF).range(element).descriptionAndTooltip("Wrong type").create());
 		}

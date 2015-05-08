@@ -18,7 +18,7 @@ package org.mustbe.consulo.unity3d.shaderlab.lang.parser;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.mustbe.consulo.unity3d.shaderlab.lang.ShaderType;
+import org.mustbe.consulo.unity3d.shaderlab.lang.ShaderLabPropertyType;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderLabElements;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderLabTokens;
 import com.intellij.lang.ASTNode;
@@ -27,6 +27,7 @@ import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiBuilderUtil;
 import com.intellij.lang.PsiParser;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.util.ThreeState;
 
 /**
  * @author VISTALL
@@ -120,8 +121,30 @@ public class ShaderLabParser implements PsiParser
 
 			if(expectWithError(builder, ShaderLabTokens.LBRACE, "'{' expected"))
 			{
-				while(!builder.eof() && parseProperty(builder))
+				int balanceCount = 0;
+
+				loop:while(!builder.eof())
 				{
+					ThreeState threeState = parseProperty(builder);
+					switch(threeState)
+					{
+						case YES:
+							if(balanceCount == 0)
+							{
+								break loop;
+							}
+							balanceCount --;
+							doneError(builder, "Unexpected token");
+							break;
+						case UNSURE:
+							if(builder.getTokenType() == ShaderLabTokens.LBRACE)
+							{
+								balanceCount ++;
+							}
+
+							doneError(builder, "Unexpected token");
+							break;
+					}
 				}
 
 				expectWithError(builder, ShaderLabTokens.RBRACE, "'}' expected");
@@ -133,7 +156,8 @@ public class ShaderLabParser implements PsiParser
 		return null;
 	}
 
-	private static boolean parseProperty(PsiBuilder builder)
+	@NotNull
+	private static ThreeState parseProperty(PsiBuilder builder)
 	{
 		IElementType tokenType = builder.getTokenType();
 		if(tokenType == ShaderLabTokens.IDENTIFIER)
@@ -142,23 +166,23 @@ public class ShaderLabParser implements PsiParser
 
 			builder.advanceLexer();
 
-			ShaderType shaderType = null;
+			ShaderLabPropertyType shaderLabPropertyType = null;
 			if(expectWithError(builder, ShaderLabTokens.LPAR, "'(' expected"))
 			{
 				expectWithError(builder, ShaderLabTokens.STRING_LITERAL, "Name expected");
 				expectWithError(builder, ShaderLabTokens.COMMA, "Comma expected");
 
-				shaderType = parsePropertyType(builder);
+				shaderLabPropertyType = parsePropertyType(builder);
 
 				expectWithError(builder, ShaderLabTokens.RPAR, "')' expected");
 			}
 
 			if(expectWithError(builder, ShaderLabTokens.EQ, "'=' expected"))
 			{
-				if(shaderType != null)
+				if(shaderLabPropertyType != null)
 				{
 					PsiBuilder.Marker valueMark = builder.mark();
-					switch(shaderType)
+					switch(shaderLabPropertyType)
 					{
 						case Float:
 						case Int:
@@ -186,13 +210,17 @@ public class ShaderLabParser implements PsiParser
 			}
 
 			mark.done(ShaderLabElements.PROPERTY);
-			return true;
+			return ThreeState.NO;
 		}
-		return false;
+		else if(tokenType == ShaderLabTokens.RBRACE)
+		{
+			return ThreeState.YES;
+		}
+		return ThreeState.UNSURE;
 	}
 
 	@Nullable
-	private static ShaderType parsePropertyType(PsiBuilder builder)
+	private static ShaderLabPropertyType parsePropertyType(PsiBuilder builder)
 	{
 		IElementType tokenType = builder.getTokenType();
 		if(tokenType == ShaderLabTokens.IDENTIFIER)
@@ -201,7 +229,7 @@ public class ShaderLabParser implements PsiParser
 
 			String tokenText = builder.getTokenText();
 			assert tokenText != null;
-			ShaderType shaderType = ShaderType.find(tokenText);
+			ShaderLabPropertyType shaderLabPropertyType = ShaderLabPropertyType.find(tokenText);
 
 			builder.advanceLexer();
 
@@ -209,7 +237,7 @@ public class ShaderLabParser implements PsiParser
 
 			mark.done(ShaderLabElements.PROPERTY_TYPE);
 
-			return shaderType;
+			return shaderLabPropertyType;
 		}
 		else if(builder.getTokenType() == ShaderLabTokens.RPAR || builder.getTokenType() == ShaderLabTokens.EQ)
 		{
