@@ -61,6 +61,8 @@ HEX_EXPONENT = [Pp] [+-]? {DIGIT_OR_UNDERSCORE}*
 
 	"Properties"               { return ShaderLabTokens.PROPERTIES_KEYWORD; }
 
+	"SubShader"                { return ShaderLabTokens.SUBSHADER_KEYWORD; }
+
 	"CGPROGRAM"                { yybegin(SHADERSCRIPT); return ShaderLabTokens.CGPROGRAM_KEYWORD; }
 
 	"ENDCG"                    { return ShaderLabTokens.ENDCG_KEYWORD; }

@@ -36,6 +36,8 @@ public interface ShaderLabTokens extends TokenType
 
 	IElementType SHADER_KEYWORD = new IElementType("SHADER_KEYWORD", ShaderLabLanguage.INSTANCE);
 
+	IElementType SUBSHADER_KEYWORD = new IElementType("SUBSHADER_KEYWORD", ShaderLabLanguage.INSTANCE);
+
 	IElementType PROPERTIES_KEYWORD = new IElementType("PROPERTIES_KEYWORD", ShaderLabLanguage.INSTANCE);
 
 	IElementType LBRACE = new IElementType("LBRACE", ShaderLabLanguage.INSTANCE);
