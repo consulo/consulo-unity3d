@@ -47,6 +47,7 @@ public class ShaderLabHighlighter extends SyntaxHighlighterBase
 		ourMap.put(ShaderLabTokens.SHADERSCRIPT, EditorColors.INJECTED_LANGUAGE_FRAGMENT);
 
 		safeMap(ourMap, ShaderLabTokenSets.KEYWORDS, DefaultLanguageHighlighterColors.KEYWORD);
+		safeMap(ourMap, ShaderLabTokenSets.VALUE_KEYWORDS, DefaultLanguageHighlighterColors.MACRO_KEYWORD);
 	}
 
 	@NotNull
