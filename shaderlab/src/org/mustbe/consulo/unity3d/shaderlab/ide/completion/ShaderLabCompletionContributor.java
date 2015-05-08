@@ -74,6 +74,7 @@ public class ShaderLabCompletionContributor extends CompletionContributor
 						return true;
 					}
 				});
+				result.addElement(LookupElementBuilder.create("Off").bold());
 			}
 		});
 	}

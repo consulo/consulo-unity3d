@@ -165,24 +165,19 @@ public class ShaderLabParser implements PsiParser
 			builder.advanceLexer();
 
 			IElementType valueTokenType = builder.getTokenType();
-			if(valueTokenType == ShaderLabTokens.IDENTIFIER)
+			if(valueTokenType == ShaderLabTokens.OFF_KEYWORD)
 			{
-				String tokenText = builder.getTokenText();
-				assert tokenText != null;
-				if(tokenText.equalsIgnoreCase("off"))
-				{
-					builder.advanceLexer();
-				}
-				else
-				{
-					doneError(builder, "Wrong value");
-				}
+				builder.advanceLexer();
 			}
 			else if(valueTokenType == ShaderLabTokens.STRING_LITERAL)
 			{
 				PsiBuilder.Marker refMarker = builder.mark();
 				builder.advanceLexer();
 				refMarker.done(ShaderLabElements.REFERENCE);
+			}
+			else
+			{
+				doneError(builder, "Wrong value");
 			}
 
 			mark.done(ShaderLabElements.SIMPLE_VALUE);
