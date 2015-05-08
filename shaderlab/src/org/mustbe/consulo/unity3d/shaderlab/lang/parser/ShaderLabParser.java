@@ -251,8 +251,24 @@ public class ShaderLabParser implements PsiParser
 						case _2D:
 						case _3D:
 							expectWithError(builder, ShaderLabTokens.STRING_LITERAL, "Name expected");
-							expectWithError(builder, ShaderLabTokens.LBRACE, "'{' expected");
-							expectWithError(builder, ShaderLabTokens.RBRACE, "'}' expected");
+							if(expectWithError(builder, ShaderLabTokens.LBRACE, "'{' expected"))
+							{
+								while(!builder.eof())
+								{
+									if(builder.getTokenType() == ShaderLabTokens.IDENTIFIER)
+									{
+										PsiBuilder.Marker optionMarker = builder.mark();
+										builder.advanceLexer();
+										expectWithError(builder, ShaderLabTokens.IDENTIFIER, "Expected value");
+										optionMarker.done(ShaderLabElements.PROPERTY_OPTION);
+									}
+									else
+									{
+										break;
+									}
+								}
+								expectWithError(builder, ShaderLabTokens.RBRACE, "'}' expected");
+							}
 							break;
 					}
 					valueMark.done(ShaderLabElements.PROPERTY_VALUE);

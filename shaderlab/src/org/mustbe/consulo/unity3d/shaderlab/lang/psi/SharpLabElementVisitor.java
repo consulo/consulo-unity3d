@@ -63,4 +63,9 @@ public class SharpLabElementVisitor extends PsiElementVisitor
 	{
 		visitElement(fallback);
 	}
+
+	public void visitPropertyOption(ShaderPropertyOption option)
+	{
+		visitElement(option);
+	}
 }
