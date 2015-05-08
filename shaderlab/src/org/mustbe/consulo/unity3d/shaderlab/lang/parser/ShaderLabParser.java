@@ -173,6 +173,8 @@ public class ShaderLabParser implements PsiParser
 				builder.error("Expected identifier");
 			}
 
+			parseElementsInBraces(builder, ShaderLabTokens.LPAR, ShaderLabTokens.RPAR, null);
+
 			expectWithError(builder, ShaderLabTokens.RBRACKET, "']' expected");
 
 			propertyMark.done(ShaderLabElements.PROPERTY_ATTRIBUTE);
@@ -303,13 +305,20 @@ public class ShaderLabParser implements PsiParser
 					break;
 				}
 
-				if(tokenType == valid)
+				if(valid != null)
 				{
-					builder.advanceLexer();
+					if(tokenType == valid)
+					{
+						builder.advanceLexer();
+					}
+					else
+					{
+						doneError(builder, "Unexpected token");
+					}
 				}
 				else
 				{
-					doneError(builder, "Unexpected token");
+					builder.advanceLexer();
 				}
 
 				if(builder.getTokenType() == ShaderLabTokens.COMMA)
