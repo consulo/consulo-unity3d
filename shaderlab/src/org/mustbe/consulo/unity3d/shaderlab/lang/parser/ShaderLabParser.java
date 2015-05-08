@@ -160,6 +160,8 @@ public class ShaderLabParser implements PsiParser
 	private static ThreeState parseProperty(PsiBuilder builder)
 	{
 		IElementType tokenType = builder.getTokenType();
+
+
 		if(tokenType == ShaderLabTokens.IDENTIFIER)
 		{
 			PsiBuilder.Marker mark = builder.mark();

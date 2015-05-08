@@ -32,7 +32,8 @@ public class ShaderLabPairedBraceMatcher implements PairedBraceMatcher
 {
 	private final BracePair[] myBracePairs = new BracePair[]{
 			new BracePair(ShaderLabTokens.LBRACE, ShaderLabTokens.RBRACE, true),
-			new BracePair(ShaderLabTokens.LPAR, ShaderLabTokens.RPAR, true),
+			new BracePair(ShaderLabTokens.LPAR, ShaderLabTokens.RPAR, false),
+			new BracePair(ShaderLabTokens.LBRACKET, ShaderLabTokens.RBRACKET, false),
 	};
 
 	@Override

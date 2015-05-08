@@ -52,6 +52,10 @@ public interface ShaderLabTokens extends TokenType
 
 	IElementType RPAR = new IElementType("RPAR", ShaderLabLanguage.INSTANCE);
 
+	IElementType LBRACKET = new IElementType("LBRACKET", ShaderLabLanguage.INSTANCE);
+
+	IElementType RBRACKET = new IElementType("RBRACKET", ShaderLabLanguage.INSTANCE);
+
 	IElementType CGPROGRAM_KEYWORD = new IElementType("CGPROGRAM_KEYWORD", ShaderLabLanguage.INSTANCE);
 
 	IElementType ENDCG_KEYWORD = new IElementType("ENDCG_KEYWORD", ShaderLabLanguage.INSTANCE);

@@ -56,6 +56,10 @@ INTEGER_LITERAL = {DIGITS} | {DIGITS} "." {DIGITS}*
 
 	")"                        { return ShaderLabTokens.RPAR; }
 
+	"["                        { return ShaderLabTokens.LBRACKET; }
+
+	"]"                        { return ShaderLabTokens.RBRACKET; }
+
 	","                        { return ShaderLabTokens.COMMA; }
 
 	"="                        { return ShaderLabTokens.EQ; }
