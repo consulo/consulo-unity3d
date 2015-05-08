@@ -17,9 +17,12 @@
 package org.mustbe.consulo.unity3d.shaderlab.lang.parser;
 
 import org.jetbrains.annotations.NotNull;
+import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderLabElements;
+import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderLabTokens;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.LanguageVersion;
 import com.intellij.lang.PsiBuilder;
+import com.intellij.lang.PsiBuilderUtil;
 import com.intellij.lang.PsiParser;
 import com.intellij.psi.tree.IElementType;
 
@@ -34,11 +37,73 @@ public class ShaderLabParser implements PsiParser
 	public ASTNode parse(@NotNull IElementType root, @NotNull PsiBuilder builder, @NotNull LanguageVersion languageVersion)
 	{
 		PsiBuilder.Marker mark = builder.mark();
+
+		if(!parseShader(builder))
+		{
+			builder.error("Shader expected");
+		}
+
 		while(!builder.eof())
 		{
+			PsiBuilder.Marker m = builder.mark();
 			builder.advanceLexer();
+			m.error("Unexpected token");
 		}
 		mark.done(root);
 		return builder.getTreeBuilt();
+	}
+
+	public static boolean parseShader(PsiBuilder builder)
+	{
+		IElementType tokenType = builder.getTokenType();
+		if(tokenType != ShaderLabTokens.SHADER_KEYWORD)
+		{
+			return false;
+		}
+
+		PsiBuilder.Marker mark = builder.mark();
+
+		builder.advanceLexer();
+
+		if(!PsiBuilderUtil.expect(builder, ShaderLabTokens.STRING_LITERAL))
+		{
+			builder.error("Expected name");
+		}
+
+		if(PsiBuilderUtil.expect(builder, ShaderLabTokens.LBRACE))
+		{
+			//TODO [VISTALL] hack until full syntax parse
+			int count = 0;
+			while(!builder.eof())
+			{
+				if(builder.getTokenType() == ShaderLabTokens.LBRACE)
+				{
+					count ++;
+				}
+
+				if(builder.getTokenType() == ShaderLabTokens.RBRACE)
+				{
+					if(count == 0)
+					{
+						break;
+					}
+
+					count --;
+				}
+				builder.advanceLexer();
+			}
+
+			if(!PsiBuilderUtil.expect(builder, ShaderLabTokens.RBRACE))
+			{
+				builder.error("'}' expected");
+			}
+		}
+		else
+		{
+			builder.error("'{' expected");
+		}
+
+		mark.done(ShaderLabElements.SHADER_DEF);
+		return true;
 	}
 }
