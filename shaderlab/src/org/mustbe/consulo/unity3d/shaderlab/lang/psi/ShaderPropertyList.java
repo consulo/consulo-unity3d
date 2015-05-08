@@ -33,7 +33,7 @@ public class ShaderPropertyList extends ShaderBraceOwnerElement
 	@NotNull
 	public ShaderProperty[] getProperties()
 	{
-		return findChildrenByClass(ShaderProperty.class);
+		return findChildrenByClass(ShaderPropertyElement.class);
 	}
 
 	@Override

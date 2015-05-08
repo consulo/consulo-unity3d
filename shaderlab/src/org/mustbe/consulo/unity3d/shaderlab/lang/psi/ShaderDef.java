@@ -23,6 +23,7 @@ import java.util.List;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.mustbe.consulo.unity3d.shaderlab.lang.psi.light.LightShaderProperty;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.stub.ShaderDefStub;
 import com.intellij.extapi.psi.StubBasedPsiElementBase;
 import com.intellij.lang.ASTNode;
@@ -77,6 +78,8 @@ public class ShaderDef extends StubBasedPsiElementBase<ShaderDefStub> implements
 		{
 			Collections.addAll(list, propertyList.getProperties());
 		}
+		list.add(new LightShaderProperty(getProject(), "_Projector", "Vector"));
+		list.add(new LightShaderProperty(getProject(), "_ProjectorClip", "Vector"));
 		return list;
 	}
 

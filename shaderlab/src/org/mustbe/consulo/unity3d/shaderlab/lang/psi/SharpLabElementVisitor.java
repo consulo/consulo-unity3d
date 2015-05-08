@@ -29,7 +29,7 @@ public class SharpLabElementVisitor extends PsiElementVisitor
 		visitElement(shaderDef);
 	}
 
-	public void visitProperty(ShaderProperty p)
+	public void visitProperty(ShaderPropertyElement p)
 	{
 		visitElement(p);
 	}
@@ -39,7 +39,7 @@ public class SharpLabElementVisitor extends PsiElementVisitor
 		visitElement(list);
 	}
 
-	public void visitPropertyType(ShaderPropertyType type)
+	public void visitPropertyType(ShaderPropertyTypeElement type)
 	{
 		visitElement(type);
 	}

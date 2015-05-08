@@ -20,8 +20,8 @@ import org.jetbrains.annotations.NotNull;
 import org.mustbe.consulo.RequiredReadAction;
 import org.mustbe.consulo.unity3d.shaderlab.lang.ShaderLabPropertyType;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderLabFile;
-import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderProperty;
-import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderPropertyType;
+import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderPropertyElement;
+import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderPropertyTypeElement;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderReference;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.SharpLabElementVisitor;
 import com.intellij.codeInsight.daemon.impl.HighlightInfo;
@@ -42,7 +42,7 @@ public class SharpLabHighlightVisitor extends SharpLabElementVisitor implements 
 	private HighlightInfoHolder myHolder;
 
 	@Override
-	public void visitProperty(ShaderProperty p)
+	public void visitProperty(ShaderPropertyElement p)
 	{
 		super.visitProperty(p);
 
@@ -55,7 +55,7 @@ public class SharpLabHighlightVisitor extends SharpLabElementVisitor implements 
 	}
 
 	@Override
-	public void visitPropertyType(ShaderPropertyType type)
+	public void visitPropertyType(ShaderPropertyTypeElement type)
 	{
 		super.visitPropertyType(type);
 

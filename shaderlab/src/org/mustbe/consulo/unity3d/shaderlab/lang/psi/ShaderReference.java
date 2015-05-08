@@ -220,7 +220,7 @@ public class ShaderReference extends ShaderLabElement implements PsiQualifiedRef
 						ShaderPropertyType type = shaderProperty.getType();
 						if(type != null)
 						{
-							builder = builder.withTypeText(type.getTargetElement().getText(), true);
+							builder = builder.withTypeText(type.getTargetText(), true);
 						}
 						values.add(builder);
 					}

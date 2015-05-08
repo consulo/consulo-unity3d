@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.mustbe.consulo.unity3d.shaderlab.lang.ShaderLabFileType;
 import org.mustbe.consulo.unity3d.shaderlab.lang.ShaderLabPropertyType;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderLabTokens;
-import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderPropertyType;
+import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderPropertyTypeElement;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.stub.index.ShaderDefIndex;
 import com.intellij.codeInsight.completion.CompletionContributor;
 import com.intellij.codeInsight.completion.CompletionParameters;
@@ -40,7 +40,7 @@ public class ShaderLabCompletionContributor extends CompletionContributor
 {
 	public ShaderLabCompletionContributor()
 	{
-		extend(CompletionType.BASIC, StandardPatterns.psiElement(ShaderLabTokens.IDENTIFIER).withParent(ShaderPropertyType.class), new CompletionProvider<CompletionParameters>()
+		extend(CompletionType.BASIC, StandardPatterns.psiElement(ShaderLabTokens.IDENTIFIER).withParent(ShaderPropertyTypeElement.class), new CompletionProvider<CompletionParameters>()
 
 		{
 			@Override

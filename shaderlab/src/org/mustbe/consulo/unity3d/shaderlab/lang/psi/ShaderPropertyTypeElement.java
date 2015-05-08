@@ -17,18 +17,37 @@
 package org.mustbe.consulo.unity3d.shaderlab.lang.psi;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 
 /**
  * @author VISTALL
- * @since 09.05.2015
+ * @since 08.05.2015
  */
-public interface ShaderPropertyType extends PsiElement
+public class ShaderPropertyTypeElement extends ShaderLabElement implements ShaderPropertyType
 {
-	@Nullable
-	PsiElement getTargetElement();
+	public ShaderPropertyTypeElement(@NotNull ASTNode node)
+	{
+		super(node);
+	}
+
+	@Override
+	@NotNull
+	public PsiElement getTargetElement()
+	{
+		return findNotNullChildByType(ShaderLabTokenSets.TYPE_KEYWORDS);
+	}
 
 	@NotNull
-	String getTargetText();
+	@Override
+	public String getTargetText()
+	{
+		return getTargetElement().getText();
+	}
+
+	@Override
+	public void accept(SharpLabElementVisitor visitor)
+	{
+		visitor.visitPropertyType(this);
+	}
 }
