@@ -36,6 +36,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiQualifiedReferenceElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.containers.ContainerUtil;
@@ -50,7 +51,8 @@ public class ShaderReference extends ShaderLabElement implements PsiQualifiedRef
 	{
 		ATTRIBUTE,
 		ANOTHER_SHADER,
-		UNKNOWN
+		UNKNOWN,
+		PROPERTY
 	}
 
 	private static final TokenSet ourTokens = TokenSet.create(ShaderLabTokens.IDENTIFIER, ShaderLabTokens.STRING_LITERAL);
@@ -68,9 +70,17 @@ public class ShaderReference extends ShaderLabElement implements PsiQualifiedRef
 		{
 			return ResolveKind.ATTRIBUTE;
 		}
-		else if(parent instanceof ShaderFallback)
+		else if(parent instanceof ShaderSimpleValue)
 		{
-			return ResolveKind.ANOTHER_SHADER;
+			IElementType key = ((ShaderSimpleValue) parent).getKey();
+			if(key == ShaderLabTokens.FALLBACK_KEYWORD)
+			{
+				return ResolveKind.ANOTHER_SHADER;
+			}
+			else if(key == ShaderLabTokens.COLOR_KEYWORD)
+			{
+				return ResolveKind.PROPERTY;
+			}
 		}
 		return ResolveKind.UNKNOWN;
 	}

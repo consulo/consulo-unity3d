@@ -22,6 +22,7 @@ import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderLabTokens;
 DIGIT=[0-9]
 WHITE_SPACE=[ \n\r\t\f]+
 SINGLE_LINE_COMMENT="/""/"[^\r\n]*
+WARNING_LINE="#warning"[^\r\n]*
 COMMENT_TAIL=([^"*"]*("*"+[^"*""/"])?)*("*"+"/")?
 MULTI_LINE_STYLE_COMMENT=("/*"{COMMENT_TAIL})|"/*"
 
@@ -42,6 +43,8 @@ INTEGER_LITERAL = {INTEGER_PREFIX}? ({DIGITS} | {DIGIT}* "." {DIGITS})
 {
 	{SINGLE_LINE_COMMENT}      { return ShaderLabTokens.LINE_COMMENT; }
 
+	{WARNING_LINE}              { return ShaderLabTokens.LINE_COMMENT; }
+
 	{MULTI_LINE_STYLE_COMMENT} { return ShaderLabTokens.BLOCK_COMMENT; }
 
 	"Shader"                   { return ShaderLabTokens.SHADER_KEYWORD; }
@@ -53,6 +56,8 @@ INTEGER_LITERAL = {INTEGER_PREFIX}? ({DIGITS} | {DIGIT}* "." {DIGITS})
 	"SubShader"                { return ShaderLabTokens.SUBSHADER_KEYWORD; }
 
 	"Tags"                     { return ShaderLabTokens.TAGS_KEYWORD; }
+
+	"Color"                    { return ShaderLabTokens.COLOR_KEYWORD; }
 
 	"Pass"                     { return ShaderLabTokens.PASS_KEYWORD; }
 

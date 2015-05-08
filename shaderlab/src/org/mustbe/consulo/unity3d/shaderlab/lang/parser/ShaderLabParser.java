@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.mustbe.consulo.unity3d.shaderlab.lang.ShaderLabPropertyType;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderLabElements;
+import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderLabTokenSets;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderLabTokens;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.LanguageVersion;
@@ -184,7 +185,7 @@ public class ShaderLabParser implements PsiParser
 				refMarker.done(ShaderLabElements.REFERENCE);
 			}
 
-			mark.done(ShaderLabElements.FALLBACK);
+			mark.done(ShaderLabElements.SIMPLE_VALUE);
 			return mark;
 		}
 		else if(tokenType == ShaderLabTokens.SUBSHADER_KEYWORD)
@@ -240,37 +241,7 @@ public class ShaderLabParser implements PsiParser
 	private static PsiBuilder.Marker parseSubShaderInner(@NotNull PsiBuilder builder)
 	{
 		IElementType tokenType = builder.getTokenType();
-		if(tokenType == ShaderLabTokens.FALLBACK_KEYWORD)
-		{
-			PsiBuilder.Marker mark = builder.mark();
-
-			builder.advanceLexer();
-
-			IElementType valueTokenType = builder.getTokenType();
-			if(valueTokenType == ShaderLabTokens.IDENTIFIER)
-			{
-				String tokenText = builder.getTokenText();
-				assert tokenText != null;
-				if(tokenText.equalsIgnoreCase("off"))
-				{
-					builder.advanceLexer();
-				}
-				else
-				{
-					doneError(builder, "Wrong value");
-				}
-			}
-			else if(valueTokenType == ShaderLabTokens.STRING_LITERAL)
-			{
-				PsiBuilder.Marker refMarker = builder.mark();
-				builder.advanceLexer();
-				refMarker.done(ShaderLabElements.REFERENCE);
-			}
-
-			mark.done(ShaderLabElements.FALLBACK);
-			return mark;
-		}
-		else if(tokenType == ShaderLabTokens.PASS_KEYWORD)
+		if(tokenType == ShaderLabTokens.PASS_KEYWORD)
 		{
 			PsiBuilder.Marker mark = builder.mark();
 
@@ -317,11 +288,40 @@ public class ShaderLabParser implements PsiParser
 			mark.done(ShaderLabElements.PASS);
 			return mark;
 		}
+		else if(tokenType == ShaderLabTokens.TAGS_KEYWORD)
+		{
+			PsiBuilder.Marker mark = builder.mark();
+			builder.advanceLexer();
+
+			if(expectWithError(builder, ShaderLabTokens.LBRACE, "'{' expected"))
+			{
+				while(!builder.eof())
+				{
+					if(builder.getTokenType() == ShaderLabTokens.STRING_LITERAL)
+					{
+						PsiBuilder.Marker optionMarker = builder.mark();
+						builder.advanceLexer();
+						if(expectWithError(builder, ShaderLabTokens.EQ, "'=' expected"))
+						{
+							expectWithError(builder, ShaderLabTokens.STRING_LITERAL, "Expected value");
+						}
+						optionMarker.done(ShaderLabElements.TAG);
+					}
+					else
+					{
+						break;
+					}
+				}
+				expectWithError(builder, ShaderLabTokens.RBRACE, "'}' expected");
+			}
+			mark.done(ShaderLabElements.TAG_LIST);
+		}
 		return null;
 	}
 
 	private static PsiBuilder.Marker parsePassInner(@NotNull PsiBuilder builder)
 	{
+		IElementType tokenType = builder.getTokenType();
 		return null;
 	}
 
@@ -448,7 +448,7 @@ public class ShaderLabParser implements PsiParser
 	private static ShaderLabPropertyType parsePropertyType(PsiBuilder builder)
 	{
 		IElementType tokenType = builder.getTokenType();
-		if(tokenType == ShaderLabTokens.IDENTIFIER)
+		if(ShaderLabTokenSets.TYPE_KEYWORDS.contains(tokenType))
 		{
 			PsiBuilder.Marker mark = builder.mark();
 

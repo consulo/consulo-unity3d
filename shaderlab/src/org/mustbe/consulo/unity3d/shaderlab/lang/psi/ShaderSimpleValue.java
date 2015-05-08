@@ -18,21 +18,30 @@ package org.mustbe.consulo.unity3d.shaderlab.lang.psi;
 
 import org.jetbrains.annotations.NotNull;
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.tree.IElementType;
 
 /**
  * @author VISTALL
- * @since 08.05.2015
+ * @since 09.05.2015
  */
-public class ShaderFallback extends ShaderLabElement
+public class ShaderSimpleValue extends ShaderLabElement
 {
-	public ShaderFallback(@NotNull ASTNode node)
+	public ShaderSimpleValue(@NotNull ASTNode node)
 	{
 		super(node);
+	}
+
+	@NotNull
+	public IElementType getKey()
+	{
+		PsiElement firstChild = getFirstChild();
+		return firstChild.getNode().getElementType();
 	}
 
 	@Override
 	public void accept(SharpLabElementVisitor visitor)
 	{
-		visitor.visitFallback(this);
+		visitor.visitSimpleValue(this);
 	}
 }

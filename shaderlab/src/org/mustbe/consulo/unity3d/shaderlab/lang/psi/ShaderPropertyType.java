@@ -34,7 +34,7 @@ public class ShaderPropertyType extends ShaderLabElement
 	@NotNull
 	public PsiElement getTargetElement()
 	{
-		return findNotNullChildByType(ShaderLabTokens.IDENTIFIER);
+		return findNotNullChildByType(ShaderLabTokenSets.TYPE_KEYWORDS);
 	}
 
 	@Override
