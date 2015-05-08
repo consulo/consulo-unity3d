@@ -68,4 +68,14 @@ public class SharpLabElementVisitor extends PsiElementVisitor
 	{
 		visitElement(option);
 	}
+
+	public void visitTags(ShaderTags tags)
+	{
+		visitElement(tags);
+	}
+
+	public void visitTag(ShaderTag tag)
+	{
+		visitElement(tag);
+	}
 }

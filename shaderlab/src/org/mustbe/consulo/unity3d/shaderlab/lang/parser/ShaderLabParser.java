@@ -154,6 +154,34 @@ public class ShaderLabParser implements PsiParser
 			mark.done(ShaderLabElements.PROPERTY_LIST);
 			return mark;
 		}
+		else if(tokenType == ShaderLabTokens.TAGS_KEYWORD)
+		{
+			PsiBuilder.Marker mark = builder.mark();
+			builder.advanceLexer();
+
+			if(expectWithError(builder, ShaderLabTokens.LBRACE, "'{' expected"))
+			{
+				while(!builder.eof())
+				{
+					if(builder.getTokenType() == ShaderLabTokens.STRING_LITERAL)
+					{
+						PsiBuilder.Marker optionMarker = builder.mark();
+						builder.advanceLexer();
+						if(expectWithError(builder, ShaderLabTokens.EQ, "'=' expected"))
+						{
+							expectWithError(builder, ShaderLabTokens.STRING_LITERAL, "Expected value");
+						}
+						optionMarker.done(ShaderLabElements.TAG);
+					}
+					else
+					{
+						break;
+					}
+				}
+				expectWithError(builder, ShaderLabTokens.RBRACE, "'}' expected");
+			}
+			mark.done(ShaderLabElements.TAGS);
+		}
 		else if(tokenType == ShaderLabTokens.FALLBACK_KEYWORD)
 		{
 			PsiBuilder.Marker mark = builder.mark();
