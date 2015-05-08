@@ -73,6 +73,10 @@ INTEGER_LITERAL = {INTEGER_PREFIX}? ({DIGITS} | {DIGIT}* "." {DIGITS})
 
 	"SetTexture"               { return ShaderLabTokens.SET_TEXTURE_KEYWORD; }
 
+	"Matrix"                   { return ShaderLabTokens.MATRIX_KEYWORD; }
+
+	"ConstantColor"            { return ShaderLabTokens.CONSTANT_COLOR_KEYWORD; }
+
 	"On"                       { return ShaderLabTokens.ON_KEYWORD; }
 
 	"Off"                      { return ShaderLabTokens.OFF_KEYWORD; }

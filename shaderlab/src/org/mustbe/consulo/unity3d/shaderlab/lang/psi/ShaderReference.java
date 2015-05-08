@@ -82,7 +82,7 @@ public class ShaderReference extends ShaderLabElement implements PsiQualifiedRef
 			{
 				return ResolveKind.ANOTHER_SHADER;
 			}
-			else if(key == ShaderLabTokens.COLOR_KEYWORD)
+			else if(key == ShaderLabTokens.COLOR_KEYWORD || key == ShaderLabTokens.MATRIX_KEYWORD || key == ShaderLabTokens.CONSTANT_COLOR_KEYWORD)
 			{
 				return ResolveKind.PROPERTY;
 			}

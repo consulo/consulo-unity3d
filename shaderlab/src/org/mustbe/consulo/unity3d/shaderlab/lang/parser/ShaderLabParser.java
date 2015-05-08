@@ -409,6 +409,42 @@ public class ShaderLabParser implements PsiParser
 
 	private static PsiBuilder.Marker parseSetTextureInner(PsiBuilder builder)
 	{
+		IElementType tokenType = builder.getTokenType();
+		if(tokenType == ShaderLabTokens.MATRIX_KEYWORD)
+		{
+			PsiBuilder.Marker mark = builder.mark();
+			builder.advanceLexer();
+
+			if(builder.getTokenType() == ShaderLabTokens.LBRACKET)
+			{
+				parseBracketReference(builder);
+			}
+			else
+			{
+				builder.error("Expected value");
+			}
+			mark.done(ShaderLabElements.SIMPLE_VALUE);
+			return mark;
+		}
+		else if(tokenType == ShaderLabTokens.CONSTANT_COLOR_KEYWORD)
+		{
+			PsiBuilder.Marker mark = builder.mark();
+			builder.advanceLexer();
+			if(builder.getTokenType() == ShaderLabTokens.LPAR)
+			{
+				parseElementsInBraces(builder, ShaderLabTokens.LPAR, ShaderLabTokens.RPAR, ShaderLabTokens.INTEGER_LITERAL);
+			}
+			else if(builder.getTokenType() == ShaderLabTokens.LBRACKET)
+			{
+				parseBracketReference(builder);
+			}
+			else
+			{
+				builder.error("Expected value");
+			}
+			mark.done(ShaderLabElements.SIMPLE_VALUE);
+			return mark;
+		}
 		return null;
 	}
 
