@@ -7,6 +7,7 @@
           <element id="zip-archive" name="unity3d.jar">
             <element id="module-production-resource-output" name="consulo-unity3d" />
             <element id="module-output" name="consulo-unity3d" />
+            <element id="module-output" name="shaderlab" />
           </element>
           <element id="library" level="project" name="dd-plist" />
           <element id="library" level="project" name="javasysmon" />
