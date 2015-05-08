@@ -180,7 +180,7 @@ public class ShaderLabParser implements PsiParser
 				}
 				expectWithError(builder, ShaderLabTokens.RBRACE, "'}' expected");
 			}
-			mark.done(ShaderLabElements.TAGS);
+			mark.done(ShaderLabElements.TAG_LIST);
 		}
 		else if(tokenType == ShaderLabTokens.FALLBACK_KEYWORD)
 		{
@@ -212,6 +212,55 @@ public class ShaderLabParser implements PsiParser
 			mark.done(ShaderLabElements.FALLBACK);
 			return mark;
 		}
+		else if(tokenType == ShaderLabTokens.PASS_KEYWORD)
+		{
+			PsiBuilder.Marker mark = builder.mark();
+
+			builder.advanceLexer();
+
+			if(PsiBuilderUtil.expect(builder, ShaderLabTokens.LBRACE))
+			{
+				//TODO [VISTALL] hack until full syntax parse
+				int count = 0;
+				while(!builder.eof())
+				{
+					parsePassInner(builder);
+
+					if(builder.getTokenType() == ShaderLabTokens.LBRACE)
+					{
+						count++;
+					}
+
+					if(builder.getTokenType() == ShaderLabTokens.RBRACE)
+					{
+						if(count == 0)
+						{
+							break;
+						}
+
+						count--;
+					}
+					builder.advanceLexer();
+				}
+
+				if(!PsiBuilderUtil.expect(builder, ShaderLabTokens.RBRACE))
+				{
+					builder.error("'}' expected");
+				}
+			}
+			else
+			{
+				builder.error("'{' expected");
+			}
+
+			mark.done(ShaderLabElements.PASS);
+			return mark;
+		}
+		return null;
+	}
+
+	private static PsiBuilder.Marker parsePassInner(@NotNull PsiBuilder builder)
+	{
 		return null;
 	}
 

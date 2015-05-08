@@ -44,7 +44,9 @@ public interface ShaderLabElements
 
 	IElementType FALLBACK = new ElementTypeAsPsiFactory("FALLBACK", ShaderLabLanguage.INSTANCE, ShaderFallback.class);
 
-	IElementType TAGS = new ElementTypeAsPsiFactory("TAGS", ShaderLabLanguage.INSTANCE, ShaderTags.class);
+	IElementType TAG_LIST = new ElementTypeAsPsiFactory("TAG_LIST", ShaderLabLanguage.INSTANCE, ShaderTagList.class);
+
+	IElementType PASS = new ElementTypeAsPsiFactory("PASS", ShaderLabLanguage.INSTANCE, ShaderPass.class);
 
 	IElementType TAG = new ElementTypeAsPsiFactory("TAG", ShaderLabLanguage.INSTANCE, ShaderTag.class);
 }

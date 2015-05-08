@@ -28,6 +28,7 @@
 		<lang.parserDefinition language="SHADERLAB" implementationClass="org.mustbe.consulo.unity3d.shaderlab.lang.ShaderLabParserDefinition"/>
 		<lang.syntaxHighlighterFactory key="SHADERLAB"
 									   implementationClass="org.mustbe.consulo.unity3d.shaderlab.ide.highlight.ShaderLabHighlighterFactory"/>
+		<lang.foldingBuilder language="SHADERLAB" implementationClass="org.mustbe.consulo.unity3d.shaderlab.lang.ShaderLabFoldingBuilder" />
 		<lang.braceMatcher language="SHADERLAB" implementationClass="org.mustbe.consulo.unity3d.shaderlab.lang.ShaderLabPairedBraceMatcher"/>
 	</extensions>
 </idea-plugin>

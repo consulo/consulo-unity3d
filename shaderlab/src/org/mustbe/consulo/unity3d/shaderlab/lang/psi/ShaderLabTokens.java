@@ -44,6 +44,8 @@ public interface ShaderLabTokens extends TokenType
 
 	IElementType TAGS_KEYWORD = new IElementType("TAGS_KEYWORD", ShaderLabLanguage.INSTANCE);
 
+	IElementType PASS_KEYWORD = new IElementType("PASS_KEYWORD", ShaderLabLanguage.INSTANCE);
+
 	IElementType PROPERTIES_KEYWORD = new IElementType("PROPERTIES_KEYWORD", ShaderLabLanguage.INSTANCE);
 
 	IElementType FALLBACK_KEYWORD = new IElementType("FALLBACK_KEYWORD", ShaderLabLanguage.INSTANCE);

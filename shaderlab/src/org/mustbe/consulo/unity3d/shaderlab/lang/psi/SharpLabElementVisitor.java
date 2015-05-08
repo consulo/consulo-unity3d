@@ -69,7 +69,7 @@ public class SharpLabElementVisitor extends PsiElementVisitor
 		visitElement(option);
 	}
 
-	public void visitTags(ShaderTags tags)
+	public void visitTags(ShaderTagList tags)
 	{
 		visitElement(tags);
 	}
@@ -77,5 +77,10 @@ public class SharpLabElementVisitor extends PsiElementVisitor
 	public void visitTag(ShaderTag tag)
 	{
 		visitElement(tag);
+	}
+
+	public void visitPass(ShaderPass shaderPass)
+	{
+		visitElement(shaderPass);
 	}
 }

@@ -54,6 +54,8 @@ INTEGER_LITERAL = {INTEGER_PREFIX}? ({DIGITS} | {DIGIT}* "." {DIGITS})
 
 	"Tags"                     { return ShaderLabTokens.TAGS_KEYWORD; }
 
+	"Pass"                     { return ShaderLabTokens.PASS_KEYWORD; }
+
 	"CGINCLUDE"                { yybegin(SHADERSCRIPT); return ShaderLabTokens.CGINCLUDE_KEYWORD; }
 
 	"CGPROGRAM"                { yybegin(SHADERSCRIPT); return ShaderLabTokens.CGPROGRAM_KEYWORD; }

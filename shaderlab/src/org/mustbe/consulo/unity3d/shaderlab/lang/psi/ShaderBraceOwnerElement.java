@@ -17,22 +17,32 @@
 package org.mustbe.consulo.unity3d.shaderlab.lang.psi;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
 
 /**
  * @author VISTALL
  * @since 09.05.2015
  */
-public class ShaderTags extends ShaderLabElement
+public abstract class ShaderBraceOwnerElement extends ShaderLabElement implements ShaderBraceOwner
 {
-	public ShaderTags(@NotNull ASTNode node)
+	public ShaderBraceOwnerElement(@NotNull ASTNode node)
 	{
 		super(node);
 	}
 
 	@Override
-	public void accept(SharpLabElementVisitor visitor)
+	@Nullable
+	public PsiElement getLeftBrace()
 	{
-		visitor.visitTags(this);
+		return findChildByType(ShaderLabTokens.LBRACE);
+	}
+
+	@Override
+	@Nullable
+	public PsiElement getRightBrace()
+	{
+		return findChildByType(ShaderLabTokens.RBRACE);
 	}
 }

@@ -33,7 +33,7 @@ import com.intellij.util.IncorrectOperationException;
  * @author VISTALL
  * @since 08.05.2015
  */
-public class ShaderDef extends StubBasedPsiElementBase<ShaderDefStub> implements PsiNameIdentifierOwner, StubBasedPsiElement<ShaderDefStub>
+public class ShaderDef extends StubBasedPsiElementBase<ShaderDefStub> implements PsiNameIdentifierOwner, StubBasedPsiElement<ShaderDefStub>, ShaderBraceOwner
 {
 	public ShaderDef(@NotNull ASTNode node)
 	{
@@ -81,6 +81,20 @@ public class ShaderDef extends StubBasedPsiElementBase<ShaderDefStub> implements
 		{
 			super.accept(visitor);
 		}
+	}
+
+	@Override
+	@Nullable
+	public PsiElement getLeftBrace()
+	{
+		return findChildByType(ShaderLabTokens.LBRACE);
+	}
+
+	@Override
+	@Nullable
+	public PsiElement getRightBrace()
+	{
+		return findChildByType(ShaderLabTokens.RBRACE);
 	}
 
 	@Nullable

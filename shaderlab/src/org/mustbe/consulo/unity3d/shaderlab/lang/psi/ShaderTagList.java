@@ -16,19 +16,23 @@
 
 package org.mustbe.consulo.unity3d.shaderlab.lang.psi;
 
-import com.intellij.psi.tree.TokenSet;
+import org.jetbrains.annotations.NotNull;
+import com.intellij.lang.ASTNode;
 
 /**
  * @author VISTALL
- * @since 08.05.2015
+ * @since 09.05.2015
  */
-public interface ShaderLabTokenSets
+public class ShaderTagList extends ShaderBraceOwnerElement
 {
-	TokenSet COMMENTS = TokenSet.create(ShaderLabTokens.LINE_COMMENT, ShaderLabTokens.BLOCK_COMMENT);
+	public ShaderTagList(@NotNull ASTNode node)
+	{
+		super(node);
+	}
 
-	TokenSet WHITESPACES = TokenSet.create(ShaderLabTokens.WHITE_SPACE);
-
-	TokenSet KEYWORDS = TokenSet.create(ShaderLabTokens.SHADER_KEYWORD, ShaderLabTokens.CGPROGRAM_KEYWORD, ShaderLabTokens.ENDCG_KEYWORD,
-			ShaderLabTokens.PROPERTIES_KEYWORD, ShaderLabTokens.SUBSHADER_KEYWORD, ShaderLabTokens.FALLBACK_KEYWORD,
-			ShaderLabTokens.CGINCLUDE_KEYWORD, ShaderLabTokens.TAGS_KEYWORD, ShaderLabTokens.PASS_KEYWORD);
+	@Override
+	public void accept(SharpLabElementVisitor visitor)
+	{
+		visitor.visitTags(this);
+	}
 }

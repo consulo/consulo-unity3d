@@ -23,7 +23,7 @@ import com.intellij.lang.ASTNode;
  * @author VISTALL
  * @since 08.05.2015
  */
-public class ShaderPropertyList extends ShaderLabElement
+public class ShaderPropertyList extends ShaderBraceOwnerElement
 {
 	public ShaderPropertyList(@NotNull ASTNode node)
 	{
