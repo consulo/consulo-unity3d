@@ -16,6 +16,10 @@
 
 package org.mustbe.consulo.unity3d.shaderlab.lang.psi;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -62,6 +66,18 @@ public class ShaderDef extends StubBasedPsiElementBase<ShaderDefStub> implements
 		}
 		PsiElement nameIdentifier = getNameIdentifier();
 		return nameIdentifier == null ? null : nameIdentifier.getText();
+	}
+
+	@NotNull
+	public List<ShaderProperty> getProperties()
+	{
+		ShaderPropertyList[] childrenByClass = findChildrenByClass(ShaderPropertyList.class);
+		List<ShaderProperty> list = new ArrayList<ShaderProperty>();
+		for(ShaderPropertyList propertyList : childrenByClass)
+		{
+			Collections.addAll(list, propertyList.getProperties());
+		}
+		return list;
 	}
 
 	@Override

@@ -16,7 +16,6 @@
 
 package org.mustbe.consulo.unity3d.shaderlab.lang.psi;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -33,12 +32,14 @@ import com.intellij.icons.AllIcons;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiQualifiedReferenceElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.util.IncorrectOperationException;
+import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 
 /**
@@ -117,13 +118,15 @@ public class ShaderReference extends ShaderLabElement implements PsiQualifiedRef
 	{
 		GlobalSearchScope scope = GlobalSearchScope.allScope(getProject());
 		ResolveKind kind = kind();
+		String referenceName = getReferenceName();
 		switch(kind)
 		{
 			case ATTRIBUTE:
 				try
 				{
-					ShaderMaterialAttribute attribute = ShaderMaterialAttribute.valueOf(getReferenceName());
-					DotNetTypeDeclaration type = DotNetPsiSearcher.getInstance(getProject()).findType(attribute.getType(), scope, DotNetPsiSearcher.TypeResoleKind.UNKNOWN, CSharpTransform.INSTANCE);
+					ShaderMaterialAttribute attribute = ShaderMaterialAttribute.valueOf(referenceName);
+					DotNetTypeDeclaration type = DotNetPsiSearcher.getInstance(getProject()).findType(attribute.getType(), scope,
+							DotNetPsiSearcher.TypeResoleKind.UNKNOWN, CSharpTransform.INSTANCE);
 					if(type != null)
 					{
 						return type;
@@ -135,8 +138,22 @@ public class ShaderReference extends ShaderLabElement implements PsiQualifiedRef
 				}
 				break;
 			case ANOTHER_SHADER:
-				Collection<ShaderDef> shaderDefs = ShaderDefIndex.getInstance().get(getReferenceName(), getProject(), scope);
+				Collection<ShaderDef> shaderDefs = ShaderDefIndex.getInstance().get(referenceName, getProject(), scope);
 				return ContainerUtil.getFirstItem(shaderDefs);
+			case PROPERTY:
+				PsiFile containingFile = getContainingFile();
+				if(!(containingFile instanceof ShaderLabFile))
+				{
+					return null;
+				}
+				for(ShaderProperty shaderProperty : ((ShaderLabFile) containingFile).getProperties())
+				{
+					if(referenceName.equals(shaderProperty.getName()))
+					{
+						return shaderProperty;
+					}
+				}
+				break;
 		}
 		return null;
 	}
@@ -172,10 +189,10 @@ public class ShaderReference extends ShaderLabElement implements PsiQualifiedRef
 	public Object[] getVariants()
 	{
 		ResolveKind kind = kind();
+		List<LookupElementBuilder> values = new SmartList<LookupElementBuilder>();
 		switch(kind)
 		{
 			case ATTRIBUTE:
-				List<LookupElementBuilder> values = new ArrayList<LookupElementBuilder>();
 				for(ShaderMaterialAttribute attribute : ShaderMaterialAttribute.values())
 				{
 					LookupElementBuilder builder = LookupElementBuilder.create(attribute.name());
@@ -183,11 +200,32 @@ public class ShaderReference extends ShaderLabElement implements PsiQualifiedRef
 					builder = builder.withTypeText(attribute.getType(), true);
 					values.add(builder);
 				}
-				return values.toArray();
+			case PROPERTY:
+				PsiFile containingFile = getContainingFile();
+				if(containingFile instanceof ShaderLabFile)
+				{
+					for(ShaderProperty shaderProperty : ((ShaderLabFile) containingFile).getProperties())
+					{
+						String name = shaderProperty.getName();
+						if(name == null)
+						{
+							continue;
+						}
+						LookupElementBuilder builder = LookupElementBuilder.create(name);
+						builder = builder.withIcon(AllIcons.Nodes.Property);
+						ShaderPropertyType type = shaderProperty.getType();
+						if(type != null)
+						{
+							builder = builder.withTypeText(type.getTargetElement().getText(), true);
+						}
+						values.add(builder);
+					}
+				}
+				break;
 			case UNKNOWN:
 				break;
 		}
-		return new Object[0];
+		return values.toArray();
 	}
 
 	@Override

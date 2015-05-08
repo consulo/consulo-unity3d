@@ -16,12 +16,17 @@
 
 package org.mustbe.consulo.unity3d.shaderlab.lang.psi;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.mustbe.consulo.unity3d.shaderlab.lang.ShaderLabFileType;
 import org.mustbe.consulo.unity3d.shaderlab.lang.ShaderLabLanguage;
 import com.intellij.extapi.psi.PsiFileBase;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.psi.FileViewProvider;
+import com.intellij.psi.stubs.StubElement;
 
 /**
  * @author VISTALL
@@ -32,6 +37,28 @@ public class ShaderLabFile extends PsiFileBase
 	public ShaderLabFile(@NotNull FileViewProvider viewProvider)
 	{
 		super(viewProvider, ShaderLabLanguage.INSTANCE);
+	}
+
+	@Nullable
+	public ShaderDef getShaderDef()
+	{
+		StubElement<?> stub = getStub();
+		if(stub != null)
+		{
+			StubElement<ShaderDef> childStubByType = stub.findChildStubByType(ShaderLabStubElements.SHADER_DEF);
+			if(childStubByType != null)
+			{
+				return childStubByType.getPsi();
+			}
+		}
+		return findChildByClass(ShaderDef.class);
+	}
+
+	@NotNull
+	public List<ShaderProperty> getProperties()
+	{
+		ShaderDef shaderDef = getShaderDef();
+		return shaderDef == null ? Collections.<ShaderProperty>emptyList() : shaderDef.getProperties();
 	}
 
 	@NotNull

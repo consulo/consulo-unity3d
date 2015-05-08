@@ -94,6 +94,9 @@ public class SharpLabHighlightVisitor extends SharpLabElementVisitor implements 
 					case ATTRIBUTE:
 						key = DefaultLanguageHighlighterColors.METADATA;
 						break;
+					case PROPERTY:
+						key = DefaultLanguageHighlighterColors.INSTANCE_FIELD;
+						break;
 					default:
 						return;
 				}

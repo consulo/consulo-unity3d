@@ -35,6 +35,12 @@ public class ShaderProperty extends ShaderLabElement implements PsiNameIdentifie
 		super(node);
 	}
 
+	@Nullable
+	public ShaderPropertyType getType()
+	{
+		return findChildByClass(ShaderPropertyType.class);
+	}
+
 	@Override
 	public int getTextOffset()
 	{

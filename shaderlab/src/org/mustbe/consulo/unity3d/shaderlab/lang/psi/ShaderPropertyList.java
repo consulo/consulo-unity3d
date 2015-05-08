@@ -30,6 +30,12 @@ public class ShaderPropertyList extends ShaderBraceOwnerElement
 		super(node);
 	}
 
+	@NotNull
+	public ShaderProperty[] getProperties()
+	{
+		return findChildrenByClass(ShaderProperty.class);
+	}
+
 	@Override
 	public void accept(SharpLabElementVisitor visitor)
 	{

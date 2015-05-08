@@ -18,7 +18,6 @@ package org.mustbe.consulo.unity3d.shaderlab.lang.psi;
 
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.stub.elementType.ShaderDefStubElementType;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.stub.elementType.ShaderLabFileStubElementType;
-import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.IFileElementType;
 
 /**
@@ -29,5 +28,5 @@ public interface ShaderLabStubElements
 {
 	IFileElementType FILE = new ShaderLabFileStubElementType();
 
-	IElementType SHADER_DEF = new ShaderDefStubElementType();
+	ShaderDefStubElementType SHADER_DEF = new ShaderDefStubElementType();
 }

@@ -315,6 +315,7 @@ public class ShaderLabParser implements PsiParser
 				expectWithError(builder, ShaderLabTokens.RBRACE, "'}' expected");
 			}
 			mark.done(ShaderLabElements.TAG_LIST);
+			return mark;
 		}
 		return null;
 	}
@@ -322,6 +323,26 @@ public class ShaderLabParser implements PsiParser
 	private static PsiBuilder.Marker parsePassInner(@NotNull PsiBuilder builder)
 	{
 		IElementType tokenType = builder.getTokenType();
+		if(tokenType == ShaderLabTokens.COLOR_KEYWORD)
+		{
+			PsiBuilder.Marker mark = builder.mark();
+			builder.advanceLexer();
+
+			if(builder.getTokenType() == ShaderLabTokens.LPAR)
+			{
+				parseElementsInBraces(builder, ShaderLabTokens.LPAR, ShaderLabTokens.RPAR, ShaderLabTokens.INTEGER_LITERAL);
+			}
+			else if(builder.getTokenType() == ShaderLabTokens.LBRACKET)
+			{
+				parseBracketReference(builder);
+			}
+			else
+			{
+				builder.error("Expected value");
+			}
+			mark.done(ShaderLabElements.SIMPLE_VALUE);
+			return mark;
+		}
 		return null;
 	}
 
@@ -430,6 +451,20 @@ public class ShaderLabParser implements PsiParser
 			propertyMark.error("Expected identifier");
 		}
 		return ThreeState.UNSURE;
+	}
+
+	private static boolean parseBracketReference(PsiBuilder builder)
+	{
+		if(expectWithError(builder, ShaderLabTokens.LBRACKET, "'[' expected"))
+		{
+			if(!parseReference(builder))
+			{
+				builder.error("Expected reference");
+			}
+			expectWithError(builder, ShaderLabTokens.RBRACKET, "']' expected");
+			return true;
+		}
+		return false;
 	}
 
 	private static boolean parseReference(PsiBuilder builder)
