@@ -30,7 +30,10 @@ import com.intellij.psi.tree.IElementType;
  */
 public class ShaderLabPairedBraceMatcher implements PairedBraceMatcher
 {
-	private final BracePair[] myBracePairs = new BracePair[]{new BracePair(ShaderLabTokens.LBRACE, ShaderLabTokens.RBRACE, true)};
+	private final BracePair[] myBracePairs = new BracePair[]{
+			new BracePair(ShaderLabTokens.LBRACE, ShaderLabTokens.RBRACE, true),
+			new BracePair(ShaderLabTokens.LPAR, ShaderLabTokens.RPAR, true),
+	};
 
 	@Override
 	public BracePair[] getPairs()

@@ -23,9 +23,9 @@ import com.intellij.lang.ASTNode;
  * @author VISTALL
  * @since 08.05.2015
  */
-public class ShaderDef extends ShaderLabElement
+public class ShaderPropertyValue extends ShaderLabElement
 {
-	public ShaderDef(@NotNull ASTNode node)
+	public ShaderPropertyValue(@NotNull ASTNode node)
 	{
 		super(node);
 	}

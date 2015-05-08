@@ -16,17 +16,42 @@
 
 package org.mustbe.consulo.unity3d.shaderlab.lang.psi;
 
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiNameIdentifierOwner;
+import com.intellij.util.IncorrectOperationException;
 
 /**
  * @author VISTALL
  * @since 08.05.2015
  */
-public class ShaderDef extends ShaderLabElement
+public class ShaderProperty extends ShaderLabElement implements PsiNameIdentifierOwner
 {
-	public ShaderDef(@NotNull ASTNode node)
+	public ShaderProperty(@NotNull ASTNode node)
 	{
 		super(node);
+	}
+
+	@Override
+	public String getName()
+	{
+		PsiElement nameIdentifier = getNameIdentifier();
+		return nameIdentifier == null ? null : nameIdentifier.getText();
+	}
+
+	@Nullable
+	@Override
+	public PsiElement getNameIdentifier()
+	{
+		return findChildByType(ShaderLabTokens.IDENTIFIER);
+	}
+
+	@Override
+	public PsiElement setName(@NonNls @NotNull String name) throws IncorrectOperationException
+	{
+		return null;
 	}
 }

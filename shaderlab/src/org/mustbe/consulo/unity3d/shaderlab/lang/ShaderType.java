@@ -14,19 +14,42 @@
  * limitations under the License.
  */
 
-package org.mustbe.consulo.unity3d.shaderlab.lang.psi;
+package org.mustbe.consulo.unity3d.shaderlab.lang;
 
 import org.jetbrains.annotations.NotNull;
-import com.intellij.lang.ASTNode;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @author VISTALL
  * @since 08.05.2015
  */
-public class ShaderDef extends ShaderLabElement
+public enum ShaderType
 {
-	public ShaderDef(@NotNull ASTNode node)
+	Float,
+	Range,
+	Color,
+	Vector,
+	Int,
+	Cube,
+	_2D,
+	_3D;
+
+	@Nullable
+	public static ShaderType find(@NotNull String value)
 	{
-		super(node);
+		for(ShaderType shaderType : values())
+		{
+			String name = shaderType.name();
+			if(name.charAt(0) == '_')
+			{
+				name = name.substring(1, name.length());
+			}
+
+			if(value.equals(name))
+			{
+				return shaderType;
+			}
+		}
+		return null;
 	}
 }

@@ -17,15 +17,16 @@
 package org.mustbe.consulo.unity3d.shaderlab.lang.psi;
 
 import org.jetbrains.annotations.NotNull;
+import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 
 /**
  * @author VISTALL
  * @since 08.05.2015
  */
-public class ShaderDef extends ShaderLabElement
+public class ShaderLabElement extends ASTWrapperPsiElement
 {
-	public ShaderDef(@NotNull ASTNode node)
+	public ShaderLabElement(@NotNull ASTNode node)
 	{
 		super(node);
 	}

@@ -17,6 +17,8 @@
 package org.mustbe.consulo.unity3d.shaderlab.lang.parser;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.mustbe.consulo.unity3d.shaderlab.lang.ShaderType;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderLabElements;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderLabTokens;
 import com.intellij.lang.ASTNode;
@@ -45,9 +47,7 @@ public class ShaderLabParser implements PsiParser
 
 		while(!builder.eof())
 		{
-			PsiBuilder.Marker m = builder.mark();
-			builder.advanceLexer();
-			m.error("Unexpected token");
+			doneError(builder, "Unexpected token");
 		}
 		mark.done(root);
 		return builder.getTreeBuilt();
@@ -76,9 +76,11 @@ public class ShaderLabParser implements PsiParser
 			int count = 0;
 			while(!builder.eof())
 			{
+				parseShaderInner(builder);
+
 				if(builder.getTokenType() == ShaderLabTokens.LBRACE)
 				{
-					count ++;
+					count++;
 				}
 
 				if(builder.getTokenType() == ShaderLabTokens.RBRACE)
@@ -88,7 +90,7 @@ public class ShaderLabParser implements PsiParser
 						break;
 					}
 
-					count --;
+					count--;
 				}
 				builder.advanceLexer();
 			}
@@ -105,5 +107,170 @@ public class ShaderLabParser implements PsiParser
 
 		mark.done(ShaderLabElements.SHADER_DEF);
 		return true;
+	}
+
+	private static PsiBuilder.Marker parseShaderInner(@NotNull PsiBuilder builder)
+	{
+		IElementType tokenType = builder.getTokenType();
+		if(tokenType == ShaderLabTokens.PROPERTIES_KEYWORD)
+		{
+			PsiBuilder.Marker mark = builder.mark();
+
+			builder.advanceLexer();
+
+			if(expectWithError(builder, ShaderLabTokens.LBRACE, "'{' expected"))
+			{
+				while(!builder.eof() && parseProperty(builder))
+				{
+				}
+
+				expectWithError(builder, ShaderLabTokens.RBRACE, "'}' expected");
+			}
+
+			mark.done(ShaderLabElements.PROPERTY_LIST);
+			return mark;
+		}
+		return null;
+	}
+
+	private static boolean parseProperty(PsiBuilder builder)
+	{
+		IElementType tokenType = builder.getTokenType();
+		if(tokenType == ShaderLabTokens.IDENTIFIER)
+		{
+			PsiBuilder.Marker mark = builder.mark();
+
+			builder.advanceLexer();
+
+			ShaderType shaderType = null;
+			if(expectWithError(builder, ShaderLabTokens.LPAR, "'(' expected"))
+			{
+				expectWithError(builder, ShaderLabTokens.STRING_LITERAL, "Name expected");
+				expectWithError(builder, ShaderLabTokens.COMMA, "Comma expected");
+
+				shaderType = parsePropertyType(builder);
+
+				expectWithError(builder, ShaderLabTokens.RPAR, "')' expected");
+			}
+
+			if(expectWithError(builder, ShaderLabTokens.EQ, "'=' expected"))
+			{
+				if(shaderType != null)
+				{
+					PsiBuilder.Marker valueMark = builder.mark();
+					switch(shaderType)
+					{
+						case Float:
+						case Int:
+						case Range:
+							expectWithError(builder, ShaderLabTokens.INTEGER_LITERAL, "Value expected");
+							break;
+						case Color:
+						case Vector:
+							parseElementsInBraces(builder, ShaderLabTokens.LPAR, ShaderLabTokens.RPAR, ShaderLabTokens.INTEGER_LITERAL);
+							break;
+						case Cube:
+						case _2D:
+						case _3D:
+							expectWithError(builder, ShaderLabTokens.STRING_LITERAL, "Name expected");
+							expectWithError(builder, ShaderLabTokens.LBRACE, "'{' expected");
+							expectWithError(builder, ShaderLabTokens.RBRACE, "'}' expected");
+							break;
+					}
+					valueMark.done(ShaderLabElements.PROPERTY_VALUE);
+				}
+				else
+				{
+					builder.error("Wrong property type");
+				}
+			}
+
+			mark.done(ShaderLabElements.PROPERTY);
+			return true;
+		}
+		return false;
+	}
+
+	@Nullable
+	private static ShaderType parsePropertyType(PsiBuilder builder)
+	{
+		IElementType tokenType = builder.getTokenType();
+		if(tokenType == ShaderLabTokens.IDENTIFIER)
+		{
+			PsiBuilder.Marker mark = builder.mark();
+
+			String tokenText = builder.getTokenText();
+			assert tokenText != null;
+			ShaderType shaderType = ShaderType.find(tokenText);
+
+			builder.advanceLexer();
+
+			parseElementsInBraces(builder, ShaderLabTokens.LPAR, ShaderLabTokens.RPAR, ShaderLabTokens.INTEGER_LITERAL);
+
+			mark.done(ShaderLabElements.PROPERTY_TYPE);
+
+			return shaderType;
+		}
+		else
+		{
+			builder.error("Type expected");
+			return null;
+		}
+	}
+
+	private static void parseElementsInBraces(@NotNull PsiBuilder builder, IElementType open, IElementType close, IElementType valid)
+	{
+		if(builder.getTokenType() == open)
+		{
+			builder.advanceLexer();
+
+			while(!builder.eof())
+			{
+				IElementType tokenType = builder.getTokenType();
+				if(tokenType == close)
+				{
+					break;
+				}
+
+				if(tokenType == valid)
+				{
+					builder.advanceLexer();
+				}
+				else
+				{
+					doneError(builder, "Unexpected token");
+				}
+
+				if(builder.getTokenType() == ShaderLabTokens.COMMA)
+				{
+					builder.advanceLexer();
+				}
+				else if(builder.getTokenType() != close)
+				{
+					doneError(builder, "Unexpected token");
+				}
+			}
+			expectWithError(builder, close, "Unexpected token");
+		}
+	}
+
+	private static void doneError(PsiBuilder builder, String message)
+	{
+		PsiBuilder.Marker mark = builder.mark();
+		builder.advanceLexer();
+		mark.error(message);
+	}
+
+	private static boolean expectWithError(PsiBuilder builder, IElementType elementType, @NotNull String message)
+	{
+		if(PsiBuilderUtil.expect(builder, elementType))
+		{
+			return true;
+		}
+		else
+		{
+			builder.error(message);
+			return false;
+		}
 	}
 }

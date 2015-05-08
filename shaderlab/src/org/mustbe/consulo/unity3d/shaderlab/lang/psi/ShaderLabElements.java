@@ -27,4 +27,12 @@ import com.intellij.psi.tree.IElementType;
 public interface ShaderLabElements
 {
 	IElementType SHADER_DEF = new ElementTypeAsPsiFactory("SHADER_DER", ShaderLabLanguage.INSTANCE, ShaderDef.class);
+
+	IElementType PROPERTY_LIST = new ElementTypeAsPsiFactory("PROPERTY_LIST", ShaderLabLanguage.INSTANCE, ShaderPropertyList.class);
+
+	IElementType PROPERTY = new ElementTypeAsPsiFactory("PROPERTY", ShaderLabLanguage.INSTANCE, ShaderProperty.class);
+
+	IElementType PROPERTY_TYPE = new ElementTypeAsPsiFactory("PROPERTY_TYPE", ShaderLabLanguage.INSTANCE, ShaderPropertyType.class);
+
+	IElementType PROPERTY_VALUE = new ElementTypeAsPsiFactory("PROPERTY_VALUE", ShaderLabLanguage.INSTANCE, ShaderPropertyValue.class);
 }

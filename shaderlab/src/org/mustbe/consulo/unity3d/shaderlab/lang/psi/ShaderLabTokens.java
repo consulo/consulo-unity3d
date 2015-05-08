@@ -34,6 +34,8 @@ public interface ShaderLabTokens extends TokenType
 
 	IElementType STRING_LITERAL = new IElementType("STRING_LITERAL", ShaderLabLanguage.INSTANCE);
 
+	IElementType COMMA = new IElementType("COMMA", ShaderLabLanguage.INSTANCE);
+
 	IElementType SHADER_KEYWORD = new IElementType("SHADER_KEYWORD", ShaderLabLanguage.INSTANCE);
 
 	IElementType SUBSHADER_KEYWORD = new IElementType("SUBSHADER_KEYWORD", ShaderLabLanguage.INSTANCE);
@@ -43,6 +45,12 @@ public interface ShaderLabTokens extends TokenType
 	IElementType LBRACE = new IElementType("LBRACE", ShaderLabLanguage.INSTANCE);
 
 	IElementType RBRACE = new IElementType("RBRACE", ShaderLabLanguage.INSTANCE);
+
+	IElementType EQ = new IElementType("EQ", ShaderLabLanguage.INSTANCE);
+
+	IElementType LPAR = new IElementType("LPAR", ShaderLabLanguage.INSTANCE);
+
+	IElementType RPAR = new IElementType("RPAR", ShaderLabLanguage.INSTANCE);
 
 	IElementType CGPROGRAM_KEYWORD = new IElementType("CGPROGRAM_KEYWORD", ShaderLabLanguage.INSTANCE);
 
