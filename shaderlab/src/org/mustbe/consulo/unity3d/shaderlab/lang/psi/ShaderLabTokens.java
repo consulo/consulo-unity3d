@@ -52,6 +52,8 @@ public interface ShaderLabTokens extends TokenType
 
 	IElementType CULL_KEYWORD = new IElementType("CULL_KEYWORD", ShaderLabLanguage.INSTANCE);
 
+	IElementType SET_TEXTURE_KEYWORD = new IElementType("SET_TEXTURE_KEYWORD", ShaderLabLanguage.INSTANCE);
+
 	IElementType FRONT_KEYWORD = new IElementType("FRONT_KEYWORD", ShaderLabLanguage.INSTANCE);
 
 	IElementType BACK_KEYWORD = new IElementType("BACK_KEYWORD", ShaderLabLanguage.INSTANCE);

@@ -71,6 +71,8 @@ INTEGER_LITERAL = {INTEGER_PREFIX}? ({DIGITS} | {DIGIT}* "." {DIGITS})
 
 	"Back"                     { return ShaderLabTokens.BACK_KEYWORD; }
 
+	"SetTexture"               { return ShaderLabTokens.SET_TEXTURE_KEYWORD; }
+
 	"On"                       { return ShaderLabTokens.ON_KEYWORD; }
 
 	"Off"                      { return ShaderLabTokens.OFF_KEYWORD; }

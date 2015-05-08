@@ -71,6 +71,10 @@ public class ShaderReference extends ShaderLabElement implements PsiQualifiedRef
 		{
 			return ResolveKind.ATTRIBUTE;
 		}
+		else if(parent instanceof ShaderSetTexture)
+		{
+			return ResolveKind.PROPERTY;
+		}
 		else if(parent instanceof ShaderSimpleValue)
 		{
 			IElementType key = ((ShaderSimpleValue) parent).getKey();

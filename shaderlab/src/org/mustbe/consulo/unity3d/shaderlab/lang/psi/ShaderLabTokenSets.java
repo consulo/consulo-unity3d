@@ -33,7 +33,7 @@ public interface ShaderLabTokenSets
 	TokenSet KEYWORDS = TokenSet.create(ShaderLabTokens.SHADER_KEYWORD, ShaderLabTokens.CGPROGRAM_KEYWORD, ShaderLabTokens.ENDCG_KEYWORD,
 			ShaderLabTokens.PROPERTIES_KEYWORD, ShaderLabTokens.SUBSHADER_KEYWORD, ShaderLabTokens.FALLBACK_KEYWORD,
 			ShaderLabTokens.CGINCLUDE_KEYWORD, ShaderLabTokens.TAGS_KEYWORD, ShaderLabTokens.PASS_KEYWORD, ShaderLabTokens.COLOR_KEYWORD,
-			ShaderLabTokens.LIGHTING_KEYWORD, ShaderLabTokens.ZWRITE_KEYWORD, ShaderLabTokens.CULL_KEYWORD);
+			ShaderLabTokens.LIGHTING_KEYWORD, ShaderLabTokens.ZWRITE_KEYWORD, ShaderLabTokens.CULL_KEYWORD, ShaderLabTokens.SET_TEXTURE_KEYWORD);
 
 	TokenSet VALUE_KEYWORDS = TokenSet.create(ShaderLabTokens.ON_KEYWORD, ShaderLabTokens.OFF_KEYWORD, ShaderLabTokens.FRONT_KEYWORD,
 			ShaderLabTokens.BACK_KEYWORD);

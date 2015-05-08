@@ -45,7 +45,8 @@ public class ShaderLabParser implements PsiParser
 		{
 			put(ShaderLabTokens.LIGHTING_KEYWORD, TokenSet.create(ShaderLabTokens.ON_KEYWORD, ShaderLabTokens.OFF_KEYWORD));
 			put(ShaderLabTokens.ZWRITE_KEYWORD, TokenSet.create(ShaderLabTokens.ON_KEYWORD, ShaderLabTokens.OFF_KEYWORD));
-			put(ShaderLabTokens.CULL_KEYWORD, TokenSet.create(ShaderLabTokens.OFF_KEYWORD, ShaderLabTokens.BACK_KEYWORD, ShaderLabTokens.FRONT_KEYWORD));
+			put(ShaderLabTokens.CULL_KEYWORD, TokenSet.create(ShaderLabTokens.OFF_KEYWORD, ShaderLabTokens.BACK_KEYWORD,
+					ShaderLabTokens.FRONT_KEYWORD));
 		}
 	};
 
@@ -351,7 +352,64 @@ public class ShaderLabParser implements PsiParser
 			mark.done(ShaderLabElements.SIMPLE_VALUE);
 			return mark;
 		}
-		return parsePassOrSubShaderInner(builder);
+		else if(tokenType == ShaderLabTokens.SET_TEXTURE_KEYWORD)
+		{
+			PsiBuilder.Marker mark = builder.mark();
+
+			builder.advanceLexer();
+
+			if(!parseBracketReference(builder))
+			{
+				builder.error("Expected reference");
+			}
+
+			if(PsiBuilderUtil.expect(builder, ShaderLabTokens.LBRACE))
+			{
+				//TODO [VISTALL] hack until full syntax parse
+				int count = 0;
+				while(!builder.eof())
+				{
+					if(parseSetTextureInner(builder) != null)
+					{
+						continue;
+					}
+
+					if(builder.getTokenType() == ShaderLabTokens.LBRACE)
+					{
+						count++;
+					}
+
+					if(builder.getTokenType() == ShaderLabTokens.RBRACE)
+					{
+						if(count == 0)
+						{
+							break;
+						}
+
+						count--;
+					}
+					builder.advanceLexer();
+				}
+
+				if(!PsiBuilderUtil.expect(builder, ShaderLabTokens.RBRACE))
+				{
+					builder.error("'}' expected");
+				}
+			}
+			else
+			{
+				builder.error("'{' expected");
+			}
+
+			mark.done(ShaderLabElements.SET_TEXTURE);
+			return mark;
+		}
+		return null;
+	}
+
+	private static PsiBuilder.Marker parseSetTextureInner(PsiBuilder builder)
+	{
+		return null;
 	}
 
 	private static PsiBuilder.Marker parsePassOrSubShaderInner(PsiBuilder builder)

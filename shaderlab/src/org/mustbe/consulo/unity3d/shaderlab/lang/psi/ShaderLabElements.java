@@ -51,4 +51,6 @@ public interface ShaderLabElements
 	IElementType SUB_SHADER = new ElementTypeAsPsiFactory("SUB_SHADER", ShaderLabLanguage.INSTANCE, ShaderSubShader.class);
 
 	IElementType SIMPLE_VALUE = new ElementTypeAsPsiFactory("SIMPLE_VALUE", ShaderLabLanguage.INSTANCE, ShaderSimpleValue.class);
+
+	IElementType SET_TEXTURE = new ElementTypeAsPsiFactory("SET_TEXTURE", ShaderLabLanguage.INSTANCE, ShaderSetTexture.class);
 }
