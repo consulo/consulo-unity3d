@@ -408,7 +408,7 @@ public class ShaderLabParser implements PsiParser
 			mark.done(ShaderLabElements.SET_TEXTURE);
 			return mark;
 		}
-		return null;
+		return parsePassOrSubShaderInner(builder);
 	}
 
 	private static PsiBuilder.Marker parseSetTextureInner(PsiBuilder builder)
@@ -493,6 +493,7 @@ public class ShaderLabParser implements PsiParser
 		if(found)
 		{
 			builder.remapCurrentToken(ShaderLabTokens.VALUE_KEYWORD);
+			builder.advanceLexer();
 			return true;
 		}
 		else
