@@ -46,6 +46,8 @@ INTEGER_LITERAL = {DIGITS} | {DIGITS} "." {DIGITS}*
 
 	"SubShader"                { return ShaderLabTokens.SUBSHADER_KEYWORD; }
 
+	"CGINCLUDE"                { yybegin(SHADERSCRIPT); return ShaderLabTokens.CGINCLUDE_KEYWORD; }
+
 	"CGPROGRAM"                { yybegin(SHADERSCRIPT); return ShaderLabTokens.CGPROGRAM_KEYWORD; }
 
 	"ENDCG"                    { return ShaderLabTokens.ENDCG_KEYWORD; }

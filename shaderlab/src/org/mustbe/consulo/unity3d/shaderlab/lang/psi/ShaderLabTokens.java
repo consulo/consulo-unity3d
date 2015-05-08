@@ -60,6 +60,8 @@ public interface ShaderLabTokens extends TokenType
 
 	IElementType CGPROGRAM_KEYWORD = new IElementType("CGPROGRAM_KEYWORD", ShaderLabLanguage.INSTANCE);
 
+	IElementType CGINCLUDE_KEYWORD = new IElementType("CGINCLUDE_KEYWORD", ShaderLabLanguage.INSTANCE);
+
 	IElementType ENDCG_KEYWORD = new IElementType("ENDCG_KEYWORD", ShaderLabLanguage.INSTANCE);
 
 	IElementType SHADERSCRIPT = new IElementType("SHADERSCRIPT", ShaderLabLanguage.INSTANCE);

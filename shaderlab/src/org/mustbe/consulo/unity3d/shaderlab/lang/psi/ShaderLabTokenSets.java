@@ -29,5 +29,6 @@ public interface ShaderLabTokenSets
 	TokenSet WHITESPACES = TokenSet.create(ShaderLabTokens.WHITE_SPACE);
 
 	TokenSet KEYWORDS = TokenSet.create(ShaderLabTokens.SHADER_KEYWORD, ShaderLabTokens.CGPROGRAM_KEYWORD, ShaderLabTokens.ENDCG_KEYWORD,
-			ShaderLabTokens.PROPERTIES_KEYWORD, ShaderLabTokens.SUBSHADER_KEYWORD, ShaderLabTokens.FALLBACK_KEYWORD);
+			ShaderLabTokens.PROPERTIES_KEYWORD, ShaderLabTokens.SUBSHADER_KEYWORD, ShaderLabTokens.FALLBACK_KEYWORD,
+			ShaderLabTokens.CGINCLUDE_KEYWORD);
 }
