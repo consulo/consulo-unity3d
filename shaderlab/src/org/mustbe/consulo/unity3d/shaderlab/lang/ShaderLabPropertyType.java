@@ -52,7 +52,7 @@ public enum ShaderLabPropertyType
 		{
 			String name = shaderLabPropertyType.getPresentableName();
 
-			if(value.equals(name))
+			if(value.equalsIgnoreCase(name))
 			{
 				return shaderLabPropertyType;
 			}
