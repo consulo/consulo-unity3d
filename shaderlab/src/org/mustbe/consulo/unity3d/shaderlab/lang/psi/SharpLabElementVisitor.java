@@ -83,4 +83,9 @@ public class SharpLabElementVisitor extends PsiElementVisitor
 	{
 		visitElement(shaderPass);
 	}
+
+	public void visitSubShader(ShaderSubShader shaderSubShader)
+	{
+		visitElement(shaderSubShader);
+	}
 }

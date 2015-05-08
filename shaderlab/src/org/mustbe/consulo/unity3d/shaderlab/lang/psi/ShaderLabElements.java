@@ -49,4 +49,6 @@ public interface ShaderLabElements
 	IElementType PASS = new ElementTypeAsPsiFactory("PASS", ShaderLabLanguage.INSTANCE, ShaderPass.class);
 
 	IElementType TAG = new ElementTypeAsPsiFactory("TAG", ShaderLabLanguage.INSTANCE, ShaderTag.class);
+
+	IElementType SUB_SHADER = new ElementTypeAsPsiFactory("SUB_SHADER", ShaderLabLanguage.INSTANCE, ShaderSubShader.class);
 }
