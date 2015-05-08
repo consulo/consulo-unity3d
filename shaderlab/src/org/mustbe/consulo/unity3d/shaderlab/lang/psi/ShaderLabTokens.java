@@ -28,8 +28,6 @@ public interface ShaderLabTokens extends TokenType
 {
 	IElementType IDENTIFIER = new IElementType("IDENTIFIER", ShaderLabLanguage.INSTANCE);
 
-	IElementType BLOCK_COMMENT = new IElementType("BLOCK_COMMENT", ShaderLabLanguage.INSTANCE);
-
 	IElementType LINE_COMMENT = new IElementType("LINE_COMMENT", ShaderLabLanguage.INSTANCE);
 
 	IElementType INTEGER_LITERAL = new IElementType("INTEGER_LITERAL", ShaderLabLanguage.INSTANCE);

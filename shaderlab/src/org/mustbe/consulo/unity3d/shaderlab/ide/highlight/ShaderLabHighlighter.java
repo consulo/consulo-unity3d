@@ -40,7 +40,6 @@ public class ShaderLabHighlighter extends SyntaxHighlighterBase
 
 	static
 	{
-		ourMap.put(ShaderLabTokens.BLOCK_COMMENT, DefaultLanguageHighlighterColors.BLOCK_COMMENT);
 		ourMap.put(ShaderLabTokens.LINE_COMMENT, DefaultLanguageHighlighterColors.LINE_COMMENT);
 		ourMap.put(ShaderLabTokens.INTEGER_LITERAL, DefaultLanguageHighlighterColors.NUMBER);
 		ourMap.put(ShaderLabTokens.STRING_LITERAL, DefaultLanguageHighlighterColors.STRING);

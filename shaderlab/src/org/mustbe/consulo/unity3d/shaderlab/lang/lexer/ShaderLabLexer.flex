@@ -21,7 +21,6 @@ import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderLabTokens;
 DIGIT=[0-9]
 WHITE_SPACE=[ \n\r\t\f]+
 SINGLE_LINE_COMMENT="/""/"[^\r\n]*
-MULTI_LINE_STYLE_COMMENT=("/*"{COMMENT_TAIL})|"/*"
 
 COMMENT_TAIL=([^"*"]*("*"+[^"*""/"])?)*("*"+"/")?
 STRING_LITERAL=\"([^\\\"\r\n]|{ESCAPE_SEQUENCE})*(\"|\\)?
@@ -57,8 +56,6 @@ HEX_EXPONENT = [Pp] [+-]? {DIGIT_OR_UNDERSCORE}*
 <YYINITIAL>
 {
 	{SINGLE_LINE_COMMENT}      { return ShaderLabTokens.LINE_COMMENT; }
-
-	{MULTI_LINE_STYLE_COMMENT} { return ShaderLabTokens.BLOCK_COMMENT; }
 
 	"Shader"                   { return ShaderLabTokens.SHADER_KEYWORD; }
 

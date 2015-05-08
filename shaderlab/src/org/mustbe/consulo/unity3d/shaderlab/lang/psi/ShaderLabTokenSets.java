@@ -24,7 +24,7 @@ import com.intellij.psi.tree.TokenSet;
  */
 public interface ShaderLabTokenSets
 {
-	TokenSet COMMENTS = TokenSet.create(ShaderLabTokens.BLOCK_COMMENT, ShaderLabTokens.LINE_COMMENT);
+	TokenSet COMMENTS = TokenSet.create(ShaderLabTokens.LINE_COMMENT);
 
 	TokenSet WHITESPACES = TokenSet.create(ShaderLabTokens.WHITE_SPACE);
 
