@@ -16,6 +16,9 @@
 
 package org.mustbe.consulo.unity3d.shaderlab.lang.parser;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.mustbe.consulo.unity3d.shaderlab.lang.ShaderLabPropertyType;
@@ -28,6 +31,7 @@ import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiBuilderUtil;
 import com.intellij.lang.PsiParser;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.tree.TokenSet;
 import com.intellij.util.ThreeState;
 
 /**
@@ -36,6 +40,15 @@ import com.intellij.util.ThreeState;
  */
 public class ShaderLabParser implements PsiParser
 {
+	private static final Map<IElementType, TokenSet> ourValidValues = new HashMap<IElementType, TokenSet>()
+	{
+		{
+			put(ShaderLabTokens.LIGHTING_KEYWORD, TokenSet.create(ShaderLabTokens.ON_KEYWORD, ShaderLabTokens.OFF_KEYWORD));
+			put(ShaderLabTokens.ZWRITE_KEYWORD, TokenSet.create(ShaderLabTokens.ON_KEYWORD, ShaderLabTokens.OFF_KEYWORD));
+			put(ShaderLabTokens.CULL_KEYWORD, TokenSet.create(ShaderLabTokens.OFF_KEYWORD, ShaderLabTokens.BACK_KEYWORD, ShaderLabTokens.FRONT_KEYWORD));
+		}
+	};
+
 	@NotNull
 	@Override
 	public ASTNode parse(@NotNull IElementType root, @NotNull PsiBuilder builder, @NotNull LanguageVersion languageVersion)
@@ -312,7 +325,7 @@ public class ShaderLabParser implements PsiParser
 			mark.done(ShaderLabElements.TAG_LIST);
 			return mark;
 		}
-		return null;
+		return parsePassOrSubShaderInner(builder);
 	}
 
 	private static PsiBuilder.Marker parsePassInner(@NotNull PsiBuilder builder)
@@ -334,6 +347,30 @@ public class ShaderLabParser implements PsiParser
 			else
 			{
 				builder.error("Expected value");
+			}
+			mark.done(ShaderLabElements.SIMPLE_VALUE);
+			return mark;
+		}
+		return parsePassOrSubShaderInner(builder);
+	}
+
+	private static PsiBuilder.Marker parsePassOrSubShaderInner(PsiBuilder builder)
+	{
+		IElementType tokenType = builder.getTokenType();
+		TokenSet tokenSet = ourValidValues.get(tokenType);
+		if(tokenSet != null)
+		{
+			PsiBuilder.Marker mark = builder.mark();
+			builder.advanceLexer();
+
+			IElementType valueTokenType = builder.getTokenType();
+			if(tokenSet.contains(valueTokenType))
+			{
+				builder.advanceLexer();
+			}
+			else
+			{
+				doneError(builder, "Wrong value");
 			}
 			mark.done(ShaderLabElements.SIMPLE_VALUE);
 			return mark;

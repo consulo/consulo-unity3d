@@ -61,6 +61,16 @@ INTEGER_LITERAL = {INTEGER_PREFIX}? ({DIGITS} | {DIGIT}* "." {DIGITS})
 
 	"Pass"                     { return ShaderLabTokens.PASS_KEYWORD; }
 
+	"Lighting"                 { return ShaderLabTokens.LIGHTING_KEYWORD; }
+
+	"ZWrite"                   { return ShaderLabTokens.ZWRITE_KEYWORD; }
+
+	"Cull"                     { return ShaderLabTokens.CULL_KEYWORD; }
+
+	"Front"                    { return ShaderLabTokens.FRONT_KEYWORD; }
+
+	"Back"                     { return ShaderLabTokens.BACK_KEYWORD; }
+
 	"On"                       { return ShaderLabTokens.ON_KEYWORD; }
 
 	"Off"                      { return ShaderLabTokens.OFF_KEYWORD; }
