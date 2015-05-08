@@ -58,4 +58,9 @@ public class SharpLabElementVisitor extends PsiElementVisitor
 	{
 		visitElement(reference);
 	}
+
+	public void visitFallback(ShaderFallback fallback)
+	{
+		visitElement(fallback);
+	}
 }

@@ -39,4 +39,6 @@ public interface ShaderLabElements
 	IElementType PROPERTY_ATTRIBUTE = new ElementTypeAsPsiFactory("PROPERTY_ATTRIBUTE", ShaderLabLanguage.INSTANCE, ShaderPropertyAttribute.class);
 
 	IElementType REFERENCE = new ElementTypeAsPsiFactory("REFERENCE", ShaderLabLanguage.INSTANCE, ShaderReference.class);
+
+	IElementType FALLBACK = new ElementTypeAsPsiFactory("FALLBACK", ShaderLabLanguage.INSTANCE, ShaderFallback.class);
 }

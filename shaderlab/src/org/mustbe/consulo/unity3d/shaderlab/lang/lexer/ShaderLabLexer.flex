@@ -42,6 +42,8 @@ INTEGER_LITERAL = {DIGITS} | {DIGITS} "." {DIGITS}*
 
 	"Properties"               { return ShaderLabTokens.PROPERTIES_KEYWORD; }
 
+	"Fallback"                 { return ShaderLabTokens.FALLBACK_KEYWORD; }
+
 	"SubShader"                { return ShaderLabTokens.SUBSHADER_KEYWORD; }
 
 	"CGPROGRAM"                { yybegin(SHADERSCRIPT); return ShaderLabTokens.CGPROGRAM_KEYWORD; }

@@ -34,6 +34,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiQualifiedReferenceElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.tree.TokenSet;
 import com.intellij.util.IncorrectOperationException;
 
 /**
@@ -45,8 +46,11 @@ public class ShaderReference extends ShaderLabElement implements PsiQualifiedRef
 	public static enum ResolveKind
 	{
 		ATTRIBUTE,
+		ANOTHER_SHADER,
 		UNKNOWN
 	}
+
+	private static final TokenSet ourTokens = TokenSet.create(ShaderLabTokens.IDENTIFIER, ShaderLabTokens.STRING_LITERAL);
 
 	public ShaderReference(@NotNull ASTNode node)
 	{
@@ -60,6 +64,10 @@ public class ShaderReference extends ShaderLabElement implements PsiQualifiedRef
 		if(parent instanceof ShaderPropertyAttribute)
 		{
 			return ResolveKind.ATTRIBUTE;
+		}
+		else if(parent instanceof ShaderFallback)
+		{
+			return ResolveKind.ANOTHER_SHADER;
 		}
 		return ResolveKind.UNKNOWN;
 	}
@@ -79,7 +87,7 @@ public class ShaderReference extends ShaderLabElement implements PsiQualifiedRef
 	@NotNull
 	public PsiElement getReferenceElement()
 	{
-		return findNotNullChildByType(ShaderLabTokens.IDENTIFIER);
+		return findNotNullChildByType(ourTokens);
 	}
 
 	@Override

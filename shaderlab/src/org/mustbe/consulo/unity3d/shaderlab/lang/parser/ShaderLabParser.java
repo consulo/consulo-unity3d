@@ -154,6 +154,36 @@ public class ShaderLabParser implements PsiParser
 			mark.done(ShaderLabElements.PROPERTY_LIST);
 			return mark;
 		}
+		else if(tokenType == ShaderLabTokens.FALLBACK_KEYWORD)
+		{
+			PsiBuilder.Marker mark = builder.mark();
+
+			builder.advanceLexer();
+
+			IElementType valueTokenType = builder.getTokenType();
+			if(valueTokenType == ShaderLabTokens.IDENTIFIER)
+			{
+				String tokenText = builder.getTokenText();
+				assert tokenText != null;
+				if(tokenText.equalsIgnoreCase("off"))
+				{
+					builder.advanceLexer();
+				}
+				else
+				{
+					doneError(builder, "Wrong value");
+				}
+			}
+			else if(valueTokenType == ShaderLabTokens.STRING_LITERAL)
+			{
+				PsiBuilder.Marker refMarker = builder.mark();
+				builder.advanceLexer();
+				refMarker.done(ShaderLabElements.REFERENCE);
+			}
+
+			mark.done(ShaderLabElements.FALLBACK);
+			return mark;
+		}
 		return null;
 	}
 
