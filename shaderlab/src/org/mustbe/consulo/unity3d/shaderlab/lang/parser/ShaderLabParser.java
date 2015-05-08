@@ -211,9 +211,13 @@ public class ShaderLabParser implements PsiParser
 
 			return shaderType;
 		}
+		else if(builder.getTokenType() == ShaderLabTokens.RPAR || builder.getTokenType() == ShaderLabTokens.EQ)
+		{
+			return null;
+		}
 		else
 		{
-			builder.error("Type expected");
+			doneError(builder, "Type expected");
 			return null;
 		}
 	}
