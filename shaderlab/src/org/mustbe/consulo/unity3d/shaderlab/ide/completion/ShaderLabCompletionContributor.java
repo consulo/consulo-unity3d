@@ -16,6 +16,8 @@
 
 package org.mustbe.consulo.unity3d.shaderlab.ide.completion;
 
+import java.util.Collection;
+
 import org.jetbrains.annotations.NotNull;
 import org.mustbe.consulo.csharp.ide.completion.util.SpaceInsertHandler;
 import org.mustbe.consulo.unity3d.shaderlab.lang.ShaderLabFileType;
@@ -24,6 +26,7 @@ import org.mustbe.consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabComposite
 import org.mustbe.consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabRole;
 import org.mustbe.consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabSimpleRole;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderBraceOwner;
+import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderDef;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderLabKeyTokens;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderLabTokens;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderPropertyTypeElement;
@@ -40,7 +43,9 @@ import com.intellij.codeInsight.completion.InsertionContext;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.editor.Caret;
+import com.intellij.openapi.project.Project;
 import com.intellij.patterns.StandardPatterns;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ProcessingContext;
 import com.intellij.util.Processor;
@@ -141,11 +146,17 @@ public class ShaderLabCompletionContributor extends CompletionContributor
 				{
 					return;
 				}
-				ShaderDefIndex.getInstance().processAllKeys(parameters.getPosition().getProject(), new Processor<String>()
+				final Project project = parameters.getPosition().getProject();
+				ShaderDefIndex.getInstance().processAllKeys(project, new Processor<String>()
 				{
 					@Override
 					public boolean process(String s)
 					{
+						Collection<ShaderDef> shaderDefs = ShaderDefIndex.getInstance().get(s, project, GlobalSearchScope.projectScope(project));
+						if(shaderDefs.isEmpty())
+						{
+							return true;
+						}
 						LookupElementBuilder builder = LookupElementBuilder.create(s);
 						builder = builder.withIcon(ShaderLabFileType.INSTANCE.getIcon());
 						result.addElement(builder);
