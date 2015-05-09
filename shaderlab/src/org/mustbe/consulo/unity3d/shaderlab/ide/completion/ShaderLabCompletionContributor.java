@@ -19,7 +19,9 @@ package org.mustbe.consulo.unity3d.shaderlab.ide.completion;
 import org.jetbrains.annotations.NotNull;
 import org.mustbe.consulo.unity3d.shaderlab.lang.ShaderLabFileType;
 import org.mustbe.consulo.unity3d.shaderlab.lang.ShaderLabPropertyType;
+import org.mustbe.consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabCompositeRole;
 import org.mustbe.consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabRole;
+import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderBraceOwner;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderLabKeyTokens;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderLabTokens;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderPropertyTypeElement;
@@ -61,6 +63,30 @@ public class ShaderLabCompletionContributor extends CompletionContributor
 			}
 		});
 
+		extend(CompletionType.BASIC, StandardPatterns.psiElement().withParent(ShaderBraceOwner.class), new CompletionProvider<CompletionParameters>()
+		{
+			@Override
+			protected void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext context, @NotNull CompletionResultSet result)
+			{
+				ShaderBraceOwner braceOwner = PsiTreeUtil.getParentOfType(parameters.getPosition(), ShaderBraceOwner.class);
+				if(braceOwner == null)
+				{
+					return;
+				}
+				ShaderLabRole role = braceOwner.getRole();
+				if(!(role instanceof ShaderLabCompositeRole))
+				{
+					return;
+				}
+
+				for(ShaderLabRole labRole : ((ShaderLabCompositeRole) role).getRoles())
+				{
+					LookupElementBuilder builder = LookupElementBuilder.create(com.intellij.openapi.util.text.StringUtil.capitalize(labRole.getName
+							()));
+					result.addElement(builder);
+				}
+			}
+		});
 		extend(CompletionType.BASIC, StandardPatterns.psiElement().afterLeaf(StandardPatterns.psiElement().withElementType(ShaderLabKeyTokens
 				.START_KEYWORD)), new CompletionProvider<CompletionParameters>()
 		{

@@ -23,7 +23,7 @@ import com.intellij.psi.PsiElement;
  * @author VISTALL
  * @since 09.05.2015
  */
-public interface ShaderBraceOwner
+public interface ShaderBraceOwner extends PsiElement, ShaderRoleOwner
 {
 	@Nullable
 	PsiElement getLeftBrace();

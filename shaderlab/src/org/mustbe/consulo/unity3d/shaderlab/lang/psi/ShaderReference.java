@@ -78,7 +78,7 @@ public class ShaderReference extends ShaderLabElement implements PsiQualifiedRef
 		else if(parent instanceof ShaderSimpleValue)
 		{
 			ShaderLabRole role = ((ShaderSimpleValue) parent).getRole();
-			if(role == ShaderLabRole.Fallback)
+			if(role == ShaderLabRole.Fallback || role == ShaderLabRole.UsePass)
 			{
 				return ResolveKind.ANOTHER_SHADER;
 			}
