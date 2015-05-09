@@ -262,13 +262,13 @@ public abstract class ShaderLabRole
 
 	public static final ShaderLabRole Cull = new ShaderLabSimpleRole("Off", "Back", "Front");
 
-	public static final ShaderLabRole ZWrite = new ShaderLabSimpleRole("On", "Off");
+	public static final ShaderLabRole ZWrite = new ShaderLabSimpleRole("Off", "On");
 
-	public static final ShaderLabRole Lighting = new ShaderLabSimpleRole("On", "Off");
+	public static final ShaderLabRole Lighting = new ShaderLabSimpleRole("Off", "On");
 
 	public static final ShaderLabRole Mode = new ShaderLabSimpleRole("Off", "Global", "Linear", "Exp", "Exp2");
 
-	public static final ShaderLabRole ZTest = new ShaderLabSimpleRole("Less" , "Greater" , "LEqual" , "GEqual" , "Equal" , "NotEqual" , "Always");
+	public static final ShaderLabRole ZTest = new ShaderLabSimpleRole("Always", "Less" , "Greater" , "LEqual" , "GEqual" , "Equal" , "NotEqual");
 
 	public static final ShaderLabRole Color = new ShaderLabRole()
 	{
