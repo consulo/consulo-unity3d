@@ -44,7 +44,8 @@ public class ShaderLabCompletionContributor extends CompletionContributor
 {
 	public ShaderLabCompletionContributor()
 	{
-		extend(CompletionType.BASIC, StandardPatterns.psiElement(ShaderLabTokens.IDENTIFIER).withParent(ShaderPropertyTypeElement.class), new CompletionProvider<CompletionParameters>()
+		extend(CompletionType.BASIC, StandardPatterns.psiElement(ShaderLabTokens.IDENTIFIER).withParent(ShaderPropertyTypeElement.class),
+				new CompletionProvider<CompletionParameters>()
 
 		{
 			@Override
@@ -64,11 +65,17 @@ public class ShaderLabCompletionContributor extends CompletionContributor
 				.START_KEYWORD)), new CompletionProvider<CompletionParameters>()
 		{
 			@Override
-			protected void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext context,
+			protected void addCompletions(@NotNull CompletionParameters parameters,
+					ProcessingContext context,
 					@NotNull final CompletionResultSet result)
 			{
 				ShaderSimpleValue simpleValue = PsiTreeUtil.getParentOfType(parameters.getPosition(), ShaderSimpleValue.class);
-				if(simpleValue == null || simpleValue.getRole() != ShaderLabRole.Fallback)
+				if(simpleValue == null)
+				{
+					return;
+				}
+				ShaderLabRole role = simpleValue.getRole();
+				if(role != ShaderLabRole.Fallback && role != ShaderLabRole.UsePass)
 				{
 					return;
 				}
@@ -83,7 +90,10 @@ public class ShaderLabCompletionContributor extends CompletionContributor
 						return true;
 					}
 				});
-				result.addElement(LookupElementBuilder.create("Off").bold());
+				if(role == ShaderLabRole.Fallback)
+				{
+					result.addElement(LookupElementBuilder.create("Off").bold());
+				}
 			}
 		});
 	}

@@ -320,6 +320,31 @@ public abstract class ShaderLabRole
 		}
 	};
 
+	public static final ShaderLabRole UsePass = new ShaderLabRole()
+	{
+		@Override
+		public void parseImpl(ShaderLabParserBuilder builder)
+		{
+			PsiBuilder.Marker mark = builder.mark();
+
+			builder.advanceLexer();
+
+			IElementType valueTokenType = builder.getTokenType();
+			if(valueTokenType == ShaderLabTokens.STRING_LITERAL)
+			{
+				PsiBuilder.Marker refMarker = builder.mark();
+				builder.advanceLexer();
+				refMarker.done(ShaderLabElements.REFERENCE);
+			}
+			else
+			{
+				doneError(builder, "Wrong value");
+			}
+
+			mark.done(ShaderLabElements.SIMPLE_VALUE);
+		}
+	};
+
 	public static final ShaderLabRole ConstantColor = new ShaderLabRole()
 	{
 		@Override
@@ -365,7 +390,8 @@ public abstract class ShaderLabRole
 
 	public static final ShaderLabRole Pass = new ShaderLabCompositeRole(ShaderLabElements.PASS, Color, SetTexture, Lighting, ZWrite, Cull, Fog, ZTest);
 
-	public static final ShaderLabRole SubShader = new ShaderLabCompositeRole(ShaderLabElements.SUB_SHADER, Pass, Tags, Lighting, ZWrite, Cull, Fog);
+	public static final ShaderLabRole SubShader = new ShaderLabCompositeRole(ShaderLabElements.SUB_SHADER, Pass, Tags, Lighting, ZWrite, Cull, Fog,
+			UsePass);
 
 	public static final ShaderLabRole Shader = new ShaderLabCompositeRole(ShaderLabElements.SHADER_DEF, Properties, Fallback, SubShader)
 	{
