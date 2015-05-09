@@ -46,6 +46,8 @@ public interface ShaderLabElements
 
 	IElementType TAG = new ElementTypeAsPsiFactory("TAG", ShaderLabLanguage.INSTANCE, ShaderTag.class);
 
+	IElementType MATERIAL = new ElementTypeAsPsiFactory("MATERIAL", ShaderLabLanguage.INSTANCE, ShaderCompositeCommand.class);
+
 	IElementType FOG = new ElementTypeAsPsiFactory("FOG", ShaderLabLanguage.INSTANCE, ShaderCompositeCommand.class);
 
 	IElementType PASS = new ElementTypeAsPsiFactory("PASS", ShaderLabLanguage.INSTANCE, ShaderCompositeCommand.class);

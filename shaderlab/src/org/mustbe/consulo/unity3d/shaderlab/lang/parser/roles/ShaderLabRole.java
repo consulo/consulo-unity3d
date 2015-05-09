@@ -272,33 +272,10 @@ public abstract class ShaderLabRole
 
 	public static final ShaderLabRole Mode = new ShaderLabSimpleRole("Off", "Global", "Linear", "Exp", "Exp2");
 
-	public static final ShaderLabRole ZTest = new ShaderLabSimpleRole("Always", "Less" , "Greater" , "LEqual" , "GEqual" , "Equal" , "NotEqual");
+	public static final ShaderLabRole ZTest = new ShaderLabSimpleRole("Always", "Less", "Greater", "LEqual", "GEqual", "Equal", "NotEqual");
 
-	public static final ShaderLabRole Color = new ShaderLabRole()
-	{
-		@Override
-		public void parseImpl(ShaderLabParserBuilder builder)
-		{
-			PsiBuilder.Marker mark = builder.mark();
-			builder.advanceLexer();
+	public static final ShaderLabRole Color = new ShaderLabColorRole();
 
-			if(builder.getTokenType() == ShaderLabTokens.LPAR)
-			{
-				PsiBuilder.Marker valueMarker = builder.mark();
-				parseElementsInBraces(builder, ShaderLabTokens.LPAR, ShaderLabTokens.RPAR, ShaderLabTokens.INTEGER_LITERAL);
-				valueMarker.done(ShaderLabElements.PROPERTY_VALUE);
-			}
-			else if(builder.getTokenType() == ShaderLabTokens.LBRACKET)
-			{
-				parseBracketReference(builder);
-			}
-			else
-			{
-				builder.error("Expected value");
-			}
-			mark.done(ShaderLabElements.SIMPLE_VALUE);
-		}
-	};
 	public static final ShaderLabRole Fallback = new ShaderLabRole()
 	{
 		@Override
@@ -397,10 +374,23 @@ public abstract class ShaderLabRole
 		}
 	};
 
+	public static final ShaderLabRole Diffuse = new ShaderLabColorRole();
+
+	public static final ShaderLabRole Ambient = new ShaderLabColorRole();
+
+	public static final ShaderLabRole Shininess = new ShaderLabColorRole();
+
+	public static final ShaderLabRole Specular = new ShaderLabColorRole();
+
+	public static final ShaderLabRole Emission = new ShaderLabColorRole();
+
+	public static final ShaderLabRole Material = new ShaderLabCompositeRole(ShaderLabElements.MATERIAL, Diffuse, Ambient, Shininess, Specular,
+			Emission);
+
 	public static final ShaderLabRole Fog = new ShaderLabCompositeRole(ShaderLabElements.FOG, Color, Mode);
 
 	public static final ShaderLabRole Pass = new ShaderLabCompositeRole(ShaderLabElements.PASS, Color, SetTexture, Lighting, ZWrite, Cull, Fog,
-			ZTest, SeparateSpecular);
+			ZTest, SeparateSpecular, Material);
 
 	public static final ShaderLabRole SubShader = new ShaderLabCompositeRole(ShaderLabElements.SUB_SHADER, Pass, Tags, Lighting, ZWrite, Cull, Fog,
 			UsePass);

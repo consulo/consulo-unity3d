@@ -26,6 +26,7 @@ import org.mustbe.consulo.csharp.lang.psi.impl.msil.CSharpTransform;
 import org.mustbe.consulo.dotnet.psi.DotNetTypeDeclaration;
 import org.mustbe.consulo.dotnet.resolve.DotNetPsiSearcher;
 import org.mustbe.consulo.unity3d.shaderlab.lang.ShaderMaterialAttribute;
+import org.mustbe.consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabColorRole;
 import org.mustbe.consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabRole;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.stub.index.ShaderDefIndex;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
@@ -82,7 +83,7 @@ public class ShaderReference extends ShaderLabElement implements PsiQualifiedRef
 			{
 				return ResolveKind.ANOTHER_SHADER;
 			}
-			else if(role == ShaderLabRole.Color || role == ShaderLabRole.ConstantColor || role == ShaderLabRole.Matrix)
+			else if(role instanceof ShaderLabColorRole || role == ShaderLabRole.Matrix)
 			{
 				return ResolveKind.PROPERTY;
 			}
