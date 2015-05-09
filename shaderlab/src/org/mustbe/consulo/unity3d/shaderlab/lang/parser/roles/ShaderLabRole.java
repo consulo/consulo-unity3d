@@ -393,7 +393,7 @@ public abstract class ShaderLabRole
 			ZTest, SeparateSpecular, Material);
 
 	public static final ShaderLabRole SubShader = new ShaderLabCompositeRole(ShaderLabElements.SUB_SHADER, Pass, Tags, Lighting, ZWrite, Cull, Fog,
-			UsePass);
+			UsePass, Material);
 
 	public static final ShaderLabRole Shader = new ShaderLabCompositeRole(ShaderLabElements.SHADER_DEF, Properties, Fallback, SubShader)
 	{
