@@ -11,7 +11,6 @@ import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderLabTokens;
 %class _ShaderLabLexer
 %extends LexerBase
 %unicode
-%ignorecase
 %function advanceImpl
 %type IElementType
 %eof{  return;
