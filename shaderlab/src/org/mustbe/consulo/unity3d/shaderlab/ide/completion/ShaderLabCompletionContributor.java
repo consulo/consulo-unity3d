@@ -22,6 +22,7 @@ import org.mustbe.consulo.unity3d.shaderlab.lang.ShaderLabFileType;
 import org.mustbe.consulo.unity3d.shaderlab.lang.ShaderLabPropertyType;
 import org.mustbe.consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabCompositeRole;
 import org.mustbe.consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabRole;
+import org.mustbe.consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabSimpleRole;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderBraceOwner;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderLabKeyTokens;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderLabTokens;
@@ -95,6 +96,7 @@ public class ShaderLabCompletionContributor extends CompletionContributor
 				}
 			}
 		});
+
 		extend(CompletionType.BASIC, StandardPatterns.psiElement().afterLeaf(StandardPatterns.psiElement().withElementType(ShaderLabKeyTokens
 				.START_KEYWORD)), new CompletionProvider<CompletionParameters>()
 		{
@@ -127,6 +129,33 @@ public class ShaderLabCompletionContributor extends CompletionContributor
 				if(role == ShaderLabRole.Fallback)
 				{
 					result.addElement(LookupElementBuilder.create("Off").bold());
+				}
+			}
+		});
+
+		extend(CompletionType.BASIC, StandardPatterns.psiElement().afterLeaf(StandardPatterns.psiElement().withElementType(ShaderLabKeyTokens
+				.START_KEYWORD)), new CompletionProvider<CompletionParameters>()
+		{
+			@Override
+			protected void addCompletions(@NotNull CompletionParameters parameters,
+					ProcessingContext context,
+					@NotNull final CompletionResultSet result)
+			{
+				ShaderSimpleValue simpleValue = PsiTreeUtil.getParentOfType(parameters.getPosition(), ShaderSimpleValue.class);
+				if(simpleValue == null)
+				{
+					return;
+				}
+				ShaderLabRole role = simpleValue.getRole();
+				if(!(role instanceof ShaderLabSimpleRole))
+				{
+					return;
+				}
+				for(String value : ((ShaderLabSimpleRole) role).getValues())
+				{
+					LookupElementBuilder builder = LookupElementBuilder.create(value);
+					builder = builder.bold();
+					result.addElement(builder);
 				}
 			}
 		});

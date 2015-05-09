@@ -260,15 +260,15 @@ public abstract class ShaderLabRole
 		}
 	};
 
-	public static final ShaderLabRole Cull = new ShaderLabSimpleRole("off", "back", "front");
+	public static final ShaderLabRole Cull = new ShaderLabSimpleRole("Off", "Back", "Front");
 
-	public static final ShaderLabRole ZWrite = new ShaderLabSimpleRole("on", "off");
+	public static final ShaderLabRole ZWrite = new ShaderLabSimpleRole("On", "Off");
 
-	public static final ShaderLabRole Lighting = new ShaderLabSimpleRole("on", "off");
+	public static final ShaderLabRole Lighting = new ShaderLabSimpleRole("On", "Off");
 
-	public static final ShaderLabRole Mode = new ShaderLabSimpleRole("off", "global", "linear", "exp", "exp2");
+	public static final ShaderLabRole Mode = new ShaderLabSimpleRole("Off", "Global", "Linear", "Exp", "Exp2");
 
-	public static final ShaderLabRole ZTest = new ShaderLabSimpleRole("less" , "greater" , "lequal" , "gequal" , "equal" , "notequal" , "always");
+	public static final ShaderLabRole ZTest = new ShaderLabSimpleRole("Less" , "Greater" , "LEqual" , "GEqual" , "Equal" , "NotEqual" , "Always");
 
 	public static final ShaderLabRole Color = new ShaderLabRole()
 	{
@@ -307,7 +307,7 @@ public abstract class ShaderLabRole
 			IElementType valueTokenType = builder.getTokenType();
 			if(valueTokenType == ShaderLabTokens.IDENTIFIER)
 			{
-				ShaderLabParser.validateIdentifier(builder, "off");
+				ShaderLabParser.validateIdentifier(builder, "Off");
 			}
 			else if(valueTokenType == ShaderLabTokens.STRING_LITERAL)
 			{
