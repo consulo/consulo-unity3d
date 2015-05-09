@@ -17,68 +17,44 @@
 package org.mustbe.consulo.unity3d.shaderlab.lang.parser.roles;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.mustbe.consulo.unity3d.shaderlab.lang.parser.ShaderLabParser;
 import org.mustbe.consulo.unity3d.shaderlab.lang.parser.ShaderLabParserBuilder;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderLabElements;
-import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderLabTokens;
 import com.intellij.lang.PsiBuilder;
 
 /**
  * @author VISTALL
  * @since 09.05.2015
  */
-public class ShaderLabSimpleRole extends ShaderLabValueRole
+public class ShaderLabPairRole extends ShaderLabValueRole
 {
-	private String[] myValues;
+	private ShaderLabRole myFirstRole;
+	private ShaderLabRole mySecondRole;
 
-	public ShaderLabSimpleRole(String... values)
+	public ShaderLabPairRole(ShaderLabRole firstRole, ShaderLabRole secondRole)
 	{
-		myValues = values;
-	}
-
-	public String[] getValues()
-	{
-		return myValues;
-	}
-
-	@Nullable
-	@Override
-	public String getDefaultInsertValue()
-	{
-		return myValues[0];
+		myFirstRole = firstRole;
+		mySecondRole = secondRole;
 	}
 
 	@Override
-	public PsiBuilder.Marker parseAndDone(ShaderLabParserBuilder builder, PsiBuilder.Marker mark)
+	public PsiBuilder.Marker parseAndDone(ShaderLabParserBuilder builder, @NotNull PsiBuilder.Marker mark)
 	{
-		if(builder.getTokenType() == ShaderLabTokens.IDENTIFIER)
+		if(myFirstRole.parseAndDone(builder, builder.mark()) != null)
 		{
-			ShaderLabParser.validateIdentifier(builder, myValues);
-		}
-		else
-		{
-			doneWithErrorSafe(builder, "Wrong value");
+			PsiBuilder.Marker secondMark = builder.mark();
+			if(mySecondRole.parseAndDone(builder, secondMark) == null)
+			{
+				secondMark.error("Expected second value");
+			}
 		}
 
-		mark.done(ShaderLabElements.SIMPLE_VALUE);
+		mark.done(ShaderLabElements.PAIR_VALUE);
 		return mark;
 	}
 
 	@Override
 	public boolean isMyValue(@NotNull ShaderLabParserBuilder builder)
 	{
-		if(builder.getTokenType() == ShaderLabTokens.IDENTIFIER)
-		{
-			String tokenText = builder.getTokenText();
-			for(String value : myValues)
-			{
-				if(value.equalsIgnoreCase(tokenText))
-				{
-					return true;
-				}
-			}
-		}
-		return false;
+		return myFirstRole instanceof ShaderLabValueRole && ((ShaderLabValueRole) myFirstRole).isMyValue(builder);
 	}
 }

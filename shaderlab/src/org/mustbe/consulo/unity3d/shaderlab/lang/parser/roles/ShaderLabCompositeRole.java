@@ -16,6 +16,7 @@
 
 package org.mustbe.consulo.unity3d.shaderlab.lang.parser.roles;
 
+import org.jetbrains.annotations.NotNull;
 import org.mustbe.consulo.unity3d.shaderlab.lang.parser.ShaderLabParserBuilder;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderLabTokens;
 import com.intellij.lang.PsiBuilder;
@@ -47,12 +48,8 @@ public class ShaderLabCompositeRole extends ShaderLabRole
 	}
 
 	@Override
-	public void parseImpl(ShaderLabParserBuilder builder)
+	public PsiBuilder.Marker parseAndDone(ShaderLabParserBuilder builder, @NotNull PsiBuilder.Marker mark)
 	{
-		PsiBuilder.Marker mark = builder.mark();
-
-		builder.advanceLexer();
-
 		parseBefore(builder);
 
 		if(PsiBuilderUtil.expect(builder, ShaderLabTokens.LBRACE))
@@ -97,5 +94,6 @@ public class ShaderLabCompositeRole extends ShaderLabRole
 			builder.error("'{' expected");
 		}
 		mark.done(myDoneElement);
+		return mark;
 	}
 }

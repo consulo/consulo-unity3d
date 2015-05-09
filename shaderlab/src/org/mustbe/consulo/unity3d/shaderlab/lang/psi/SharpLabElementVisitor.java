@@ -88,4 +88,9 @@ public class SharpLabElementVisitor extends PsiElementVisitor
 	{
 		visitElement(texture);
 	}
+
+	public void visitPairValue(ShaderPairValue value)
+	{
+		visitElement(value);
+	}
 }

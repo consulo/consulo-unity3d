@@ -19,6 +19,7 @@ package org.mustbe.consulo.unity3d.shaderlab.lang.parser.roles;
 import static org.mustbe.consulo.unity3d.shaderlab.lang.parser.ShaderLabParser.parseBracketReference;
 import static org.mustbe.consulo.unity3d.shaderlab.lang.parser.ShaderLabParser.parseElementsInBraces;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.mustbe.consulo.unity3d.shaderlab.lang.parser.ShaderLabParserBuilder;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderLabElements;
@@ -29,14 +30,11 @@ import com.intellij.lang.PsiBuilder;
  * @author VISTALL
  * @since 09.05.2015
  */
-public class ShaderLabColorRole extends ShaderLabRole
+public class ShaderLabColorRole extends ShaderLabValueRole
 {
 	@Override
-	public void parseImpl(ShaderLabParserBuilder builder)
+	public PsiBuilder.Marker parseAndDone(ShaderLabParserBuilder builder, PsiBuilder.Marker mark)
 	{
-		PsiBuilder.Marker mark = builder.mark();
-		builder.advanceLexer();
-
 		if(builder.getTokenType() == ShaderLabTokens.LPAR)
 		{
 			PsiBuilder.Marker valueMarker = builder.mark();
@@ -52,6 +50,7 @@ public class ShaderLabColorRole extends ShaderLabRole
 			builder.error("Expected value");
 		}
 		mark.done(ShaderLabElements.SIMPLE_VALUE);
+		return mark;
 	}
 
 	@Nullable
@@ -59,5 +58,11 @@ public class ShaderLabColorRole extends ShaderLabRole
 	public String getDefaultInsertValue()
 	{
 		return "()";
+	}
+
+	@Override
+	public boolean isMyValue(@NotNull ShaderLabParserBuilder builder)
+	{
+		return builder.getTokenType() == ShaderLabTokens.LPAR || builder.getTokenType() == ShaderLabTokens.LBRACKET;
 	}
 }

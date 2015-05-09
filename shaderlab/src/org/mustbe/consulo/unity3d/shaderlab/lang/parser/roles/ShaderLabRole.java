@@ -47,12 +47,8 @@ public abstract class ShaderLabRole
 	public static final ShaderLabRole Properties = new ShaderLabRole()
 	{
 		@Override
-		public void parseImpl(ShaderLabParserBuilder builder)
+		public PsiBuilder.Marker parseAndDone(ShaderLabParserBuilder builder, @NotNull PsiBuilder.Marker mark)
 		{
-			PsiBuilder.Marker mark = builder.mark();
-
-			builder.advanceLexer();
-
 			if(expectWithError(builder, ShaderLabTokens.LBRACE, "'{' expected"))
 			{
 				int balanceCount = 0;
@@ -86,6 +82,7 @@ public abstract class ShaderLabRole
 			}
 
 			mark.done(ShaderLabElements.PROPERTY_LIST);
+			return mark;
 		}
 
 
@@ -230,11 +227,8 @@ public abstract class ShaderLabRole
 	public static final ShaderLabRole Tags = new ShaderLabRole()
 	{
 		@Override
-		public void parseImpl(ShaderLabParserBuilder builder)
+		public PsiBuilder.Marker parseAndDone(ShaderLabParserBuilder builder, @NotNull PsiBuilder.Marker mark)
 		{
-			PsiBuilder.Marker mark = builder.mark();
-			builder.advanceLexer();
-
 			if(expectWithError(builder, ShaderLabTokens.LBRACE, "'{' expected"))
 			{
 				while(!builder.eof())
@@ -257,6 +251,7 @@ public abstract class ShaderLabRole
 				expectWithError(builder, ShaderLabTokens.RBRACE, "'}' expected");
 			}
 			mark.done(ShaderLabElements.TAG_LIST);
+			return mark;
 		}
 	};
 
@@ -279,12 +274,8 @@ public abstract class ShaderLabRole
 	public static final ShaderLabRole Fallback = new ShaderLabRole()
 	{
 		@Override
-		public void parseImpl(ShaderLabParserBuilder builder)
+		public PsiBuilder.Marker parseAndDone(ShaderLabParserBuilder builder, @NotNull PsiBuilder.Marker mark)
 		{
-			PsiBuilder.Marker mark = builder.mark();
-
-			builder.advanceLexer();
-
 			IElementType valueTokenType = builder.getTokenType();
 			if(valueTokenType == ShaderLabTokens.IDENTIFIER)
 			{
@@ -298,6 +289,7 @@ public abstract class ShaderLabRole
 			}
 
 			mark.done(ShaderLabElements.SIMPLE_VALUE);
+			return mark;
 		}
 
 		@Nullable
@@ -311,12 +303,8 @@ public abstract class ShaderLabRole
 	public static final ShaderLabRole UsePass = new ShaderLabRole()
 	{
 		@Override
-		public void parseImpl(ShaderLabParserBuilder builder)
+		public PsiBuilder.Marker parseAndDone(ShaderLabParserBuilder builder, @NotNull PsiBuilder.Marker mark)
 		{
-			PsiBuilder.Marker mark = builder.mark();
-
-			builder.advanceLexer();
-
 			IElementType valueTokenType = builder.getTokenType();
 			if(valueTokenType == ShaderLabTokens.STRING_LITERAL)
 			{
@@ -330,26 +318,17 @@ public abstract class ShaderLabRole
 			}
 
 			mark.done(ShaderLabElements.SIMPLE_VALUE);
+			return mark;
 		}
 	};
 
-	public static final ShaderLabRole ConstantColor = new ShaderLabRole()
-	{
-		@Override
-		public void parseImpl(ShaderLabParserBuilder builder)
-		{
-			Color.parseImpl(builder);
-		}
-	};
+	public static final ShaderLabRole ConstantColor = new ShaderLabColorRole();
 
 	public static final ShaderLabRole Matrix = new ShaderLabRole()
 	{
 		@Override
-		public void parseImpl(ShaderLabParserBuilder builder)
+		public PsiBuilder.Marker parseAndDone(ShaderLabParserBuilder builder, @NotNull PsiBuilder.Marker mark)
 		{
-			PsiBuilder.Marker mark = builder.mark();
-			builder.advanceLexer();
-
 			if(builder.getTokenType() == ShaderLabTokens.LBRACKET)
 			{
 				parseBracketReference(builder);
@@ -359,6 +338,7 @@ public abstract class ShaderLabRole
 				builder.error("Expected value");
 			}
 			mark.done(ShaderLabElements.SIMPLE_VALUE);
+			return mark;
 		}
 	};
 
@@ -387,10 +367,22 @@ public abstract class ShaderLabRole
 	public static final ShaderLabRole Material = new ShaderLabCompositeRole(ShaderLabElements.MATERIAL, Diffuse, Ambient, Shininess, Specular,
 			Emission);
 
+	public static final ShaderLabRole AlphaTest = new ShaderLabOrRole(new ShaderLabSimpleRole("Off"), new ShaderLabPairRole(new ShaderLabSimpleRole
+			("Always", "Less", "Greater", "LEqual", "GEqual", "Equal", "NotEqual", "Never"), new ShaderLabTokenRole(ShaderLabTokens
+			.INTEGER_LITERAL)))
+	{
+		@Nullable
+		@Override
+		public String getDefaultInsertValue()
+		{
+			return "Off";
+		}
+	};
+
 	public static final ShaderLabRole Fog = new ShaderLabCompositeRole(ShaderLabElements.FOG, Color, Mode);
 
 	public static final ShaderLabRole Pass = new ShaderLabCompositeRole(ShaderLabElements.PASS, Color, SetTexture, Lighting, ZWrite, Cull, Fog,
-			ZTest, SeparateSpecular, Material);
+			ZTest, SeparateSpecular, Material, AlphaTest);
 
 	public static final ShaderLabRole SubShader = new ShaderLabCompositeRole(ShaderLabElements.SUB_SHADER, Pass, Tags, Lighting, ZWrite, Cull, Fog,
 			UsePass, Material);
@@ -448,7 +440,18 @@ public abstract class ShaderLabRole
 		}
 	}
 
-	public abstract void parseImpl(ShaderLabParserBuilder builder);
+	public PsiBuilder.Marker parseImpl(ShaderLabParserBuilder builder)
+	{
+		PsiBuilder.Marker mark = builder.mark();
+
+		builder.advanceLexer();
+
+		parseAndDone(builder, mark);
+
+		return mark;
+	}
+
+	public abstract PsiBuilder.Marker parseAndDone(ShaderLabParserBuilder builder, PsiBuilder.Marker mark);
 
 	private static Map<String, ShaderLabRole> ourRoles = new HashMap<String, ShaderLabRole>();
 

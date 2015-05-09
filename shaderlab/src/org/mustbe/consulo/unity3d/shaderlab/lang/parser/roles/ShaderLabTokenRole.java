@@ -17,68 +17,43 @@
 package org.mustbe.consulo.unity3d.shaderlab.lang.parser.roles;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.mustbe.consulo.unity3d.shaderlab.lang.parser.ShaderLabParser;
 import org.mustbe.consulo.unity3d.shaderlab.lang.parser.ShaderLabParserBuilder;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderLabElements;
-import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderLabTokens;
 import com.intellij.lang.PsiBuilder;
+import com.intellij.psi.tree.IElementType;
 
 /**
  * @author VISTALL
  * @since 09.05.2015
  */
-public class ShaderLabSimpleRole extends ShaderLabValueRole
+public class ShaderLabTokenRole extends ShaderLabValueRole
 {
-	private String[] myValues;
+	private IElementType myElementType;
 
-	public ShaderLabSimpleRole(String... values)
+	public ShaderLabTokenRole(IElementType elementType)
 	{
-		myValues = values;
+		myElementType = elementType;
 	}
 
-	public String[] getValues()
-	{
-		return myValues;
-	}
-
-	@Nullable
-	@Override
-	public String getDefaultInsertValue()
-	{
-		return myValues[0];
-	}
 
 	@Override
-	public PsiBuilder.Marker parseAndDone(ShaderLabParserBuilder builder, PsiBuilder.Marker mark)
+	public PsiBuilder.Marker parseAndDone(ShaderLabParserBuilder builder, @NotNull PsiBuilder.Marker mark)
 	{
-		if(builder.getTokenType() == ShaderLabTokens.IDENTIFIER)
+		if(builder.getTokenType() == myElementType)
 		{
-			ShaderLabParser.validateIdentifier(builder, myValues);
+			builder.advanceLexer();
+			mark.done(ShaderLabElements.SIMPLE_VALUE);
+			return mark;
 		}
 		else
 		{
-			doneWithErrorSafe(builder, "Wrong value");
+			return null;
 		}
-
-		mark.done(ShaderLabElements.SIMPLE_VALUE);
-		return mark;
 	}
 
 	@Override
 	public boolean isMyValue(@NotNull ShaderLabParserBuilder builder)
 	{
-		if(builder.getTokenType() == ShaderLabTokens.IDENTIFIER)
-		{
-			String tokenText = builder.getTokenText();
-			for(String value : myValues)
-			{
-				if(value.equalsIgnoreCase(tokenText))
-				{
-					return true;
-				}
-			}
-		}
-		return false;
+		return builder.getTokenType() == myElementType;
 	}
 }
