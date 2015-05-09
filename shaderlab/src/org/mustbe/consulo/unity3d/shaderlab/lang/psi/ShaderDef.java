@@ -23,6 +23,7 @@ import java.util.List;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.mustbe.consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabRole;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.light.LightShaderProperty;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.stub.ShaderDefStub;
 import com.intellij.extapi.psi.StubBasedPsiElementBase;
@@ -38,7 +39,8 @@ import com.intellij.util.IncorrectOperationException;
  * @author VISTALL
  * @since 08.05.2015
  */
-public class ShaderDef extends StubBasedPsiElementBase<ShaderDefStub> implements PsiNameIdentifierOwner, StubBasedPsiElement<ShaderDefStub>, ShaderBraceOwner
+public class ShaderDef extends StubBasedPsiElementBase<ShaderDefStub> implements PsiNameIdentifierOwner, StubBasedPsiElement<ShaderDefStub>,
+		ShaderBraceOwner, ShaderRoleOwner
 {
 	public ShaderDef(@NotNull ASTNode node)
 	{
@@ -121,5 +123,12 @@ public class ShaderDef extends StubBasedPsiElementBase<ShaderDefStub> implements
 	public PsiElement getNameIdentifier()
 	{
 		return findChildByType(ShaderLabTokens.STRING_LITERAL);
+	}
+
+	@Nullable
+	@Override
+	public ShaderLabRole getRole()
+	{
+		return ShaderLabRole.Shader;
 	}
 }

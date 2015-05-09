@@ -19,9 +19,11 @@ package org.mustbe.consulo.unity3d.shaderlab.ide.completion;
 import org.jetbrains.annotations.NotNull;
 import org.mustbe.consulo.unity3d.shaderlab.lang.ShaderLabFileType;
 import org.mustbe.consulo.unity3d.shaderlab.lang.ShaderLabPropertyType;
+import org.mustbe.consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabRole;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderLabKeyTokens;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderLabTokens;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderPropertyTypeElement;
+import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderSimpleValue;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.stub.index.ShaderDefIndex;
 import com.intellij.codeInsight.completion.CompletionContributor;
 import com.intellij.codeInsight.completion.CompletionParameters;
@@ -30,6 +32,7 @@ import com.intellij.codeInsight.completion.CompletionResultSet;
 import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.patterns.StandardPatterns;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ProcessingContext;
 import com.intellij.util.Processor;
 
@@ -58,12 +61,17 @@ public class ShaderLabCompletionContributor extends CompletionContributor
 		});
 
 		extend(CompletionType.BASIC, StandardPatterns.psiElement().afterLeaf(StandardPatterns.psiElement().withElementType(ShaderLabKeyTokens
-				.FALLBACK_KEYWORD)), new CompletionProvider<CompletionParameters>()
+				.START_KEYWORD)), new CompletionProvider<CompletionParameters>()
 		{
 			@Override
 			protected void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext context,
 					@NotNull final CompletionResultSet result)
 			{
+				ShaderSimpleValue simpleValue = PsiTreeUtil.getParentOfType(parameters.getPosition(), ShaderSimpleValue.class);
+				if(simpleValue == null || simpleValue.getRole() != ShaderLabRole.Fallback)
+				{
+					return;
+				}
 				ShaderDefIndex.getInstance().processAllKeys(parameters.getPosition().getProject(), new Processor<String>()
 				{
 					@Override

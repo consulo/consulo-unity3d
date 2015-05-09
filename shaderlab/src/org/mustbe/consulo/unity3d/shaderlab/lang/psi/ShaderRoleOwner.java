@@ -16,42 +16,15 @@
 
 package org.mustbe.consulo.unity3d.shaderlab.lang.psi;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.mustbe.consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabRole;
-import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
 
 /**
  * @author VISTALL
  * @since 09.05.2015
  */
-public abstract class ShaderBraceOwnerElement extends ShaderLabElement implements ShaderBraceOwner, ShaderRoleOwner
+public interface ShaderRoleOwner
 {
-	public ShaderBraceOwnerElement(@NotNull ASTNode node)
-	{
-		super(node);
-	}
-
-	@Override
 	@Nullable
-	public ShaderLabRole getRole()
-	{
-		PsiElement element = findNotNullChildByType(ShaderLabKeyTokens.START_KEYWORD);
-		return ShaderLabRole.findRole(element.getText());
-	}
-
-	@Override
-	@Nullable
-	public PsiElement getLeftBrace()
-	{
-		return findChildByType(ShaderLabTokens.LBRACE);
-	}
-
-	@Override
-	@Nullable
-	public PsiElement getRightBrace()
-	{
-		return findChildByType(ShaderLabTokens.RBRACE);
-	}
+	ShaderLabRole getRole();
 }

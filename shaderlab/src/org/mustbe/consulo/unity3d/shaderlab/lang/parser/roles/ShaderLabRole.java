@@ -21,13 +21,17 @@ import static org.mustbe.consulo.unity3d.shaderlab.lang.parser.ShaderLabParser.e
 import static org.mustbe.consulo.unity3d.shaderlab.lang.parser.ShaderLabParser.parseBracketReference;
 import static org.mustbe.consulo.unity3d.shaderlab.lang.parser.ShaderLabParser.parseElementsInBraces;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.mustbe.consulo.unity3d.shaderlab.lang.ShaderLabPropertyType;
 import org.mustbe.consulo.unity3d.shaderlab.lang.parser.ShaderLabParser;
 import org.mustbe.consulo.unity3d.shaderlab.lang.parser.ShaderLabParserBuilder;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderLabElements;
-import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderLabKeyTokens;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderLabTokens;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiBuilderUtil;
@@ -40,7 +44,7 @@ import com.intellij.util.ThreeState;
  */
 public abstract class ShaderLabRole
 {
-	public static final ShaderLabRole Properties = new ShaderLabRole(ShaderLabKeyTokens.PROPERTIES_KEYWORD)
+	public static final ShaderLabRole Properties = new ShaderLabRole()
 	{
 		@Override
 		public void parseImpl(ShaderLabParserBuilder builder)
@@ -223,7 +227,7 @@ public abstract class ShaderLabRole
 			}
 		}
 	};
-	public static final ShaderLabRole Tags = new ShaderLabRole(ShaderLabKeyTokens.TAGS_KEYWORD)
+	public static final ShaderLabRole Tags = new ShaderLabRole()
 	{
 		@Override
 		public void parseImpl(ShaderLabParserBuilder builder)
@@ -256,15 +260,15 @@ public abstract class ShaderLabRole
 		}
 	};
 
-	public static final ShaderLabRole Cull = new ShaderLabSimpleRole(ShaderLabKeyTokens.CULL_KEYWORD, "off", "back", "front");
+	public static final ShaderLabRole Cull = new ShaderLabSimpleRole("off", "back", "front");
 
-	public static final ShaderLabRole ZWrite = new ShaderLabSimpleRole(ShaderLabKeyTokens.ZWRITE_KEYWORD, "on", "off");
+	public static final ShaderLabRole ZWrite = new ShaderLabSimpleRole("on", "off");
 
-	public static final ShaderLabRole Lighting = new ShaderLabSimpleRole(ShaderLabKeyTokens.LIGHTING_KEYWORD, "on", "off");
+	public static final ShaderLabRole Lighting = new ShaderLabSimpleRole("on", "off");
 
-	public static final ShaderLabRole Mode = new ShaderLabSimpleRole(ShaderLabKeyTokens.MODE_KEYWORD, "off", "global", "linear", "exp", "exp2");
+	public static final ShaderLabRole Mode = new ShaderLabSimpleRole("off", "global", "linear", "exp", "exp2");
 
-	public static final ShaderLabRole Color = new ShaderLabRole(ShaderLabKeyTokens.COLOR_KEYWORD)
+	public static final ShaderLabRole Color = new ShaderLabRole()
 	{
 		@Override
 		public void parseImpl(ShaderLabParserBuilder builder)
@@ -289,7 +293,7 @@ public abstract class ShaderLabRole
 			mark.done(ShaderLabElements.SIMPLE_VALUE);
 		}
 	};
-	public static final ShaderLabRole Fallback = new ShaderLabRole(ShaderLabKeyTokens.FALLBACK_KEYWORD)
+	public static final ShaderLabRole Fallback = new ShaderLabRole()
 	{
 		@Override
 		public void parseImpl(ShaderLabParserBuilder builder)
@@ -314,7 +318,7 @@ public abstract class ShaderLabRole
 		}
 	};
 
-	public static final ShaderLabRole ConstantColor = new ShaderLabRole(ShaderLabKeyTokens.CONSTANT_COLOR_KEYWORD)
+	public static final ShaderLabRole ConstantColor = new ShaderLabRole()
 	{
 		@Override
 		public void parseImpl(ShaderLabParserBuilder builder)
@@ -323,7 +327,7 @@ public abstract class ShaderLabRole
 		}
 	};
 
-	public static final ShaderLabRole Maxtix = new ShaderLabRole(ShaderLabKeyTokens.MATRIX_KEYWORD)
+	public static final ShaderLabRole Maxtix = new ShaderLabRole()
 	{
 		@Override
 		public void parseImpl(ShaderLabParserBuilder builder)
@@ -343,8 +347,7 @@ public abstract class ShaderLabRole
 		}
 	};
 
-	public static final ShaderLabRole SetTexture = new ShaderLabCompositeRole(ShaderLabKeyTokens.SET_TEXTURE_KEYWORD, ShaderLabElements.SET_TEXTURE,
-			Maxtix, ConstantColor)
+	public static final ShaderLabRole SetTexture = new ShaderLabCompositeRole(ShaderLabElements.SET_TEXTURE, Maxtix, ConstantColor)
 	{
 		@Override
 		public void parseBefore(ShaderLabParserBuilder builder)
@@ -356,16 +359,13 @@ public abstract class ShaderLabRole
 		}
 	};
 
-	public static final ShaderLabRole Fog = new ShaderLabCompositeRole(ShaderLabKeyTokens.FOG_KEYWORD, ShaderLabElements.FOG, Color, Mode);
+	public static final ShaderLabRole Fog = new ShaderLabCompositeRole(ShaderLabElements.FOG, Color, Mode);
 
-	public static final ShaderLabRole Pass = new ShaderLabCompositeRole(ShaderLabKeyTokens.PASS_KEYWORD, ShaderLabElements.PASS, Color, SetTexture,
-			Lighting, ZWrite, Cull, Fog);
+	public static final ShaderLabRole Pass = new ShaderLabCompositeRole(ShaderLabElements.PASS, Color, SetTexture, Lighting, ZWrite, Cull, Fog);
 
-	public static final ShaderLabRole SubShader = new ShaderLabCompositeRole(ShaderLabKeyTokens.SUBSHADER_KEYWORD, ShaderLabElements.SUB_SHADER,
-			Pass, Tags, Lighting, ZWrite, Cull, Fog);
+	public static final ShaderLabRole SubShader = new ShaderLabCompositeRole(ShaderLabElements.SUB_SHADER, Pass, Tags, Lighting, ZWrite, Cull, Fog);
 
-	public static final ShaderLabRole Shader = new ShaderLabCompositeRole(ShaderLabKeyTokens.SHADER_KEYWORD, ShaderLabElements.SHADER_DEF,
-			Properties, Fallback, SubShader)
+	public static final ShaderLabRole Shader = new ShaderLabCompositeRole(ShaderLabElements.SHADER_DEF, Properties, Fallback, SubShader)
 	{
 		@Override
 		public void parseBefore(ShaderLabParserBuilder builder)
@@ -377,16 +377,21 @@ public abstract class ShaderLabRole
 		}
 	};
 
-	private IElementType myStartElementType;
+	private String myName;
 
-	public ShaderLabRole(IElementType startElementType)
+	public ShaderLabRole()
 	{
-		myStartElementType = startElementType;
+	}
+
+	@NotNull
+	public String getName()
+	{
+		return myName;
 	}
 
 	public boolean tryParse(ShaderLabParserBuilder builder)
 	{
-		if(builder.is(myStartElementType))
+		if(builder.is(this))
 		{
 			parseImpl(builder);
 			return true;
@@ -395,4 +400,34 @@ public abstract class ShaderLabRole
 	}
 
 	public abstract void parseImpl(ShaderLabParserBuilder builder);
+
+	private static Map<String, ShaderLabRole> ourRoles = new HashMap<String, ShaderLabRole>();
+
+	@Nullable
+	public static ShaderLabRole findRole(String name)
+	{
+		name = name.toLowerCase();
+		return ourRoles.get(name);
+	}
+
+	static
+	{
+		Field[] declaredFields = ShaderLabRole.class.getFields();
+		for(Field declaredField : declaredFields)
+		{
+			if(Modifier.isStatic(declaredField.getModifiers()))
+			{
+				try
+				{
+					ShaderLabRole value = (ShaderLabRole) declaredField.get(null);
+					value.myName = declaredField.getName().toLowerCase();
+					ourRoles.put(value.myName, value);
+				}
+				catch(IllegalAccessException e)
+				{
+					throw new Error(e);
+				}
+			}
+		}
+	}
 }

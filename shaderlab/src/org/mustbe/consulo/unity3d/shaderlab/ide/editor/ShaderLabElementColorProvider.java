@@ -22,7 +22,7 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.mustbe.consulo.unity3d.shaderlab.lang.ShaderLabPropertyType;
-import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderLabKeyTokens;
+import org.mustbe.consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabRole;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderLabTokens;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderProperty;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderPropertyType;
@@ -30,7 +30,6 @@ import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderPropertyValue;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderSimpleValue;
 import com.intellij.openapi.editor.ElementColorProvider;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.tree.IElementType;
 
 /**
  * @author VISTALL
@@ -100,8 +99,8 @@ public class ShaderLabElementColorProvider implements ElementColorProvider
 		}
 		else if(element instanceof ShaderSimpleValue)
 		{
-			IElementType key = ((ShaderSimpleValue) element).getKey();
-			return key == ShaderLabKeyTokens.COLOR_KEYWORD || key == ShaderLabKeyTokens.CONSTANT_COLOR_KEYWORD;
+			ShaderLabRole key = ((ShaderSimpleValue) element).getRole();
+			return key == ShaderLabRole.Color || key == ShaderLabRole.ConstantColor;
 		}
 		return false;
 	}

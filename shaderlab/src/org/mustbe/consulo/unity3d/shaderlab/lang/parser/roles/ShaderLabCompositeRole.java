@@ -31,9 +31,8 @@ public class ShaderLabCompositeRole extends ShaderLabRole
 	private IElementType myDoneElement;
 	private ShaderLabRole[] myRoles;
 
-	public ShaderLabCompositeRole(IElementType elementType, IElementType doneElement, ShaderLabRole... roles)
+	public ShaderLabCompositeRole(IElementType doneElement, ShaderLabRole... roles)
 	{
-		super(elementType);
 		myDoneElement = doneElement;
 		myRoles = roles;
 	}

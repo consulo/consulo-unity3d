@@ -122,7 +122,7 @@ public class SharpLabHighlightVisitor extends SharpLabElementVisitor implements 
 				myHolder.add(HighlightInfo.newHighlightInfo(HighlightInfoType.INFORMATION).range(node).textAttributes
 						(DefaultLanguageHighlighterColors.MACRO_KEYWORD).create());
 			}
-			else if(ShaderLabKeyTokens.ALL.contains(node.getElementType()))
+			else if(node.getElementType() == ShaderLabKeyTokens.START_KEYWORD)
 			{
 				myHolder.add(HighlightInfo.newHighlightInfo(HighlightInfoType.INFORMATION).range(node).textAttributes
 						(DefaultLanguageHighlighterColors.KEYWORD).create());

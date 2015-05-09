@@ -17,26 +17,28 @@
 package org.mustbe.consulo.unity3d.shaderlab.lang.psi;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.mustbe.consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabRole;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.tree.IElementType;
 
 /**
  * @author VISTALL
  * @since 09.05.2015
  */
-public class ShaderSimpleValue extends ShaderLabElement
+public class ShaderSimpleValue extends ShaderLabElement implements ShaderRoleOwner
 {
 	public ShaderSimpleValue(@NotNull ASTNode node)
 	{
 		super(node);
 	}
 
-	@NotNull
-	public IElementType getKey()
+	@Override
+	@Nullable
+	public ShaderLabRole getRole()
 	{
-		PsiElement firstChild = getFirstChild();
-		return firstChild.getNode().getElementType();
+		PsiElement element = findNotNullChildByType(ShaderLabKeyTokens.START_KEYWORD);
+		return ShaderLabRole.findRole(element.getText());
 	}
 
 	@Override

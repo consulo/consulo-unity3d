@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderBraceOwner;
+import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderRoleOwner;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.SharpLabElementVisitor;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.folding.CustomFoldingBuilder;
@@ -58,6 +59,7 @@ public class ShaderLabFoldingBuilder extends CustomFoldingBuilder
 	protected String getLanguagePlaceholderText(@NotNull ASTNode node, @NotNull TextRange range)
 	{
 		PsiElement psi = node.getPsi();
+		assert psi instanceof ShaderRoleOwner : psi.getClass().getSimpleName();
 		PsiElement firstChild = psi.getFirstChild();
 		return firstChild.getText();
 	}

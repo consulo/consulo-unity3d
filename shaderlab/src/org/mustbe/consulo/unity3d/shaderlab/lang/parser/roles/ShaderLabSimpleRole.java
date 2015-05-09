@@ -21,7 +21,6 @@ import org.mustbe.consulo.unity3d.shaderlab.lang.parser.ShaderLabParserBuilder;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderLabElements;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderLabTokens;
 import com.intellij.lang.PsiBuilder;
-import com.intellij.psi.tree.IElementType;
 
 /**
  * @author VISTALL
@@ -31,9 +30,8 @@ public class ShaderLabSimpleRole extends ShaderLabRole
 {
 	private String[] myValues;
 
-	public ShaderLabSimpleRole(IElementType colorKeyword, String... values)
+	public ShaderLabSimpleRole(String... values)
 	{
-		super(colorKeyword);
 		myValues = values;
 	}
 

@@ -26,6 +26,7 @@ import org.mustbe.consulo.csharp.lang.psi.impl.msil.CSharpTransform;
 import org.mustbe.consulo.dotnet.psi.DotNetTypeDeclaration;
 import org.mustbe.consulo.dotnet.resolve.DotNetPsiSearcher;
 import org.mustbe.consulo.unity3d.shaderlab.lang.ShaderMaterialAttribute;
+import org.mustbe.consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabRole;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.stub.index.ShaderDefIndex;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.icons.AllIcons;
@@ -36,7 +37,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiQualifiedReferenceElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.SmartList;
@@ -77,12 +77,12 @@ public class ShaderReference extends ShaderLabElement implements PsiQualifiedRef
 		}
 		else if(parent instanceof ShaderSimpleValue)
 		{
-			IElementType key = ((ShaderSimpleValue) parent).getKey();
-			if(key == ShaderLabKeyTokens.FALLBACK_KEYWORD)
+			ShaderLabRole role = ((ShaderSimpleValue) parent).getRole();
+			if(role == ShaderLabRole.Fallback)
 			{
 				return ResolveKind.ANOTHER_SHADER;
 			}
-			else if(key == ShaderLabKeyTokens.COLOR_KEYWORD || key == ShaderLabKeyTokens.MATRIX_KEYWORD || key == ShaderLabKeyTokens.CONSTANT_COLOR_KEYWORD)
+			else if(role == ShaderLabRole.Color || role == ShaderLabRole.ConstantColor || role == ShaderLabRole.Maxtix)
 			{
 				return ResolveKind.PROPERTY;
 			}

@@ -16,10 +16,8 @@
 
 package org.mustbe.consulo.unity3d.shaderlab.lang.parser;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.jetbrains.annotations.NotNull;
+import org.mustbe.consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabRole;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderLabKeyTokens;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderLabTokens;
 import com.intellij.lang.PsiBuilder;
@@ -32,42 +30,25 @@ import com.intellij.psi.tree.IElementType;
  */
 public class ShaderLabParserBuilder extends PsiBuilderAdapter
 {
-	private static final Map<IElementType, String> ourKeywords = new HashMap<IElementType, String>();
-
-	static
-	{
-		for(IElementType keyword : ShaderLabKeyTokens.ALL.getTypes())
-		{
-			String s = keyword.toString();
-			s = s.replace("_KEYWORD", "");
-			s = s.replace("_", "");
-			ourKeywords.put(keyword, s);
-		}
-	}
-
 	public ShaderLabParserBuilder(PsiBuilder delegate)
 	{
 		super(delegate);
 	}
 
-	public boolean is(@NotNull IElementType softTokenType)
+	public boolean is(@NotNull ShaderLabRole role)
 	{
 		IElementType tokenType = getTokenType();
 		String tokenText = getTokenText();
 		if(tokenType == null || tokenText == null)
 		{
-			return softTokenType == tokenType;
+			return false;
 		}
 
-		if(tokenType == ShaderLabTokens.IDENTIFIER)
+		if(tokenType == ShaderLabTokens.IDENTIFIER && tokenText.equalsIgnoreCase(role.getName()))
 		{
-			String key = ourKeywords.get(softTokenType);
-			if(key != null && key.equalsIgnoreCase(tokenText))
-			{
-				remapCurrentToken(softTokenType);
-				return true;
-			}
+			remapCurrentToken(ShaderLabKeyTokens.START_KEYWORD);
+			return true;
 		}
-		return tokenType == softTokenType;
+		return false;
 	}
 }
