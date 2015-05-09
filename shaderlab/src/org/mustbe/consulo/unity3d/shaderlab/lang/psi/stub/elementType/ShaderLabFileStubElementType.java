@@ -34,6 +34,6 @@ public class ShaderLabFileStubElementType extends IStubFileElementType<PsiFileSt
 	@Override
 	public int getStubVersion()
 	{
-		return 2;
+		return 3;
 	}
 }
