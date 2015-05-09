@@ -268,6 +268,8 @@ public abstract class ShaderLabRole
 
 	public static final ShaderLabRole Mode = new ShaderLabSimpleRole("off", "global", "linear", "exp", "exp2");
 
+	public static final ShaderLabRole ZTest = new ShaderLabSimpleRole("less" , "greater" , "lequal" , "gequal" , "equal" , "notequal" , "always");
+
 	public static final ShaderLabRole Color = new ShaderLabRole()
 	{
 		@Override
@@ -361,7 +363,7 @@ public abstract class ShaderLabRole
 
 	public static final ShaderLabRole Fog = new ShaderLabCompositeRole(ShaderLabElements.FOG, Color, Mode);
 
-	public static final ShaderLabRole Pass = new ShaderLabCompositeRole(ShaderLabElements.PASS, Color, SetTexture, Lighting, ZWrite, Cull, Fog);
+	public static final ShaderLabRole Pass = new ShaderLabCompositeRole(ShaderLabElements.PASS, Color, SetTexture, Lighting, ZWrite, Cull, Fog, ZTest);
 
 	public static final ShaderLabRole SubShader = new ShaderLabCompositeRole(ShaderLabElements.SUB_SHADER, Pass, Tags, Lighting, ZWrite, Cull, Fog);
 
