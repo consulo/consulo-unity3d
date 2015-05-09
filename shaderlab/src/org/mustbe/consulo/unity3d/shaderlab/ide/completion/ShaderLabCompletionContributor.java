@@ -93,27 +93,31 @@ public class ShaderLabCompletionContributor extends CompletionContributor
 					{
 						builder = builder.withInsertHandler(BracesInsertHandler.INSTANCE);
 					}
-					else if(labRole instanceof ShaderLabSimpleRole)
-					{
-						builder = builder.withInsertHandler(new InsertHandler<LookupElement>()
-						{
-							@Override
-							public void handleInsert(InsertionContext context, LookupElement item)
-							{
-								int offset = context.getTailOffset();
-								offset = TailType.insertChar(context.getEditor(), offset, ' ');
-								final String value = ((ShaderLabSimpleRole) labRole).getValues()[0];
-								context.getDocument().insertString(offset, value);
-
-								Caret currentCaret = context.getEditor().getCaretModel().getCurrentCaret();
-								currentCaret.setSelection(offset, offset + value.length());
-							}
-						});
-					}
 					else
 					{
-						builder = builder.withInsertHandler(SpaceInsertHandler.INSTANCE);
+						final String defaultInsertValue = labRole.getDefaultInsertValue();
+						if(defaultInsertValue == null)
+						{
+							builder = builder.withInsertHandler(SpaceInsertHandler.INSTANCE);
+						}
+						else
+						{
+							builder = builder.withInsertHandler(new InsertHandler<LookupElement>()
+							{
+								@Override
+								public void handleInsert(InsertionContext context, LookupElement item)
+								{
+									int offset = context.getTailOffset();
+									offset = TailType.insertChar(context.getEditor(), offset, ' ');
+									context.getDocument().insertString(offset, defaultInsertValue);
+
+									Caret currentCaret = context.getEditor().getCaretModel().getCurrentCaret();
+									currentCaret.setSelection(offset, offset + defaultInsertValue.length());
+								}
+							});
+						}
 					}
+
 					result.addElement(builder);
 				}
 			}
@@ -133,7 +137,7 @@ public class ShaderLabCompletionContributor extends CompletionContributor
 					return;
 				}
 				ShaderLabRole role = simpleValue.getRole();
-				if(role != ShaderLabRole.Fallback && role != ShaderLabRole.UsePass)
+				if(role == null || role != ShaderLabRole.Fallback && role != ShaderLabRole.UsePass)
 				{
 					return;
 				}
@@ -148,9 +152,10 @@ public class ShaderLabCompletionContributor extends CompletionContributor
 						return true;
 					}
 				});
-				if(role == ShaderLabRole.Fallback)
+				String defaultInsertValue = role.getDefaultInsertValue();
+				if(defaultInsertValue != null)
 				{
-					result.addElement(LookupElementBuilder.create("Off").bold());
+					result.addElement(LookupElementBuilder.create(defaultInsertValue).bold());
 				}
 			}
 		});

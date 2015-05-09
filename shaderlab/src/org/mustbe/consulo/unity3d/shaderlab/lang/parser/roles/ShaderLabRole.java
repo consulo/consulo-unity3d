@@ -318,6 +318,13 @@ public abstract class ShaderLabRole
 
 			mark.done(ShaderLabElements.SIMPLE_VALUE);
 		}
+
+		@Nullable
+		@Override
+		public String getDefaultInsertValue()
+		{
+			return "Off";
+		}
 	};
 
 	public static final ShaderLabRole UsePass = new ShaderLabRole()
@@ -415,6 +422,12 @@ public abstract class ShaderLabRole
 	public String getName()
 	{
 		return myName;
+	}
+
+	@Nullable
+	public String getDefaultInsertValue()
+	{
+		return null;
 	}
 
 	public boolean tryParse(ShaderLabParserBuilder builder)

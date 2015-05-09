@@ -16,6 +16,7 @@
 
 package org.mustbe.consulo.unity3d.shaderlab.lang.parser.roles;
 
+import org.jetbrains.annotations.Nullable;
 import org.mustbe.consulo.unity3d.shaderlab.lang.parser.ShaderLabParser;
 import org.mustbe.consulo.unity3d.shaderlab.lang.parser.ShaderLabParserBuilder;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderLabElements;
@@ -38,6 +39,13 @@ public class ShaderLabSimpleRole extends ShaderLabRole
 	public String[] getValues()
 	{
 		return myValues;
+	}
+
+	@Nullable
+	@Override
+	public String getDefaultInsertValue()
+	{
+		return myValues[0];
 	}
 
 	@Override
