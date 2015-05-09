@@ -367,6 +367,9 @@ public abstract class ShaderLabRole
 	public static final ShaderLabRole Material = new ShaderLabCompositeRole(ShaderLabElements.MATERIAL, Diffuse, Ambient, Shininess, Specular,
 			Emission);
 
+	public static final ShaderLabRole Offset = new ShaderLabCommaPairRole(new ShaderLabTokenRole(ShaderLabTokens.INTEGER_LITERAL),
+			new ShaderLabTokenRole(ShaderLabTokens.INTEGER_LITERAL));
+
 	public static final ShaderLabRole AlphaTest = new ShaderLabOrRole(new ShaderLabSimpleRole("Off"), new ShaderLabPairRole(new ShaderLabSimpleRole
 			("Always", "Less", "Greater", "LEqual", "GEqual", "Equal", "NotEqual", "Never"), new ShaderLabTokenRole(ShaderLabTokens
 			.INTEGER_LITERAL)))
@@ -382,7 +385,7 @@ public abstract class ShaderLabRole
 	public static final ShaderLabRole Fog = new ShaderLabCompositeRole(ShaderLabElements.FOG, Color, Mode);
 
 	public static final ShaderLabRole Pass = new ShaderLabCompositeRole(ShaderLabElements.PASS, Color, SetTexture, Lighting, ZWrite, Cull, Fog,
-			ZTest, SeparateSpecular, Material, AlphaTest);
+			ZTest, SeparateSpecular, Material, AlphaTest, Offset);
 
 	public static final ShaderLabRole SubShader = new ShaderLabCompositeRole(ShaderLabElements.SUB_SHADER, Pass, Tags, Lighting, ZWrite, Cull, Fog,
 			UsePass, Material);

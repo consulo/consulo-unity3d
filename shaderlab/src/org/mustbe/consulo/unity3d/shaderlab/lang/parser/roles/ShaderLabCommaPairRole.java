@@ -22,51 +22,66 @@ import org.mustbe.consulo.unity3d.shaderlab.lang.parser.ShaderLabParserBuilder;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderLabElements;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderLabTokens;
 import com.intellij.lang.PsiBuilder;
-import com.intellij.psi.tree.IElementType;
 
 /**
  * @author VISTALL
  * @since 09.05.2015
  */
-public class ShaderLabTokenRole extends ShaderLabValueRole
+public class ShaderLabCommaPairRole extends ShaderLabValueRole
 {
-	private IElementType myElementType;
+	private ShaderLabRole myFirstRole;
+	private ShaderLabRole mySecondRole;
 
-	public ShaderLabTokenRole(IElementType elementType)
+	public ShaderLabCommaPairRole(ShaderLabRole firstRole, ShaderLabRole secondRole)
 	{
-		myElementType = elementType;
+		myFirstRole = firstRole;
+		mySecondRole = secondRole;
 	}
-
 
 	@Override
 	public PsiBuilder.Marker parseAndDone(ShaderLabParserBuilder builder, @NotNull PsiBuilder.Marker mark)
 	{
-		if(builder.getTokenType() == myElementType)
+		PsiBuilder.Marker firstMarker = builder.mark();
+		if(myFirstRole.parseAndDone(builder, firstMarker) != null)
 		{
-			builder.advanceLexer();
-			mark.done(ShaderLabElements.SIMPLE_VALUE);
-			return mark;
+			if(builder.getTokenType() == ShaderLabTokens.COMMA)
+			{
+				builder.advanceLexer();
+
+				PsiBuilder.Marker secondMark = builder.mark();
+				if(mySecondRole.parseAndDone(builder, secondMark) == null)
+				{
+					secondMark.error("Expected second value");
+				}
+			}
+			else
+			{
+				builder.error("Expected comma");
+			}
 		}
 		else
 		{
-			return null;
+			firstMarker.error("Expected value");
 		}
+
+		mark.done(ShaderLabElements.PAIR_VALUE);
+		return mark;
 	}
 
 	@Nullable
 	@Override
 	public String getDefaultInsertValue()
 	{
-		if(myElementType == ShaderLabTokens.INTEGER_LITERAL)
-		{
-			return "0";
-		}
-		return super.getDefaultInsertValue();
+		StringBuilder builder = new StringBuilder();
+		builder.append(myFirstRole.getDefaultInsertValue());
+		builder.append(", ");
+		builder.append(mySecondRole.getDefaultInsertValue());
+		return builder.toString();
 	}
 
 	@Override
 	public boolean isMyValue(@NotNull ShaderLabParserBuilder builder)
 	{
-		return builder.getTokenType() == myElementType;
+		return myFirstRole instanceof ShaderLabValueRole && ((ShaderLabValueRole) myFirstRole).isMyValue(builder);
 	}
 }
