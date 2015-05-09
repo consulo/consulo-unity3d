@@ -74,14 +74,9 @@ public class SharpLabElementVisitor extends PsiElementVisitor
 		visitElement(tag);
 	}
 
-	public void visitPass(ShaderPass shaderPass)
+	public void visitCompositeCommand(ShaderCompositeCommand shaderCompositeCommand)
 	{
-		visitElement(shaderPass);
-	}
-
-	public void visitSubShader(ShaderSubShader shaderSubShader)
-	{
-		visitElement(shaderSubShader);
+		visitElement(shaderCompositeCommand);
 	}
 
 	public void visitSimpleValue(ShaderSimpleValue value)

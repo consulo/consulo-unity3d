@@ -23,9 +23,9 @@ import com.intellij.lang.ASTNode;
  * @author VISTALL
  * @since 09.05.2015
  */
-public class ShaderPass extends ShaderBraceOwnerElement
+public class ShaderCompositeCommand extends ShaderBraceOwnerElement
 {
-	public ShaderPass(@NotNull ASTNode node)
+	public ShaderCompositeCommand(@NotNull ASTNode node)
 	{
 		super(node);
 	}
@@ -33,6 +33,6 @@ public class ShaderPass extends ShaderBraceOwnerElement
 	@Override
 	public void accept(SharpLabElementVisitor visitor)
 	{
-		visitor.visitPass(this);
+		visitor.visitCompositeCommand(this);
 	}
 }

@@ -262,6 +262,8 @@ public abstract class ShaderLabRole
 
 	public static final ShaderLabRole Lighting = new ShaderLabSimpleRole(ShaderLabKeyTokens.LIGHTING_KEYWORD, "on", "off");
 
+	public static final ShaderLabRole Mode = new ShaderLabSimpleRole(ShaderLabKeyTokens.MODE_KEYWORD, "off", "global", "linear", "exp", "exp2");
+
 	public static final ShaderLabRole Color = new ShaderLabRole(ShaderLabKeyTokens.COLOR_KEYWORD)
 	{
 		@Override
@@ -354,11 +356,13 @@ public abstract class ShaderLabRole
 		}
 	};
 
+	public static final ShaderLabRole Fog = new ShaderLabCompositeRole(ShaderLabKeyTokens.FOG_KEYWORD, ShaderLabElements.FOG, Color, Mode);
+
 	public static final ShaderLabRole Pass = new ShaderLabCompositeRole(ShaderLabKeyTokens.PASS_KEYWORD, ShaderLabElements.PASS, Color, SetTexture,
-			Lighting, ZWrite, Cull);
+			Lighting, ZWrite, Cull, Fog);
 
 	public static final ShaderLabRole SubShader = new ShaderLabCompositeRole(ShaderLabKeyTokens.SUBSHADER_KEYWORD, ShaderLabElements.SUB_SHADER,
-			Pass, Tags, Lighting, ZWrite, Cull);
+			Pass, Tags, Lighting, ZWrite, Cull, Fog);
 
 	public static final ShaderLabRole Shader = new ShaderLabCompositeRole(ShaderLabKeyTokens.SHADER_KEYWORD, ShaderLabElements.SHADER_DEF,
 			Properties, Fallback, SubShader)
