@@ -50,17 +50,19 @@ public class ShaderLabElementColorProvider implements ElementColorProvider
 			}
 
 			List<PsiElement> children = ((ShaderPropertyValue) element).getElements(ShaderLabTokens.INTEGER_LITERAL);
-			if(children.size() != 4)
+			if(children.size() < 3)
 			{
 				return null;
 			}
 
 			float[] floats = new float[4];
+			floats[3] = 1;
 			try
 			{
-				for(int i = 0; i < floats.length; i++)
+				for(int i = 0; i < children.size(); i++)
 				{
-					float v = Float.parseFloat(children.get(i).getText());
+					PsiElement psiElement = children.get(i);
+					float v = Float.parseFloat(psiElement.getText());
 					if(v > 1 || v < 0)
 					{
 						return null;
