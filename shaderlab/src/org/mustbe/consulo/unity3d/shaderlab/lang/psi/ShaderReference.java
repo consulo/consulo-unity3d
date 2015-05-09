@@ -26,7 +26,6 @@ import org.mustbe.consulo.csharp.lang.psi.impl.msil.CSharpTransform;
 import org.mustbe.consulo.dotnet.psi.DotNetTypeDeclaration;
 import org.mustbe.consulo.dotnet.resolve.DotNetPsiSearcher;
 import org.mustbe.consulo.unity3d.shaderlab.lang.ShaderMaterialAttribute;
-import org.mustbe.consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabColorRole;
 import org.mustbe.consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabRole;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.stub.index.ShaderDefIndex;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
@@ -53,7 +52,6 @@ public class ShaderReference extends ShaderLabElement implements PsiQualifiedRef
 	{
 		ATTRIBUTE,
 		ANOTHER_SHADER,
-		UNKNOWN,
 		PROPERTY
 	}
 
@@ -83,12 +81,8 @@ public class ShaderReference extends ShaderLabElement implements PsiQualifiedRef
 			{
 				return ResolveKind.ANOTHER_SHADER;
 			}
-			else if(role instanceof ShaderLabColorRole || role == ShaderLabRole.Matrix)
-			{
-				return ResolveKind.PROPERTY;
-			}
 		}
-		return ResolveKind.UNKNOWN;
+		return ResolveKind.PROPERTY;
 	}
 
 	@Override
@@ -227,8 +221,6 @@ public class ShaderReference extends ShaderLabElement implements PsiQualifiedRef
 					}
 				}
 				break;
-			case UNKNOWN:
-				break;
 		}
 		return values.toArray();
 	}
@@ -236,7 +228,7 @@ public class ShaderReference extends ShaderLabElement implements PsiQualifiedRef
 	@Override
 	public boolean isSoft()
 	{
-		return kind() == ResolveKind.UNKNOWN;
+		return false;
 	}
 
 	@Override

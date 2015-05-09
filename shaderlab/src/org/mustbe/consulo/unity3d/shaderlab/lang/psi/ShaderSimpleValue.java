@@ -37,7 +37,11 @@ public class ShaderSimpleValue extends ShaderLabElement implements ShaderRoleOwn
 	@Nullable
 	public ShaderLabRole getRole()
 	{
-		PsiElement element = findNotNullChildByType(ShaderLabKeyTokens.START_KEYWORD);
+		PsiElement element = findChildByType(ShaderLabKeyTokens.START_KEYWORD);
+		if(element == null)
+		{
+			return null;
+		}
 		return ShaderLabRole.findRole(element.getText());
 	}
 

@@ -17,50 +17,31 @@
 package org.mustbe.consulo.unity3d.shaderlab.lang.parser.roles;
 
 import org.jetbrains.annotations.NotNull;
+import org.mustbe.consulo.unity3d.shaderlab.lang.parser.ShaderLabParser;
 import org.mustbe.consulo.unity3d.shaderlab.lang.parser.ShaderLabParserBuilder;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderLabElements;
+import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderLabTokens;
 import com.intellij.lang.PsiBuilder;
 
 /**
  * @author VISTALL
  * @since 09.05.2015
  */
-public class ShaderLabOrRole extends ShaderLabValueRole
+public class ShaderLabReferenceRole extends ShaderLabValueRole
 {
-	private ShaderLabRole[] myRoles;
-
-	public ShaderLabOrRole(ShaderLabRole... roles)
-	{
-		myRoles = roles;
-	}
-
-	@Override
-	public PsiBuilder.Marker parseAndDone(ShaderLabParserBuilder builder, @NotNull PsiBuilder.Marker mark)
-	{
-		for(ShaderLabRole role : myRoles)
-		{
-			if(role instanceof ShaderLabValueRole && ((ShaderLabValueRole) role).isMyValue(builder))
-			{
-				return role.parseAndDone(builder, mark);
-			}
-		}
-
-		doneWithErrorSafe(builder, "Wrong value");
-		mark.done(ShaderLabElements.SIMPLE_VALUE);
-
-		return mark;
-	}
+	public static final ShaderLabReferenceRole INSTANCE = new ShaderLabReferenceRole();
 
 	@Override
 	public boolean isMyValue(@NotNull ShaderLabParserBuilder builder)
 	{
-		for(ShaderLabRole role : myRoles)
-		{
-			if(role instanceof ShaderLabValueRole && ((ShaderLabValueRole) role).isMyValue(builder))
-			{
-				return true;
-			}
-		}
-		return false;
+		return builder.getTokenType() == ShaderLabTokens.LBRACKET;
+	}
+
+	@Override
+	public PsiBuilder.Marker parseAndDone(ShaderLabParserBuilder builder, PsiBuilder.Marker mark)
+	{
+		ShaderLabParser.parseBracketReference(builder);
+		mark.done(ShaderLabElements.SIMPLE_VALUE);
+		return mark;
 	}
 }

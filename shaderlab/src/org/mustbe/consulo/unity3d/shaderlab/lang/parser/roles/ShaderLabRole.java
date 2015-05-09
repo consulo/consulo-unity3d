@@ -373,8 +373,8 @@ public abstract class ShaderLabRole
 			new ShaderLabTokenRole(ShaderLabTokens.INTEGER_LITERAL));
 
 	public static final ShaderLabRole AlphaTest = new ShaderLabOrRole(new ShaderLabSimpleRole("Off"), new ShaderLabPairRole(new ShaderLabSimpleRole
-			("Always", "Less", "Greater", "LEqual", "GEqual", "Equal", "NotEqual", "Never"), new ShaderLabTokenRole(ShaderLabTokens
-			.INTEGER_LITERAL)))
+			("Always", "Less", "Greater", "LEqual", "GEqual", "Equal", "NotEqual", "Never"), new ShaderLabOrRole(new ShaderLabTokenRole
+			(ShaderLabTokens.INTEGER_LITERAL), ShaderLabReferenceRole.INSTANCE)))
 	{
 		@Nullable
 		@Override
