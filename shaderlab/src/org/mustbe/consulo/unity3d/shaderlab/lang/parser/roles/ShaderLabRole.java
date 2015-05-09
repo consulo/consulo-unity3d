@@ -266,6 +266,10 @@ public abstract class ShaderLabRole
 
 	public static final ShaderLabRole Lighting = new ShaderLabSimpleRole("Off", "On");
 
+	public static final ShaderLabRole SeparateSpecular = new ShaderLabSimpleRole("Off", "On");
+
+	public static final ShaderLabRole ColorMaterial = new ShaderLabSimpleRole("Emission", "AmbientAndDiffuse");
+
 	public static final ShaderLabRole Mode = new ShaderLabSimpleRole("Off", "Global", "Linear", "Exp", "Exp2");
 
 	public static final ShaderLabRole ZTest = new ShaderLabSimpleRole("Always", "Less" , "Greater" , "LEqual" , "GEqual" , "Equal" , "NotEqual");
@@ -395,7 +399,8 @@ public abstract class ShaderLabRole
 
 	public static final ShaderLabRole Fog = new ShaderLabCompositeRole(ShaderLabElements.FOG, Color, Mode);
 
-	public static final ShaderLabRole Pass = new ShaderLabCompositeRole(ShaderLabElements.PASS, Color, SetTexture, Lighting, ZWrite, Cull, Fog, ZTest);
+	public static final ShaderLabRole Pass = new ShaderLabCompositeRole(ShaderLabElements.PASS, Color, SetTexture, Lighting, ZWrite, Cull, Fog,
+			ZTest, SeparateSpecular);
 
 	public static final ShaderLabRole SubShader = new ShaderLabCompositeRole(ShaderLabElements.SUB_SHADER, Pass, Tags, Lighting, ZWrite, Cull, Fog,
 			UsePass);
