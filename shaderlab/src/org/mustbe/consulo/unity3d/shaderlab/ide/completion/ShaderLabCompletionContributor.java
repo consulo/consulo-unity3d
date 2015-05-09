@@ -29,12 +29,17 @@ import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderLabTokens;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderPropertyTypeElement;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderSimpleValue;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.stub.index.ShaderDefIndex;
+import com.intellij.codeInsight.TailType;
 import com.intellij.codeInsight.completion.CompletionContributor;
 import com.intellij.codeInsight.completion.CompletionParameters;
 import com.intellij.codeInsight.completion.CompletionProvider;
 import com.intellij.codeInsight.completion.CompletionResultSet;
 import com.intellij.codeInsight.completion.CompletionType;
+import com.intellij.codeInsight.completion.InsertHandler;
+import com.intellij.codeInsight.completion.InsertionContext;
+import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
+import com.intellij.openapi.editor.Caret;
 import com.intellij.patterns.StandardPatterns;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ProcessingContext;
@@ -81,12 +86,29 @@ public class ShaderLabCompletionContributor extends CompletionContributor
 					return;
 				}
 
-				for(ShaderLabRole labRole : ((ShaderLabCompositeRole) role).getRoles())
+				for(final ShaderLabRole labRole : ((ShaderLabCompositeRole) role).getRoles())
 				{
 					LookupElementBuilder builder = LookupElementBuilder.create(labRole.getName());
 					if(labRole instanceof ShaderLabCompositeRole)
 					{
 						builder = builder.withInsertHandler(BracesInsertHandler.INSTANCE);
+					}
+					else if(labRole instanceof ShaderLabSimpleRole)
+					{
+						builder = builder.withInsertHandler(new InsertHandler<LookupElement>()
+						{
+							@Override
+							public void handleInsert(InsertionContext context, LookupElement item)
+							{
+								int offset = context.getTailOffset();
+								offset = TailType.insertChar(context.getEditor(), offset, ' ');
+								final String value = ((ShaderLabSimpleRole) labRole).getValues()[0];
+								context.getDocument().insertString(offset, value);
+
+								Caret currentCaret = context.getEditor().getCaretModel().getCurrentCaret();
+								currentCaret.setSelection(offset, offset + value.length());
+							}
+						});
 					}
 					else
 					{
