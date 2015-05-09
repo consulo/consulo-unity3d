@@ -82,7 +82,7 @@ public class ShaderReference extends ShaderLabElement implements PsiQualifiedRef
 			{
 				return ResolveKind.ANOTHER_SHADER;
 			}
-			else if(role == ShaderLabRole.Color || role == ShaderLabRole.ConstantColor || role == ShaderLabRole.Maxtix)
+			else if(role == ShaderLabRole.Color || role == ShaderLabRole.ConstantColor || role == ShaderLabRole.Matrix)
 			{
 				return ResolveKind.PROPERTY;
 			}

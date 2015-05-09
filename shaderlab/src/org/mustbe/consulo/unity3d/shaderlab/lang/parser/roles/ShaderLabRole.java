@@ -327,7 +327,7 @@ public abstract class ShaderLabRole
 		}
 	};
 
-	public static final ShaderLabRole Maxtix = new ShaderLabRole()
+	public static final ShaderLabRole Matrix = new ShaderLabRole()
 	{
 		@Override
 		public void parseImpl(ShaderLabParserBuilder builder)
@@ -347,7 +347,7 @@ public abstract class ShaderLabRole
 		}
 	};
 
-	public static final ShaderLabRole SetTexture = new ShaderLabCompositeRole(ShaderLabElements.SET_TEXTURE, Maxtix, ConstantColor)
+	public static final ShaderLabRole SetTexture = new ShaderLabCompositeRole(ShaderLabElements.SET_TEXTURE, Matrix, ConstantColor)
 	{
 		@Override
 		public void parseBefore(ShaderLabParserBuilder builder)
