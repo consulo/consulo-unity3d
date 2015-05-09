@@ -461,8 +461,8 @@ public abstract class ShaderLabRole
 				try
 				{
 					ShaderLabRole value = (ShaderLabRole) declaredField.get(null);
-					value.myName = declaredField.getName().toLowerCase();
-					ourRoles.put(value.myName, value);
+					value.myName = declaredField.getName();
+					ourRoles.put(declaredField.getName().toLowerCase(), value);
 				}
 				catch(IllegalAccessException e)
 				{

@@ -81,8 +81,7 @@ public class ShaderLabCompletionContributor extends CompletionContributor
 
 				for(ShaderLabRole labRole : ((ShaderLabCompositeRole) role).getRoles())
 				{
-					LookupElementBuilder builder = LookupElementBuilder.create(com.intellij.openapi.util.text.StringUtil.capitalize(labRole.getName
-							()));
+					LookupElementBuilder builder = LookupElementBuilder.create(labRole.getName());
 					result.addElement(builder);
 				}
 			}
