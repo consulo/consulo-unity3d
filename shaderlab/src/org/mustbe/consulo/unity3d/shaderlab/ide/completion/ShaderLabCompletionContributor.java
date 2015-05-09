@@ -17,6 +17,7 @@
 package org.mustbe.consulo.unity3d.shaderlab.ide.completion;
 
 import org.jetbrains.annotations.NotNull;
+import org.mustbe.consulo.csharp.ide.completion.util.SpaceInsertHandler;
 import org.mustbe.consulo.unity3d.shaderlab.lang.ShaderLabFileType;
 import org.mustbe.consulo.unity3d.shaderlab.lang.ShaderLabPropertyType;
 import org.mustbe.consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabCompositeRole;
@@ -82,6 +83,14 @@ public class ShaderLabCompletionContributor extends CompletionContributor
 				for(ShaderLabRole labRole : ((ShaderLabCompositeRole) role).getRoles())
 				{
 					LookupElementBuilder builder = LookupElementBuilder.create(labRole.getName());
+					if(labRole instanceof ShaderLabCompositeRole)
+					{
+						builder = builder.withInsertHandler(BracesInsertHandler.INSTANCE);
+					}
+					else
+					{
+						builder = builder.withInsertHandler(SpaceInsertHandler.INSTANCE);
+					}
 					result.addElement(builder);
 				}
 			}
