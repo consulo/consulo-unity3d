@@ -22,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import org.mustbe.consulo.unity3d.shaderlab.lang.ShaderLabLanguage;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderProperty;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderPropertyType;
+import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderPropertyValue;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiManager;
@@ -74,5 +75,12 @@ public class LightShaderProperty extends LightElement implements ShaderProperty
 	public ShaderPropertyType getType()
 	{
 		return myType;
+	}
+
+	@Nullable
+	@Override
+	public ShaderPropertyValue getValue()
+	{
+		return null;
 	}
 }

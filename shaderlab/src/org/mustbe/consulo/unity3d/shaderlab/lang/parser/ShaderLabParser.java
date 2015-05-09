@@ -343,7 +343,9 @@ public class ShaderLabParser implements PsiParser
 
 			if(builder.getTokenType() == ShaderLabTokens.LPAR)
 			{
+				PsiBuilder.Marker valueMarker = builder.mark();
 				parseElementsInBraces(builder, ShaderLabTokens.LPAR, ShaderLabTokens.RPAR, ShaderLabTokens.INTEGER_LITERAL);
+				valueMarker.done(ShaderLabElements.PROPERTY_VALUE);
 			}
 			else if(builder.getTokenType() == ShaderLabTokens.LBRACKET)
 			{
@@ -436,7 +438,9 @@ public class ShaderLabParser implements PsiParser
 			builder.advanceLexer();
 			if(builder.getTokenType() == ShaderLabTokens.LPAR)
 			{
+				PsiBuilder.Marker valueMarker = builder.mark();
 				parseElementsInBraces(builder, ShaderLabTokens.LPAR, ShaderLabTokens.RPAR, ShaderLabTokens.INTEGER_LITERAL);
+				valueMarker.done(ShaderLabElements.PROPERTY_VALUE);
 			}
 			else if(builder.getTokenType() == ShaderLabTokens.LBRACKET)
 			{

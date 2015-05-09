@@ -41,6 +41,13 @@ public class ShaderPropertyElement extends ShaderLabElement implements ShaderPro
 		return findChildByClass(ShaderPropertyTypeElement.class);
 	}
 
+	@Nullable
+	@Override
+	public ShaderPropertyValue getValue()
+	{
+		return findChildByClass(ShaderPropertyValue.class);
+	}
+
 	@Override
 	public int getTextOffset()
 	{

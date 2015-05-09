@@ -28,4 +28,7 @@ public interface ShaderProperty extends PsiElement, PsiNameIdentifierOwner
 {
 	@Nullable
 	ShaderPropertyType getType();
+
+	@Nullable
+	ShaderPropertyValue getValue();
 }
