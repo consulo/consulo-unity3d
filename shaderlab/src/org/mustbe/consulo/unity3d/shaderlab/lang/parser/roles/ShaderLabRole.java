@@ -338,7 +338,7 @@ public abstract class ShaderLabRole
 			}
 			else
 			{
-				doneError(builder, "Wrong value");
+				doneWithErrorSafe(builder, "Wrong value");
 			}
 
 			mark.done(ShaderLabElements.SIMPLE_VALUE);
@@ -425,6 +425,19 @@ public abstract class ShaderLabRole
 			return true;
 		}
 		return false;
+	}
+
+	protected void doneWithErrorSafe(@NotNull ShaderLabParserBuilder builder, @NotNull String error)
+	{
+		IElementType tokenType = builder.getTokenType();
+		if(tokenType == ShaderLabTokens.LBRACE || tokenType == ShaderLabTokens.RBRACE)
+		{
+			builder.error("Expected value");
+		}
+		else
+		{
+			doneError(builder, error);
+		}
 	}
 
 	public abstract void parseImpl(ShaderLabParserBuilder builder);

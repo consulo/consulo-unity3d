@@ -52,7 +52,7 @@ public class ShaderLabSimpleRole extends ShaderLabRole
 		}
 		else
 		{
-			ShaderLabParser.doneError(builder, "Wrong value");
+			doneWithErrorSafe(builder, "Wrong value");
 		}
 
 		mark.done(ShaderLabElements.SIMPLE_VALUE);
