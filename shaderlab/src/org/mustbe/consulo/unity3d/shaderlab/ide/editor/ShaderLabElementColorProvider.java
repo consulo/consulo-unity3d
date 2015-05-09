@@ -22,6 +22,7 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.mustbe.consulo.unity3d.shaderlab.lang.ShaderLabPropertyType;
+import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderLabKeyTokens;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderLabTokens;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderProperty;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderPropertyType;
@@ -98,7 +99,7 @@ public class ShaderLabElementColorProvider implements ElementColorProvider
 		else if(element instanceof ShaderSimpleValue)
 		{
 			IElementType key = ((ShaderSimpleValue) element).getKey();
-			return key == ShaderLabTokens.COLOR_KEYWORD || key == ShaderLabTokens.CONSTANT_COLOR_KEYWORD;
+			return key == ShaderLabKeyTokens.COLOR_KEYWORD || key == ShaderLabKeyTokens.CONSTANT_COLOR_KEYWORD;
 		}
 		return false;
 	}

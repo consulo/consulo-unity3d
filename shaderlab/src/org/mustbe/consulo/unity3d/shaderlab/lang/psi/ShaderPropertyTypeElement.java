@@ -35,7 +35,7 @@ public class ShaderPropertyTypeElement extends ShaderLabElement implements Shade
 	@NotNull
 	public PsiElement getTargetElement()
 	{
-		return findNotNullChildByType(ShaderLabTokenSets.TYPE_KEYWORDS);
+		return findNotNullChildByType(ShaderLabTokens.IDENTIFIER);
 	}
 
 	@NotNull

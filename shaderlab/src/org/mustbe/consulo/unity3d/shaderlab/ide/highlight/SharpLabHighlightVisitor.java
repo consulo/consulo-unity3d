@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.mustbe.consulo.RequiredReadAction;
 import org.mustbe.consulo.unity3d.shaderlab.lang.ShaderLabPropertyType;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderLabFile;
-import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderLabTokens;
+import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderLabKeyTokens;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderPropertyElement;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderPropertyTypeElement;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderReference;
@@ -102,8 +102,8 @@ public class SharpLabHighlightVisitor extends SharpLabElementVisitor implements 
 					default:
 						return;
 				}
-				myHolder.add(HighlightInfo.newHighlightInfo(HighlightInfoType.INFORMATION).range(reference.getReferenceElement())
-						.textAttributes(key).create());
+				myHolder.add(HighlightInfo.newHighlightInfo(HighlightInfoType.INFORMATION).range(reference.getReferenceElement()).textAttributes
+						(key).create());
 			}
 		}
 	}
@@ -114,10 +114,19 @@ public class SharpLabHighlightVisitor extends SharpLabElementVisitor implements 
 		super.visitElement(element);
 
 		ASTNode node = element.getNode();
-		if(node != null && node.getElementType() == ShaderLabTokens.VALUE_KEYWORD)
+
+		if(node != null)
 		{
-			myHolder.add(HighlightInfo.newHighlightInfo(HighlightInfoType.INFORMATION).range(node)
-					.textAttributes(DefaultLanguageHighlighterColors.MACRO_KEYWORD).create());
+			if(node.getElementType() == ShaderLabKeyTokens.VALUE_KEYWORD)
+			{
+				myHolder.add(HighlightInfo.newHighlightInfo(HighlightInfoType.INFORMATION).range(node).textAttributes
+						(DefaultLanguageHighlighterColors.MACRO_KEYWORD).create());
+			}
+			else if(ShaderLabKeyTokens.ALL.contains(node.getElementType()))
+			{
+				myHolder.add(HighlightInfo.newHighlightInfo(HighlightInfoType.INFORMATION).range(node).textAttributes
+						(DefaultLanguageHighlighterColors.KEYWORD).create());
+			}
 		}
 	}
 

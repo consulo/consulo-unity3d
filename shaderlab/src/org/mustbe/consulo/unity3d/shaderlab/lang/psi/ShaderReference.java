@@ -78,11 +78,11 @@ public class ShaderReference extends ShaderLabElement implements PsiQualifiedRef
 		else if(parent instanceof ShaderSimpleValue)
 		{
 			IElementType key = ((ShaderSimpleValue) parent).getKey();
-			if(key == ShaderLabTokens.FALLBACK_KEYWORD)
+			if(key == ShaderLabKeyTokens.FALLBACK_KEYWORD)
 			{
 				return ResolveKind.ANOTHER_SHADER;
 			}
-			else if(key == ShaderLabTokens.COLOR_KEYWORD || key == ShaderLabTokens.MATRIX_KEYWORD || key == ShaderLabTokens.CONSTANT_COLOR_KEYWORD)
+			else if(key == ShaderLabKeyTokens.COLOR_KEYWORD || key == ShaderLabKeyTokens.MATRIX_KEYWORD || key == ShaderLabKeyTokens.CONSTANT_COLOR_KEYWORD)
 			{
 				return ResolveKind.PROPERTY;
 			}

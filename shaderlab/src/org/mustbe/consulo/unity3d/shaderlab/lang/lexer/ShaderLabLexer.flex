@@ -47,32 +47,6 @@ INTEGER_LITERAL = {INTEGER_PREFIX}? ({DIGITS} | {DIGIT}* "." {DIGITS})
 
 	{MULTI_LINE_STYLE_COMMENT} { return ShaderLabTokens.BLOCK_COMMENT; }
 
-	"Shader"                   { return ShaderLabTokens.SHADER_KEYWORD; }
-
-	"Properties"               { return ShaderLabTokens.PROPERTIES_KEYWORD; }
-
-	"Fallback"                 { return ShaderLabTokens.FALLBACK_KEYWORD; }
-
-	"SubShader"                { return ShaderLabTokens.SUBSHADER_KEYWORD; }
-
-	"Tags"                     { return ShaderLabTokens.TAGS_KEYWORD; }
-
-	"Color"                    { return ShaderLabTokens.COLOR_KEYWORD; }
-
-	"Pass"                     { return ShaderLabTokens.PASS_KEYWORD; }
-
-	"Lighting"                 { return ShaderLabTokens.LIGHTING_KEYWORD; }
-
-	"ZWrite"                   { return ShaderLabTokens.ZWRITE_KEYWORD; }
-
-	"Cull"                     { return ShaderLabTokens.CULL_KEYWORD; }
-
-	"SetTexture"               { return ShaderLabTokens.SET_TEXTURE_KEYWORD; }
-
-	"Matrix"                   { return ShaderLabTokens.MATRIX_KEYWORD; }
-
-	"ConstantColor"            { return ShaderLabTokens.CONSTANT_COLOR_KEYWORD; }
-
 	"CGINCLUDE"                { yybegin(SHADERSCRIPT); return ShaderLabTokens.CGINCLUDE_KEYWORD; }
 
 	"CGPROGRAM"                { yybegin(SHADERSCRIPT); return ShaderLabTokens.CGPROGRAM_KEYWORD; }

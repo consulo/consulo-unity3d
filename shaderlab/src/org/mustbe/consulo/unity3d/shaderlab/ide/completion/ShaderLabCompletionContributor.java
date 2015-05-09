@@ -19,6 +19,7 @@ package org.mustbe.consulo.unity3d.shaderlab.ide.completion;
 import org.jetbrains.annotations.NotNull;
 import org.mustbe.consulo.unity3d.shaderlab.lang.ShaderLabFileType;
 import org.mustbe.consulo.unity3d.shaderlab.lang.ShaderLabPropertyType;
+import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderLabKeyTokens;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderLabTokens;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderPropertyTypeElement;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.stub.index.ShaderDefIndex;
@@ -56,7 +57,7 @@ public class ShaderLabCompletionContributor extends CompletionContributor
 			}
 		});
 
-		extend(CompletionType.BASIC, StandardPatterns.psiElement().afterLeaf(StandardPatterns.psiElement().withElementType(ShaderLabTokens
+		extend(CompletionType.BASIC, StandardPatterns.psiElement().afterLeaf(StandardPatterns.psiElement().withElementType(ShaderLabKeyTokens
 				.FALLBACK_KEYWORD)), new CompletionProvider<CompletionParameters>()
 		{
 			@Override

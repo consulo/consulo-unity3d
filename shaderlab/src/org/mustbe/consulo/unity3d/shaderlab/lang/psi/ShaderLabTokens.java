@@ -38,34 +38,6 @@ public interface ShaderLabTokens extends TokenType
 
 	IElementType COMMA = new IElementType("COMMA", ShaderLabLanguage.INSTANCE);
 
-	IElementType SHADER_KEYWORD = new IElementType("SHADER_KEYWORD", ShaderLabLanguage.INSTANCE);
-
-	IElementType SUBSHADER_KEYWORD = new IElementType("SUBSHADER_KEYWORD", ShaderLabLanguage.INSTANCE);
-
-	IElementType TAGS_KEYWORD = new IElementType("TAGS_KEYWORD", ShaderLabLanguage.INSTANCE);
-
-	IElementType PASS_KEYWORD = new IElementType("PASS_KEYWORD", ShaderLabLanguage.INSTANCE);
-
-	IElementType LIGHTING_KEYWORD = new IElementType("LIGHTING_KEYWORD", ShaderLabLanguage.INSTANCE);
-
-	IElementType ZWRITE_KEYWORD = new IElementType("ZWRITE_KEYWORD", ShaderLabLanguage.INSTANCE);
-
-	IElementType CULL_KEYWORD = new IElementType("CULL_KEYWORD", ShaderLabLanguage.INSTANCE);
-
-	IElementType SET_TEXTURE_KEYWORD = new IElementType("SET_TEXTURE_KEYWORD", ShaderLabLanguage.INSTANCE);
-
-	IElementType MATRIX_KEYWORD = new IElementType("MATRIX_KEYWORD", ShaderLabLanguage.INSTANCE);
-
-	IElementType CONSTANT_COLOR_KEYWORD = new IElementType("CONSTANT_COLOR_KEYWORD", ShaderLabLanguage.INSTANCE);
-
-	IElementType VALUE_KEYWORD = new IElementType("VALUE_KEYWORD", ShaderLabLanguage.INSTANCE);
-
-	IElementType COLOR_KEYWORD = new IElementType("COLOR_KEYWORD", ShaderLabLanguage.INSTANCE);
-
-	IElementType PROPERTIES_KEYWORD = new IElementType("PROPERTIES_KEYWORD", ShaderLabLanguage.INSTANCE);
-
-	IElementType FALLBACK_KEYWORD = new IElementType("FALLBACK_KEYWORD", ShaderLabLanguage.INSTANCE);
-
 	IElementType LBRACE = new IElementType("LBRACE", ShaderLabLanguage.INSTANCE);
 
 	IElementType RBRACE = new IElementType("RBRACE", ShaderLabLanguage.INSTANCE);
