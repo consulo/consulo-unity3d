@@ -59,6 +59,13 @@ public class Unity3dMetaFileProjectViewProvider implements TreeStructureProvider
 		{
 			return children;
 		}
+
+		Boolean showMetaFiles = settings.getViewOption(Unity3dShowMetaFileProjectViewPaneOptionProvider.KEY);
+		if(showMetaFiles == Boolean.TRUE)
+		{
+			return children;
+		}
+
 		List<AbstractTreeNode> nodes = new ArrayList<AbstractTreeNode>(children.size());
 		for(AbstractTreeNode child : children)
 		{
