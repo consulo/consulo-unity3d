@@ -33,6 +33,7 @@ import com.intellij.execution.executors.DefaultDebugExecutor;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.DefaultProgramRunner;
 import com.intellij.execution.runners.ExecutionEnvironment;
+import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
@@ -108,8 +109,12 @@ public class Unity3dAttachRunner extends DefaultProgramRunner
 					public void connectionFailed()
 					{
 						ProcessHandler processHandler = process.getProcessHandler();
-						session.getConsoleView().print(String.format("Failed attach to '%s' at %s:%d", firstItem.getName(), firstItem.getHost(),
-								firstItem.getPort()), ConsoleViewContentType.ERROR_OUTPUT);
+						ConsoleView consoleView = session.getConsoleView();
+						if(consoleView != null)
+						{
+							consoleView.print(String.format("Failed attach to '%s' at %s:%d", firstItem.getName(), firstItem.getHost(),
+									firstItem.getPort()), ConsoleViewContentType.ERROR_OUTPUT);
+						}
 						StopProcessAction.stopProcess(processHandler);
 					}
 				});
