@@ -19,6 +19,7 @@ package org.mustbe.consulo.unity3d.shaderlab.lang.psi;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.mustbe.consulo.unity3d.shaderlab.ide.refactoring.ShaderRefactorUtil;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.IncorrectOperationException;
@@ -78,6 +79,12 @@ public class ShaderPropertyElement extends ShaderLabElement implements ShaderPro
 	@Override
 	public PsiElement setName(@NonNls @NotNull String name) throws IncorrectOperationException
 	{
-		return null;
+		PsiElement nameIdentifier = getNameIdentifier();
+		if(nameIdentifier == null)
+		{
+			throw new IncorrectOperationException();
+		}
+		ShaderRefactorUtil.replaceIdentifier(nameIdentifier, name);
+		return this;
 	}
 }

@@ -25,6 +25,7 @@ import org.mustbe.consulo.RequiredReadAction;
 import org.mustbe.consulo.csharp.lang.psi.impl.msil.CSharpTransform;
 import org.mustbe.consulo.dotnet.psi.DotNetTypeDeclaration;
 import org.mustbe.consulo.dotnet.resolve.DotNetPsiSearcher;
+import org.mustbe.consulo.unity3d.shaderlab.ide.refactoring.ShaderRefactorUtil;
 import org.mustbe.consulo.unity3d.shaderlab.lang.ShaderMaterialAttribute;
 import org.mustbe.consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabRole;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.stub.index.ShaderDefIndex;
@@ -167,7 +168,8 @@ public class ShaderReference extends ShaderLabElement implements PsiQualifiedRef
 	@Override
 	public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException
 	{
-		return null;
+		ShaderRefactorUtil.replaceIdentifier(getReferenceElement(), newElementName);
+		return this;
 	}
 
 	@Override
