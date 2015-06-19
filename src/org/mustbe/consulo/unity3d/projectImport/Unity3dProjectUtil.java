@@ -69,15 +69,15 @@ public class Unity3dProjectUtil
 
 		ContainerUtil.addIfNotNull(modules, createRootModule(project, newModel, unitySdk));
 
-		MultiMap<Module, VirtualFile> virtualFilesByModule = MultiMap.create();
+		MultiMap<Module, VirtualFile> sourceFilesByModule = MultiMap.create();
 
-		ContainerUtil.addIfNotNull(modules, createAssemblyCSharpModuleFirstPass(project, newModel, unitySdk, virtualFilesByModule));
+		ContainerUtil.addIfNotNull(modules, createAssemblyCSharpModuleFirstPass(project, newModel, unitySdk, sourceFilesByModule));
 
-		ContainerUtil.addIfNotNull(modules, createAssemblyUnityScriptModuleFirstPass(project, newModel, unitySdk, virtualFilesByModule));
+		ContainerUtil.addIfNotNull(modules, createAssemblyUnityScriptModuleFirstPass(project, newModel, unitySdk, sourceFilesByModule));
 
-		ContainerUtil.addIfNotNull(modules, createAssemblyCSharpModuleEditor(project, newModel, unitySdk, virtualFilesByModule));
+		ContainerUtil.addIfNotNull(modules, createAssemblyCSharpModuleEditor(project, newModel, unitySdk, sourceFilesByModule));
 
-		ContainerUtil.addIfNotNull(modules, createAssemblyCSharpModule(project, newModel, unitySdk, virtualFilesByModule));
+		ContainerUtil.addIfNotNull(modules, createAssemblyCSharpModule(project, newModel, unitySdk, sourceFilesByModule));
 
 		if(!fromProjectStructure)
 		{
@@ -98,7 +98,8 @@ public class Unity3dProjectUtil
 			final Sdk unityBundle,
 			MultiMap<Module, VirtualFile> virtualFilesByModule)
 	{
-		return createAndSetupModule("Assembly-CSharp", project, newModel, new String[]{"Assets"}, unityBundle, new Consumer<ModuleRootLayerImpl>()
+		String[] paths = {"Assets"};
+		return createAndSetupModule("Assembly-CSharp", project, newModel, paths, unityBundle, new Consumer<ModuleRootLayerImpl>()
 		{
 			@Override
 			public void consume(ModuleRootLayerImpl layer)
@@ -120,24 +121,8 @@ public class Unity3dProjectUtil
 				"Assets/Plugins"
 		};
 
-		return createAndSetupModule("Assembly-UnityScript-firstpass", project, newModel, paths, unityBundle, new Consumer<ModuleRootLayerImpl>()
-		{
-			@Override
-			public void consume(ModuleRootLayerImpl layer)
-			{
-				for(String path : paths)
-				{
-					VirtualFile dirFile = LocalFileSystem.getInstance().findFileByPath(path);
-					if(dirFile != null)
-					{
-						for(VirtualFile virtualFile : dirFile.getChildren())
-						{
-							addAsLibrary(virtualFile, layer);
-						}
-					}
-				}
-			}
-		}, "unity3d-unityscript-child", JavaScriptFileType.INSTANCE, virtualFilesByModule);
+		return createAndSetupModule("Assembly-UnityScript-firstpass", project, newModel, paths, unityBundle, null, "unity3d-unityscript-child",
+				JavaScriptFileType.INSTANCE, virtualFilesByModule);
 	}
 
 	private static Module createAssemblyCSharpModuleFirstPass(final Project project,
@@ -151,24 +136,8 @@ public class Unity3dProjectUtil
 				"Assets/Plugins"
 		};
 
-		return createAndSetupModule("Assembly-CSharp-firstpass", project, newModel, paths, unityBundle, new Consumer<ModuleRootLayerImpl>()
-		{
-			@Override
-			public void consume(ModuleRootLayerImpl layer)
-			{
-				for(String path : paths)
-				{
-					VirtualFile dirFile = LocalFileSystem.getInstance().findFileByPath(path);
-					if(dirFile != null)
-					{
-						for(VirtualFile virtualFile : dirFile.getChildren())
-						{
-							addAsLibrary(virtualFile, layer);
-						}
-					}
-				}
-			}
-		}, "unity3d-csharp-child", CSharpFileType.INSTANCE, virtualFilesByModule);
+		return createAndSetupModule("Assembly-CSharp-firstpass", project, newModel, paths, unityBundle, null, "unity3d-csharp-child",
+				CSharpFileType.INSTANCE, virtualFilesByModule);
 	}
 
 	private static Module createAssemblyCSharpModuleEditor(final Project project,
@@ -216,22 +185,6 @@ public class Unity3dProjectUtil
 				{
 					layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEditor.UI"));
 				}
-				for(String path : pathsAsArray)
-				{
-					VirtualFile dirFile = LocalFileSystem.getInstance().findFileByPath(path);
-					if(dirFile != null)
-					{
-						VfsUtil.visitChildrenRecursively(dirFile, new VirtualFileVisitor()
-						{
-							@Override
-							public boolean visitFile(@NotNull VirtualFile file)
-							{
-								addAsLibrary(file, layer);
-								return true;
-							}
-						});
-					}
-				}
 			}
 		}, "unity3d-csharp-child", CSharpFileType.INSTANCE, virtualFilesByModule);
 	}
@@ -242,7 +195,7 @@ public class Unity3dProjectUtil
 			@NotNull ModifiableModuleModel modifiableModuleModels,
 			@NotNull String[] paths,
 			@Nullable Sdk unitySdk,
-			@NotNull Consumer<ModuleRootLayerImpl> setupConsumer,
+			@Nullable Consumer<ModuleRootLayerImpl> setupConsumer,
 			@NotNull String moduleExtensionId,
 			@NotNull final FileType fileType,
 			@NotNull final MultiMap<Module, VirtualFile> virtualFilesByModule)
@@ -270,6 +223,7 @@ public class Unity3dProjectUtil
 		modifiableModel.removeAllLayers(false);
 
 		final List<VirtualFile> toAdd = new ArrayList<VirtualFile>();
+		final List<VirtualFile> libraryFiles = new ArrayList<VirtualFile>();
 
 		for(String path : paths)
 		{
@@ -291,6 +245,10 @@ public class Unity3dProjectUtil
 							virtualFilesByModule.putValue(module, file);
 							toAdd.add(file);
 						}
+						else if(file.getFileType() == DotNetModuleFileType.INSTANCE)
+						{
+							libraryFiles.add(file);
+						}
 						return true;
 					}
 				});
@@ -306,7 +264,10 @@ public class Unity3dProjectUtil
 				layer.addContentEntry(virtualFile);
 			}
 
-			setupConsumer.consume(layer);
+			if(setupConsumer != null)
+			{
+				setupConsumer.consume(layer);
+			}
 
 			layer.getExtensionWithoutCheck(Unity3dChildMutableModuleExtension.class).setEnabled(true);
 			// enable correct unity lang extension
@@ -323,6 +284,11 @@ public class Unity3dProjectUtil
 			layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "System.Core"));
 			layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "System.Xml"));
 			layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "System.Xml.Linq"));
+
+			for(VirtualFile virtualFile : libraryFiles)
+			{
+				addAsLibrary(virtualFile, layer);
+			}
 		}
 
 		new WriteAction<Object>()
