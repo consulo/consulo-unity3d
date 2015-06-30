@@ -280,6 +280,11 @@ public class Unity3dProjectUtil
 			{
 				layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEngine.UI"));
 			}
+			if(isVersionHigherOrEqual(unitySdk, "5.1.0"))
+			{
+				layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEngine.Networking"));
+				layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEngine.Analytics"));
+			}
 			layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "System"));
 			layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "System.Core"));
 			layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "System.Xml"));
@@ -317,7 +322,7 @@ public class Unity3dProjectUtil
 	}
 
 	@NotNull
-	private static Version parseVersion(@Nullable String versionString)
+	public static Version parseVersion(@Nullable String versionString)
 	{
 		if(versionString == null)
 		{

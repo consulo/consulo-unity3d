@@ -27,6 +27,7 @@ import org.mustbe.consulo.dotnet.execution.DebugConnectionInfo;
 import org.mustbe.consulo.dotnet.module.extension.BaseDotNetSimpleModuleExtension;
 import org.mustbe.consulo.dotnet.module.extension.DotNetModuleExtension;
 import org.mustbe.consulo.unity3d.bundle.Unity3dBundleType;
+import org.mustbe.consulo.unity3d.projectImport.Unity3dProjectUtil;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.ide.macro.Macro;
@@ -35,6 +36,7 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkType;
 import com.intellij.openapi.roots.ModuleRootLayer;
 import com.intellij.openapi.util.SystemInfo;
+import com.intellij.openapi.util.Version;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -126,7 +128,7 @@ public class Unity3dRootModuleExtension extends BaseDotNetSimpleModuleExtension<
 			return EMPTY_FILE_ARRAY;
 		}
 
-		List<String> pathsForLibraries = getPathsForLibraries(homePath);
+		List<String> pathsForLibraries = getPathsForLibraries(homePath, sdk);
 
 		File[] array = EMPTY_FILE_ARRAY;
 		for(String pathsForLibrary : pathsForLibraries)
@@ -145,54 +147,75 @@ public class Unity3dRootModuleExtension extends BaseDotNetSimpleModuleExtension<
 	}
 
 	@NotNull
-	private List<String> getPathsForLibraries(String homePath)
+	private List<String> getPathsForLibraries(String homePath, @NotNull Sdk sdk)
 	{
+		Version version = Unity3dProjectUtil.parseVersion(sdk.getVersionString());
+
 		List<String> list = new SmartList<String>();
 		list.add(Unity3dBundleType.getPathForMono(homePath, getLibrarySuffix()));
 		if(SystemInfo.isMac)
 		{
 			list.add(homePath + "/Contents/Frameworks/Managed");
 
-			addUnityExtensions(list, homePath + "/Contents/UnityExtensions/Unity/GUISystem");
-			addUnityExtensions(list, homePath + "/Contents/Frameworks/UnityExtensions/Unity/GUISystem");
+			// dead path?
+			addUnityExtensions(list, version, homePath + "/Contents/Frameworks/UnityExtensions/Unity");
+			// actual mac path
+			addUnityExtensions(list, version, homePath + "/Contents/UnityExtensions/Unity");
 		}
 		else if(SystemInfo.isWindows || SystemInfo.isLinux)
 		{
 			list.add(homePath + "/Editor/Data/Managed");
 
-			addUnityExtensions(list, homePath + "/Editor/Data/UnityExtensions/Unity/GUISystem");
+			addUnityExtensions(list, version, homePath + "/Editor/Data/UnityExtensions/Unity");
 		}
 		return list;
 	}
 
-	private static void addUnityExtensions(List<String> list, String baseDir)
+	private static void addUnityExtensions(List<String> list, @NotNull Version version, String baseDir)
 	{
-		// UnityUI 4.6.2 specific
-		// UnityUI 4.6.3 specific
-		// {VERSION}/Editor
+		VirtualFile dir = LocalFileSystem.getInstance().findFileByPath(baseDir);
+		if(dir == null)
+		{
+			return;
+		}
+
+		for(VirtualFile virtualFile : dir.getChildren())
+		{
+			if(virtualFile.isDirectory())
+			{
+				addUnityExtension(list, virtualFile, version);
+			}
+		}
+	}
+
+	private static void addUnityExtension(List<String> list, @NotNull VirtualFile dir, @NotNull Version version)
+	{
+		// UnityUI 4.6.X specific
+		// {EXTENSION_NAME}/{VERSION}/{LIBRARY}
 
 		// UnityUI 5.0 specific
-		// Editor
+		// {EXTENSION_NAME}/{LIBRARY}
 
-		VirtualFile dir = LocalFileSystem.getInstance().findFileByPath(baseDir);
-		if(dir != null)
+		if(version.isOrGreaterThan(5, 0, 0))
 		{
+			list.add(dir.getPath());
 			VirtualFile editorDir = dir.findChild("Editor");
 			if(editorDir != null)
 			{
-				list.add(dir.getPath());
 				list.add(editorDir.getPath());
 			}
-			else
+		}
+		else
+		{
+			for(VirtualFile child : dir.getChildren())
 			{
-				for(VirtualFile file : dir.getChildren())
+				if(child.isDirectory())
 				{
-					editorDir = file.findChild("Editor");
+					list.add(child.getPath());
+					VirtualFile editorDir = child.findChild("Editor");
 					if(editorDir != null)
 					{
-						list.add(file.getPath());
 						list.add(editorDir.getPath());
-						break;
 					}
 				}
 			}
