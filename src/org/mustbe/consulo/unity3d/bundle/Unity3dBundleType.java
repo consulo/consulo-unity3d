@@ -54,25 +54,11 @@ public class Unity3dBundleType extends SdkType
 		{
 			return sdkPath + "/Contents/MacOS/Unity";
 		}
-		else if(SystemInfo.isWindows)
+		else if(SystemInfo.isWindows || SystemInfo.isLinux)
 		{
 			return sdkPath + "/Editor/Unity.exe";
 		}
 		return null;
-	}
-
-	@NotNull
-	public static String getPathForMono(@NotNull String sdkPath, @NotNull String suffix)
-	{
-		if(SystemInfo.isMac)
-		{
-			return sdkPath + "/Contents/Frameworks/Mono/lib/mono/" + suffix;
-		}
-		else if(SystemInfo.isWindows || SystemInfo.isLinux)
-		{
-			return sdkPath + "/Editor/Data/Mono/lib/mono/" + suffix;
-		}
-		throw new IllegalArgumentException("Unknown system " + SystemInfo.OS_NAME);
 	}
 
 	@NotNull
@@ -121,7 +107,7 @@ public class Unity3dBundleType extends SdkType
 	@Override
 	public boolean isValidSdkHome(String s)
 	{
-		return new File(getPathForMono(s, "unity")).exists();
+		return new File(getApplicationPath(s)).exists();
 	}
 
 	@Nullable

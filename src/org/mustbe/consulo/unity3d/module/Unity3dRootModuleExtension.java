@@ -152,9 +152,9 @@ public class Unity3dRootModuleExtension extends BaseDotNetSimpleModuleExtension<
 		Version version = Unity3dProjectUtil.parseVersion(sdk.getVersionString());
 
 		List<String> list = new SmartList<String>();
-		list.add(Unity3dBundleType.getPathForMono(homePath, getLibrarySuffix()));
 		if(SystemInfo.isMac)
 		{
+			list.add(homePath + "/Contents/Frameworks/Mono/lib/mono/unity");
 			list.add(homePath + "/Contents/Frameworks/Managed");
 
 			// dead path?
@@ -164,6 +164,7 @@ public class Unity3dRootModuleExtension extends BaseDotNetSimpleModuleExtension<
 		}
 		else if(SystemInfo.isWindows || SystemInfo.isLinux)
 		{
+			list.add(homePath + "/Editor/Data/Mono/lib/mono/unity");
 			list.add(homePath + "/Editor/Data/Managed");
 
 			addUnityExtensions(list, version, homePath + "/Editor/Data/UnityExtensions/Unity");
@@ -220,12 +221,6 @@ public class Unity3dRootModuleExtension extends BaseDotNetSimpleModuleExtension<
 				}
 			}
 		}
-	}
-
-	@NotNull
-	public String getLibrarySuffix()
-	{
-		return "unity";
 	}
 
 	@NotNull
