@@ -107,7 +107,8 @@ public class Unity3dBundleType extends SdkType
 	@Override
 	public boolean isValidSdkHome(String s)
 	{
-		return new File(getApplicationPath(s)).exists();
+		String applicationPath = getApplicationPath(s);
+		return applicationPath != null && new File(applicationPath).exists();
 	}
 
 	@Nullable
