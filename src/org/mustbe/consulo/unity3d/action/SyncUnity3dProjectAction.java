@@ -1,5 +1,6 @@
 package org.mustbe.consulo.unity3d.action;
 
+import org.jetbrains.annotations.NotNull;
 import org.mustbe.consulo.RequiredDispatchThread;
 import org.mustbe.consulo.unity3d.Unity3dIcons;
 import org.mustbe.consulo.unity3d.module.Unity3dModuleExtensionUtil;
@@ -8,6 +9,8 @@ import org.mustbe.consulo.unity3d.projectImport.Unity3dProjectUtil;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
+import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 
@@ -26,18 +29,26 @@ public class SyncUnity3dProjectAction extends AnAction
 	@RequiredDispatchThread
 	public void actionPerformed(AnActionEvent anActionEvent)
 	{
-		Project project = anActionEvent.getProject();
+		final Project project = anActionEvent.getProject();
 		if(project == null)
 		{
 			return;
 		}
-		Unity3dRootModuleExtension rootModuleExtension = Unity3dModuleExtensionUtil.getRootModuleExtension(project);
+		final Unity3dRootModuleExtension rootModuleExtension = Unity3dModuleExtensionUtil.getRootModuleExtension(project);
 		if(rootModuleExtension == null)
 		{
 			return;
 		}
 
-		Unity3dProjectUtil.importOrUpdate(project, rootModuleExtension.getSdk(), null);
+		new Task.Modal(project, "Sync project", false)
+		{
+			@Override
+			public void run(@NotNull ProgressIndicator indicator)
+			{
+				indicator.setIndeterminate(true);
+				Unity3dProjectUtil.importOrUpdate(project, rootModuleExtension.getSdk(), null);
+			}
+		}.queue();
 	}
 
 	@RequiredDispatchThread

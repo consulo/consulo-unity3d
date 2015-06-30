@@ -7,7 +7,6 @@ import org.consulo.lombok.annotations.Logger;
 import org.consulo.module.extension.MutableModuleExtension;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.mustbe.consulo.RequiredReadAction;
 import org.mustbe.consulo.csharp.lang.CSharpFileType;
 import org.mustbe.consulo.dotnet.dll.DotNetModuleFileType;
 import org.mustbe.consulo.dotnet.module.roots.DotNetLibraryOrderEntryImpl;
@@ -31,11 +30,13 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.LibraryOrderEntry;
+import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.impl.ModuleRootLayerImpl;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.types.BinariesOrderRootType;
 import com.intellij.openapi.roots.types.DocumentationOrderRootType;
+import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.Version;
 import com.intellij.openapi.util.text.StringUtil;
@@ -58,12 +59,20 @@ import lombok.val;
 public class Unity3dProjectUtil
 {
 	@NotNull
-	@RequiredReadAction
-	public static List<Module> importOrUpdate(@NotNull Project project, @Nullable Sdk unitySdk, @Nullable ModifiableModuleModel originalModel)
+	public static List<Module> importOrUpdate(@NotNull final Project project, @Nullable Sdk unitySdk, @Nullable ModifiableModuleModel originalModel)
 	{
-		val fromProjectStructure = originalModel != null;
+		boolean fromProjectStructure = originalModel != null;
 
-		val newModel = fromProjectStructure ? originalModel : ModuleManager.getInstance(project).getModifiableModel();
+		val newModel = fromProjectStructure ? originalModel : ApplicationManager.getApplication().runReadAction(new
+																														Computable<ModifiableModuleModel>()
+
+		{
+			@Override
+			public ModifiableModuleModel compute()
+			{
+				return ModuleManager.getInstance(project).getModifiableModel();
+			}
+		});
 
 		List<Module> modules = new ArrayList<Module>(5);
 
@@ -81,14 +90,14 @@ public class Unity3dProjectUtil
 
 		if(!fromProjectStructure)
 		{
-			ApplicationManager.getApplication().runWriteAction(new Runnable()
+			new WriteAction<Object>()
 			{
 				@Override
-				public void run()
+				protected void run(Result<Object> result) throws Throwable
 				{
 					newModel.commit();
 				}
-			});
+			}.execute();
 		}
 		return modules;
 	}
@@ -195,7 +204,7 @@ public class Unity3dProjectUtil
 			@NotNull ModifiableModuleModel modifiableModuleModels,
 			@NotNull String[] paths,
 			@Nullable Sdk unitySdk,
-			@Nullable Consumer<ModuleRootLayerImpl> setupConsumer,
+			@Nullable final Consumer<ModuleRootLayerImpl> setupConsumer,
 			@NotNull String moduleExtensionId,
 			@NotNull final FileType fileType,
 			@NotNull final MultiMap<Module, VirtualFile> virtualFilesByModule)
@@ -216,9 +225,14 @@ public class Unity3dProjectUtil
 			module = temp;
 		}
 
-		ModuleRootManager moduleRootManager = ModuleRootManager.getInstance(module);
-
-		val modifiableModel = moduleRootManager.getModifiableModel();
+		final ModifiableRootModel modifiableModel = ApplicationManager.getApplication().runReadAction(new Computable<ModifiableRootModel>()
+		{
+			@Override
+			public ModifiableRootModel compute()
+			{
+				return ModuleRootManager.getInstance(module).getModifiableModel();
+			}
+		});
 
 		modifiableModel.removeAllLayers(false);
 
@@ -266,7 +280,14 @@ public class Unity3dProjectUtil
 
 			if(setupConsumer != null)
 			{
-				setupConsumer.consume(layer);
+				ApplicationManager.getApplication().runReadAction(new Runnable()
+				{
+					@Override
+					public void run()
+					{
+						setupConsumer.consume(layer);
+					}
+				});
 			}
 
 			layer.getExtensionWithoutCheck(Unity3dChildMutableModuleExtension.class).setEnabled(true);
@@ -384,11 +405,19 @@ public class Unity3dProjectUtil
 	}
 
 	@NotNull
-	@RequiredReadAction
-	private static Module createRootModule(Project project, ModifiableModuleModel newModel, Sdk unityBundle)
+	private static Module createRootModule(@NotNull final Project project, ModifiableModuleModel newModel, Sdk unityBundle)
 	{
-		Module rootModule;
-		Unity3dRootModuleExtension rootModuleExtension = Unity3dModuleExtensionUtil.getRootModuleExtension(project);
+		final Module rootModule;
+		Unity3dRootModuleExtension rootModuleExtension = ApplicationManager.getApplication().runReadAction(new
+																												   Computable<Unity3dRootModuleExtension>()
+
+		{
+			@Override
+			public Unity3dRootModuleExtension compute()
+			{
+				return Unity3dModuleExtensionUtil.getRootModuleExtension(project);
+			}
+		});
 		if(rootModuleExtension != null)
 		{
 			rootModule = rootModuleExtension.getModule();
@@ -400,7 +429,14 @@ public class Unity3dProjectUtil
 
 		String projectUrl = project.getBaseDir().getUrl();
 
-		val modifiableModel = ModuleRootManager.getInstance(rootModule).getModifiableModel();
+		final ModifiableRootModel modifiableModel = ApplicationManager.getApplication().runReadAction(new Computable<ModifiableRootModel>()
+		{
+			@Override
+			public ModifiableRootModel compute()
+			{
+				return ModuleRootManager.getInstance(rootModule).getModifiableModel();
+			}
+		});
 		modifiableModel.removeAllLayers(false);
 
 		for(Unity3dTarget unity3dTarget : Unity3dTarget.values())
