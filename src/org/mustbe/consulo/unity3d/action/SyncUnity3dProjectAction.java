@@ -40,6 +40,7 @@ public class SyncUnity3dProjectAction extends AnAction
 		Unity3dProjectUtil.importOrUpdate(project, rootModuleExtension.getSdk(), null);
 	}
 
+	@RequiredDispatchThread
 	@Override
 	public void update(AnActionEvent e)
 	{
