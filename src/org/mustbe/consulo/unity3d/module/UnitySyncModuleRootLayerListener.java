@@ -21,10 +21,11 @@ import org.mustbe.consulo.RequiredReadAction;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootLayer;
 import com.intellij.openapi.roots.ModuleRootLayerListener;
 import com.intellij.openapi.roots.ModuleRootManager;
-import lombok.val;
 
 /**
  * @author VISTALL
@@ -40,18 +41,20 @@ public class UnitySyncModuleRootLayerListener extends ModuleRootLayerListener.Ad
 			@NotNull String newName,
 			@NotNull ModuleRootLayer moduleRootLayer2)
 	{
-		if(!module.getProject().isOpen())
+		Project project = module.getProject();
+		if(!project.isOpen())
 		{
 			return;
 		}
 
 		// if we dont have unity extension dont try sync switch
-		if(moduleRootLayer.getExtension(Unity3dModuleExtension.class) == null)
+		Module rootModule = Unity3dModuleExtensionUtil.getRootModule(project);
+		if(rootModule == null)
 		{
 			return;
 		}
 
-		ModuleManager moduleManager = ModuleManager.getInstance(module.getProject());
+		ModuleManager moduleManager = ModuleManager.getInstance(project);
 		for(Module anotherModule : moduleManager.getModules())
 		{
 			if(anotherModule == module)
@@ -60,7 +63,7 @@ public class UnitySyncModuleRootLayerListener extends ModuleRootLayerListener.Ad
 			}
 
 			ModuleRootManager rootManager = ModuleRootManager.getInstance(anotherModule);
-			val modifiableModel = rootManager.getModifiableModel();
+			final ModifiableRootModel modifiableModel = rootManager.getModifiableModel();
 			modifiableModel.setCurrentLayer(newName);
 
 			ApplicationManager.getApplication().runWriteAction(new Runnable()
