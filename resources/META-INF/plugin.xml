@@ -78,6 +78,8 @@
 		<completion.contributor language="C#" implementationClass="org.mustbe.consulo.unity3d.csharp.completion.UnitySpecificMethodCompletion"/>
 		<codeInsight.lineMarkerProvider language="C#"
 										implementationClass="org.mustbe.consulo.unity3d.csharp.codeInsight.UnityCSharpLineMarkerProvider"/>
+		<codeInsight.lineMarkerProvider language="JavaScript"
+										implementationClass="org.mustbe.consulo.unity3d.unityscript.codeInsight.UnityScriptLineMarkerProvider" />
 		<colorProvider implementation="org.mustbe.consulo.unity3d.csharp.codeInsight.UnityCSharpStaticElementColorProvider"/>
 		<macro implementation="org.mustbe.consulo.unity3d.module.UnityFileNameMacro"/>
 		<compiler implementation="org.mustbe.consulo.unity3d.compiler.UnityCompiler" order="last"/>
