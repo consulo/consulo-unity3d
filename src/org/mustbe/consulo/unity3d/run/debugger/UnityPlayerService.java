@@ -30,6 +30,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import org.consulo.lombok.annotations.Logger;
 import org.jetbrains.annotations.NotNull;
@@ -72,51 +75,7 @@ public class UnityPlayerService implements ApplicationComponent
 
 	private EventDispatcher<UpdateListener> myUpdateListenerEventDispatcher = EventDispatcher.create(UpdateListener.class);
 
-	public UnityPlayerService()
-	{
-		Thread thread = new Thread()
-		{
-			@Override
-			public void run()
-			{
-				while(true)
-				{
-					try
-					{
-						int size = myPlayers.size();
-						for(Iterator<Map.Entry<UnityPlayer, UnityPlayer>> iterator = myPlayers.entrySet().iterator(); iterator.hasNext(); )
-						{
-							Map.Entry<UnityPlayer, UnityPlayer> next = iterator.next();
-
-							if(!next.getKey().isAvailable())
-							{
-								iterator.remove();
-							}
-						}
-
-						List<UnityPlayer> values = new ArrayList<UnityPlayer>(myPlayers.values());
-						if(size != values.size())
-						{
-							myUpdateListenerEventDispatcher.getMulticaster().update(values);
-						}
-					}
-					finally
-					{
-						try
-						{
-							Thread.sleep(2000L);
-						}
-						catch(InterruptedException ignored)
-						{
-						}
-					}
-				}
-			}
-		};
-		thread.setDaemon(true);
-		thread.setPriority(Thread.MIN_PRIORITY);
-		thread.start();
-	}
+	private ScheduledExecutorService myExecutorService =  Executors.newScheduledThreadPool(1);
 
 	@Override
 	public void initComponent()
@@ -157,12 +116,36 @@ public class UnityPlayerService implements ApplicationComponent
 					}
 					catch(Exception e)
 					{
-						failBinds ++;
+						failBinds++;
 						LOGGER.warn(e);
 					}
 				}
 			}
 			LOGGER.info("Port status: " + succBinds + " vs " + failBinds);
+
+			myExecutorService.scheduleAtFixedRate(new Runnable()
+			{
+				@Override
+				public void run()
+				{
+					int size = myPlayers.size();
+					for(Iterator<Map.Entry<UnityPlayer, UnityPlayer>> iterator = myPlayers.entrySet().iterator(); iterator.hasNext(); )
+					{
+						Map.Entry<UnityPlayer, UnityPlayer> next = iterator.next();
+
+						if(!next.getKey().isAvailable())
+						{
+							iterator.remove();
+						}
+					}
+
+					List<UnityPlayer> values = new ArrayList<UnityPlayer>(myPlayers.values());
+					if(size != values.size())
+					{
+						myUpdateListenerEventDispatcher.getMulticaster().update(values);
+					}
+				}
+			}, 2, 2, TimeUnit.SECONDS);
 		}
 		catch(Exception e)
 		{
@@ -197,6 +180,8 @@ public class UnityPlayerService implements ApplicationComponent
 	@Override
 	public void disposeComponent()
 	{
+		myExecutorService.shutdown();
+
 		for(UnityUdpThread thread : myThreads)
 		{
 			thread.dispose();
