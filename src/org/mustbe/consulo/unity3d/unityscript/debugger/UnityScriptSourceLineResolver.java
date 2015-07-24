@@ -1,5 +1,8 @@
 package org.mustbe.consulo.unity3d.unityscript.debugger;
 
+import java.util.Collections;
+import java.util.Set;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.mustbe.consulo.RequiredReadAction;
@@ -28,5 +31,13 @@ public class UnityScriptSourceLineResolver extends DotNetDebuggerSourceLineResol
 		}
 		VirtualFile virtualFile = PsiUtilCore.getVirtualFile(element);
 		return virtualFile == null ? null : virtualFile.getNameWithoutExtension();
+	}
+
+	@RequiredReadAction
+	@NotNull
+	@Override
+	public Set<PsiElement> getAllExecutableChildren(@NotNull PsiElement element)
+	{
+		return Collections.emptySet();
 	}
 }
