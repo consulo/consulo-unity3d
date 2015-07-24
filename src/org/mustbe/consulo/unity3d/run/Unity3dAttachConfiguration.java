@@ -19,6 +19,7 @@ package org.mustbe.consulo.unity3d.run;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.mustbe.consulo.RequiredReadAction;
+import org.mustbe.consulo.unity3d.run.debugger.UnityProcess;
 import com.intellij.compiler.options.CompileStepBeforeRun;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
@@ -42,15 +43,23 @@ import com.intellij.openapi.project.Project;
 public class Unity3dAttachConfiguration extends LocatableConfigurationBase implements ModuleRunProfile,
 		RunConfigurationWithSuppressedDefaultRunAction, CompileStepBeforeRun.Suppressor
 {
-	public Unity3dAttachConfiguration(Project project, ConfigurationFactory factory, String name)
+	private UnityProcess myUnityProcess;
+
+	public Unity3dAttachConfiguration(Project project, ConfigurationFactory factory)
 	{
-		super(project, factory, name);
+		super(project, factory, "dummy");
+		myUnityProcess = new UnityProcess(-1, "", "", -1);
 	}
 
-	@Override
-	public String suggestedName()
+	public Unity3dAttachConfiguration(Project project, ConfigurationFactory factory, @NotNull UnityProcess unityProcess)
 	{
-		return "Attach";
+		super(project, factory, "Unity3D Attach to PID: " + unityProcess.hashCode());
+		myUnityProcess = unityProcess;
+	}
+
+	public UnityProcess getUnityProcess()
+	{
+		return myUnityProcess;
 	}
 
 	@NotNull

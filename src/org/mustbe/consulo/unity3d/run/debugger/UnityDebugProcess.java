@@ -32,16 +32,19 @@ import com.intellij.xdebugger.XDebugSession;
  */
 public class UnityDebugProcess extends DotNetDebugProcess
 {
-	public UnityDebugProcess(XDebugSession session, DebugConnectionInfo debugConnectionInfo, RunProfile runProfile)
+	private UnityProcess mySelected;
+
+	public UnityDebugProcess(XDebugSession session, DebugConnectionInfo debugConnectionInfo, RunProfile runProfile, UnityProcess selected)
 	{
 		super(session, debugConnectionInfo, runProfile);
+		mySelected = selected;
 	}
 
 	@Nullable
 	@Override
 	protected ProcessHandler doGetProcessHandler()
 	{
-		return null;
+		return new Unity3dAttachProcessHandler(mySelected.hashCode());
 	}
 
 	@NotNull

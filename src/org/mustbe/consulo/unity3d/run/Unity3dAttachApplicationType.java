@@ -40,7 +40,7 @@ public class Unity3dAttachApplicationType extends ConfigurationTypeBase
 			@Override
 			public RunConfiguration createTemplateConfiguration(Project project)
 			{
-				return new Unity3dAttachConfiguration(project, this, null);
+				return new Unity3dAttachConfiguration(project, this);
 			}
 
 			@Override
