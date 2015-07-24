@@ -23,6 +23,7 @@ import org.mustbe.consulo.unity3d.run.debugger.UnityProcess;
 import com.intellij.compiler.options.CompileStepBeforeRun;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
+import com.intellij.execution.configuration.CompatibilityAwareRunProfile;
 import com.intellij.execution.configuration.EmptyRunProfileState;
 import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.LocatableConfigurationBase;
@@ -41,7 +42,7 @@ import com.intellij.openapi.project.Project;
  * @since 10.11.14
  */
 public class Unity3dAttachConfiguration extends LocatableConfigurationBase implements ModuleRunProfile,
-		RunConfigurationWithSuppressedDefaultRunAction, CompileStepBeforeRun.Suppressor
+		RunConfigurationWithSuppressedDefaultRunAction, CompileStepBeforeRun.Suppressor, CompatibilityAwareRunProfile
 {
 	private UnityProcess myUnityProcess;
 
@@ -82,5 +83,12 @@ public class Unity3dAttachConfiguration extends LocatableConfigurationBase imple
 	public Module[] getModules()
 	{
 		return ModuleManager.getInstance(getProject()).getModules();
+	}
+
+	@Override
+	public boolean mustBeStoppedToRun(@NotNull RunConfiguration configuration)
+	{
+		return configuration != this && configuration instanceof Unity3dAttachConfiguration && myUnityProcess.hashCode() == (
+				(Unity3dAttachConfiguration) configuration).getUnityProcess().hashCode();
 	}
 }

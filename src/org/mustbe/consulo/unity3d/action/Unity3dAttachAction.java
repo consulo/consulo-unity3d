@@ -34,8 +34,6 @@ import org.mustbe.consulo.unity3d.run.debugger.UnityProcessDialog;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionManager;
 import com.intellij.execution.RunManager;
-import com.intellij.execution.RunnerAndConfigurationSettings;
-import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.executors.DefaultDebugExecutor;
 import com.intellij.execution.impl.RunManagerImpl;
 import com.intellij.execution.impl.RunnerAndConfigurationSettingsImpl;
@@ -143,18 +141,7 @@ public class Unity3dAttachAction extends AnAction
 
 			RunManager runManager = RunManager.getInstance(project);
 			RunnerAndConfigurationSettingsImpl runnerAndConfigurationSettings = new RunnerAndConfigurationSettingsImpl((RunManagerImpl) runManager,
-					configuration, false)
-			{
-				@Override
-				public boolean isEquivalentTo(@NotNull RunnerAndConfigurationSettings obj)
-				{
-					RunConfiguration conf1 = getConfiguration();
-					RunConfiguration conf2 = obj.getConfiguration();
-					return conf1 instanceof Unity3dAttachConfiguration && conf2 instanceof Unity3dAttachConfiguration && (
-							(Unity3dAttachConfiguration) conf1).getUnityProcess().hashCode() == ((Unity3dAttachConfiguration) conf2).getUnityProcess
-							().hashCode();
-				}
-			};
+					configuration, false);
 			runnerAndConfigurationSettings.setSingleton(true);
 
 			builder.runnerAndSettings(Unity3dAttachRunner.ourDummyInstance, runnerAndConfigurationSettings);
