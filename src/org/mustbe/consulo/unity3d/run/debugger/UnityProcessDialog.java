@@ -16,20 +16,27 @@
 
 package org.mustbe.consulo.unity3d.run.debugger;
 
+import java.awt.BorderLayout;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import javax.swing.Icon;
+import javax.swing.JComponent;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.mustbe.consulo.unity3d.Unity3dBundle;
 import org.mustbe.consulo.unity3d.Unity3dIcons;
 import com.intellij.ide.util.ChooseElementsDialog;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.ui.components.JBCheckBox;
 import com.intellij.util.ui.UIUtil;
+import com.intellij.xdebugger.impl.settings.XDebuggerSettingsManager;
 import com.jezhumble.javasysmon.JavaSysMon;
 import com.jezhumble.javasysmon.ProcessInfo;
 
@@ -81,7 +88,7 @@ public class UnityProcessDialog extends ChooseElementsDialog<UnityProcess>
 	}
 
 	@NotNull
-	private static List<UnityProcess> collectItems()
+	public static List<UnityProcess> collectItems()
 	{
 		Collection<UnityPlayer> players = UnityPlayerService.getInstance().getPlayers();
 		List<UnityProcess> items = new ArrayList<UnityProcess>(players.size() + 1);
@@ -94,13 +101,34 @@ public class UnityProcessDialog extends ChooseElementsDialog<UnityProcess>
 		for(ProcessInfo processInfo : processInfos)
 		{
 			String name = processInfo.getName();
-			if((StringUtil.startsWithIgnoreCase(name, "unity") || StringUtil.containsIgnoreCase(name, "Unity.app")) && !StringUtil.containsIgnoreCase
-					(name, "UnityShader"))
+			if((StringUtil.startsWithIgnoreCase(name, "unity") || StringUtil.containsIgnoreCase(name,
+					"Unity.app")) && !StringUtil.containsIgnoreCase(name, "UnityShader"))
 			{
 				items.add(new UnityProcess(processInfo.getPid(), name, "localhost", 56000 + processInfo.getPid() % 1000));
 			}
 		}
 		return items;
+	}
+
+	@Override
+	protected JComponent createCenterPanel()
+	{
+		JComponent centerPanel = super.createCenterPanel();
+		assert centerPanel != null;
+
+		final Unity3dDebuggerSettings settings = XDebuggerSettingsManager.getInstanceImpl().getSettings(Unity3dDebuggerSettings.class);
+		final JBCheckBox comp = new JBCheckBox(Unity3dBundle.message("attach.to.single.process.without.dialog.box"),
+				settings.myAttachToSingleProcessWithoutDialog);
+		comp.addChangeListener(new ChangeListener()
+		{
+			@Override
+			public void stateChanged(ChangeEvent e)
+			{
+				settings.myAttachToSingleProcessWithoutDialog = comp.isSelected();
+			}
+		});
+		centerPanel.add(comp, BorderLayout.SOUTH);
+		return centerPanel;
 	}
 
 	@Nullable

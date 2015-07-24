@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.mustbe.consulo.dotnet.debugger.DotNetVirtualMachineListener;
 import org.mustbe.consulo.dotnet.execution.DebugConnectionInfo;
+import org.mustbe.consulo.unity3d.run.debugger.Unity3dDebuggerSettings;
 import org.mustbe.consulo.unity3d.run.debugger.UnityDebugProcess;
 import org.mustbe.consulo.unity3d.run.debugger.UnityProcess;
 import org.mustbe.consulo.unity3d.run.debugger.UnityProcessDialog;
@@ -42,6 +43,7 @@ import com.intellij.xdebugger.XDebugProcess;
 import com.intellij.xdebugger.XDebugProcessStarter;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebuggerManager;
+import com.intellij.xdebugger.impl.settings.XDebuggerSettingsManager;
 import lombok.val;
 import mono.debugger.VirtualMachine;
 
@@ -71,16 +73,32 @@ public class Unity3dAttachRunner extends DefaultProgramRunner
 	protected RunContentDescriptor doExecute(@NotNull RunProfileState state,
 			@NotNull final ExecutionEnvironment environment) throws ExecutionException
 	{
-		UnityProcessDialog dialog = new UnityProcessDialog(environment.getProject());
+		UnityProcess firstItem = null;
 
-		List<UnityProcess> unityProcesses = dialog.showAndGetResult();
-
-		final UnityProcess firstItem = ContainerUtil.getFirstItem(unityProcesses);
-		if(firstItem == null)
+		Unity3dDebuggerSettings settings = XDebuggerSettingsManager.getInstanceImpl().getSettings(Unity3dDebuggerSettings.class);
+		if(settings.myAttachToSingleProcessWithoutDialog)
 		{
-			return null;
+			List<UnityProcess> unityProcesses = UnityProcessDialog.collectItems();
+			if(unityProcesses.size() == 1)
+			{
+				firstItem = ContainerUtil.getFirstItem(unityProcesses);
+			}
 		}
 
+		if(firstItem == null)
+		{
+			UnityProcessDialog dialog = new UnityProcessDialog(environment.getProject());
+
+			List<UnityProcess> unityProcesses = dialog.showAndGetResult();
+
+			firstItem = ContainerUtil.getFirstItem(unityProcesses);
+			if(firstItem == null)
+			{
+				return null;
+			}
+		}
+
+		final UnityProcess selected = firstItem;
 		FileDocumentManager.getInstance().saveAllDocuments();
 		final XDebugSession debugSession = XDebuggerManager.getInstance(environment.getProject()).startSession(environment,
 				new XDebugProcessStarter()
@@ -89,15 +107,15 @@ public class Unity3dAttachRunner extends DefaultProgramRunner
 			@Override
 			public XDebugProcess start(@NotNull final XDebugSession session) throws ExecutionException
 			{
-				DebugConnectionInfo debugConnectionInfo = new DebugConnectionInfo(firstItem.getHost(), firstItem.getPort(), true);
+				DebugConnectionInfo debugConnectionInfo = new DebugConnectionInfo(selected.getHost(), selected.getPort(), true);
 				val process = new UnityDebugProcess(session, debugConnectionInfo, environment.getRunProfile());
 				process.getDebugThread().addListener(new DotNetVirtualMachineListener()
 				{
 					@Override
 					public void connectionSuccess(@NotNull VirtualMachine machine)
 					{
-						session.getConsoleView().print(String.format("Success attach to '%s' at %s:%d", firstItem.getName(), firstItem.getHost(),
-								firstItem.getPort()), ConsoleViewContentType.SYSTEM_OUTPUT);
+						session.getConsoleView().print(String.format("Success attach to '%s' at %s:%d", selected.getName(), selected.getHost(),
+								selected.getPort()), ConsoleViewContentType.SYSTEM_OUTPUT);
 					}
 
 					@Override
@@ -112,8 +130,8 @@ public class Unity3dAttachRunner extends DefaultProgramRunner
 						ConsoleView consoleView = session.getConsoleView();
 						if(consoleView != null)
 						{
-							consoleView.print(String.format("Failed attach to '%s' at %s:%d", firstItem.getName(), firstItem.getHost(),
-									firstItem.getPort()), ConsoleViewContentType.ERROR_OUTPUT);
+							consoleView.print(String.format("Failed attach to '%s' at %s:%d", selected.getName(), selected.getHost(),
+									selected.getPort()), ConsoleViewContentType.ERROR_OUTPUT);
 						}
 						StopProcessAction.stopProcess(processHandler);
 					}

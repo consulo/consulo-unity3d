@@ -86,6 +86,7 @@
 		<macro implementation="org.mustbe.consulo.unity3d.module.UnityFileNameMacro"/>
 		<compiler implementation="org.mustbe.consulo.unity3d.compiler.UnityCompiler" order="last"/>
 		<sdkType implementation="org.mustbe.consulo.unity3d.bundle.Unity3dBundleType"/>
+		<xdebugger.settings implementation="org.mustbe.consulo.unity3d.run.debugger.Unity3dDebuggerSettings" />
 
 		<configurationType implementation="org.mustbe.consulo.unity3d.run.Unity3dApplicationType"/>
 
