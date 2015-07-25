@@ -47,21 +47,21 @@ public class Unity3dChildModuleExtension extends ModuleExtensionImpl<Unity3dChil
 	@Override
 	public ModuleInheritableNamedPointer<Sdk> getInheritableSdk()
 	{
-		throw new UnsupportedOperationException("Use root module extension");
+		return EmptyModuleInheritableNamedPointer.empty();
 	}
 
 	@Nullable
 	@Override
 	public Sdk getSdk()
 	{
-		throw new UnsupportedOperationException("Use root module extension");
+		return null;
 	}
 
 	@Nullable
 	@Override
 	public String getSdkName()
 	{
-		throw new UnsupportedOperationException("Use root module extension");
+		return null;
 	}
 
 	@NotNull

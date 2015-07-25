@@ -5,6 +5,7 @@ import org.consulo.module.extension.impl.ModuleExtensionImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.mustbe.consulo.javascript.module.extension.JavaScriptModuleExtension;
+import org.mustbe.consulo.unity3d.module.EmptyModuleInheritableNamedPointer;
 import org.mustbe.consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import org.mustbe.consulo.unity3d.module.Unity3dRootModuleExtension;
 import com.intellij.openapi.projectRoots.Sdk;
@@ -27,7 +28,7 @@ public class Unity3dScriptModuleExtension extends ModuleExtensionImpl<Unity3dScr
 	@Override
 	public ModuleInheritableNamedPointer<Sdk> getInheritableSdk()
 	{
-		throw new UnsupportedOperationException("Use root module extension");
+		return EmptyModuleInheritableNamedPointer.empty();
 	}
 
 	@Nullable
