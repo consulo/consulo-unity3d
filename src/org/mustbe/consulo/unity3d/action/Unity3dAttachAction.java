@@ -27,17 +27,14 @@ import org.mustbe.consulo.unity3d.Unity3dIcons;
 import org.mustbe.consulo.unity3d.run.Unity3dAttachApplicationType;
 import org.mustbe.consulo.unity3d.run.Unity3dAttachConfiguration;
 import org.mustbe.consulo.unity3d.run.Unity3dAttachRunner;
-import org.mustbe.consulo.unity3d.run.debugger.Unity3dAttachProcessHandler;
 import org.mustbe.consulo.unity3d.run.debugger.Unity3dDebuggerSettings;
 import org.mustbe.consulo.unity3d.run.debugger.UnityProcess;
 import org.mustbe.consulo.unity3d.run.debugger.UnityProcessDialog;
-import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionManager;
 import com.intellij.execution.RunManager;
 import com.intellij.execution.executors.DefaultDebugExecutor;
 import com.intellij.execution.impl.RunManagerImpl;
 import com.intellij.execution.impl.RunnerAndConfigurationSettingsImpl;
-import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironmentBuilder;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -148,21 +145,7 @@ public class Unity3dAttachAction extends AnAction
 
 			builder.runProfile(configuration);
 
-			ProcessHandler[] runningProcesses = ExecutionManager.getInstance(project).getRunningProcesses();
-			for(ProcessHandler runningProcess : runningProcesses)
-			{
-				if(runningProcess instanceof Unity3dAttachProcessHandler && !runningProcess.isProcessTerminated())
-				{
-					ExecutionManager.getInstance(project).restartRunProfile(builder.build());
-					return;
-				}
-			}
-
-			builder.buildAndExecute();
-		}
-		catch(ExecutionException e)
-		{
-			LOGGER.error(e);
+			ExecutionManager.getInstance(project).restartRunProfile(builder.build());
 		}
 		finally
 		{
