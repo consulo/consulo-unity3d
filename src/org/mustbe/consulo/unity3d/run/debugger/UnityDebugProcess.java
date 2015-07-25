@@ -44,7 +44,7 @@ public class UnityDebugProcess extends DotNetDebugProcess
 	@Override
 	protected ProcessHandler doGetProcessHandler()
 	{
-		return new Unity3dAttachProcessHandler(mySelected.hashCode());
+		return null;
 	}
 
 	@NotNull
