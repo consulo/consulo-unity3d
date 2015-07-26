@@ -457,6 +457,10 @@ public class Unity3dProjectUtil
 			Unity3dDefineByVersion unity3dDefineByVersion = Unity3dDefineByVersion.find(currentBundleVersion.toString());
 			if(unity3dDefineByVersion != Unity3dDefineByVersion.UNKNOWN)
 			{
+				for(Unity3dDefineByVersion majorVersion : unity3dDefineByVersion.getMajorVersions())
+				{
+					extension.getVariables().add(majorVersion.name());
+				}
 				extension.getVariables().add(unity3dDefineByVersion.name());
 			}
 

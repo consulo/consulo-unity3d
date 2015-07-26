@@ -21,6 +21,7 @@ import java.util.regex.Pattern;
 
 import org.intellij.lang.annotations.RegExp;
 import org.jetbrains.annotations.NotNull;
+import com.intellij.util.ArrayUtil;
 
 /**
  * @author VISTALL
@@ -29,42 +30,50 @@ import org.jetbrains.annotations.NotNull;
 public enum Unity3dDefineByVersion
 {
 	UNITY_2_6("2.6.\\d"),
-	UNITY_2_6_1("2.6.1"),
+	UNITY_2_6_1("2.6.1", UNITY_2_6),
 	UNITY_3_0("3.0.\\d"),
-	UNITY_3_0_0("3.0.0"),
-	UNITY_3_1("3.1.\\d"),
-	UNITY_3_2("3.2.\\d"),
-	UNITY_3_3("3.3.\\d"),
-	UNITY_3_4("3.4.\\d"),
-	UNITY_3_5("3.5.\\d"),
+	UNITY_3_0_0("3.0.0", UNITY_3_0),
+	UNITY_3_1("3.1.\\d", UNITY_3_0),
+	UNITY_3_2("3.2.\\d", UNITY_3_0),
+	UNITY_3_3("3.3.\\d", UNITY_3_0),
+	UNITY_3_4("3.4.\\d", UNITY_3_0),
+	UNITY_3_5("3.5.\\d", UNITY_3_0),
 	UNITY_4_0("4.0.\\d"),
-	UNITY_4_0_1("4.0.1"),
-	UNITY_4_1("4.1.\\d"),
-	UNITY_4_2("4.2.\\d"),
-	UNITY_4_3("4.3.\\d"),
-	UNITY_4_5("4.5.\\d"),
-	UNITY_4_6("4.6.\\d"),
+	UNITY_4_0_1("4.0.1", UNITY_4_0),
+	UNITY_4_1("4.1.\\d", UNITY_4_0),
+	UNITY_4_2("4.2.\\d", UNITY_4_0),
+	UNITY_4_3("4.3.\\d", UNITY_4_0),
+	UNITY_4_5("4.5.\\d", UNITY_4_0),
+	UNITY_4_6("4.6.\\d", UNITY_4_0),
 	UNITY_5("5.0.\\d"),
-	UNITY_5_1("5.1.\\d"),
+	UNITY_5_1("5.1.\\d", UNITY_5),
 	UNKNOWN("\\d.\\d.\\d");
 
 	private final Pattern myVersionPattern;
+	private Unity3dDefineByVersion[] myMajorVersions;
 
-	Unity3dDefineByVersion(@RegExp String versionRegexp)
+	Unity3dDefineByVersion(@RegExp String versionRegexp, Unity3dDefineByVersion... majorVersions)
 	{
+		myMajorVersions = majorVersions;
 		myVersionPattern = Pattern.compile(versionRegexp);
+	}
+
+	@NotNull
+	public Unity3dDefineByVersion[] getMajorVersions()
+	{
+		return myMajorVersions;
 	}
 
 	@NotNull
 	public static Unity3dDefineByVersion find(String version)
 	{
-		for(Unity3dDefineByVersion unity3dDefineByVersion : Unity3dDefineByVersion.values())
+		Unity3dDefineByVersion[] values = Unity3dDefineByVersion.values();
+		for(Unity3dDefineByVersion unity3dDefineByVersion : ArrayUtil.reverseArray(values))
 		{
 			if(unity3dDefineByVersion == UNKNOWN)
 			{
-				break;
+				continue;
 			}
-
 			Matcher matcher = unity3dDefineByVersion.myVersionPattern.matcher(version);
 			if(matcher.find())
 			{
