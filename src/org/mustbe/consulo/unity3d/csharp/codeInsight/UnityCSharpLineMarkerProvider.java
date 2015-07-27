@@ -22,8 +22,9 @@ import java.util.Map;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.mustbe.consulo.RequiredReadAction;
+import org.mustbe.consulo.csharp.ide.lineMarkerProvider.CSharpLineMarkerUtil;
 import org.mustbe.consulo.csharp.lang.psi.CSharpMethodDeclaration;
-import org.mustbe.consulo.csharp.lang.psi.CSharpTokens;
 import org.mustbe.consulo.csharp.lang.psi.CSharpTypeDeclaration;
 import org.mustbe.consulo.csharp.lang.psi.impl.CSharpTypeUtil;
 import org.mustbe.consulo.dotnet.psi.DotNetInheritUtil;
@@ -57,6 +58,7 @@ public class UnityCSharpLineMarkerProvider implements LineMarkerProvider
 	}
 
 	@Override
+	@RequiredReadAction
 	public void collectSlowLineMarkers(@NotNull List<PsiElement> elements, @NotNull Collection<LineMarkerInfo> result)
 	{
 		for(PsiElement element : elements)
@@ -70,9 +72,11 @@ public class UnityCSharpLineMarkerProvider implements LineMarkerProvider
 	}
 
 	@Nullable
+	@RequiredReadAction
 	private static LineMarkerInfo createMarker(PsiElement element)
 	{
-		if(element.getNode().getElementType() == CSharpTokens.IDENTIFIER && element.getParent() instanceof CSharpMethodDeclaration)
+		CSharpMethodDeclaration methodDeclaration = CSharpLineMarkerUtil.getNameIdentifierAs(element, CSharpMethodDeclaration.class);
+		if(methodDeclaration != null)
 		{
 			UnityFunctionManager.FunctionInfo functionInfo = UnityFunctionManager.getInstance().getFunctionInfo(element.getText());
 			if(functionInfo == null)
@@ -84,7 +88,6 @@ public class UnityCSharpLineMarkerProvider implements LineMarkerProvider
 			{
 				return null;
 			}
-			CSharpMethodDeclaration methodDeclaration = (CSharpMethodDeclaration) element.getParent();
 			PsiElement maybeTypeDeclaration = methodDeclaration.getParent();
 			if(maybeTypeDeclaration instanceof CSharpTypeDeclaration && DotNetInheritUtil.isParent(Unity3dTypes.UnityEngine.MonoBehaviour,
 					(DotNetTypeDeclaration) maybeTypeDeclaration, true))
