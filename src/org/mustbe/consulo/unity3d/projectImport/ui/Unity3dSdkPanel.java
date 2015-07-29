@@ -31,6 +31,7 @@ import com.intellij.openapi.roots.ui.configuration.SdkComboBox;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel;
 import com.intellij.openapi.ui.LabeledComponent;
 import com.intellij.openapi.ui.VerticalFlowLayout;
+import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Conditions;
 import com.intellij.ui.components.panels.HorizontalLayout;
@@ -43,7 +44,7 @@ public class Unity3dSdkPanel extends JPanel
 {
 	private SdkComboBox myComboBox;
 
-	public Unity3dSdkPanel()
+	public Unity3dSdkPanel(@Nullable String requiredVersion)
 	{
 		super(new VerticalFlowLayout());
 
@@ -51,7 +52,8 @@ public class Unity3dSdkPanel extends JPanel
 		projectSdksModel.reset();
 
 		JButton button = new JButton("Ne\u001Bw...");
-		myComboBox = new SdkComboBox(projectSdksModel, Conditions.<SdkTypeId>is(Unity3dBundleType.getInstance()), true);
+		Condition<SdkTypeId> filter = Conditions.<SdkTypeId>is(Unity3dBundleType.getInstance());
+		myComboBox = new SdkComboBox(projectSdksModel, filter, true);
 		myComboBox.setSetupButton(button, null, projectSdksModel, null, new Condition<Sdk>()
 		{
 			@Override
@@ -70,6 +72,21 @@ public class Unity3dSdkPanel extends JPanel
 			}
 		},false);
 
+		if(requiredVersion != null)
+		{
+			for(Sdk sdk : projectSdksModel.getSdks())
+			{
+				if(filter.value(sdk.getSdkType()))
+				{
+					String versionString = sdk.getVersionString();
+					if(Comparing.equal(requiredVersion, versionString))
+					{
+						myComboBox.setSelectedSdk(sdk);
+						break;
+					}
+				}
+			}
+		}
 		JPanel panel = new JPanel(new HorizontalLayout(0, SwingConstants.CENTER));
 		panel.add(LabeledComponent.left(myComboBox, "Unity SDK"), HorizontalLayout.LEFT);
 		panel.add(button, HorizontalLayout.RIGHT);

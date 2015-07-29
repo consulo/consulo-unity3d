@@ -142,7 +142,7 @@ public class Unity3dBundleType extends SdkType
 	/**
 	 * We need cut full version before 5.0.0f4 after 5.0.0
 	 */
-	private static String filterReleaseInfo(String version)
+	public static String filterReleaseInfo(String version)
 	{
 		char[] chars = version.toCharArray();
 		StringBuilder builder = new StringBuilder();

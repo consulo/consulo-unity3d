@@ -1,5 +1,7 @@
 package org.mustbe.consulo.unity3d.projectImport;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,6 +41,7 @@ import com.intellij.openapi.roots.types.DocumentationOrderRootType;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.Version;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
@@ -58,6 +61,39 @@ import lombok.val;
 @Logger
 public class Unity3dProjectUtil
 {
+	@Nullable
+	public static String loadVersionFromProject(@NotNull String path)
+	{
+		File file = new File(path, "ProjectSettings/ProjectVersion.txt");
+		if(!file.exists())
+		{
+			return null;
+		}
+
+		try
+		{
+			List<String> lines = FileUtil.loadLines(file);
+			String prefix = "m_EditorVersion:";
+			for(String line : lines)
+			{
+				if(line.startsWith(prefix))
+				{
+					String version = line.substring(prefix.length(), line.length());
+
+					return Unity3dBundleType.filterReleaseInfo(version.trim());
+				}
+			}
+		}
+		catch(IOException ignored)
+		{
+		}
+		return null;
+	}
+
+	public static void main(String[] args)
+	{
+		System.out.println(loadVersionFromProject("R:\\_pragmatix\\unity-client"));
+	}
 	@NotNull
 	public static List<Module> importOrUpdate(@NotNull final Project project, @Nullable Sdk unitySdk, @Nullable ModifiableModuleModel originalModel)
 	{

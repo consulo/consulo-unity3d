@@ -19,9 +19,13 @@ package org.mustbe.consulo.unity3d.projectImport.ui;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 
+import org.mustbe.consulo.unity3d.Unity3dBundle;
 import org.mustbe.consulo.unity3d.projectImport.Unity3dProjectImportBuilder;
+import org.mustbe.consulo.unity3d.projectImport.Unity3dProjectUtil;
 import com.intellij.ide.util.newProjectWizard.ProjectNameStep;
 import com.intellij.ide.util.projectWizard.WizardContext;
+import com.intellij.ui.JBColor;
+import com.intellij.ui.components.JBLabel;
 
 /**
  * @author VISTALL
@@ -34,9 +38,19 @@ public class Unity3dWizardStep extends ProjectNameStep
 	public Unity3dWizardStep(WizardContext context)
 	{
 		super(context, null);
-		mySdkPanel = new Unity3dSdkPanel();
+
+		String version = Unity3dProjectUtil.loadVersionFromProject(context.getProjectFileDirectory());
+		mySdkPanel = new Unity3dSdkPanel(version);
 		myAdditionalContentPanel.add(mySdkPanel, new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 1, 1, GridBagConstraints.NORTHWEST,
 				GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+
+		if(version != null)
+		{
+			JBLabel versionLabel = new JBLabel(Unity3dBundle.message("required.unity.version.is.0", version));
+			versionLabel.setForeground(JBColor.GRAY);
+			myAdditionalContentPanel.add(versionLabel, new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 1, 1, GridBagConstraints.NORTHEAST,
+					GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+		}
 	}
 
 	@Override
