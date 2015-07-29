@@ -16,17 +16,24 @@
 
 package org.mustbe.consulo.unity3d.projectImport.ui;
 
+import javax.swing.JButton;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 
 import org.jetbrains.annotations.Nullable;
+import org.mustbe.consulo.RequiredDispatchThread;
 import org.mustbe.consulo.unity3d.bundle.Unity3dBundleType;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkTable;
 import com.intellij.openapi.projectRoots.SdkTypeId;
-import com.intellij.openapi.projectRoots.impl.SdkListCellRenderer;
-import com.intellij.openapi.ui.ComboBox;
+import com.intellij.openapi.roots.ui.configuration.SdkComboBox;
+import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel;
 import com.intellij.openapi.ui.LabeledComponent;
 import com.intellij.openapi.ui.VerticalFlowLayout;
+import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.util.Conditions;
+import com.intellij.ui.components.panels.HorizontalLayout;
 
 /**
  * @author VISTALL
@@ -34,31 +41,44 @@ import com.intellij.openapi.ui.VerticalFlowLayout;
  */
 public class Unity3dSdkPanel extends JPanel
 {
-	private ComboBox myComboBox;
+	private SdkComboBox myComboBox;
 
 	public Unity3dSdkPanel()
 	{
 		super(new VerticalFlowLayout());
 
-		SdkTable sdkTable = SdkTable.getInstance();
-		myComboBox = new ComboBox();
-		myComboBox.setRenderer(new SdkListCellRenderer("<none>"));
+		ProjectSdksModel projectSdksModel = new ProjectSdksModel();
+		projectSdksModel.reset();
 
-		for(Sdk o : sdkTable.getAllSdks())
+		JButton button = new JButton("Ne\u001Bw...");
+		myComboBox = new SdkComboBox(projectSdksModel, Conditions.<SdkTypeId>is(Unity3dBundleType.getInstance()), true);
+		myComboBox.setSetupButton(button, null, projectSdksModel, null, new Condition<Sdk>()
 		{
-			SdkTypeId sdkType = o.getSdkType();
-			if(sdkType == Unity3dBundleType.getInstance())
+			@Override
+			@RequiredDispatchThread
+			public boolean value(final Sdk sdk)
 			{
-				myComboBox.addItem(o);
+				ApplicationManager.getApplication().runWriteAction(new Runnable()
+				{
+					@Override
+					public void run()
+					{
+						SdkTable.getInstance().addSdk(sdk);
+					}
+				});
+				return false;
 			}
-		}
+		},false);
 
-		add(LabeledComponent.left(myComboBox, "Unity SDK"));
+		JPanel panel = new JPanel(new HorizontalLayout(0, SwingConstants.CENTER));
+		panel.add(LabeledComponent.left(myComboBox, "Unity SDK"), HorizontalLayout.LEFT);
+		panel.add(button, HorizontalLayout.RIGHT);
+		add(panel);
 	}
 
 	@Nullable
 	public Sdk getSdk()
 	{
-		return (Sdk) myComboBox.getSelectedItem();
+		return myComboBox.getSelectedSdk();
 	}
 }
