@@ -132,6 +132,7 @@
 		<lang.defineVersion language="JavaScript" implementationClass="org.mustbe.consulo.unity3d.unityscript.lang.UnityScriptLanguageVersion"/>
 
 		<projectImportProvider implementation="org.mustbe.consulo.unity3d.projectImport.Unity3dProjectImportProvider"/>
+		<editorNotificationProvider implementation="org.mustbe.consulo.unity3d.ide.ui.SetupUnitySDKProvider"/>
 
 		<fileTypeFactory implementation="org.mustbe.consulo.unity3d.Unity3dFileTypeFactory"/>
 		<treeStructureProvider implementation="org.mustbe.consulo.unity3d.ide.projectView.Unity3dMetaFileProjectViewProvider"/>
