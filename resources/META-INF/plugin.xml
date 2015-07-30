@@ -84,11 +84,11 @@
 		<iconDescriptorUpdater implementation="org.mustbe.consulo.unity3d.unityscript.UnityScriptIconDescriptorUpdater" />
 		<gotoClassContributor implementation="org.mustbe.consulo.unity3d.unityscript.navigation.UnityScriptGotoClassContributor" />
 		<macro implementation="org.mustbe.consulo.unity3d.module.UnityFileNameMacro"/>
-		<compiler implementation="org.mustbe.consulo.unity3d.compiler.UnityCompiler" order="last"/>
+		<!--<compiler implementation="org.mustbe.consulo.unity3d.compiler.UnityCompiler" order="last"/> -->
 		<sdkType implementation="org.mustbe.consulo.unity3d.bundle.Unity3dBundleType"/>
 		<xdebugger.settings implementation="org.mustbe.consulo.unity3d.run.debugger.Unity3dDebuggerSettings" />
 
-		<configurationType implementation="org.mustbe.consulo.unity3d.run.Unity3dApplicationType"/>
+		<!--<configurationType implementation="org.mustbe.consulo.unity3d.run.Unity3dApplicationType"/>-->
 
 		<moduleExtensionProvider
 				key="unity3d"
