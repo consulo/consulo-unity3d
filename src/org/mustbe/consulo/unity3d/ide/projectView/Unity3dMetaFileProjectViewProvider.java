@@ -71,8 +71,8 @@ public class Unity3dMetaFileProjectViewProvider implements TreeStructureProvider
 		{
 			if(child instanceof ProjectViewNode)
 			{
-				VirtualFile virtualFile = ((ProjectViewNode)child).getVirtualFile();
-				if(virtualFile != null && virtualFile.getFileType() == Unity3dMetaFileType.INSTANCE)
+				VirtualFile virtualFile = ((ProjectViewNode) child).getVirtualFile();
+				if(virtualFile != null && virtualFile.getFileType() == Unity3dMetaFileType.INSTANCE && haveOwnerFile(virtualFile))
 				{
 					continue;
 				}
@@ -81,6 +81,13 @@ public class Unity3dMetaFileProjectViewProvider implements TreeStructureProvider
 			nodes.add(child);
 		}
 		return nodes;
+	}
+
+	public static boolean haveOwnerFile(VirtualFile virtualFile)
+	{
+		String nameWithoutExtension = virtualFile.getNameWithoutExtension();
+		VirtualFile parent = virtualFile.getParent();
+		return parent.findChild(nameWithoutExtension) != null;
 	}
 
 	@Nullable
