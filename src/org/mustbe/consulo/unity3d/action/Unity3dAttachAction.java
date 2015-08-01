@@ -24,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.mustbe.consulo.RequiredDispatchThread;
 import org.mustbe.consulo.unity3d.Unity3dIcons;
+import org.mustbe.consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import org.mustbe.consulo.unity3d.run.Unity3dAttachApplicationType;
 import org.mustbe.consulo.unity3d.run.Unity3dAttachConfiguration;
 import org.mustbe.consulo.unity3d.run.Unity3dAttachRunner;
@@ -36,10 +37,12 @@ import com.intellij.execution.executors.DefaultDebugExecutor;
 import com.intellij.execution.impl.RunManagerImpl;
 import com.intellij.execution.impl.RunnerAndConfigurationSettingsImpl;
 import com.intellij.execution.runners.ExecutionEnvironmentBuilder;
-import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.Task;
+import com.intellij.openapi.project.DumbAwareAction;
+import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.UIUtil;
@@ -50,13 +53,15 @@ import com.intellij.xdebugger.impl.settings.XDebuggerSettingsManager;
  * @since 17.04.2015
  */
 @Logger
-public class Unity3dAttachAction extends AnAction
+public class Unity3dAttachAction extends DumbAwareAction
 {
 	private AtomicBoolean myBusyState = new AtomicBoolean();
 
 	public Unity3dAttachAction()
 	{
-		super(Unity3dIcons.Attach);
+		super("Attach to Unity3D process", null, Unity3dIcons.Attach);
+
+		getTemplatePresentation().setVisible(false);
 	}
 
 	@RequiredDispatchThread
@@ -157,6 +162,26 @@ public class Unity3dAttachAction extends AnAction
 	@Override
 	public void update(AnActionEvent e)
 	{
+		final Presentation presentation = e.getPresentation();
+		final Project project = e.getProject();
+
+		if(project == null || project.isDisposed())
+		{
+			presentation.setEnabledAndVisible(false);
+			return;
+		}
+
+		presentation.setVisible(Unity3dModuleExtensionUtil.getRootModuleExtension(project) != null);
+		if(!presentation.isVisible())
+		{
+			return;
+		}
+
+		if(DumbService.getInstance(project).isDumb() || !project.isInitialized())
+		{
+			presentation.setEnabled(false);
+			return;
+		}
 		e.getPresentation().setEnabled(!myBusyState.get());
 	}
 }

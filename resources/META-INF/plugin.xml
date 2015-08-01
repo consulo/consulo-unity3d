@@ -38,8 +38,7 @@
 					require-module-extensions="unity3d"/>
 			<add-to-group anchor="last" group-id="ProjectViewPopupMenuSettingsGroup"/>
 		</group>
-		<action id="Unity3Attach" class="org.mustbe.consulo.unity3d.action.Unity3dAttachAction" can-use-project-as-default="true"
-				require-module-extensions="unity3d">
+		<action id="Unity3Attach" class="org.mustbe.consulo.unity3d.action.Unity3dAttachAction">
 			<add-to-group group-id="ToolbarRunGroup" anchor="after" relative-to-action="RunnerActions"/>
 		</action>
 	</actions>
