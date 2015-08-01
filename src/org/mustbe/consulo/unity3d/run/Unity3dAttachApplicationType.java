@@ -33,7 +33,7 @@ public class Unity3dAttachApplicationType extends ConfigurationTypeBase
 
 	public Unity3dAttachApplicationType()
 	{
-		super("#UnityAttachApplication", "Unity Attach", "", Unity3dIcons.Unity3d);
+		super("#UnityAttachApplication", "Unity Attach", "", Unity3dIcons.Attach);
 
 		addFactory(new ConfigurationFactoryEx(this)
 		{
