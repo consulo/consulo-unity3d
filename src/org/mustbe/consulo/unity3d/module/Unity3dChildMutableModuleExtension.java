@@ -21,6 +21,7 @@ import javax.swing.JComponent;
 import org.consulo.module.extension.MutableModuleInheritableNamedPointer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.mustbe.consulo.RequiredDispatchThread;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ModuleRootLayer;
 
@@ -39,9 +40,10 @@ public class Unity3dChildMutableModuleExtension extends Unity3dChildModuleExtens
 	@Override
 	public MutableModuleInheritableNamedPointer<Sdk> getInheritableSdk()
 	{
-		throw new UnsupportedOperationException("Use root module extension");
+		return (MutableModuleInheritableNamedPointer<Sdk>) super.getInheritableSdk();
 	}
 
+	@RequiredDispatchThread
 	@Nullable
 	@Override
 	public JComponent createConfigurablePanel(@NotNull Runnable updateOnCheck)

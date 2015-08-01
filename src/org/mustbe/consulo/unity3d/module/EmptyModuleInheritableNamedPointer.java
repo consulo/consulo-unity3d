@@ -17,6 +17,7 @@
 package org.mustbe.consulo.unity3d.module;
 
 import org.consulo.module.extension.ModuleInheritableNamedPointer;
+import org.consulo.module.extension.MutableModuleInheritableNamedPointer;
 import org.consulo.util.pointers.Named;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -26,7 +27,7 @@ import com.intellij.openapi.module.Module;
  * @author VISTALL
  * @since 26.07.2015
  */
-public class EmptyModuleInheritableNamedPointer<T extends Named> implements ModuleInheritableNamedPointer<T>
+public class EmptyModuleInheritableNamedPointer<T extends Named> implements MutableModuleInheritableNamedPointer<T>
 {
 	private static final EmptyModuleInheritableNamedPointer ourInstance = new EmptyModuleInheritableNamedPointer();
 
@@ -69,5 +70,20 @@ public class EmptyModuleInheritableNamedPointer<T extends Named> implements Modu
 	public String getName()
 	{
 		return "null";
+	}
+
+	@Override
+	public void set(ModuleInheritableNamedPointer<T> value)
+	{
+	}
+
+	@Override
+	public void set(@Nullable String moduleName, @Nullable String name)
+	{
+	}
+
+	@Override
+	public void set(@Nullable Module module, @Nullable T named)
+	{
 	}
 }

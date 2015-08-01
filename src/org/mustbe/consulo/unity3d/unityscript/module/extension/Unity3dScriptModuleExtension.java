@@ -4,6 +4,7 @@ import org.consulo.module.extension.ModuleInheritableNamedPointer;
 import org.consulo.module.extension.impl.ModuleExtensionImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.mustbe.consulo.RequiredReadAction;
 import org.mustbe.consulo.javascript.module.extension.JavaScriptModuleExtension;
 import org.mustbe.consulo.unity3d.module.EmptyModuleInheritableNamedPointer;
 import org.mustbe.consulo.unity3d.module.Unity3dModuleExtensionUtil;
@@ -33,6 +34,7 @@ public class Unity3dScriptModuleExtension extends ModuleExtensionImpl<Unity3dScr
 
 	@Nullable
 	@Override
+	@RequiredReadAction
 	public Sdk getSdk()
 	{
 		Unity3dRootModuleExtension rootModuleExtension = Unity3dModuleExtensionUtil.getRootModuleExtension(getProject());
@@ -45,6 +47,7 @@ public class Unity3dScriptModuleExtension extends ModuleExtensionImpl<Unity3dScr
 
 	@Nullable
 	@Override
+	@RequiredReadAction
 	public String getSdkName()
 	{
 		Unity3dRootModuleExtension rootModuleExtension = Unity3dModuleExtensionUtil.getRootModuleExtension(getProject());
