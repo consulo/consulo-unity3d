@@ -19,6 +19,8 @@ package org.mustbe.consulo.unity3d.action;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import javax.swing.Icon;
+
 import org.consulo.lombok.annotations.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -33,10 +35,14 @@ import org.mustbe.consulo.unity3d.run.debugger.UnityProcess;
 import org.mustbe.consulo.unity3d.run.debugger.UnityProcessDialog;
 import com.intellij.execution.ExecutionManager;
 import com.intellij.execution.RunManager;
+import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.executors.DefaultDebugExecutor;
+import com.intellij.execution.impl.ExecutionManagerImpl;
 import com.intellij.execution.impl.RunManagerImpl;
 import com.intellij.execution.impl.RunnerAndConfigurationSettingsImpl;
 import com.intellij.execution.runners.ExecutionEnvironmentBuilder;
+import com.intellij.execution.runners.ExecutionUtil;
+import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -44,6 +50,8 @@ import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Condition;
+import com.intellij.util.IconUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.xdebugger.impl.settings.XDebuggerSettingsManager;
@@ -179,9 +187,47 @@ public class Unity3dAttachAction extends DumbAwareAction
 
 		if(DumbService.getInstance(project).isDumb() || !project.isInitialized())
 		{
+			presentation.setIcon(getTemplatePresentation().getIcon());
 			presentation.setEnabled(false);
 			return;
 		}
-		e.getPresentation().setEnabled(!myBusyState.get());
+
+		boolean enabled = !myBusyState.get();
+		e.getPresentation().setEnabled(enabled);
+		if(enabled)
+		{
+			presentation.setIcon(getIcon(project, getTemplatePresentation().getIcon()));
+		}
+		else
+		{
+			presentation.setIcon(getTemplatePresentation().getIcon());
+		}
+	}
+
+	private Icon getIcon(Project project, Icon icon)
+	{
+		final ExecutionManagerImpl executionManager = ExecutionManagerImpl.getInstance(project);
+		List<RunContentDescriptor> runningDescriptors = executionManager.getRunningDescriptors(new Condition<RunnerAndConfigurationSettings>()
+		{
+			@Override
+			public boolean value(RunnerAndConfigurationSettings s)
+			{
+				return s.getConfiguration() instanceof Unity3dAttachConfiguration;
+			}
+		});
+
+		if(runningDescriptors.isEmpty())
+		{
+			return icon;
+		}
+
+		if(runningDescriptors.size() == 1)
+		{
+			return ExecutionUtil.getLiveIndicator(icon);
+		}
+		else
+		{
+			return IconUtil.addText(icon, String.valueOf(runningDescriptors.size()));
+		}
 	}
 }
