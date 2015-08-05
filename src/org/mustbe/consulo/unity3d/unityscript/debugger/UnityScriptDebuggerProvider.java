@@ -27,6 +27,7 @@ import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.xdebugger.XSourcePosition;
 import com.intellij.xdebugger.evaluation.XDebuggerEvaluator;
 import mono.debugger.StackFrameMirror;
 
@@ -45,10 +46,11 @@ public class UnityScriptDebuggerProvider extends DotNetDebuggerProvider
 
 	@Override
 	public void evaluate(@NotNull StackFrameMirror stackFrameMirror,
-			@NotNull DotNetDebugContext debugContext,
+			@NotNull DotNetDebugContext context,
 			@NotNull String s,
 			@Nullable PsiElement element,
-			@NotNull XDebuggerEvaluator.XEvaluationCallback xEvaluationCallback)
+			@NotNull XDebuggerEvaluator.XEvaluationCallback xEvaluationCallback,
+			@Nullable XSourcePosition sourcePosition)
 	{
 
 	}
