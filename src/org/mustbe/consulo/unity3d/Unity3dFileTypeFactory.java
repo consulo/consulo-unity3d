@@ -17,6 +17,8 @@
 package org.mustbe.consulo.unity3d;
 
 import org.jetbrains.annotations.NotNull;
+import org.mustbe.consulo.unity3d.scene.Unity3dBinarySceneFileType;
+import org.mustbe.consulo.unity3d.scene.Unity3dYMLSceneFileType;
 import com.intellij.openapi.fileTypes.FileTypeConsumer;
 import com.intellij.openapi.fileTypes.FileTypeFactory;
 
@@ -30,5 +32,7 @@ public class Unity3dFileTypeFactory extends FileTypeFactory
 	public void createFileTypes(@NotNull FileTypeConsumer consumer)
 	{
 		consumer.consume(Unity3dMetaFileType.INSTANCE);
+		consumer.consume(Unity3dBinarySceneFileType.INSTANCE);
+		consumer.consume(Unity3dYMLSceneFileType.INSTANCE);
 	}
 }

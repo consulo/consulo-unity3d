@@ -139,5 +139,6 @@
 		<projectViewOptionProvider implementation="org.mustbe.consulo.unity3d.ide.projectView.Unity3dShowMetaFileProjectViewPaneOptionProvider" />
 		<projectViewNodeDecorator implementation="org.mustbe.consulo.unity3d.ide.projectView.Unity3dProjectViewNodeDecorator" />
 		<possibleModuleForFileResolver implementation="org.mustbe.consulo.unity3d.projectImport.Unity3dPossibleModuleForFileResolver"/>
+		<fileTypeDetector implementation="org.mustbe.consulo.unity3d.scene.Unity3dSceneFileTypeDetector" />
 	</extensions>
 </idea-plugin>
