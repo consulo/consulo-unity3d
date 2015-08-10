@@ -14,10 +14,6 @@ import com.intellij.openapi.vfs.VirtualFile;
  */
 public class Unity3dSceneFileTypeDetector implements FileTypeRegistry.FileTypeDetector
 {
-	public static class Yml
-	{
-
-	}
 	@Nullable
 	@Override
 	public FileType detect(@NotNull VirtualFile file, @NotNull ByteSequence firstBytes, @Nullable CharSequence firstCharsIfText)
