@@ -1,100 +1,45 @@
 package org.mustbe.consulo.unity3d.csharp.codeInsight;
 
-import gnu.trove.THashMap;
-
 import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.mustbe.consulo.RequiredWriteAction;
 import org.mustbe.consulo.csharp.lang.evaluator.ConstantExpressionEvaluator;
 import org.mustbe.consulo.csharp.lang.psi.CSharpCallArgument;
 import org.mustbe.consulo.csharp.lang.psi.CSharpConstructorDeclaration;
+import org.mustbe.consulo.csharp.lang.psi.CSharpFileFactory;
 import org.mustbe.consulo.csharp.lang.psi.CSharpNewExpression;
-import org.mustbe.consulo.csharp.lang.psi.CSharpReferenceExpression;
 import org.mustbe.consulo.csharp.lang.psi.CSharpTokens;
-import org.mustbe.consulo.csharp.lang.psi.CSharpTypeDeclaration;
 import org.mustbe.consulo.csharp.lang.psi.impl.source.resolve.MethodResolveResult;
 import org.mustbe.consulo.csharp.lang.psi.impl.source.resolve.methodResolving.MethodCalcResult;
 import org.mustbe.consulo.csharp.lang.psi.impl.source.resolve.methodResolving.arguments.NCallArgument;
 import org.mustbe.consulo.csharp.lang.psi.impl.source.resolve.util.CSharpResolveUtil;
 import org.mustbe.consulo.dotnet.psi.DotNetExpression;
 import org.mustbe.consulo.dotnet.psi.DotNetType;
-import org.mustbe.consulo.dotnet.psi.DotNetVariable;
 import org.mustbe.consulo.unity3d.Unity3dTypes;
 import com.intellij.openapi.editor.ElementColorProvider;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveResult;
 import com.intellij.psi.tree.IElementType;
-import com.intellij.util.ObjectUtils;
+import com.intellij.psi.util.PsiTreeUtil;
 
 /**
  * @author VISTALL
  * @since 01.04.2015
  */
 @SuppressWarnings("UseJBColor")
-public class UnityCSharpStaticElementColorProvider implements ElementColorProvider
+public class UnityCSharpStaticElementColor32Provider implements ElementColorProvider
 {
-	private static final Map<String, Color> staticNames = new THashMap<String, Color>()
-	{
-		{
-			put("red", Color.RED);
-			put("green", Color.GREEN);
-			put("blue", Color.BLUE);
-			put("white", Color.WHITE);
-			put("black", Color.BLACK);
-			put("yellow", Color.YELLOW);
-			put("cyan", Color.CYAN);
-			put("magenta", Color.MAGENTA);
-			put("gray", Color.GRAY);
-			put("grey", Color.GRAY);
-			put("clear", new Color(0, 0, 0, 0));
-		}
-	};
-
-	public static class UnityColor
-	{
-		private float r;
-		private float g;
-		private float b;
-		private float a;
-
-		public UnityColor(float r, float g, float b, float a)
-		{
-			this.r = r;
-			this.g = g;
-			this.b = b;
-			this.a = a;
-		}
-	}
-
 	@Nullable
 	@Override
+	@RequiredWriteAction
 	public Color getColorFrom(@NotNull PsiElement element)
 	{
 		IElementType elementType = element.getNode().getElementType();
-		if(elementType == CSharpTokens.IDENTIFIER)
-		{
-			PsiElement parent = element.getParent();
-			if(parent instanceof CSharpReferenceExpression)
-			{
-				String referenceName = ((CSharpReferenceExpression) parent).getReferenceName();
-				Color color = staticNames.get(referenceName);
-				if(color != null)
-				{
-					PsiElement resolvedElement = ((CSharpReferenceExpression) parent).resolve();
-					if(resolvedElement instanceof DotNetVariable)
-					{
-						if(parentIsColorType(resolvedElement, Unity3dTypes.UnityEngine.Color))
-						{
-							return color;
-						}
-					}
-				}
-			}
-		}
-		else if(elementType == CSharpTokens.NEW_KEYWORD)
+		if(elementType == CSharpTokens.NEW_KEYWORD)
 		{
 			PsiElement parent = element.getParent();
 			if(!(parent instanceof CSharpNewExpression))
@@ -114,16 +59,18 @@ public class UnityCSharpStaticElementColorProvider implements ElementColorProvid
 				return null;
 			}
 
-			if(parentIsColorType(resolvedElementMaybeConstructor, Unity3dTypes.UnityEngine.Color))
+			if(UnityCSharpStaticElementColorProvider.parentIsColorType(resolvedElementMaybeConstructor,
+					Unity3dTypes.UnityEngine.Color32))
 			{
-				ResolveResult validResult = CSharpResolveUtil.findFirstValidResult(((CSharpNewExpression) parent).multiResolve(false));
+				ResolveResult validResult = CSharpResolveUtil.findFirstValidResult(((CSharpNewExpression) parent)
+						.multiResolve(false));
 				if(!(validResult instanceof MethodResolveResult))
 				{
 					return null;
 				}
 
 				MethodCalcResult calcResult = ((MethodResolveResult) validResult).getCalcResult();
-				Map<String, Float> map = new HashMap<String, Float>(4);
+				Map<String, Integer> map = new HashMap<String, Integer>(4);
 				for(NCallArgument nCallArgument : calcResult.getArguments())
 				{
 					String parameterName = nCallArgument.getParameterName();
@@ -145,12 +92,12 @@ public class UnityCSharpStaticElementColorProvider implements ElementColorProvid
 					Object value = new ConstantExpressionEvaluator(argumentExpression).getValue();
 					if(value instanceof Number)
 					{
-						float floatValue = ((Number) value).floatValue();
-						if(floatValue < 0 || floatValue > 1)
+						int intValue = ((Number) value).intValue();
+						if(intValue < 0 || intValue > 255)
 						{
 							return null;
 						}
-						map.put(parameterName, floatValue);
+						map.put(parameterName, intValue);
 					}
 					else
 					{
@@ -158,9 +105,9 @@ public class UnityCSharpStaticElementColorProvider implements ElementColorProvid
 					}
 				}
 
-				if(map.size() == 3 || map.size() == 4)
+				if(map.size() == 4)
 				{
-					return new Color(map.get("r"), map.get("g"), map.get("b"), ObjectUtils.<Float>notNull(map.get("a"), 1f));
+					return new Color(map.get("r"), map.get("g"), map.get("b"), map.get("a"));
 				}
 			}
 		}
@@ -168,15 +115,24 @@ public class UnityCSharpStaticElementColorProvider implements ElementColorProvid
 		return null;
 	}
 
-	public static boolean parentIsColorType(PsiElement resolvedElement, @NotNull String type)
-	{
-		PsiElement typeParent = resolvedElement.getParent();
-		return typeParent instanceof CSharpTypeDeclaration && type.equals(((CSharpTypeDeclaration) typeParent).getVmQName());
-	}
-
 	@Override
+	@RequiredWriteAction
 	public void setColorTo(@NotNull PsiElement element, @NotNull Color color)
 	{
+		CSharpNewExpression newExpression = PsiTreeUtil.getParentOfType(element, CSharpNewExpression.class);
+		assert newExpression != null;
+		DotNetType newType = newExpression.getNewType();
+		assert newType != null;
+		StringBuilder builder = new StringBuilder().append("new ").append(newType.getText()).append("(");
+		builder.append(color.getRed()).append(", ");
+		builder.append(color.getGreen()).append(", ");
+		builder.append(color.getBlue()).append(", ");
+		builder.append(color.getAlpha());
+		builder.append(")");
 
+		CSharpNewExpression expression = (CSharpNewExpression) CSharpFileFactory.createExpression(element.getProject()
+				, builder.toString());
+
+		newExpression.getParameterList().replace(expression.getParameterList());
 	}
 }
