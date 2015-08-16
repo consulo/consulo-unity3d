@@ -8,13 +8,17 @@ import java.util.Map;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.mustbe.consulo.RequiredReadAction;
+import org.mustbe.consulo.RequiredWriteAction;
 import org.mustbe.consulo.csharp.lang.evaluator.ConstantExpressionEvaluator;
 import org.mustbe.consulo.csharp.lang.psi.CSharpCallArgument;
 import org.mustbe.consulo.csharp.lang.psi.CSharpConstructorDeclaration;
+import org.mustbe.consulo.csharp.lang.psi.CSharpFileFactory;
 import org.mustbe.consulo.csharp.lang.psi.CSharpNewExpression;
 import org.mustbe.consulo.csharp.lang.psi.CSharpReferenceExpression;
 import org.mustbe.consulo.csharp.lang.psi.CSharpTokens;
 import org.mustbe.consulo.csharp.lang.psi.CSharpTypeDeclaration;
+import org.mustbe.consulo.csharp.lang.psi.CSharpUserType;
 import org.mustbe.consulo.csharp.lang.psi.impl.source.resolve.MethodResolveResult;
 import org.mustbe.consulo.csharp.lang.psi.impl.source.resolve.methodResolving.MethodCalcResult;
 import org.mustbe.consulo.csharp.lang.psi.impl.source.resolve.methodResolving.arguments.NCallArgument;
@@ -24,10 +28,12 @@ import org.mustbe.consulo.dotnet.psi.DotNetType;
 import org.mustbe.consulo.dotnet.psi.DotNetVariable;
 import org.mustbe.consulo.unity3d.Unity3dTypes;
 import com.intellij.openapi.editor.ElementColorProvider;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveResult;
 import com.intellij.psi.tree.IElementType;
-import com.intellij.util.ObjectUtils;
+import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.util.ObjectUtil;
 
 /**
  * @author VISTALL
@@ -53,24 +59,9 @@ public class UnityCSharpStaticElementColorProvider implements ElementColorProvid
 		}
 	};
 
-	public static class UnityColor
-	{
-		private float r;
-		private float g;
-		private float b;
-		private float a;
-
-		public UnityColor(float r, float g, float b, float a)
-		{
-			this.r = r;
-			this.g = g;
-			this.b = b;
-			this.a = a;
-		}
-	}
-
 	@Nullable
 	@Override
+	@RequiredReadAction
 	public Color getColorFrom(@NotNull PsiElement element)
 	{
 		IElementType elementType = element.getNode().getElementType();
@@ -116,7 +107,8 @@ public class UnityCSharpStaticElementColorProvider implements ElementColorProvid
 
 			if(parentIsColorType(resolvedElementMaybeConstructor, Unity3dTypes.UnityEngine.Color))
 			{
-				ResolveResult validResult = CSharpResolveUtil.findFirstValidResult(((CSharpNewExpression) parent).multiResolve(false));
+				ResolveResult validResult = CSharpResolveUtil.findFirstValidResult(((CSharpNewExpression) parent)
+						.multiResolve(false));
 				if(!(validResult instanceof MethodResolveResult))
 				{
 					return null;
@@ -160,7 +152,8 @@ public class UnityCSharpStaticElementColorProvider implements ElementColorProvid
 
 				if(map.size() == 3 || map.size() == 4)
 				{
-					return new Color(map.get("r"), map.get("g"), map.get("b"), ObjectUtils.<Float>notNull(map.get("a"), 1f));
+					return new Color(map.get("r"), map.get("g"), map.get("b"), ObjectUtil.<Float>notNull(map.get("a"),
+							1f));
 				}
 			}
 		}
@@ -168,15 +161,94 @@ public class UnityCSharpStaticElementColorProvider implements ElementColorProvid
 		return null;
 	}
 
+	@RequiredReadAction
 	public static boolean parentIsColorType(PsiElement resolvedElement, @NotNull String type)
 	{
 		PsiElement typeParent = resolvedElement.getParent();
-		return typeParent instanceof CSharpTypeDeclaration && type.equals(((CSharpTypeDeclaration) typeParent).getVmQName());
+		return typeParent instanceof CSharpTypeDeclaration && type.equals(((CSharpTypeDeclaration) typeParent)
+				.getVmQName());
 	}
 
 	@Override
+	@RequiredWriteAction
 	public void setColorTo(@NotNull PsiElement element, @NotNull Color color)
 	{
+		PsiElement targetElement = null;
+		if(element.getNode().getElementType() == CSharpTokens.NEW_KEYWORD)
+		{
+			targetElement = PsiTreeUtil.getParentOfType(element, CSharpNewExpression.class);
+		}
+		else
+		{
+			targetElement = PsiTreeUtil.getParentOfType(element, CSharpReferenceExpression.class);
+		}
+		assert targetElement != null;
 
+		String constantName = null;
+
+		for(Map.Entry<String, Color> entry : staticNames.entrySet())
+		{
+			if(entry.getValue().equals(color))
+			{
+				constantName = entry.getKey();
+				break;
+			}
+		}
+
+
+		boolean qualified = false;
+		if(targetElement instanceof CSharpReferenceExpression)
+		{
+			// for example Color.grey or UnityEngine.Color.grey
+			PsiElement qualifier = ((CSharpReferenceExpression) targetElement).getQualifier();
+			qualified = qualifier instanceof CSharpReferenceExpression && ((CSharpReferenceExpression) qualifier)
+					.getQualifier() != null;
+		}
+		else
+		{
+			CSharpUserType newType = (CSharpUserType) ((CSharpNewExpression) targetElement).getNewType();
+			// new Color or new UnityEngine.Color
+			qualified = newType.getReferenceExpression().getQualifier() != null;
+		}
+
+		StringBuilder builder = new StringBuilder();
+		if(constantName == null)
+		{
+			builder.append("new ");
+		}
+
+		if(qualified)
+		{
+			builder.append(Unity3dTypes.UnityEngine.Color);
+		}
+		else
+		{
+			builder.append(StringUtil.getShortName(Unity3dTypes.UnityEngine.Color));
+		}
+
+		if(constantName != null)
+		{
+			builder.append(".").append(constantName);
+		}
+		else
+		{
+			builder.append("(");
+			float[] components = color.getRGBComponents(null);
+
+			builder.append(components[0]).append("f").append(", ");
+			builder.append(components[1]).append("f").append(", ");
+			builder.append(components[2]).append("f");
+
+			if(components[3] != 1f)
+			{
+				builder.append(", ");
+				builder.append(components[3]).append("f");
+			}
+			builder.append(")");
+		}
+
+		DotNetExpression expression = CSharpFileFactory.createExpression(element.getProject(), builder.toString());
+
+		targetElement.replace(expression);
 	}
 }

@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.mustbe.consulo.RequiredReadAction;
 import org.mustbe.consulo.RequiredWriteAction;
 import org.mustbe.consulo.csharp.lang.evaluator.ConstantExpressionEvaluator;
 import org.mustbe.consulo.csharp.lang.psi.CSharpCallArgument;
@@ -35,7 +36,7 @@ public class UnityCSharpStaticElementColor32Provider implements ElementColorProv
 {
 	@Nullable
 	@Override
-	@RequiredWriteAction
+	@RequiredReadAction
 	public Color getColorFrom(@NotNull PsiElement element)
 	{
 		IElementType elementType = element.getNode().getElementType();
