@@ -13,6 +13,7 @@ import org.mustbe.consulo.csharp.lang.CSharpFileType;
 import org.mustbe.consulo.dotnet.dll.DotNetModuleFileType;
 import org.mustbe.consulo.dotnet.module.roots.DotNetLibraryOrderEntryImpl;
 import org.mustbe.consulo.roots.impl.ExcludedContentFolderTypeProvider;
+import org.mustbe.consulo.unity3d.Unity3dBundle;
 import org.mustbe.consulo.unity3d.bundle.Unity3dBundleType;
 import org.mustbe.consulo.unity3d.bundle.Unity3dDefineByVersion;
 import org.mustbe.consulo.unity3d.module.Unity3dChildMutableModuleExtension;
@@ -28,6 +29,10 @@ import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.module.ModifiableModuleModel;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.progress.Task;
+import com.intellij.openapi.project.DumbModePermission;
+import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ContentEntry;
@@ -39,6 +44,8 @@ import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.types.BinariesOrderRootType;
 import com.intellij.openapi.roots.types.DocumentationOrderRootType;
 import com.intellij.openapi.util.Computable;
+import com.intellij.openapi.util.Getter;
+import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.Version;
 import com.intellij.openapi.util.io.FileUtil;
@@ -52,6 +59,7 @@ import com.intellij.util.ArrayUtil;
 import com.intellij.util.Consumer;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
+import com.intellij.util.ui.UIUtil;
 
 /**
  * @author VISTALL
@@ -60,6 +68,8 @@ import com.intellij.util.containers.MultiMap;
 @Logger
 public class Unity3dProjectUtil
 {
+	public static final Key<Getter<Sdk>> NEWLY_IMPORTED_PROJECT_SDK = Key.create("unity.new.project");
+
 	@Nullable
 	public static String loadVersionFromProject(@NotNull String path)
 	{
@@ -94,10 +104,30 @@ public class Unity3dProjectUtil
 		System.out.println(loadVersionFromProject("R:\\_pragmatix\\unity-client"));
 	}
 
+	public static void syncProject(@NotNull final Project project, @Nullable final Sdk sdk)
+	{
+		new Task.Modal(project, "Sync project", false)
+		{
+			@Override
+			public void run(@NotNull final ProgressIndicator indicator)
+			{
+				DumbService.allowStartingDumbModeInside(DumbModePermission.MAY_START_BACKGROUND, new Runnable()
+				{
+					@Override
+					public void run()
+					{
+						Unity3dProjectUtil.importOrUpdate(project, sdk, null, indicator);
+					}
+				});
+			}
+		}.queue();
+	}
+
 	@NotNull
-	public static List<Module> importOrUpdate(@NotNull final Project project,
+	private static List<Module> importOrUpdate(@NotNull final Project project,
 			@Nullable Sdk unitySdk,
-			@Nullable ModifiableModuleModel originalModel)
+			@Nullable ModifiableModuleModel originalModel,
+			@NotNull ProgressIndicator progressIndicator)
 	{
 		boolean fromProjectStructure = originalModel != null;
 
@@ -114,21 +144,28 @@ public class Unity3dProjectUtil
 
 		List<Module> modules = new ArrayList<Module>(5);
 
-		ContainerUtil.addIfNotNull(modules, createRootModule(project, newModel, unitySdk));
+		ContainerUtil.addIfNotNull(modules, createRootModule(project, newModel, unitySdk, progressIndicator));
+		progressIndicator.setFraction(0.1);
 
 		MultiMap<Module, VirtualFile> sourceFilesByModule = MultiMap.create();
 
 		ContainerUtil.addIfNotNull(modules, createAssemblyCSharpModuleFirstPass(project, newModel, unitySdk,
-				sourceFilesByModule));
+				sourceFilesByModule, progressIndicator));
+		progressIndicator.setFraction(0.25);
 
 		ContainerUtil.addIfNotNull(modules, createAssemblyUnityScriptModuleFirstPass(project, newModel, unitySdk,
-				sourceFilesByModule));
+				sourceFilesByModule, progressIndicator));
+		progressIndicator.setFraction(0.5);
 
 		ContainerUtil.addIfNotNull(modules, createAssemblyCSharpModuleEditor(project, newModel, unitySdk,
-				sourceFilesByModule));
+				sourceFilesByModule, progressIndicator));
+		progressIndicator.setFraction(0.75);
 
 		ContainerUtil.addIfNotNull(modules, createAssemblyCSharpModule(project, newModel, unitySdk,
-				sourceFilesByModule));
+				sourceFilesByModule, progressIndicator));
+
+		progressIndicator.setFraction(1);
+		progressIndicator.setText(null);
 
 		if(!fromProjectStructure)
 		{
@@ -147,7 +184,8 @@ public class Unity3dProjectUtil
 	private static Module createAssemblyCSharpModule(Project project,
 			ModifiableModuleModel newModel,
 			final Sdk unityBundle,
-			MultiMap<Module, VirtualFile> virtualFilesByModule)
+			MultiMap<Module, VirtualFile> virtualFilesByModule,
+			ProgressIndicator progressIndicator)
 	{
 		String[] paths = {"Assets"};
 		return createAndSetupModule("Assembly-CSharp", project, newModel, paths, unityBundle,
@@ -159,13 +197,14 @@ public class Unity3dProjectUtil
 				layer.addInvalidModuleEntry("Assembly-UnityScript-firstpass");
 				layer.addInvalidModuleEntry("Assembly-CSharp-firstpass");
 			}
-		}, "unity3d-csharp-child", CSharpFileType.INSTANCE, virtualFilesByModule);
+		}, "unity3d-csharp-child", CSharpFileType.INSTANCE, virtualFilesByModule, progressIndicator);
 	}
 
 	private static Module createAssemblyUnityScriptModuleFirstPass(final Project project,
 			ModifiableModuleModel newModel,
 			final Sdk unityBundle,
-			MultiMap<Module, VirtualFile> virtualFilesByModule)
+			MultiMap<Module, VirtualFile> virtualFilesByModule,
+			ProgressIndicator progressIndicator)
 	{
 		String[] paths = new String[]{
 				"Assets/Standard Assets",
@@ -174,13 +213,14 @@ public class Unity3dProjectUtil
 		};
 
 		return createAndSetupModule("Assembly-UnityScript-firstpass", project, newModel, paths, unityBundle, null,
-				"unity3d-unityscript-child", JavaScriptFileType.INSTANCE, virtualFilesByModule);
+				"unity3d-unityscript-child", JavaScriptFileType.INSTANCE, virtualFilesByModule, progressIndicator);
 	}
 
 	private static Module createAssemblyCSharpModuleFirstPass(final Project project,
 			ModifiableModuleModel newModel,
 			Sdk unityBundle,
-			MultiMap<Module, VirtualFile> virtualFilesByModule)
+			MultiMap<Module, VirtualFile> virtualFilesByModule,
+			ProgressIndicator progressIndicator)
 	{
 		String[] paths = new String[]{
 				"Assets/Standard Assets",
@@ -189,13 +229,14 @@ public class Unity3dProjectUtil
 		};
 
 		return createAndSetupModule("Assembly-CSharp-firstpass", project, newModel, paths, unityBundle, null,
-				"unity3d-csharp-child", CSharpFileType.INSTANCE, virtualFilesByModule);
+				"unity3d-csharp-child", CSharpFileType.INSTANCE, virtualFilesByModule, progressIndicator);
 	}
 
 	private static Module createAssemblyCSharpModuleEditor(final Project project,
 			ModifiableModuleModel newModel,
 			final Sdk unityBundle,
-			MultiMap<Module, VirtualFile> virtualFilesByModule)
+			MultiMap<Module, VirtualFile> virtualFilesByModule,
+			ProgressIndicator progressIndicator)
 	{
 		final List<String> paths = new ArrayList<String>();
 		paths.add("Assets/Standard Assets/Editor");
@@ -239,11 +280,11 @@ public class Unity3dProjectUtil
 					layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEditor.UI"));
 				}
 			}
-		}, "unity3d-csharp-child", CSharpFileType.INSTANCE, virtualFilesByModule);
+		}, "unity3d-csharp-child", CSharpFileType.INSTANCE, virtualFilesByModule, progressIndicator);
 	}
 
 	@NotNull
-	private static Module createAndSetupModule(String moduleName,
+	private static Module createAndSetupModule(@NotNull String moduleName,
 			@NotNull Project project,
 			@NotNull ModifiableModuleModel modifiableModuleModels,
 			@NotNull String[] paths,
@@ -251,8 +292,11 @@ public class Unity3dProjectUtil
 			@Nullable final Consumer<ModuleRootLayerImpl> setupConsumer,
 			@NotNull String moduleExtensionId,
 			@NotNull final FileType fileType,
-			@NotNull final MultiMap<Module, VirtualFile> virtualFilesByModule)
+			@NotNull final MultiMap<Module, VirtualFile> virtualFilesByModule,
+			@NotNull final ProgressIndicator progressIndicator)
 	{
+		progressIndicator.setText(Unity3dBundle.message("syncing.0.module", moduleName));
+
 		for(int i = 0; i < paths.length; i++)
 		{
 			paths[i] = project.getBasePath() + "/" + paths[i];
@@ -284,8 +328,11 @@ public class Unity3dProjectUtil
 		final List<VirtualFile> toAdd = new ArrayList<VirtualFile>();
 		final List<VirtualFile> libraryFiles = new ArrayList<VirtualFile>();
 
-		for(String path : paths)
+		final double fraction = progressIndicator.getFraction();
+		for(int i = 0; i < paths.length; i++)
 		{
+			String path = paths[i];
+
 			VirtualFile fileByPath = LocalFileSystem.getInstance().findFileByPath(path);
 			if(fileByPath != null)
 			{
@@ -312,6 +359,16 @@ public class Unity3dProjectUtil
 					}
 				});
 			}
+
+			final double newFraction = fraction + 0.25f * (i / (float)paths.length);
+			UIUtil.invokeLaterIfNeeded(new Runnable()
+			{
+				@Override
+				public void run()
+				{
+					progressIndicator.setFraction(newFraction);
+				}
+			});
 		}
 
 		for(final Unity3dTarget unity3dTarget : Unity3dTarget.values())
@@ -455,8 +512,9 @@ public class Unity3dProjectUtil
 
 	@NotNull
 	private static Module createRootModule(@NotNull final Project project,
-			ModifiableModuleModel newModel,
-			Sdk unityBundle)
+			@NotNull ModifiableModuleModel newModel,
+			@Nullable Sdk unityBundle,
+			@NotNull ProgressIndicator progressIndicator)
 	{
 		final Module rootModule;
 		Unity3dRootModuleExtension rootModuleExtension = ApplicationManager.getApplication().runReadAction(new
@@ -477,6 +535,8 @@ public class Unity3dProjectUtil
 		{
 			rootModule = newModel.newModule(project.getName(), project.getBasePath());
 		}
+
+		progressIndicator.setText(Unity3dBundle.message("syncing.0.module", rootModule.getName()));
 
 		String projectUrl = project.getBaseDir().getUrl();
 
