@@ -46,7 +46,6 @@ import com.intellij.openapi.roots.types.DocumentationOrderRootType;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Getter;
 import com.intellij.openapi.util.Key;
-import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.Version;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -374,7 +373,7 @@ public class Unity3dProjectUtil
 		for(final Unity3dTarget unity3dTarget : Unity3dTarget.values())
 		{
 			final ModuleRootLayerImpl layer = (ModuleRootLayerImpl) modifiableModel.addLayer(unity3dTarget
-					.getPresentation(), null, getDefaultTarget() == unity3dTarget);
+					.getPresentation(), null, false);
 
 			for(VirtualFile virtualFile : toAdd)
 			{
@@ -420,6 +419,7 @@ public class Unity3dProjectUtil
 			}
 		}
 
+		modifiableModel.setCurrentLayer(Unity3dTarget.Editor.name());
 		new WriteAction<Object>()
 		{
 			@Override
@@ -493,23 +493,6 @@ public class Unity3dProjectUtil
 		}
 	}
 
-	private static Unity3dTarget getDefaultTarget()
-	{
-		if(SystemInfo.isWindows)
-		{
-			return Unity3dTarget.Windows;
-		}
-		else if(SystemInfo.isLinux)
-		{
-			return Unity3dTarget.LinuxUniversal;
-		}
-		else if(SystemInfo.isMac)
-		{
-			return Unity3dTarget.OSXUniversal;
-		}
-		throw new IllegalArgumentException(SystemInfo.OS_NAME);
-	}
-
 	@NotNull
 	private static Module createRootModule(@NotNull final Project project,
 			@NotNull ModifiableModuleModel newModel,
@@ -554,7 +537,7 @@ public class Unity3dProjectUtil
 		for(Unity3dTarget unity3dTarget : Unity3dTarget.values())
 		{
 			ModuleRootLayerImpl layer = (ModuleRootLayerImpl) modifiableModel.addLayer(unity3dTarget.getPresentation()
-					, null, getDefaultTarget() == unity3dTarget);
+					, null, false);
 
 			ContentEntry contentEntry = layer.addContentEntry(projectUrl);
 
@@ -562,6 +545,7 @@ public class Unity3dProjectUtil
 					(Unity3dRootMutableModuleExtension.class);
 			assert extension != null;
 			extension.setEnabled(true);
+			extension.setBuildTarget(unity3dTarget);
 			extension.getInheritableSdk().set(null, unityBundle);
 
 			extension.getVariables().add(unity3dTarget.getDefineName());
@@ -585,6 +569,8 @@ public class Unity3dProjectUtil
 			contentEntry.addFolder(projectUrl + "/Temp", ExcludedContentFolderTypeProvider.getInstance());
 			contentEntry.addFolder(projectUrl + "/test_Data", ExcludedContentFolderTypeProvider.getInstance());
 		}
+
+		modifiableModel.setCurrentLayer(Unity3dTarget.Editor.name());
 
 		new WriteAction<Object>()
 		{
