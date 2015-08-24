@@ -52,7 +52,6 @@ import com.intellij.util.ArrayUtil;
 import com.intellij.util.Consumer;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
-import lombok.val;
 
 /**
  * @author VISTALL
@@ -94,13 +93,16 @@ public class Unity3dProjectUtil
 	{
 		System.out.println(loadVersionFromProject("R:\\_pragmatix\\unity-client"));
 	}
+
 	@NotNull
-	public static List<Module> importOrUpdate(@NotNull final Project project, @Nullable Sdk unitySdk, @Nullable ModifiableModuleModel originalModel)
+	public static List<Module> importOrUpdate(@NotNull final Project project,
+			@Nullable Sdk unitySdk,
+			@Nullable ModifiableModuleModel originalModel)
 	{
 		boolean fromProjectStructure = originalModel != null;
 
-		val newModel = fromProjectStructure ? originalModel : ApplicationManager.getApplication().runReadAction(new
-																														Computable<ModifiableModuleModel>()
+		final ModifiableModuleModel newModel = fromProjectStructure ? originalModel : ApplicationManager
+				.getApplication().runReadAction(new Computable<ModifiableModuleModel>()
 
 		{
 			@Override
@@ -116,13 +118,17 @@ public class Unity3dProjectUtil
 
 		MultiMap<Module, VirtualFile> sourceFilesByModule = MultiMap.create();
 
-		ContainerUtil.addIfNotNull(modules, createAssemblyCSharpModuleFirstPass(project, newModel, unitySdk, sourceFilesByModule));
+		ContainerUtil.addIfNotNull(modules, createAssemblyCSharpModuleFirstPass(project, newModel, unitySdk,
+				sourceFilesByModule));
 
-		ContainerUtil.addIfNotNull(modules, createAssemblyUnityScriptModuleFirstPass(project, newModel, unitySdk, sourceFilesByModule));
+		ContainerUtil.addIfNotNull(modules, createAssemblyUnityScriptModuleFirstPass(project, newModel, unitySdk,
+				sourceFilesByModule));
 
-		ContainerUtil.addIfNotNull(modules, createAssemblyCSharpModuleEditor(project, newModel, unitySdk, sourceFilesByModule));
+		ContainerUtil.addIfNotNull(modules, createAssemblyCSharpModuleEditor(project, newModel, unitySdk,
+				sourceFilesByModule));
 
-		ContainerUtil.addIfNotNull(modules, createAssemblyCSharpModule(project, newModel, unitySdk, sourceFilesByModule));
+		ContainerUtil.addIfNotNull(modules, createAssemblyCSharpModule(project, newModel, unitySdk,
+				sourceFilesByModule));
 
 		if(!fromProjectStructure)
 		{
@@ -144,7 +150,8 @@ public class Unity3dProjectUtil
 			MultiMap<Module, VirtualFile> virtualFilesByModule)
 	{
 		String[] paths = {"Assets"};
-		return createAndSetupModule("Assembly-CSharp", project, newModel, paths, unityBundle, new Consumer<ModuleRootLayerImpl>()
+		return createAndSetupModule("Assembly-CSharp", project, newModel, paths, unityBundle,
+				new Consumer<ModuleRootLayerImpl>()
 		{
 			@Override
 			public void consume(ModuleRootLayerImpl layer)
@@ -160,14 +167,14 @@ public class Unity3dProjectUtil
 			final Sdk unityBundle,
 			MultiMap<Module, VirtualFile> virtualFilesByModule)
 	{
-		val paths = new String[]{
+		String[] paths = new String[]{
 				"Assets/Standard Assets",
 				"Assets/Pro Standard Assets",
 				"Assets/Plugins"
 		};
 
-		return createAndSetupModule("Assembly-UnityScript-firstpass", project, newModel, paths, unityBundle, null, "unity3d-unityscript-child",
-				JavaScriptFileType.INSTANCE, virtualFilesByModule);
+		return createAndSetupModule("Assembly-UnityScript-firstpass", project, newModel, paths, unityBundle, null,
+				"unity3d-unityscript-child", JavaScriptFileType.INSTANCE, virtualFilesByModule);
 	}
 
 	private static Module createAssemblyCSharpModuleFirstPass(final Project project,
@@ -175,14 +182,14 @@ public class Unity3dProjectUtil
 			Sdk unityBundle,
 			MultiMap<Module, VirtualFile> virtualFilesByModule)
 	{
-		val paths = new String[]{
+		String[] paths = new String[]{
 				"Assets/Standard Assets",
 				"Assets/Pro Standard Assets",
 				"Assets/Plugins"
 		};
 
-		return createAndSetupModule("Assembly-CSharp-firstpass", project, newModel, paths, unityBundle, null, "unity3d-csharp-child",
-				CSharpFileType.INSTANCE, virtualFilesByModule);
+		return createAndSetupModule("Assembly-CSharp-firstpass", project, newModel, paths, unityBundle, null,
+				"unity3d-csharp-child", CSharpFileType.INSTANCE, virtualFilesByModule);
 	}
 
 	private static Module createAssemblyCSharpModuleEditor(final Project project,
@@ -190,14 +197,14 @@ public class Unity3dProjectUtil
 			final Sdk unityBundle,
 			MultiMap<Module, VirtualFile> virtualFilesByModule)
 	{
-		val paths = new ArrayList<String>();
+		final List<String> paths = new ArrayList<String>();
 		paths.add("Assets/Standard Assets/Editor");
 		paths.add("Assets/Pro Standard Assets/Editor");
 		paths.add("Assets/Plugins/Editor");
 
-		val baseDir = project.getBaseDir();
+		final VirtualFile baseDir = project.getBaseDir();
 
-		val assetsDir = baseDir.findFileByRelativePath("Assets");
+		final VirtualFile assetsDir = baseDir.findFileByRelativePath("Assets");
 		if(assetsDir != null)
 		{
 			VfsUtil.visitChildrenRecursively(assetsDir, new VirtualFileVisitor()
@@ -214,8 +221,9 @@ public class Unity3dProjectUtil
 			});
 		}
 
-		val pathsAsArray = ArrayUtil.toStringArray(paths);
-		return createAndSetupModule("Assembly-CSharp-Editor", project, newModel, pathsAsArray, unityBundle, new Consumer<ModuleRootLayerImpl>()
+		final String[] pathsAsArray = ArrayUtil.toStringArray(paths);
+		return createAndSetupModule("Assembly-CSharp-Editor", project, newModel, pathsAsArray, unityBundle,
+				new Consumer<ModuleRootLayerImpl>()
 		{
 			@Override
 			public void consume(final ModuleRootLayerImpl layer)
@@ -261,7 +269,8 @@ public class Unity3dProjectUtil
 			module = temp;
 		}
 
-		final ModifiableRootModel modifiableModel = ApplicationManager.getApplication().runReadAction(new Computable<ModifiableRootModel>()
+		final ModifiableRootModel modifiableModel = ApplicationManager.getApplication().runReadAction(new
+																											  Computable<ModifiableRootModel>()
 		{
 			@Override
 			public ModifiableRootModel compute()
@@ -307,7 +316,8 @@ public class Unity3dProjectUtil
 
 		for(final Unity3dTarget unity3dTarget : Unity3dTarget.values())
 		{
-			val layer = (ModuleRootLayerImpl) modifiableModel.addLayer(unity3dTarget.getPresentation(), null, getDefaultTarget() == unity3dTarget);
+			final ModuleRootLayerImpl layer = (ModuleRootLayerImpl) modifiableModel.addLayer(unity3dTarget
+					.getPresentation(), null, getDefaultTarget() == unity3dTarget);
 
 			for(VirtualFile virtualFile : toAdd)
 			{
@@ -367,7 +377,8 @@ public class Unity3dProjectUtil
 	@NotNull
 	private static Version parseBundleVersion(@Nullable Sdk unityBundle)
 	{
-		String currentVersionString = unityBundle == null ? Unity3dBundleType.UNKNOWN_VERSION : unityBundle.getVersionString();
+		String currentVersionString = unityBundle == null ? Unity3dBundleType.UNKNOWN_VERSION : unityBundle
+				.getVersionString();
 		return parseVersion(currentVersionString);
 	}
 
@@ -390,7 +401,8 @@ public class Unity3dProjectUtil
 		{
 			try
 			{
-				return new Version(Integer.parseInt(list.get(0)), Integer.parseInt(list.get(1)), Integer.parseInt(list.get(2)));
+				return new Version(Integer.parseInt(list.get(0)), Integer.parseInt(list.get(1)),
+						Integer.parseInt(list.get(2)));
 			}
 			catch(NumberFormatException ignored)
 			{
@@ -409,7 +421,8 @@ public class Unity3dProjectUtil
 				Library library = layer.getModuleLibraryTable().createLibrary();
 				Library.ModifiableModel modifiableModel = library.getModifiableModel();
 				modifiableModel.addRoot(archiveRootForLocalFile, BinariesOrderRootType.getInstance());
-				VirtualFile docFile = virtualFile.getParent().findChild(virtualFile.getNameWithoutExtension() + ".xml");
+				VirtualFile docFile = virtualFile.getParent().findChild(virtualFile.getNameWithoutExtension() + "" +
+						".xml");
 				if(docFile != null)
 				{
 					modifiableModel.addRoot(docFile, DocumentationOrderRootType.getInstance());
@@ -441,7 +454,9 @@ public class Unity3dProjectUtil
 	}
 
 	@NotNull
-	private static Module createRootModule(@NotNull final Project project, ModifiableModuleModel newModel, Sdk unityBundle)
+	private static Module createRootModule(@NotNull final Project project,
+			ModifiableModuleModel newModel,
+			Sdk unityBundle)
 	{
 		final Module rootModule;
 		Unity3dRootModuleExtension rootModuleExtension = ApplicationManager.getApplication().runReadAction(new
@@ -465,7 +480,8 @@ public class Unity3dProjectUtil
 
 		String projectUrl = project.getBaseDir().getUrl();
 
-		final ModifiableRootModel modifiableModel = ApplicationManager.getApplication().runReadAction(new Computable<ModifiableRootModel>()
+		final ModifiableRootModel modifiableModel = ApplicationManager.getApplication().runReadAction(new
+																											  Computable<ModifiableRootModel>()
 		{
 			@Override
 			public ModifiableRootModel compute()
@@ -477,12 +493,13 @@ public class Unity3dProjectUtil
 
 		for(Unity3dTarget unity3dTarget : Unity3dTarget.values())
 		{
-			ModuleRootLayerImpl layer = (ModuleRootLayerImpl) modifiableModel.addLayer(unity3dTarget.getPresentation(), null,
-					getDefaultTarget() == unity3dTarget);
+			ModuleRootLayerImpl layer = (ModuleRootLayerImpl) modifiableModel.addLayer(unity3dTarget.getPresentation()
+					, null, getDefaultTarget() == unity3dTarget);
 
 			ContentEntry contentEntry = layer.addContentEntry(projectUrl);
 
-			Unity3dRootMutableModuleExtension extension = layer.getExtensionWithoutCheck(Unity3dRootMutableModuleExtension.class);
+			Unity3dRootMutableModuleExtension extension = layer.getExtensionWithoutCheck
+					(Unity3dRootMutableModuleExtension.class);
 			assert extension != null;
 			extension.setEnabled(true);
 			extension.getInheritableSdk().set(null, unityBundle);
@@ -490,7 +507,8 @@ public class Unity3dProjectUtil
 			extension.getVariables().add(unity3dTarget.getDefineName());
 
 			Version currentBundleVersion = parseBundleVersion(unityBundle);
-			Unity3dDefineByVersion unity3dDefineByVersion = Unity3dDefineByVersion.find(currentBundleVersion.toString());
+			Unity3dDefineByVersion unity3dDefineByVersion = Unity3dDefineByVersion.find(currentBundleVersion.toString
+					());
 			if(unity3dDefineByVersion != Unity3dDefineByVersion.UNKNOWN)
 			{
 				for(Unity3dDefineByVersion majorVersion : unity3dDefineByVersion.getMajorVersions())
@@ -501,7 +519,8 @@ public class Unity3dProjectUtil
 			}
 
 			// exclude temp dirs
-			contentEntry.addFolder(projectUrl + "/" + Project.DIRECTORY_STORE_FOLDER, ExcludedContentFolderTypeProvider.getInstance());
+			contentEntry.addFolder(projectUrl + "/" + Project.DIRECTORY_STORE_FOLDER,
+					ExcludedContentFolderTypeProvider.getInstance());
 			contentEntry.addFolder(projectUrl + "/Library", ExcludedContentFolderTypeProvider.getInstance());
 			contentEntry.addFolder(projectUrl + "/Temp", ExcludedContentFolderTypeProvider.getInstance());
 			contentEntry.addFolder(projectUrl + "/test_Data", ExcludedContentFolderTypeProvider.getInstance());
