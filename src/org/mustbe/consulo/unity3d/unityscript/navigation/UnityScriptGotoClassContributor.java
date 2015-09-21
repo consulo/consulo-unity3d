@@ -51,7 +51,7 @@ public class UnityScriptGotoClassContributor implements ChooseByNameContributorE
 	{
 		CommonProcessors.CollectProcessor<String> processor = new CommonProcessors.CollectProcessor<String>(ContainerUtil.<String>newTroveSet());
 		processNames(processor, GlobalSearchScope.allScope(project), IdFilter.getProjectIdFilter(project, includeNonProjectItems));
-		return processor.toArray(ArrayUtil.EMPTY_STRING_ARRAY);
+		return processor.toArray(ArrayUtil.STRING_ARRAY_FACTORY);
 	}
 
 	@NotNull
@@ -62,7 +62,7 @@ public class UnityScriptGotoClassContributor implements ChooseByNameContributorE
 				.<NavigationItem>newTroveSet());
 		processElementsWithName(name, processor, new FindSymbolParameters(pattern, name, GlobalSearchScope.allScope(project),
 				IdFilter.getProjectIdFilter(project, includeNonProjectItems)));
-		return processor.toArray(NavigationItem.EMPTY_NAVIGATION_ITEM_ARRAY);
+		return processor.toArray(NavigationItem.ARRAY_FACTORY);
 	}
 
 	@Override
