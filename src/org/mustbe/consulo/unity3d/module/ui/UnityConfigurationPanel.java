@@ -52,7 +52,6 @@ import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBList;
 import com.intellij.ui.components.JBTextField;
 import com.intellij.util.NullableFunction;
-import lombok.val;
 
 /**
  * @author VISTALL
@@ -110,7 +109,7 @@ public class UnityConfigurationPanel extends JPanel
 			}
 		});
 
-		val fileNameField = new JBTextField(extension.getFileName());
+		final JBTextField fileNameField = new JBTextField(extension.getFileName());
 		fileNameField.getEmptyText().setText(Unity3dRootModuleExtension.FILE_NAME);
 		fileNameField.getDocument().addDocumentListener(new DocumentAdapter()
 		{
@@ -123,7 +122,7 @@ public class UnityConfigurationPanel extends JPanel
 
 		add(LabeledComponent.left(fileNameField, DotNetBundle.message("file.label")));
 
-		val outputDirectoryField = new JBTextField(extension.getOutputDir());
+		final JBTextField outputDirectoryField = new JBTextField(extension.getOutputDir());
 		outputDirectoryField.getEmptyText().setText(DotNetModuleExtension.DEFAULT_OUTPUT_DIR);
 		outputDirectoryField.getDocument().addDocumentListener(new DocumentAdapter()
 		{
@@ -137,7 +136,7 @@ public class UnityConfigurationPanel extends JPanel
 		add(LabeledComponent.left(outputDirectoryField, DotNetBundle.message("output.dir.label")));
 		add(LabeledComponent.left(target, "Target:"));
 
-		val dataModel = new CollectionListModel<String>(variables)
+		final CollectionListModel<String> dataModel = new CollectionListModel<String>(variables)
 		{
 			@Override
 			public int getSize()
@@ -175,7 +174,7 @@ public class UnityConfigurationPanel extends JPanel
 			}
 		};
 
-		val variableList = new JBList(dataModel);
+		final JBList variableList = new JBList(dataModel);
 		ToolbarDecorator variableDecorator = ToolbarDecorator.createDecorator(variableList);
 		variableDecorator.setAddAction(new AnActionButtonRunnable()
 		{

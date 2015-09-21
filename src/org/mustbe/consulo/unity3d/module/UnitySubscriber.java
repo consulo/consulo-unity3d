@@ -29,7 +29,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileAdapter;
 import com.intellij.openapi.vfs.VirtualFileEvent;
-import lombok.val;
 
 /**
  * @author VISTALL
@@ -45,7 +44,8 @@ public class UnitySubscriber extends AbstractProjectComponent
 	@Override
 	public void initComponent()
 	{
-		myProject.getMessageBus().connect().subscribe(ProjectTopics.MODULE_LAYERS, new UnitySyncModuleRootLayerListener());
+		myProject.getMessageBus().connect().subscribe(ProjectTopics.MODULE_LAYERS,
+				new UnitySyncModuleRootLayerListener());
 
 		VirtualFileAdapter virtualFileAdapter = new VirtualFileAdapter()
 		{
@@ -65,8 +65,8 @@ public class UnitySubscriber extends AbstractProjectComponent
 					return;
 				}
 
-				val metaFile = parent.findChild(event.getFile().getNameWithoutExtension() + "." + Unity3dMetaFileType.INSTANCE.getDefaultExtension
-						());
+				final VirtualFile metaFile = parent.findChild(event.getFile().getNameWithoutExtension() + "." +
+						Unity3dMetaFileType.INSTANCE.getDefaultExtension());
 				if(metaFile == null)
 				{
 					return;

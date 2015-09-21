@@ -22,6 +22,7 @@ package org.mustbe.consulo.unity3d.module;
  */
 public enum Unity3dTarget
 {
+	Editor("Editor", "", "$UnityFileName$", "UNITY_EDITOR"),
 	Windows("Windows (32 bit)", "-buildWindowsPlayer", "$UnityFileName$.exe", "UNITY_STANDALONE_WIN"),
 	Windows64("Windows (64 bit)", "-buildWindows64Player",  "$UnityFileName$.exe", "UNITY_STANDALONE_WIN"),
 	OSX("MacOS (32 bit)", "-buildOSXPlayer", "$UnityFileName$.app", "UNITY_STANDALONE_OSX"),

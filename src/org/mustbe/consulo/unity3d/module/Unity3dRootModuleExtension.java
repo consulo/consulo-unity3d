@@ -21,23 +21,16 @@ import java.util.List;
 
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.mustbe.consulo.dotnet.compiler.DotNetMacroUtil;
-import org.mustbe.consulo.dotnet.execution.DebugConnectionInfo;
+import org.mustbe.consulo.RequiredReadAction;
 import org.mustbe.consulo.dotnet.module.extension.BaseDotNetSimpleModuleExtension;
 import org.mustbe.consulo.dotnet.module.extension.DotNetModuleExtension;
 import org.mustbe.consulo.unity3d.bundle.Unity3dBundleType;
 import org.mustbe.consulo.unity3d.projectImport.Unity3dProjectUtil;
-import com.intellij.execution.ExecutionException;
-import com.intellij.execution.configurations.GeneralCommandLine;
-import com.intellij.ide.macro.Macro;
-import com.intellij.ide.macro.MacroManager;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkType;
 import com.intellij.openapi.roots.ModuleRootLayer;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.Version;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -52,7 +45,7 @@ public class Unity3dRootModuleExtension extends BaseDotNetSimpleModuleExtension<
 {
 	public static final String FILE_NAME = "$ModuleName$";
 
-	protected Unity3dTarget myBuildTarget = Unity3dTarget.Windows;
+	protected Unity3dTarget myBuildTarget = Unity3dTarget.Editor;
 	protected String myFileName = FILE_NAME;
 	protected String myOutputDirectory = DotNetModuleExtension.DEFAULT_OUTPUT_DIR;
 
@@ -79,13 +72,14 @@ public class Unity3dRootModuleExtension extends BaseDotNetSimpleModuleExtension<
 		element.setAttribute("file-name", myFileName);
 	}
 
+	@RequiredReadAction
 	@Override
 	protected void loadStateImpl(@NotNull Element element)
 	{
 		super.loadStateImpl(element);
 		myFileName = element.getAttributeValue("file-name", FILE_NAME);
 		myOutputDirectory = element.getAttributeValue("output-dir", DotNetModuleExtension.DEFAULT_OUTPUT_DIR);
-		myBuildTarget = Unity3dTarget.valueOf(element.getAttributeValue("build-target", Unity3dTarget.Windows.name()));
+		myBuildTarget = Unity3dTarget.valueOf(element.getAttributeValue("build-target", Unity3dTarget.Editor.name()));
 	}
 
 	@NotNull
@@ -228,38 +222,5 @@ public class Unity3dRootModuleExtension extends BaseDotNetSimpleModuleExtension<
 	public Class<? extends SdkType> getSdkTypeClass()
 	{
 		return Unity3dBundleType.class;
-	}
-
-	@NotNull
-	public GeneralCommandLine createDefaultCommandLine(@NotNull Sdk sdk, @Nullable DebugConnectionInfo debugConnectionInfo) throws ExecutionException
-	{
-		GeneralCommandLine commandLine = new GeneralCommandLine();
-
-		String templateFilePath = getOutputDir() + "/" + myBuildTarget.getFileNameTemplate();
-
-		try
-		{
-			String filePath = MacroManager.getInstance().expandSilentMarcos(templateFilePath, true, DotNetMacroUtil.createContext(getModule(),
-					false));
-
-			if(SystemInfo.isMac)
-			{
-				// need get app dir, like 'TestProject.app'
-				String fileName = StringUtil.getShortName(filePath, '/');
-				// cut '.app'
-				String nameWithoutExtension = FileUtil.getNameWithoutExtension(fileName);
-
-				commandLine.setExePath(filePath + "/Contents/MacOS/" + nameWithoutExtension);
-			}
-			else
-			{
-				commandLine.setExePath(filePath);
-			}
-		}
-		catch(Macro.ExecutionCancelledException e)
-		{
-			throw new ExecutionException(e);
-		}
-		return commandLine;
 	}
 }

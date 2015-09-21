@@ -16,6 +16,7 @@
 
 package org.mustbe.consulo.unity3d.projectImport;
 
+import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.Icon;
@@ -24,12 +25,16 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.mustbe.consulo.RequiredReadAction;
 import org.mustbe.consulo.unity3d.Unity3dIcons;
+import com.intellij.openapi.application.Result;
+import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.module.ModifiableModuleModel;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ui.configuration.ModulesProvider;
+import com.intellij.openapi.util.StaticGetter;
 import com.intellij.packaging.artifacts.ModifiableArtifactModel;
 import com.intellij.projectImport.ProjectImportBuilder;
 
@@ -86,13 +91,34 @@ public class Unity3dProjectImportBuilder extends ProjectImportBuilder
 	@Nullable
 	@Override
 	@RequiredReadAction
-	public List<Module> commit(Project project,
-			ModifiableModuleModel originalModel,
+	public List<Module> commit(final Project project,
+			@Nullable ModifiableModuleModel originalModel,
 			ModulesProvider modulesProvider,
 			ModifiableArtifactModel artifactModel)
 	{
 		Sdk unitySdk = myUnitySdk;
 		myUnitySdk = null; // drop link to sdk
-		return Unity3dProjectUtil.importOrUpdate(project, unitySdk, originalModel);
+
+		boolean fromProjectStructure = originalModel != null;
+
+		final ModifiableModuleModel newModel = fromProjectStructure ? originalModel : ModuleManager.getInstance
+				(project).getModifiableModel();
+
+		Module rootModule = newModel.newModule(project.getName(), project.getBasePath());
+
+		if(!fromProjectStructure)
+		{
+			new WriteAction<Object>()
+			{
+				@Override
+				protected void run(Result<Object> result) throws Throwable
+				{
+					newModel.commit();
+				}
+			}.execute();
+		}
+
+		project.putUserData(Unity3dProjectUtil.NEWLY_IMPORTED_PROJECT_SDK, new StaticGetter<Sdk>(unitySdk));
+		return Arrays.asList(rootModule);
 	}
 }

@@ -54,9 +54,13 @@ public class Unity3dBundleType extends SdkType
 		{
 			return sdkPath + "/Contents/MacOS/Unity";
 		}
-		else if(SystemInfo.isWindows || SystemInfo.isLinux)
+		else if(SystemInfo.isWindows)
 		{
 			return sdkPath + "/Editor/Unity.exe";
+		}
+		else if(SystemInfo.isLinux)
+		{
+			return sdkPath + "/Editor/Unity";
 		}
 		return null;
 	}
@@ -95,6 +99,10 @@ public class Unity3dBundleType extends SdkType
 			// x32 windows
 			paths.add("C:/Program Files/Unity");
 		}
+		else if(SystemInfo.isLinux)
+		{
+			paths.add("/opt/Unity");
+		}
 		return paths;
 	}
 
@@ -129,6 +137,23 @@ public class Unity3dBundleType extends SdkType
 					NSString version = (NSString) ((NSDictionary) rootObject).get("CFBundleVersion");
 					assert version != null;
 					return filterReleaseInfo(version.getContent());
+				}
+			}
+			else if(SystemInfo.isLinux)
+			{
+				// fixme [vistall] maybe something better?
+				File packageManagerDir = new File(sdkHome, "/Editor/Data/PackageManager/Unity/PackageManager");
+				if(packageManagerDir.exists())
+				{
+					File[] files = packageManagerDir.listFiles();
+					assert files != null;
+					for(File file : files)
+					{
+						if(file.isDirectory())
+						{
+							return file.getName();
+						}
+					}
 				}
 			}
 		}
