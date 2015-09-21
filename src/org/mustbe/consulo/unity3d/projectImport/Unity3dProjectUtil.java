@@ -13,6 +13,7 @@ import org.mustbe.consulo.csharp.lang.CSharpFileType;
 import org.mustbe.consulo.dotnet.dll.DotNetModuleFileType;
 import org.mustbe.consulo.dotnet.module.roots.DotNetLibraryOrderEntryImpl;
 import org.mustbe.consulo.roots.impl.ExcludedContentFolderTypeProvider;
+import org.mustbe.consulo.unity3d.Unity3dMetaFileType;
 import org.mustbe.consulo.unity3d.bundle.Unity3dBundleType;
 import org.mustbe.consulo.unity3d.bundle.Unity3dDefineByVersion;
 import org.mustbe.consulo.unity3d.module.Unity3dChildMutableModuleExtension;
@@ -293,6 +294,13 @@ public class Unity3dProjectUtil
 
 							virtualFilesByModule.putValue(module, file);
 							toAdd.add(file);
+
+							VirtualFile parent = file.getParent();
+							VirtualFile metaFile = parent.findChild(file.getName() + "." + Unity3dMetaFileType.INSTANCE.getDefaultExtension());
+							if(metaFile != null)
+							{
+								toAdd.add(metaFile);
+							}
 						}
 						else if(file.getFileType() == DotNetModuleFileType.INSTANCE)
 						{
