@@ -52,7 +52,6 @@ import com.intellij.util.ArrayUtil;
 import com.intellij.util.Consumer;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
-import lombok.val;
 
 /**
  * @author VISTALL
@@ -99,7 +98,7 @@ public class Unity3dProjectUtil
 	{
 		boolean fromProjectStructure = originalModel != null;
 
-		val newModel = fromProjectStructure ? originalModel : ApplicationManager.getApplication().runReadAction(new
+		final ModifiableModuleModel newModel = fromProjectStructure ? originalModel : ApplicationManager.getApplication().runReadAction(new
 																														Computable<ModifiableModuleModel>()
 
 		{
@@ -160,7 +159,7 @@ public class Unity3dProjectUtil
 			final Sdk unityBundle,
 			MultiMap<Module, VirtualFile> virtualFilesByModule)
 	{
-		val paths = new String[]{
+		final String[] paths = new String[]{
 				"Assets/Standard Assets",
 				"Assets/Pro Standard Assets",
 				"Assets/Plugins"
@@ -175,7 +174,7 @@ public class Unity3dProjectUtil
 			Sdk unityBundle,
 			MultiMap<Module, VirtualFile> virtualFilesByModule)
 	{
-		val paths = new String[]{
+		final String[] paths = new String[]{
 				"Assets/Standard Assets",
 				"Assets/Pro Standard Assets",
 				"Assets/Plugins"
@@ -190,14 +189,14 @@ public class Unity3dProjectUtil
 			final Sdk unityBundle,
 			MultiMap<Module, VirtualFile> virtualFilesByModule)
 	{
-		val paths = new ArrayList<String>();
+		final List<String> paths = new ArrayList<String>();
 		paths.add("Assets/Standard Assets/Editor");
 		paths.add("Assets/Pro Standard Assets/Editor");
 		paths.add("Assets/Plugins/Editor");
 
-		val baseDir = project.getBaseDir();
+		final VirtualFile baseDir = project.getBaseDir();
 
-		val assetsDir = baseDir.findFileByRelativePath("Assets");
+		final VirtualFile assetsDir = baseDir.findFileByRelativePath("Assets");
 		if(assetsDir != null)
 		{
 			VfsUtil.visitChildrenRecursively(assetsDir, new VirtualFileVisitor()
@@ -214,7 +213,7 @@ public class Unity3dProjectUtil
 			});
 		}
 
-		val pathsAsArray = ArrayUtil.toStringArray(paths);
+		final String[] pathsAsArray = ArrayUtil.toStringArray(paths);
 		return createAndSetupModule("Assembly-CSharp-Editor", project, newModel, pathsAsArray, unityBundle, new Consumer<ModuleRootLayerImpl>()
 		{
 			@Override
@@ -307,7 +306,7 @@ public class Unity3dProjectUtil
 
 		for(final Unity3dTarget unity3dTarget : Unity3dTarget.values())
 		{
-			val layer = (ModuleRootLayerImpl) modifiableModel.addLayer(unity3dTarget.getPresentation(), null, getDefaultTarget() == unity3dTarget);
+			final ModuleRootLayerImpl layer = (ModuleRootLayerImpl) modifiableModel.addLayer(unity3dTarget.getPresentation(), null, getDefaultTarget() == unity3dTarget);
 
 			for(VirtualFile virtualFile : toAdd)
 			{
