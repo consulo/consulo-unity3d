@@ -94,7 +94,10 @@ public class UnityProcessDialog extends ChooseElementsDialog<UnityProcess>
 		List<UnityProcess> items = new ArrayList<UnityProcess>(players.size() + 1);
 		for(UnityPlayer player : players)
 		{
-			items.add(new UnityProcess((int) player.getGuid(), player.getId(), player.getIp(), player.getDebuggerPort()));
+			if(player.isSupportDebugging())
+			{
+				items.add(new UnityProcess((int) player.getGuid(), player.getId(), player.getIp(), player.getDebuggerPort()));
+			}
 		}
 		JavaSysMon javaSysMon = new JavaSysMon();
 		ProcessInfo[] processInfos = javaSysMon.processTable();
