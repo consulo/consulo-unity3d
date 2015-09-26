@@ -33,12 +33,9 @@ import com.intellij.xdebugger.XDebugSession;
  */
 public class UnityDebugProcess extends DotNetDebugProcess
 {
-	private UnityProcess mySelected;
-
-	public UnityDebugProcess(XDebugSession session, DebugConnectionInfo debugConnectionInfo, RunProfile runProfile, UnityProcess selected)
+	public UnityDebugProcess(XDebugSession session, DebugConnectionInfo debugConnectionInfo, RunProfile runProfile)
 	{
 		super(session, debugConnectionInfo, runProfile);
-		mySelected = selected;
 	}
 
 	@Nullable

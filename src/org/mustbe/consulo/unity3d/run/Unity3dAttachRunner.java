@@ -77,7 +77,7 @@ public class Unity3dAttachRunner extends DefaultProgramRunner
 			public XDebugProcess start(@NotNull final XDebugSession session) throws ExecutionException
 			{
 				DebugConnectionInfo debugConnectionInfo = new DebugConnectionInfo(selected.getHost(), selected.getPort(), true);
-				final UnityDebugProcess process = new UnityDebugProcess(session, debugConnectionInfo, environment.getRunProfile(), selected);
+				final UnityDebugProcess process = new UnityDebugProcess(session, debugConnectionInfo, environment.getRunProfile());
 				process.getDebugThread().addListener(new DotNetVirtualMachineListener()
 				{
 					@Override
