@@ -106,7 +106,7 @@ public class UnityProcessDialog extends ChooseElementsDialog<UnityProcess>
 			String name = processInfo.getName();
 			if((StringUtil.startsWithIgnoreCase(name, "unity") ||
 					StringUtil.containsIgnoreCase(name, "Unity.app"))
-					&& !StringUtil.containsIgnoreCase(name, "Unity Helper")
+					&& !(StringUtil.containsIgnoreCase(name, "Unity") && StringUtil.containsIgnoreCase(name, "Helper")) //ignore 'UnityHelper' and 'Unity Helper'
 					&& !StringUtil.containsIgnoreCase(name, "UnityShader"))
 			{
 				items.add(new UnityProcess(processInfo.getPid(), name, "localhost", 56000 + processInfo.getPid() % 1000));
