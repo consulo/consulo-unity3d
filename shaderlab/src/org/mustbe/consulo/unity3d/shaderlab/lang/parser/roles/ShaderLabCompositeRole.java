@@ -17,7 +17,9 @@
 package org.mustbe.consulo.unity3d.shaderlab.lang.parser.roles;
 
 import org.jetbrains.annotations.NotNull;
+import org.mustbe.consulo.unity3d.shaderlab.lang.parser.ShaderLabParser;
 import org.mustbe.consulo.unity3d.shaderlab.lang.parser.ShaderLabParserBuilder;
+import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderLabElements;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderLabTokens;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiBuilderUtil;
@@ -67,12 +69,13 @@ public class ShaderLabCompositeRole extends ShaderLabRole
 					}
 				}
 
-				if(builder.getTokenType() == ShaderLabTokens.LBRACE)
+				IElementType tokenType = builder.getTokenType();
+				if(tokenType == ShaderLabTokens.LBRACE)
 				{
 					count++;
 				}
 
-				if(builder.getTokenType() == ShaderLabTokens.RBRACE)
+				if(tokenType == ShaderLabTokens.RBRACE)
 				{
 					if(count == 0)
 					{
@@ -81,7 +84,22 @@ public class ShaderLabCompositeRole extends ShaderLabRole
 
 					count--;
 				}
-				builder.advanceLexer();
+
+				if(tokenType == ShaderLabTokens.CGINCLUDE_KEYWORD || tokenType == ShaderLabTokens.CGPROGRAM_KEYWORD)
+				{
+					PsiBuilder.Marker marker = builder.mark();
+					builder.advanceLexer();
+					if(builder.getTokenType() == ShaderLabTokens.SHADERSCRIPT)
+					{
+						builder.advanceLexer();
+					}
+					ShaderLabParser.expectWithError(builder, ShaderLabTokens.ENDCG_KEYWORD, "Expected 'ENDCG'");
+					marker.done(ShaderLabElements.CG_SHADER);
+				}
+				else
+				{
+					builder.advanceLexer();
+				}
 			}
 
 			if(!PsiBuilderUtil.expect(builder, ShaderLabTokens.RBRACE))

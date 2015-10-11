@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-package org.mustbe.consulo.unity3d.shaderlab.ide.highlight;
+package org.mustbe.consulo.cgshader.highlighter;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import org.jetbrains.annotations.NotNull;
-import org.mustbe.consulo.unity3d.shaderlab.lang.lexer.ShaderLabLexer;
-import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderLabTokenSets;
-import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderLabTokens;
+import org.mustbe.consulo.cgshader.lexer.CGLexer;
+import org.mustbe.consulo.cgshader.lexer.CGTokens;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
@@ -31,27 +30,33 @@ import com.intellij.psi.tree.IElementType;
 
 /**
  * @author VISTALL
- * @since 08.05.2015
+ * @since 11.10.2015
  */
-public class ShaderLabHighlighter extends SyntaxHighlighterBase
+public class CGSyntaxHighlighter extends SyntaxHighlighterBase
 {
 	private static Map<IElementType, TextAttributesKey> ourMap = new HashMap<IElementType, TextAttributesKey>();
 
 	static
 	{
-		ourMap.put(ShaderLabTokens.LINE_COMMENT, DefaultLanguageHighlighterColors.LINE_COMMENT);
-		ourMap.put(ShaderLabTokens.BLOCK_COMMENT, DefaultLanguageHighlighterColors.BLOCK_COMMENT);
-		ourMap.put(ShaderLabTokens.INTEGER_LITERAL, DefaultLanguageHighlighterColors.NUMBER);
-		ourMap.put(ShaderLabTokens.STRING_LITERAL, DefaultLanguageHighlighterColors.STRING);
-
-		safeMap(ourMap, ShaderLabTokenSets.KEYWORDS, DefaultLanguageHighlighterColors.KEYWORD);
+		ourMap.put(CGTokens.LINE_COMMENT, DefaultLanguageHighlighterColors.LINE_COMMENT);
+		ourMap.put(CGTokens.BLOCK_COMMENT, DefaultLanguageHighlighterColors.BLOCK_COMMENT);
+		ourMap.put(CGTokens.NUMBER_LITERAL, DefaultLanguageHighlighterColors.NUMBER);
+		ourMap.put(CGTokens.STRING_LITERAL, DefaultLanguageHighlighterColors.STRING);
+		ourMap.put(CGTokens.KEYWORD, DefaultLanguageHighlighterColors.KEYWORD);
+		ourMap.put(CGTokens.MACRO_KEYWORD, DefaultLanguageHighlighterColors.MACRO_KEYWORD);
+		ourMap.put(CGTokens.LPAR, DefaultLanguageHighlighterColors.PARENTHESES);
+		ourMap.put(CGTokens.RPAR, DefaultLanguageHighlighterColors.PARENTHESES);
+		ourMap.put(CGTokens.LBRACE, DefaultLanguageHighlighterColors.BRACES);
+		ourMap.put(CGTokens.RBRACE, DefaultLanguageHighlighterColors.BRACES);
+		ourMap.put(CGTokens.LBRACKET, DefaultLanguageHighlighterColors.BRACKETS);
+		ourMap.put(CGTokens.RBRACKET, DefaultLanguageHighlighterColors.BRACKETS);
 	}
 
 	@NotNull
 	@Override
 	public Lexer getHighlightingLexer()
 	{
-		return new ShaderLabLexer();
+		return new CGLexer();
 	}
 
 	@NotNull

@@ -14,88 +14,105 @@
  * limitations under the License.
  */
 
-package org.mustbe.consulo.unity3d.shaderlab.lang;
+package org.mustbe.consulo.cgshader;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.mustbe.consulo.unity3d.shaderlab.lang.lexer.ShaderLabLexer;
-import org.mustbe.consulo.unity3d.shaderlab.lang.parser.ShaderLabParser;
-import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderLabFile;
-import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderLabStubElements;
-import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderLabTokenSets;
+import org.mustbe.consulo.cgshader.lexer.CGLexer;
+import org.mustbe.consulo.cgshader.lexer.CGTokens;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
+import com.intellij.extapi.psi.PsiFileBase;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.LanguageVersion;
 import com.intellij.lang.ParserDefinition;
+import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiParser;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.IFileElementType;
 import com.intellij.psi.tree.TokenSet;
 
 /**
  * @author VISTALL
- * @since 08.05.2015
+ * @since 11.10.2015
  */
-public class ShaderLabParserDefinition implements ParserDefinition
+public class CGParserDefinition implements ParserDefinition
 {
+	private static final IFileElementType FILE_ELEMENT_TYPE = new IFileElementType(CGLanguage.INSTANCE);
+
 	@NotNull
 	@Override
 	public Lexer createLexer(@Nullable Project project, @NotNull LanguageVersion languageVersion)
 	{
-		return new ShaderLabLexer();
+		return new CGLexer();
 	}
 
 	@NotNull
 	@Override
 	public PsiParser createParser(@Nullable Project project, @NotNull LanguageVersion languageVersion)
 	{
-		return new ShaderLabParser();
+		return new PsiParser()
+		{
+			@NotNull
+			@Override
+			public ASTNode parse(@NotNull IElementType root, @NotNull PsiBuilder builder, @NotNull LanguageVersion languageVersion)
+			{
+				PsiBuilder.Marker mark = builder.mark();
+				while(!builder.eof())
+				{
+					builder.advanceLexer();
+				}
+				mark.done(root);
+				return builder.getTreeBuilt();
+			}
+		};
 	}
 
 	@NotNull
 	@Override
 	public IFileElementType getFileNodeType()
 	{
-		return ShaderLabStubElements.FILE;
+		return FILE_ELEMENT_TYPE;
 	}
 
 	@NotNull
 	@Override
 	public TokenSet getWhitespaceTokens(@NotNull LanguageVersion languageVersion)
 	{
-		return ShaderLabTokenSets.WHITESPACES;
+		return TokenSet.create(CGTokens.WHITE_SPACE);
 	}
 
 	@NotNull
 	@Override
 	public TokenSet getCommentTokens(@NotNull LanguageVersion languageVersion)
 	{
-		return ShaderLabTokenSets.COMMENTS;
+		return TokenSet.create(CGTokens.LINE_COMMENT, CGTokens.BLOCK_COMMENT);
 	}
 
 	@NotNull
 	@Override
 	public TokenSet getStringLiteralElements(@NotNull LanguageVersion languageVersion)
 	{
-		return TokenSet.EMPTY;
+		return TokenSet.create(CGTokens.STRING_LITERAL);
 	}
 
 	@NotNull
 	@Override
 	public PsiElement createElement(ASTNode node)
 	{
-		System.out.println(node.getElementType());
 		return new ASTWrapperPsiElement(node);
 	}
 
 	@Override
 	public PsiFile createFile(FileViewProvider viewProvider)
 	{
-		return new ShaderLabFile(viewProvider);
+		return new PsiFileBase(viewProvider, CGLanguage.INSTANCE)
+		{
+		};
 	}
 
 	@NotNull

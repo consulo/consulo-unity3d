@@ -93,4 +93,9 @@ public class SharpLabElementVisitor extends PsiElementVisitor
 	{
 		visitElement(value);
 	}
+
+	public void visitCGScript(ShaderCGScript script)
+	{
+		visitElement(script);
+	}
 }

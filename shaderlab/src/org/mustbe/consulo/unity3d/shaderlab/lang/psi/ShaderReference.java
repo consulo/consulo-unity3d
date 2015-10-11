@@ -29,6 +29,7 @@ import org.mustbe.consulo.unity3d.shaderlab.ide.refactoring.ShaderRefactorUtil;
 import org.mustbe.consulo.unity3d.shaderlab.lang.ShaderMaterialAttribute;
 import org.mustbe.consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabRole;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.stub.index.ShaderDefIndex;
+import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.icons.AllIcons;
 import com.intellij.lang.ASTNode;
@@ -39,6 +40,7 @@ import com.intellij.psi.PsiQualifiedReferenceElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.tree.TokenSet;
+import com.intellij.util.Consumer;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
@@ -125,8 +127,7 @@ public class ShaderReference extends ShaderLabElement implements PsiQualifiedRef
 				try
 				{
 					ShaderMaterialAttribute attribute = ShaderMaterialAttribute.valueOf(referenceName);
-					DotNetTypeDeclaration type = DotNetPsiSearcher.getInstance(getProject()).findType(attribute.getType(), scope,
-							DotNetPsiSearcher.TypeResoleKind.UNKNOWN, CSharpTransform.INSTANCE);
+					DotNetTypeDeclaration type = DotNetPsiSearcher.getInstance(getProject()).findType(attribute.getType(), scope, DotNetPsiSearcher.TypeResoleKind.UNKNOWN, CSharpTransform.INSTANCE);
 					if(type != null)
 					{
 						return type;
@@ -190,7 +191,7 @@ public class ShaderReference extends ShaderLabElement implements PsiQualifiedRef
 	public Object[] getVariants()
 	{
 		ResolveKind kind = kind();
-		List<LookupElementBuilder> values = new SmartList<LookupElementBuilder>();
+		final List<LookupElement> values = new SmartList<LookupElement>();
 		switch(kind)
 		{
 			case ATTRIBUTE:
@@ -205,26 +206,38 @@ public class ShaderReference extends ShaderLabElement implements PsiQualifiedRef
 				PsiFile containingFile = getContainingFile();
 				if(containingFile instanceof ShaderLabFile)
 				{
-					for(ShaderProperty shaderProperty : ((ShaderLabFile) containingFile).getProperties())
+					consumeProperties((ShaderLabFile) containingFile, new Consumer<LookupElement>()
 					{
-						String name = shaderProperty.getName();
-						if(name == null)
+						@Override
+						public void consume(LookupElement lookupElement)
 						{
-							continue;
+							values.add(lookupElement);
 						}
-						LookupElementBuilder builder = LookupElementBuilder.create(name);
-						builder = builder.withIcon(AllIcons.Nodes.Property);
-						ShaderPropertyType type = shaderProperty.getType();
-						if(type != null)
-						{
-							builder = builder.withTypeText(type.getTargetText(), true);
-						}
-						values.add(builder);
-					}
+					});
 				}
 				break;
 		}
 		return values.toArray();
+	}
+
+	public static void consumeProperties(@NotNull ShaderLabFile file, @NotNull Consumer<LookupElement> consumer)
+	{
+		for(ShaderProperty shaderProperty : file.getProperties())
+		{
+			String name = shaderProperty.getName();
+			if(name == null)
+			{
+				continue;
+			}
+			LookupElementBuilder builder = LookupElementBuilder.create(name);
+			builder = builder.withIcon(AllIcons.Nodes.Property);
+			ShaderPropertyType type = shaderProperty.getType();
+			if(type != null)
+			{
+				builder = builder.withTypeText(type.getTargetText(), true);
+			}
+			consumer.consume(builder);
+		}
 	}
 
 	@Override

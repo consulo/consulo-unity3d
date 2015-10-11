@@ -82,6 +82,19 @@
               </binaries>
             </library>
           </orderEntry>
+          <orderEntry type="module" module-name="cg-shader" />
+        </module-layer>
+      </module>
+      <module name="cg-shader" dirurl="file://$PROJECT_DIR$/cg-shader" current-layer="Default">
+        <module-layer name="Default">
+          <extension id="consulo-plugin" sdk-module-name="consulo-unity3d" sdk-name="" />
+          <extension id="java" sdk-module-name="" sdk-name="1.6" language-level-module-name="consulo-unity3d" language-level-name="" special-dir-location="SOURCE_DIR" />
+          <content url="file://$MODULE_DIR$">
+            <content-folder type="PRODUCTION" url="file://$MODULE_DIR$/src" />
+          </content>
+          <orderEntry type="module-extension-sdk" extension-id="consulo-plugin" />
+          <orderEntry type="module-extension-sdk" extension-id="java" />
+          <orderEntry type="sourceFolder" />
         </module-layer>
       </module>
     </modules>

@@ -39,7 +39,7 @@ public class ShaderLabParser implements PsiParser
 	public ASTNode parse(@NotNull IElementType root, @NotNull PsiBuilder b, @NotNull LanguageVersion languageVersion)
 	{
 		ShaderLabParserBuilder builder = new ShaderLabParserBuilder(b);
-		b.setDebugMode(true);
+		//b.setDebugMode(true);
 
 		PsiBuilder.Marker mark = builder.mark();
 
