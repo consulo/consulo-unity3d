@@ -94,7 +94,10 @@ public class UnityProcessDialog extends ChooseElementsDialog<UnityProcess>
 		List<UnityProcess> items = new ArrayList<UnityProcess>(players.size() + 1);
 		for(UnityPlayer player : players)
 		{
-			items.add(new UnityProcess((int) player.getGuid(), player.getId(), player.getIp(), player.getDebuggerPort()));
+			if(player.isSupportDebugging())
+			{
+				items.add(new UnityProcess((int) player.getGuid(), player.getId(), player.getIp(), player.getDebuggerPort()));
+			}
 		}
 		JavaSysMon javaSysMon = new JavaSysMon();
 		ProcessInfo[] processInfos = javaSysMon.processTable();
@@ -103,7 +106,7 @@ public class UnityProcessDialog extends ChooseElementsDialog<UnityProcess>
 			String name = processInfo.getName();
 			if((StringUtil.startsWithIgnoreCase(name, "unity") ||
 					StringUtil.containsIgnoreCase(name, "Unity.app"))
-					&& !StringUtil.containsIgnoreCase(name, "Unity Helper")
+					&& !(StringUtil.containsIgnoreCase(name, "Unity") && StringUtil.containsIgnoreCase(name, "Helper")) //ignore 'UnityHelper' and 'Unity Helper'
 					&& !StringUtil.containsIgnoreCase(name, "UnityShader"))
 			{
 				items.add(new UnityProcess(processInfo.getPid(), name, "localhost", 56000 + processInfo.getPid() % 1000));

@@ -23,6 +23,7 @@ import org.mustbe.consulo.dotnet.execution.DebugConnectionInfo;
 import com.intellij.execution.configurations.RunProfile;
 import com.intellij.execution.filters.TextConsoleBuilderFactory;
 import com.intellij.execution.process.ProcessHandler;
+import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.ExecutionConsole;
 import com.intellij.xdebugger.XDebugSession;
 
@@ -32,12 +33,9 @@ import com.intellij.xdebugger.XDebugSession;
  */
 public class UnityDebugProcess extends DotNetDebugProcess
 {
-	private UnityProcess mySelected;
-
-	public UnityDebugProcess(XDebugSession session, DebugConnectionInfo debugConnectionInfo, RunProfile runProfile, UnityProcess selected)
+	public UnityDebugProcess(XDebugSession session, DebugConnectionInfo debugConnectionInfo, RunProfile runProfile)
 	{
 		super(session, debugConnectionInfo, runProfile);
-		mySelected = selected;
 	}
 
 	@Nullable
@@ -51,6 +49,8 @@ public class UnityDebugProcess extends DotNetDebugProcess
 	@Override
 	public ExecutionConsole createConsole()
 	{
-		return TextConsoleBuilderFactory.getInstance().createBuilder(getSession().getProject()).getConsole();
+		ConsoleView consoleView = TextConsoleBuilderFactory.getInstance().createBuilder(getSession().getProject()).getConsole();
+		consoleView.attachToProcess(getProcessHandler());
+		return consoleView;
 	}
 }

@@ -28,10 +28,9 @@ import com.intellij.execution.configurations.RunProfile;
 import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.executors.DefaultDebugExecutor;
 import com.intellij.execution.process.ProcessHandler;
+import com.intellij.execution.process.ProcessOutputTypes;
 import com.intellij.execution.runners.DefaultProgramRunner;
 import com.intellij.execution.runners.ExecutionEnvironment;
-import com.intellij.execution.ui.ConsoleView;
-import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.xdebugger.XDebugProcess;
@@ -78,14 +77,15 @@ public class Unity3dAttachRunner extends DefaultProgramRunner
 			public XDebugProcess start(@NotNull final XDebugSession session) throws ExecutionException
 			{
 				DebugConnectionInfo debugConnectionInfo = new DebugConnectionInfo(selected.getHost(), selected.getPort(), true);
-				final UnityDebugProcess process = new UnityDebugProcess(session, debugConnectionInfo, environment.getRunProfile(), selected);
+				final UnityDebugProcess process = new UnityDebugProcess(session, debugConnectionInfo, environment.getRunProfile());
 				process.getDebugThread().addListener(new DotNetVirtualMachineListener()
 				{
 					@Override
 					public void connectionSuccess(@NotNull VirtualMachine machine)
 					{
-						session.getConsoleView().print(String.format("Success attach to '%s' at %s:%d", selected.getName(), selected.getHost(),
-								selected.getPort()), ConsoleViewContentType.SYSTEM_OUTPUT);
+						ProcessHandler processHandler = process.getProcessHandler();
+						processHandler.notifyTextAvailable(String.format("Success attach to '%s' at %s:%d", selected.getName(), selected.getHost(),
+								selected.getPort()), ProcessOutputTypes.STDOUT);
 					}
 
 					@Override
@@ -97,12 +97,8 @@ public class Unity3dAttachRunner extends DefaultProgramRunner
 					public void connectionFailed()
 					{
 						ProcessHandler processHandler = process.getProcessHandler();
-						ConsoleView consoleView = session.getConsoleView();
-						if(consoleView != null)
-						{
-							consoleView.print(String.format("Failed attach to '%s' at %s:%d", selected.getName(), selected.getHost(),
-									selected.getPort()), ConsoleViewContentType.ERROR_OUTPUT);
-						}
+						processHandler.notifyTextAvailable(String.format("Failed attach to '%s' at %s:%d", selected.getName(), selected.getHost(),
+								selected.getPort()), ProcessOutputTypes.STDERR);
 						StopProcessAction.stopProcess(processHandler);
 					}
 				});
