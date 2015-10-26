@@ -46,8 +46,14 @@ public class Unity3dChildModuleExtension extends ModuleExtensionImpl<Unity3dChil
 
 	@NotNull
 	@Override
+	@RequiredReadAction
 	public DotNetNamespaceGeneratePolicy getNamespaceGeneratePolicy()
 	{
+		Unity3dRootModuleExtension rootModuleExtension = Unity3dModuleExtensionUtil.getRootModuleExtension(getProject());
+		if(rootModuleExtension != null)
+		{
+			return rootModuleExtension.getNamespaceGeneratePolicy();
+		}
 		return UnityNamespaceGeneratePolicy.INSTANCE;
 	}
 

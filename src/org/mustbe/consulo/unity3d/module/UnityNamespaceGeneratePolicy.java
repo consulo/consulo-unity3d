@@ -17,7 +17,25 @@ import com.intellij.psi.PsiDirectory;
  */
 public class UnityNamespaceGeneratePolicy implements DotNetNamespaceGeneratePolicy
 {
-	public static final UnityNamespaceGeneratePolicy INSTANCE = new UnityNamespaceGeneratePolicy();
+	public static final UnityNamespaceGeneratePolicy INSTANCE = new UnityNamespaceGeneratePolicy(null);
+
+	public static UnityNamespaceGeneratePolicy createOrGet(@NotNull Unity3dRootModuleExtension rootModuleExtension)
+	{
+		String namespacePrefix = rootModuleExtension.getNamespacePrefix();
+		if(namespacePrefix != null)
+		{
+			return new UnityNamespaceGeneratePolicy(namespacePrefix);
+		}
+		return INSTANCE;
+	}
+
+	@Nullable
+	private String myNamespacePrefix;
+
+	public UnityNamespaceGeneratePolicy(@Nullable String namespacePrefix)
+	{
+		myNamespacePrefix = namespacePrefix;
+	}
 
 	@RequiredReadAction
 	@Nullable
@@ -28,7 +46,7 @@ public class UnityNamespaceGeneratePolicy implements DotNetNamespaceGeneratePoli
 		VirtualFile baseDir = project.getBaseDir();
 		if(baseDir == null)
 		{
-			return null;
+			return myNamespacePrefix;
 		}
 
 		VirtualFile targetDir = psiDirectory.getVirtualFile();
@@ -39,9 +57,14 @@ public class UnityNamespaceGeneratePolicy implements DotNetNamespaceGeneratePoli
 			String relativePath = VfsUtil.getRelativePath(targetDir, assetsDirectory, '.');
 			if(relativePath != null)
 			{
-				return StringUtil.replaceChar(relativePath, ' ', '_');
+				String replacedString = StringUtil.replaceChar(relativePath, ' ', '_');
+				if(!StringUtil.isEmpty(myNamespacePrefix))
+				{
+					return myNamespacePrefix + "." + replacedString;
+				}
+				return replacedString;
 			}
 		}
-		return null;
+		return myNamespacePrefix;
 	}
 }

@@ -54,6 +54,11 @@ public class Unity3dRootMutableModuleExtension extends Unity3dRootModuleExtensio
 		myOutputDirectory = dir;
 	}
 
+	public void setNamespacePrefix(@Nullable String prefix)
+	{
+		myNamespacePrefix = prefix;
+	}
+
 	@NotNull
 	@Override
 	public MutableModuleInheritableNamedPointer<Sdk> getInheritableSdk()
@@ -81,6 +86,7 @@ public class Unity3dRootMutableModuleExtension extends Unity3dRootModuleExtensio
 		return isModifiedImpl(ex) ||
 				myBuildTarget != ex.getBuildTarget() ||
 				!Comparing.equal(getFileName(), ex.getFileName()) ||
+				!Comparing.equal(getNamespacePrefix(), ex.getNamespacePrefix()) ||
 				!Comparing.equal(getOutputDir(), ex.getOutputDir());
 	}
 }

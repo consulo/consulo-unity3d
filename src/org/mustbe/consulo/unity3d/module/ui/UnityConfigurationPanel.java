@@ -174,6 +174,18 @@ public class UnityConfigurationPanel extends JPanel
 			}
 		};
 
+		final JBTextField namespacePrefixField = new JBTextField(extension.getNamespacePrefix());
+		namespacePrefixField.getDocument().addDocumentListener(new DocumentAdapter()
+		{
+			@Override
+			protected void textChanged(DocumentEvent documentEvent)
+			{
+				extension.setNamespacePrefix(namespacePrefixField.getText());
+			}
+		});
+
+		add(LabeledComponent.left(namespacePrefixField, "Namespace Prefix:"));
+
 		final JBList variableList = new JBList(dataModel);
 		ToolbarDecorator variableDecorator = ToolbarDecorator.createDecorator(variableList);
 		variableDecorator.setAddAction(new AnActionButtonRunnable()
@@ -184,12 +196,14 @@ public class UnityConfigurationPanel extends JPanel
 				String name = Messages.showInputDialog(UnityConfigurationPanel.this, DotNetBundle.message("new.variable.message"),
 						DotNetBundle.message("new.variable.title"), null, null, new InputValidator()
 				{
+					@RequiredDispatchThread
 					@Override
 					public boolean checkInput(String s)
 					{
 						return !variables.contains(s);
 					}
 
+					@RequiredDispatchThread
 					@Override
 					public boolean canClose(String s)
 					{

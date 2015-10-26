@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.mustbe.consulo.RequiredReadAction;
 import org.mustbe.consulo.dotnet.module.DotNetNamespaceGeneratePolicy;
 import org.mustbe.consulo.dotnet.module.extension.BaseDotNetSimpleModuleExtension;
@@ -49,6 +50,7 @@ public class Unity3dRootModuleExtension extends BaseDotNetSimpleModuleExtension<
 	protected Unity3dTarget myBuildTarget = Unity3dTarget.Editor;
 	protected String myFileName = FILE_NAME;
 	protected String myOutputDirectory = DotNetModuleExtension.DEFAULT_OUTPUT_DIR;
+	protected String myNamespacePrefix = null;
 
 	public Unity3dRootModuleExtension(@NotNull String id, @NotNull ModuleRootLayer rootModel)
 	{
@@ -59,7 +61,7 @@ public class Unity3dRootModuleExtension extends BaseDotNetSimpleModuleExtension<
 	@Override
 	public DotNetNamespaceGeneratePolicy getNamespaceGeneratePolicy()
 	{
-		return UnityNamespaceGeneratePolicy.INSTANCE;
+		return UnityNamespaceGeneratePolicy.createOrGet(this);
 	}
 
 	@Override
@@ -69,6 +71,7 @@ public class Unity3dRootModuleExtension extends BaseDotNetSimpleModuleExtension<
 		myBuildTarget = mutableModuleExtension.getBuildTarget();
 		myFileName = mutableModuleExtension.myFileName;
 		myOutputDirectory = mutableModuleExtension.myOutputDirectory;
+		myNamespacePrefix = mutableModuleExtension.myNamespacePrefix;
 	}
 
 	@Override
@@ -78,6 +81,10 @@ public class Unity3dRootModuleExtension extends BaseDotNetSimpleModuleExtension<
 		element.setAttribute("output-dir", myOutputDirectory);
 		element.setAttribute("build-target", myBuildTarget.name());
 		element.setAttribute("file-name", myFileName);
+		if(myNamespacePrefix != null)
+		{
+			element.setAttribute("namespace-prefix", myNamespacePrefix);
+		}
 	}
 
 	@RequiredReadAction
@@ -88,6 +95,7 @@ public class Unity3dRootModuleExtension extends BaseDotNetSimpleModuleExtension<
 		myFileName = element.getAttributeValue("file-name", FILE_NAME);
 		myOutputDirectory = element.getAttributeValue("output-dir", DotNetModuleExtension.DEFAULT_OUTPUT_DIR);
 		myBuildTarget = Unity3dTarget.valueOf(element.getAttributeValue("build-target", Unity3dTarget.Editor.name()));
+		myNamespacePrefix = element.getAttributeValue("namespace-prefix");
 	}
 
 	@NotNull
@@ -100,6 +108,12 @@ public class Unity3dRootModuleExtension extends BaseDotNetSimpleModuleExtension<
 	public String getOutputDir()
 	{
 		return StringUtil.notNullizeIfEmpty(myOutputDirectory, DotNetModuleExtension.DEFAULT_OUTPUT_DIR);
+	}
+
+	@Nullable
+	public String getNamespacePrefix()
+	{
+		return myNamespacePrefix;
 	}
 
 	@NotNull
