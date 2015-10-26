@@ -68,6 +68,8 @@ import com.intellij.util.ui.UIUtil;
 @Logger
 public class Unity3dProjectUtil
 {
+	public static final String ASSETS_DIRECTORY = "Assets";
+
 	public static final Key<Getter<Sdk>> NEWLY_IMPORTED_PROJECT_SDK = Key.create("unity.new.project");
 
 	@Nullable
@@ -178,7 +180,7 @@ public class Unity3dProjectUtil
 			MultiMap<Module, VirtualFile> virtualFilesByModule,
 			ProgressIndicator progressIndicator)
 	{
-		String[] paths = {"Assets"};
+		String[] paths = {ASSETS_DIRECTORY};
 		return createAndSetupModule("Assembly-CSharp", project, newModel, paths, unityBundle, new Consumer<ModuleRootLayerImpl>()
 		{
 			@Override
@@ -235,7 +237,7 @@ public class Unity3dProjectUtil
 
 		final VirtualFile baseDir = project.getBaseDir();
 
-		final VirtualFile assetsDir = baseDir.findFileByRelativePath("Assets");
+		final VirtualFile assetsDir = baseDir.findFileByRelativePath(ASSETS_DIRECTORY);
 		if(assetsDir != null)
 		{
 			VfsUtil.visitChildrenRecursively(assetsDir, new VirtualFileVisitor()

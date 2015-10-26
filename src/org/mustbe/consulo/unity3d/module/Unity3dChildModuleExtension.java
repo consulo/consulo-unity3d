@@ -25,6 +25,7 @@ import org.consulo.module.extension.impl.ModuleExtensionImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.mustbe.consulo.RequiredReadAction;
+import org.mustbe.consulo.dotnet.module.DotNetNamespaceGeneratePolicy;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkType;
 import com.intellij.openapi.roots.ModuleRootLayer;
@@ -41,6 +42,13 @@ public class Unity3dChildModuleExtension extends ModuleExtensionImpl<Unity3dChil
 	public Unity3dChildModuleExtension(@NotNull String id, @NotNull ModuleRootLayer moduleRootLayer)
 	{
 		super(id, moduleRootLayer);
+	}
+
+	@NotNull
+	@Override
+	public DotNetNamespaceGeneratePolicy getNamespaceGeneratePolicy()
+	{
+		return UnityNamespaceGeneratePolicy.INSTANCE;
 	}
 
 	@NotNull

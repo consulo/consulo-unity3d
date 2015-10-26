@@ -22,6 +22,7 @@ import java.util.List;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.mustbe.consulo.RequiredReadAction;
+import org.mustbe.consulo.dotnet.module.DotNetNamespaceGeneratePolicy;
 import org.mustbe.consulo.dotnet.module.extension.BaseDotNetSimpleModuleExtension;
 import org.mustbe.consulo.dotnet.module.extension.DotNetModuleExtension;
 import org.mustbe.consulo.unity3d.bundle.Unity3dBundleType;
@@ -52,6 +53,13 @@ public class Unity3dRootModuleExtension extends BaseDotNetSimpleModuleExtension<
 	public Unity3dRootModuleExtension(@NotNull String id, @NotNull ModuleRootLayer rootModel)
 	{
 		super(id, rootModel);
+	}
+
+	@NotNull
+	@Override
+	public DotNetNamespaceGeneratePolicy getNamespaceGeneratePolicy()
+	{
+		return UnityNamespaceGeneratePolicy.INSTANCE;
 	}
 
 	@Override
