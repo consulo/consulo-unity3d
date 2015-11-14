@@ -146,5 +146,7 @@
 		<projectViewNodeDecorator implementation="org.mustbe.consulo.unity3d.ide.projectView.Unity3dProjectViewNodeDecorator" />
 		<possibleModuleForFileResolver implementation="org.mustbe.consulo.unity3d.projectImport.Unity3dPossibleModuleForFileResolver"/>
 		<fileTypeDetector implementation="org.mustbe.consulo.unity3d.scene.Unity3dSceneFileTypeDetector" />
+
+		<httpRequestHandler implementation="org.mustbe.consulo.unity3d.jsonApi.UnityOpenFilePostHandler" />
 	</extensions>
 </idea-plugin>
