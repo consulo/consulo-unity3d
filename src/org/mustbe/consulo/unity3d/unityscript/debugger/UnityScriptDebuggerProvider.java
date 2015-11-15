@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.mustbe.consulo.dotnet.debugger.DotNetDebugContext;
 import org.mustbe.consulo.dotnet.debugger.DotNetDebuggerProvider;
+import org.mustbe.consulo.dotnet.psi.DotNetReferenceExpression;
 import org.mustbe.consulo.unity3d.unityscript.lang.UnityScriptLanguageVersion;
 import com.intellij.lang.Language;
 import com.intellij.lang.javascript.JavascriptLanguage;
@@ -51,6 +52,15 @@ public class UnityScriptDebuggerProvider extends DotNetDebuggerProvider
 			@Nullable PsiElement element,
 			@NotNull XDebuggerEvaluator.XEvaluationCallback xEvaluationCallback,
 			@Nullable XSourcePosition sourcePosition)
+	{
+
+	}
+
+	@Override
+	public void evaluate(@NotNull StackFrameMirror stackFrameMirror,
+			@NotNull DotNetDebugContext dotNetDebugContext,
+			@NotNull DotNetReferenceExpression dotNetReferenceExpression,
+			@NotNull XDebuggerEvaluator.XEvaluationCallback xEvaluationCallback)
 	{
 
 	}
