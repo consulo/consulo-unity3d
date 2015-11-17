@@ -16,6 +16,8 @@
 
 package org.mustbe.consulo.unity3d.unityscript.debugger;
 
+import java.util.Set;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.mustbe.consulo.dotnet.debugger.DotNetDebugContext;
@@ -28,8 +30,10 @@ import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.util.Consumer;
 import com.intellij.xdebugger.XSourcePosition;
 import com.intellij.xdebugger.evaluation.XDebuggerEvaluator;
+import com.intellij.xdebugger.frame.XNamedValue;
 import mono.debugger.StackFrameMirror;
 
 /**
@@ -60,7 +64,8 @@ public class UnityScriptDebuggerProvider extends DotNetDebuggerProvider
 	public void evaluate(@NotNull StackFrameMirror stackFrameMirror,
 			@NotNull DotNetDebugContext dotNetDebugContext,
 			@NotNull DotNetReferenceExpression dotNetReferenceExpression,
-			@NotNull XDebuggerEvaluator.XEvaluationCallback xEvaluationCallback)
+			@NotNull Set<Object> set,
+			@NotNull Consumer<XNamedValue> consumer)
 	{
 
 	}
