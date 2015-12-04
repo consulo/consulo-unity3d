@@ -48,8 +48,8 @@ public class UnitySyncModuleRootLayerListener extends ModuleRootLayerListener.Ad
 		}
 
 		// if we dont have unity extension dont try sync switch
-		Module rootModule = Unity3dModuleExtensionUtil.getRootModule(project);
-		if(rootModule == null)
+		Unity3dRootModuleExtension unity3dRootModuleExtension = Unity3dModuleExtensionUtil.getRootModuleExtension(project);
+		if(unity3dRootModuleExtension == null)
 		{
 			return;
 		}
