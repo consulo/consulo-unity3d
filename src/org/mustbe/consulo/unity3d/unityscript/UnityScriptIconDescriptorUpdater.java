@@ -3,12 +3,12 @@ package org.mustbe.consulo.unity3d.unityscript;
 import org.jetbrains.annotations.NotNull;
 import org.mustbe.consulo.RequiredReadAction;
 import org.mustbe.consulo.unity3d.Unity3dIcons;
-import org.mustbe.consulo.unity3d.module.Unity3dModuleExtensionUtil;
+import org.mustbe.consulo.unity3d.module.Unity3dRootModuleExtension;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.IconDescriptor;
 import com.intellij.ide.IconDescriptorUpdater;
 import com.intellij.lang.javascript.psi.JSFile;
-import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.psi.PsiElement;
 
 /**
@@ -23,8 +23,8 @@ public class UnityScriptIconDescriptorUpdater implements IconDescriptorUpdater
 	{
 		if(element instanceof JSFile)
 		{
-			Module rootModule = Unity3dModuleExtensionUtil.getRootModule(element.getProject());
-			if(rootModule == null)
+			Unity3dRootModuleExtension moduleExtension = ModuleUtilCore.getExtension(element, Unity3dRootModuleExtension.class);
+			if(moduleExtension == null)
 			{
 				return;
 			}
