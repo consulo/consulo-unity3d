@@ -3,13 +3,13 @@ package org.mustbe.consulo.unity3d.unityscript.lang;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.mustbe.consulo.javascript.lang.BaseJavaScriptLanguageVersion;
+import org.mustbe.consulo.javascript.lang.JavaScriptLanguage;
 import org.mustbe.consulo.javascript.lang.parsing.EcmaScript4Parser;
 import org.mustbe.consulo.unity3d.unityscript.module.extension.Unity3dScriptModuleExtension;
 import com.intellij.lang.LanguageVersionWithDefinition;
 import com.intellij.lang.PsiParser;
 import com.intellij.lang.javascript.DialectOptionHolder;
 import com.intellij.lang.javascript.JavaScriptParsingLexer;
-import com.intellij.lang.javascript.JavascriptLanguage;
 import com.intellij.lang.javascript.highlighting.JSHighlighter;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.module.ModuleUtilCore;
@@ -22,7 +22,7 @@ import com.intellij.psi.PsiFile;
  * @author VISTALL
  * @since 04.04.2015
  */
-public class UnityScriptLanguageVersion extends BaseJavaScriptLanguageVersion implements LanguageVersionWithDefinition<JavascriptLanguage>
+public class UnityScriptLanguageVersion extends BaseJavaScriptLanguageVersion implements LanguageVersionWithDefinition<JavaScriptLanguage>
 {
 	private final DialectOptionHolder myDialectOptionHolder = new DialectOptionHolder(true, false);
 
