@@ -23,9 +23,9 @@ import org.jetbrains.annotations.Nullable;
 import org.mustbe.consulo.dotnet.debugger.DotNetDebugContext;
 import org.mustbe.consulo.dotnet.debugger.DotNetDebuggerProvider;
 import org.mustbe.consulo.dotnet.psi.DotNetReferenceExpression;
+import org.mustbe.consulo.javascript.lang.JavaScriptLanguage;
 import org.mustbe.consulo.unity3d.unityscript.lang.UnityScriptLanguageVersion;
 import com.intellij.lang.Language;
-import com.intellij.lang.javascript.JavascriptLanguage;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -79,6 +79,6 @@ public class UnityScriptDebuggerProvider extends DotNetDebuggerProvider
 	@Override
 	public Language getEditorLanguage()
 	{
-		return JavascriptLanguage.INSTANCE;
+		return JavaScriptLanguage.INSTANCE;
 	}
 }
