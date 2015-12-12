@@ -5,10 +5,13 @@ import org.consulo.module.extension.impl.ModuleExtensionImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.mustbe.consulo.RequiredReadAction;
+import org.mustbe.consulo.javascript.lang.JavaScriptLanguage;
 import org.mustbe.consulo.javascript.module.extension.JavaScriptModuleExtension;
 import org.mustbe.consulo.unity3d.module.EmptyModuleInheritableNamedPointer;
 import org.mustbe.consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import org.mustbe.consulo.unity3d.module.Unity3dRootModuleExtension;
+import org.mustbe.consulo.unity3d.unityscript.lang.UnityScriptLanguageVersion;
+import com.intellij.lang.LanguageVersion;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkType;
 import com.intellij.openapi.roots.ModuleRootLayer;
@@ -63,5 +66,12 @@ public class Unity3dScriptModuleExtension extends ModuleExtensionImpl<Unity3dScr
 	public Class<? extends SdkType> getSdkTypeClass()
 	{
 		throw new UnsupportedOperationException("Use root module extension");
+	}
+
+	@NotNull
+	@Override
+	public LanguageVersion<JavaScriptLanguage> getLanguageVersion()
+	{
+		return UnityScriptLanguageVersion.getInstance();
 	}
 }
