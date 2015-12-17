@@ -51,6 +51,9 @@
 		<component>
 			<implementation-class>org.mustbe.consulo.unity3d.run.debugger.UnityPlayerService</implementation-class>
 		</component>
+		<component>
+			<implementation-class>org.mustbe.consulo.unity3d.Unity3dLocalFileSystemComponent</implementation-class>
+		</component>
 	</application-components>
 
 	<project-components>
