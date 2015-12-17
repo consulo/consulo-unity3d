@@ -61,6 +61,6 @@ public class ShaderLabFileType extends LanguageFileType
 	@Override
 	public Icon getIcon()
 	{
-		return Unity3dIcons.Unity3d;
+		return Unity3dIcons.Shader;
 	}
 }
