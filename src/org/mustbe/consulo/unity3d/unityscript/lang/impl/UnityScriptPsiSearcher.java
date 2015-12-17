@@ -39,6 +39,6 @@ public class UnityScriptPsiSearcher extends DotNetPsiSearcher
 			return Collections.emptyList();
 		}
 		JSFile firstItem = ContainerUtil.getFirstItem(jsFiles);
-		return Collections.singletonList(new UnityScriptFileToDotNetTypeDeclaration(s, firstItem));
+		return Collections.singletonList(new UnityScriptDotNetTypeDeclaration(s, firstItem));
 	}
 }

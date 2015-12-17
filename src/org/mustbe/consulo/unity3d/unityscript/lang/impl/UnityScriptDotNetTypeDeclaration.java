@@ -22,13 +22,13 @@ import com.intellij.util.IncorrectOperationException;
  * @author VISTALL
  * @since 19.07.2015
  */
-public class UnityScriptFileToDotNetTypeDeclaration extends LightElement implements DotNetTypeDeclaration
+public class UnityScriptDotNetTypeDeclaration extends LightElement implements DotNetTypeDeclaration
 {
 	private String myNameWithoutExtension;
 	private JSFile myFile;
 
 	@RequiredReadAction
-	public UnityScriptFileToDotNetTypeDeclaration(@NotNull String nameWithoutExtension, @NotNull JSFile file)
+	public UnityScriptDotNetTypeDeclaration(@NotNull String nameWithoutExtension, @NotNull JSFile file)
 	{
 		super(file.getManager(), file.getLanguage());
 		myNameWithoutExtension = nameWithoutExtension;
