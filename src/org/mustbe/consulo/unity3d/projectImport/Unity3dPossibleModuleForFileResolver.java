@@ -34,73 +34,62 @@ public class Unity3dPossibleModuleForFileResolver implements ContentEntryFileLis
 	{
 		if(virtualFile.getFileType() == CSharpFileType.INSTANCE)
 		{
-			Module module = Unity3dModuleExtensionUtil.getRootModule(project);
-			if(module == null)
-			{
-				return null;
-			}
-
-			VirtualFile baseDir = project.getBaseDir();
-			assert baseDir != null;
-			VirtualFile assetsDir = baseDir.findChild("Assets");
-			if(assetsDir == null)
-			{
-				return null;
-			}
-
-			if(!VfsUtil.isAncestor(assetsDir, virtualFile, true))
-			{
-				return null;
-			}
-
-			VirtualFile parent = virtualFile.getParent();
-			while(!assetsDir.equals(parent))
-			{
-				if(parent.getName().equals("Editor"))
-				{
-					return ModuleManager.getInstance(project).findModuleByName("Assembly-CSharp-Editor");
-				}
-				parent = parent.getParent();
-			}
-
-			String[] paths = new String[]{
-					"Assets/Standard Assets",
-					"Assets/Pro Standard Assets",
-					"Assets/Plugins"
-			};
-
-			for(String path : paths)
-			{
-				VirtualFile pathFile = baseDir.findFileByRelativePath(path);
-				if(pathFile != null && VfsUtil.isAncestor(pathFile, virtualFile, true))
-				{
-					return ModuleManager.getInstance(project).findModuleByName("Assembly-CSharp-firstpass");
-				}
-			}
-			return ModuleManager.getInstance(project).findModuleByName("Assembly-CSharp");
+			return findModule(project, virtualFile, "CSharp");
 		}
 		else if(virtualFile.getFileType() == JavaScriptFileType.INSTANCE)
 		{
-			Module module = Unity3dModuleExtensionUtil.getRootModule(project);
-			if(module == null)
-			{
-				return null;
-			}
-
-			VirtualFile baseDir = project.getBaseDir();
-			assert baseDir != null;
-			VirtualFile assetsDir = baseDir.findChild("Assets");
-			if(assetsDir == null)
-			{
-				return null;
-			}
-
-			if(!VfsUtil.isAncestor(assetsDir, virtualFile, true))
-			{
-				return null;
-			}
-			return ModuleManager.getInstance(project).findModuleByName("Assembly-UnityScript-firstpass");
+			return findModule(project, virtualFile, "UnityScript");
 		}
 		return null;
+	}
+
+	@Nullable
+	@RequiredReadAction
+	private Module findModule(Project project, VirtualFile virtualFile, String modulePrefix)
+	{
+		Module module = Unity3dModuleExtensionUtil.getRootModule(project);
+		if(module == null)
+		{
+			return null;
+		}
+
+		VirtualFile baseDir = project.getBaseDir();
+		assert baseDir != null;
+		VirtualFile assetsDir = baseDir.findChild("Assets");
+		if(assetsDir == null)
+		{
+			return null;
+		}
+
+		if(!VfsUtil.isAncestor(assetsDir, virtualFile, true))
+		{
+			return null;
+		}
+
+		VirtualFile parent = virtualFile.getParent();
+		while(!assetsDir.equals(parent))
+		{
+			if(parent.getName().equals("Editor"))
+			{
+				return ModuleManager.getInstance(project).findModuleByName("Assembly-" + modulePrefix + "-Editor");
+			}
+			parent = parent.getParent();
+		}
+
+		String[] paths = new String[]{
+				"Assets/Standard Assets",
+				"Assets/Pro Standard Assets",
+				"Assets/Plugins"
+		};
+
+		for(String path : paths)
+		{
+			VirtualFile pathFile = baseDir.findFileByRelativePath(path);
+			if(pathFile != null && VfsUtil.isAncestor(pathFile, virtualFile, true))
+			{
+				return ModuleManager.getInstance(project).findModuleByName("Assembly-" + modulePrefix + "-firstpass");
+			}
+		}
+		return ModuleManager.getInstance(project).findModuleByName("Assembly-" + modulePrefix);
 	}
 }
