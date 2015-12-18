@@ -67,6 +67,10 @@
 		<indexer implementation="org.mustbe.consulo.unity3d.unityscript.index.UnityScriptIndexer" />
 	</extensions>
 
+	<extensions defaultExtensionNs="org.mustbe.consulo.csharp">
+		<toNativeElementTransformer implementation="org.mustbe.consulo.unity3d.unityscript.lang.impl.csharp.UnityScriptToNativeElementTransformer" />
+	</extensions>
+
 	<extensions defaultExtensionNs="org.mustbe.consulo.dotnet.core">
 		<debugger.provider implementation="org.mustbe.consulo.unity3d.unityscript.debugger.UnityScriptDebuggerProvider" />
 		<debugger.sourceLineResolver language="JavaScript"

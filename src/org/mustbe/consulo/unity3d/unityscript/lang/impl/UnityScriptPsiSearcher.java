@@ -4,9 +4,12 @@ import java.util.Collection;
 import java.util.Collections;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.mustbe.consulo.RequiredReadAction;
 import org.mustbe.consulo.dotnet.psi.DotNetTypeDeclaration;
+import org.mustbe.consulo.dotnet.resolve.DotNetNamespaceAsElement;
 import org.mustbe.consulo.dotnet.resolve.DotNetPsiSearcher;
+import org.mustbe.consulo.javascript.lang.JavaScriptLanguage;
 import org.mustbe.consulo.unity3d.unityscript.index.UnityScriptFileByNameIndex;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.project.Project;
@@ -27,18 +30,30 @@ public class UnityScriptPsiSearcher extends DotNetPsiSearcher
 	}
 
 	@RequiredReadAction
+	@Nullable
+	@Override
+	public DotNetNamespaceAsElement findNamespace(@NotNull String qName, @NotNull GlobalSearchScope scope)
+	{
+		if(qName.isEmpty())
+		{
+			return new UnityScriptRootNamespaceAsElement(myProject, JavaScriptLanguage.INSTANCE, qName);
+		}
+		return null;
+	}
+
+	@RequiredReadAction
 	@NotNull
 	@Override
-	public Collection<? extends DotNetTypeDeclaration> findTypesImpl(@NotNull String s,
+	public Collection<? extends DotNetTypeDeclaration> findTypesImpl(@NotNull String key,
 			@NotNull GlobalSearchScope searchScope,
 			@NotNull TypeResoleKind typeResoleKind)
 	{
-		Collection<JSFile> jsFiles = UnityScriptFileByNameIndex.getInstance().get(s, myProject, searchScope);
-		if(jsFiles.isEmpty())
+		Collection<JSFile> jsFiles = UnityScriptFileByNameIndex.getInstance().get(key, myProject, searchScope);
+		JSFile jsFile = ContainerUtil.getFirstItem(jsFiles);
+		if(jsFile == null)
 		{
 			return Collections.emptyList();
 		}
-		JSFile firstItem = ContainerUtil.getFirstItem(jsFiles);
-		return Collections.singletonList(new UnityScriptDotNetTypeDeclaration(s, firstItem));
+		return Collections.singletonList(new UnityScriptDotNetTypeDeclaration(key, jsFile));
 	}
 }

@@ -4,14 +4,18 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.mustbe.consulo.RequiredReadAction;
+import org.mustbe.consulo.csharp.lang.psi.impl.source.resolve.type.CSharpTypeRefByQName;
 import org.mustbe.consulo.dotnet.psi.DotNetGenericParameter;
 import org.mustbe.consulo.dotnet.psi.DotNetGenericParameterList;
+import org.mustbe.consulo.dotnet.psi.DotNetInheritUtil;
 import org.mustbe.consulo.dotnet.psi.DotNetModifier;
 import org.mustbe.consulo.dotnet.psi.DotNetModifierList;
 import org.mustbe.consulo.dotnet.psi.DotNetNamedElement;
 import org.mustbe.consulo.dotnet.psi.DotNetTypeDeclaration;
 import org.mustbe.consulo.dotnet.psi.DotNetTypeList;
 import org.mustbe.consulo.dotnet.resolve.DotNetTypeRef;
+import org.mustbe.consulo.unity3d.Unity3dTypes;
+import com.intellij.lang.javascript.JavaScriptFileType;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -70,14 +74,14 @@ public class UnityScriptDotNetTypeDeclaration extends LightElement implements Do
 	@Override
 	public DotNetTypeRef[] getExtendTypeRefs()
 	{
-		return new DotNetTypeRef[0];
+		return new DotNetTypeRef[] {new CSharpTypeRefByQName(Unity3dTypes.UnityEngine.MonoBehaviour)};
 	}
 
 	@RequiredReadAction
 	@Override
-	public boolean isInheritor(@NotNull String s, boolean b)
+	public boolean isInheritor(@NotNull String qname, boolean deep)
 	{
-		return false;
+		return DotNetInheritUtil.isInheritor(this, qname, deep);
 	}
 
 	@Override
@@ -102,6 +106,13 @@ public class UnityScriptDotNetTypeDeclaration extends LightElement implements Do
 		return myNameWithoutExtension;
 	}
 
+	@RequiredReadAction
+	@Override
+	public String getName()
+	{
+		return getVmName();
+	}
+
 	@Nullable
 	@Override
 	public DotNetGenericParameterList getGenericParameterList()
@@ -113,7 +124,7 @@ public class UnityScriptDotNetTypeDeclaration extends LightElement implements Do
 	@Override
 	public DotNetGenericParameter[] getGenericParameters()
 	{
-		return new DotNetGenericParameter[0];
+		return DotNetGenericParameter.EMPTY_ARRAY;
 	}
 
 	@Override
@@ -180,7 +191,8 @@ public class UnityScriptDotNetTypeDeclaration extends LightElement implements Do
 	@Override
 	public PsiElement setName(@NonNls @NotNull String name) throws IncorrectOperationException
 	{
-		throw new IncorrectOperationException();
+		myFile.setName(name + "." + JavaScriptFileType.INSTANCE.getDefaultExtension());
+		return this;
 	}
 
 	@Override
