@@ -25,7 +25,7 @@ public class Unity3dYMLSceneFileType extends LanguageFileType
 	@Override
 	public String getName()
 	{
-		return "UNITY_BINARY_SCENE";
+		return "UNITY_YML_SCENE";
 	}
 
 	@NotNull
@@ -46,6 +46,6 @@ public class Unity3dYMLSceneFileType extends LanguageFileType
 	@Override
 	public Icon getIcon()
 	{
-		return Unity3dIcons.Unity3d;
+		return Unity3dIcons.Shader;
 	}
 }
