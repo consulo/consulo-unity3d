@@ -12,6 +12,7 @@
           </element>
           <element id="library" level="project" name="dd-plist" />
           <element id="library" level="project" name="javasysmon" />
+          <element id="library" level="module" name="snakeyaml" module-name="consulo-unity3d" />
         </element>
         <element id="dir-copy" path="$PROJECT_DIR$/dist" />
       </element>

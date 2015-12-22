@@ -28,4 +28,5 @@ public interface Unity3dIcons
 	Icon Js = IconLoader.getIcon("/icons/js.PNG");  // 16x16
 	Icon Shader = IconLoader.getIcon("/icons/shader.png");  // 16x16
 	Icon Unity3d = IconLoader.getIcon("/icons/unity3d.png");  // 16x16
+	Icon Unity3dLineMarker = IconLoader.getIcon("/icons/unity3dLineMarker.png");  // 12x12
 }

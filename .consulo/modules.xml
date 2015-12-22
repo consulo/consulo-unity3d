@@ -48,6 +48,16 @@
             </library>
           </orderEntry>
           <orderEntry type="library" name="javasysmon" level="project" />
+          <orderEntry type="module-library">
+            <library name="snakeyaml">
+              <binaries>
+                <root url="jar://$MODULE_DIR$/lib/snakeyaml-1.16.jar!/" />
+              </binaries>
+              <sources>
+                <root url="jar://$MODULE_DIR$/libSrc/snakeyaml-1.16-sources.jar!/" />
+              </sources>
+            </library>
+          </orderEntry>
         </module-layer>
       </module>
       <module name="shaderlab" dirurl="file://$PROJECT_DIR$/shaderlab" current-layer="Default">
