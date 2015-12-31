@@ -228,6 +228,10 @@ public class UnityCSharpLineMarkerProvider implements LineMarkerProvider
 		String name = virtualFile.getName();
 
 		VirtualFile parent = virtualFile.getParent();
+		if(parent == null)
+		{
+			return null;
+		}
 
 		VirtualFile child = parent.findChild(name + "." + Unity3dMetaFileType.INSTANCE.getDefaultExtension());
 		if(child != null)
