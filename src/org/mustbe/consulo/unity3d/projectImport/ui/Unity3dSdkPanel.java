@@ -70,7 +70,7 @@ public class Unity3dSdkPanel extends JPanel
 				});
 				return false;
 			}
-		},false);
+		});
 
 		if(requiredVersion != null)
 		{
