@@ -36,7 +36,8 @@ public class Unity3dPostStartupActivity implements StartupActivity
 		{
 			return;
 		}
-		Runnable task = new Runnable()
+
+		StartupManager.getInstance(project).runWhenProjectIsInitialized(new Runnable()
 		{
 			@Override
 			public void run()
@@ -49,15 +50,6 @@ public class Unity3dPostStartupActivity implements StartupActivity
 					Unity3dProjectUtil.syncProject(project, getter.get());
 				}
 			}
-		};
-
-		if(project.isInitialized())
-		{
-			task.run();
-		}
-		else
-		{
-			StartupManager.getInstance(project).registerPostStartupActivity(task);
-		}
+		});
 	}
 }
