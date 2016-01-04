@@ -25,5 +25,7 @@ public class UnityOpenFilePostHandlerRequest
 	public String projectPath;
 	public String contentType;
 	public String filePath;
+	// on MacOS it will be '/Applications/Unity/Unity.app' but on windows will be 'Unity/Editor/Unity.exe'
+	public String editorPath;
 	public int line;
 }
