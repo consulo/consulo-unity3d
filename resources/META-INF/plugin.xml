@@ -64,40 +64,47 @@
 	</project-components>
 
 	<extensions defaultExtensionNs="org.mustbe.consulo.javascript">
-		<indexer implementation="org.mustbe.consulo.unity3d.unityscript.index.UnityScriptIndexer" />
+		<indexer implementation="org.mustbe.consulo.unity3d.unityscript.index.UnityScriptIndexer"/>
 	</extensions>
 
 	<extensions defaultExtensionNs="org.mustbe.consulo.csharp">
-		<toNativeElementTransformer implementation="org.mustbe.consulo.unity3d.unityscript.lang.impl.csharp.UnityScriptToNativeElementTransformer" />
+		<toNativeElementTransformer implementation="org.mustbe.consulo.unity3d.unityscript.lang.impl.csharp.UnityScriptToNativeElementTransformer"/>
 	</extensions>
 
 	<extensions defaultExtensionNs="org.mustbe.consulo.dotnet.core">
-		<debugger.provider implementation="org.mustbe.consulo.unity3d.unityscript.debugger.UnityScriptDebuggerProvider" />
+		<debugger.provider implementation="org.mustbe.consulo.unity3d.unityscript.debugger.UnityScriptDebuggerProvider"/>
 		<debugger.sourceLineResolver language="JavaScript"
-									 implementationClass="org.mustbe.consulo.unity3d.unityscript.debugger.UnityScriptSourceLineResolver" />
+									 implementationClass="org.mustbe.consulo.unity3d.unityscript.debugger.UnityScriptSourceLineResolver"/>
 
-		<psiSearcher implementation="org.mustbe.consulo.unity3d.unityscript.lang.impl.UnityScriptPsiSearcher" />
+		<psiSearcher implementation="org.mustbe.consulo.unity3d.unityscript.lang.impl.UnityScriptPsiSearcher"/>
 	</extensions>
 
 	<extensions defaultExtensionNs="com.intellij">
-		<errorHandler implementation="com.intellij.diagnostic.ITNReporter" />
-		<stubIndex implementation="org.mustbe.consulo.unity3d.unityscript.index.UnityScriptFileByNameIndex" />
+		<errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
+		<stubIndex implementation="org.mustbe.consulo.unity3d.unityscript.index.UnityScriptFileByNameIndex"/>
 		<xdebugger.lineBreakpointResolver filetype="JavaScript"
 										  implementationClass="org.mustbe.consulo.unity3d.unityscript.debugger.UnityScriptLineBreakpointResolver"
-										  order="before javascript" />
+										  order="before javascript"/>
 		<completion.contributor language="C#" implementationClass="org.mustbe.consulo.unity3d.csharp.completion.UnitySpecificMethodCompletion"/>
 		<codeInsight.lineMarkerProvider language="C#"
 										implementationClass="org.mustbe.consulo.unity3d.csharp.codeInsight.UnityCSharpLineMarkerProvider"/>
 		<codeInsight.lineMarkerProvider language="JavaScript"
-										implementationClass="org.mustbe.consulo.unity3d.unityscript.codeInsight.UnityScriptLineMarkerProvider" />
+										implementationClass="org.mustbe.consulo.unity3d.unityscript.codeInsight.UnityScriptLineMarkerProvider"/>
+		<localInspection
+				enabledByDefault="true"
+				level="WARNING"
+				language="C#"
+				groupName="Unity"
+				displayName="Creation MonoBehaviour object via new expression"
+				implementationClass="org.mustbe.consulo.unity3d.csharp.codeInsight.inspection.UnityNewMonoBehaviourInspection"/>
 		<colorProvider implementation="org.mustbe.consulo.unity3d.csharp.codeInsight.UnityCSharpStaticElementColorProvider"/>
 		<colorProvider implementation="org.mustbe.consulo.unity3d.csharp.codeInsight.UnityCSharpStaticElementColor32Provider"/>
-		<iconDescriptorUpdater implementation="org.mustbe.consulo.unity3d.unityscript.UnityScriptIconDescriptorUpdater" />
-		<gotoClassContributor implementation="org.mustbe.consulo.unity3d.unityscript.navigation.UnityScriptGotoClassContributor" />
+		<iconDescriptorUpdater implementation="org.mustbe.consulo.unity3d.unityscript.UnityScriptIconDescriptorUpdater"/>
+		<gotoClassContributor implementation="org.mustbe.consulo.unity3d.unityscript.navigation.UnityScriptGotoClassContributor"/>
 		<macro implementation="org.mustbe.consulo.unity3d.module.UnityFileNameMacro"/>
 		<!--<compiler implementation="org.mustbe.consulo.unity3d.compiler.UnityCompiler" order="last"/> -->
 		<sdkType implementation="org.mustbe.consulo.unity3d.bundle.Unity3dBundleType"/>
-		<xdebugger.settings implementation="org.mustbe.consulo.unity3d.run.debugger.Unity3dDebuggerSettings" />
+		<xdebugger.settings implementation="org.mustbe.consulo.unity3d.run.debugger.Unity3dDebuggerSettings"/>
 
 		<!--<configurationType implementation="org.mustbe.consulo.unity3d.run.Unity3dApplicationType"/>-->
 
@@ -143,18 +150,18 @@
 		<lang.defineVersion language="JavaScript" implementationClass="org.mustbe.consulo.unity3d.unityscript.lang.UnityScriptLanguageVersion"/>
 
 		<projectImportProvider implementation="org.mustbe.consulo.unity3d.projectImport.Unity3dProjectImportProvider"/>
-		<postStartupActivity implementation="org.mustbe.consulo.unity3d.projectImport.Unity3dPostStartupActivity" />
+		<postStartupActivity implementation="org.mustbe.consulo.unity3d.projectImport.Unity3dPostStartupActivity"/>
 		<editorNotificationProvider implementation="org.mustbe.consulo.unity3d.ide.ui.SetupUnitySDKProvider"/>
 
 		<fileTypeFactory implementation="org.mustbe.consulo.unity3d.Unity3dFileTypeFactory"/>
 		<treeStructureProvider implementation="org.mustbe.consulo.unity3d.ide.projectView.Unity3dMetaFileProjectViewProvider"/>
 		<treeStructureProvider implementation="org.mustbe.consulo.unity3d.unityscript.projectView.UnityScriptFileProjectViewProvider"/>
-		<projectViewOptionProvider implementation="org.mustbe.consulo.unity3d.ide.projectView.Unity3dShowMetaFileProjectViewPaneOptionProvider" />
-		<projectViewNodeDecorator implementation="org.mustbe.consulo.unity3d.ide.projectView.Unity3dProjectViewNodeDecorator" />
+		<projectViewOptionProvider implementation="org.mustbe.consulo.unity3d.ide.projectView.Unity3dShowMetaFileProjectViewPaneOptionProvider"/>
+		<projectViewNodeDecorator implementation="org.mustbe.consulo.unity3d.ide.projectView.Unity3dProjectViewNodeDecorator"/>
 		<possibleModuleForFileResolver implementation="org.mustbe.consulo.unity3d.projectImport.Unity3dPossibleModuleForFileResolver"/>
-		<fileTypeDetector implementation="org.mustbe.consulo.unity3d.scene.Unity3dSceneFileTypeDetector" />
-		<fileBasedIndex implementation="org.mustbe.consulo.unity3d.scene.index.Unity3dYMLSceneIndexExtension" />
+		<fileTypeDetector implementation="org.mustbe.consulo.unity3d.scene.Unity3dSceneFileTypeDetector"/>
+		<fileBasedIndex implementation="org.mustbe.consulo.unity3d.scene.index.Unity3dYMLSceneIndexExtension"/>
 
-		<httpRequestHandler implementation="org.mustbe.consulo.unity3d.jsonApi.UnityOpenFilePostHandler" />
+		<httpRequestHandler implementation="org.mustbe.consulo.unity3d.jsonApi.UnityOpenFilePostHandler"/>
 	</extensions>
 </idea-plugin>
