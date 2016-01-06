@@ -172,6 +172,11 @@ public class UnityOpenFilePostHandler extends JsonPostRequestHandler<UnityOpenFi
 							openFile(openedProject, body);
 						}
 					}
+					else
+					{
+						activateFrame(openedProject, body);
+						openFile(openedProject, body);
+					}
 				}
 			}
 		});
