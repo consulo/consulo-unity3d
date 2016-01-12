@@ -270,6 +270,11 @@ public class Unity3dProjectUtil
 				{
 					layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEditor.UI"));
 				}
+
+				if(isVersionHigherOrEqual(unityBundle, "5.3.0"))
+				{
+					layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "nunit.framework"));
+				}
 			}
 		}, "unity3d-csharp-child", CSharpFileType.INSTANCE, virtualFilesByModule, progressIndicator);
 	}
