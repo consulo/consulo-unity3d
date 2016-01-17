@@ -109,10 +109,15 @@ public class UnityProcessDialog extends ChooseElementsDialog<UnityProcess>
 					&& !(StringUtil.containsIgnoreCase(name, "Unity") && StringUtil.containsIgnoreCase(name, "Helper")) //ignore 'UnityHelper' and 'Unity Helper'
 					&& !StringUtil.containsIgnoreCase(name, "UnityShader"))
 			{
-				items.add(new UnityProcess(processInfo.getPid(), name, "localhost", 56000 + processInfo.getPid() % 1000));
+				items.add(new UnityProcess(processInfo.getPid(), name, "localhost", buildDebuggerPort(processInfo.getPid())));
 			}
 		}
 		return items;
+	}
+
+	public static int buildDebuggerPort(int pid)
+	{
+		return 56000 + pid % 1000;
 	}
 
 	@Override
