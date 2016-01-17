@@ -25,6 +25,7 @@
 	<depends>org.mustbe.consulo.dotnet.core</depends>
 	<depends>org.mustbe.consulo.csharp</depends>
 	<depends>org.mustbe.consulo.javascript</depends>
+	<depends>org.mustbe.consulo.nunit</depends>
 
 	<xi:include href="/META-INF/SharderLab.xml" xpointer="xpointer(/idea-plugin/*)">
 		<xi:fallback/>
@@ -118,6 +119,14 @@
 				icon="/icons/unity3d.png"
 				immutableClass="org.mustbe.consulo.unity3d.module.Unity3dChildModuleExtension"
 				mutableClass="org.mustbe.consulo.unity3d.module.Unity3dChildMutableModuleExtension"/>
+
+		<moduleExtensionProvider
+				key="unity3d-nunit-child"
+				parentKey="unity3d-child"
+				name="NUnit"
+				icon="/icons/nunit.png"
+				immutableClass="org.mustbe.consulo.unity3d.nunit.module.extension.Unity3dNUnitModuleExtension"
+				mutableClass="org.mustbe.consulo.unity3d.nunit.module.extension.Unity3dNUnitMutableModuleExtension"/>
 
 		<moduleExtensionProvider
 				key="unity3d-csharp-child"

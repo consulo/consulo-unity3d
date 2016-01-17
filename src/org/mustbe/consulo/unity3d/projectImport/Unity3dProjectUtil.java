@@ -22,6 +22,7 @@ import org.mustbe.consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import org.mustbe.consulo.unity3d.module.Unity3dRootModuleExtension;
 import org.mustbe.consulo.unity3d.module.Unity3dRootMutableModuleExtension;
 import org.mustbe.consulo.unity3d.module.Unity3dTarget;
+import org.mustbe.consulo.unity3d.nunit.module.extension.Unity3dNUnitMutableModuleExtension;
 import com.intellij.lang.javascript.JavaScriptFileType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.Result;
@@ -274,6 +275,9 @@ public class Unity3dProjectUtil
 				if(isVersionHigherOrEqual(unityBundle, "5.3.0"))
 				{
 					layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "nunit.framework"));
+
+					// enable nunit
+					layer.getExtensionWithoutCheck(Unity3dNUnitMutableModuleExtension.class).setEnabled(true);
 				}
 			}
 		}, "unity3d-csharp-child", CSharpFileType.INSTANCE, virtualFilesByModule, progressIndicator);

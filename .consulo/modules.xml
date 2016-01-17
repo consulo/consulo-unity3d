@@ -58,6 +58,13 @@
               </sources>
             </library>
           </orderEntry>
+          <orderEntry type="module-library">
+            <library name="consulo:NUnit">
+              <binaries>
+                <root url="jar://$MODULE_DIR$/dep/nunit/lib/nunit.jar!/" />
+              </binaries>
+            </library>
+          </orderEntry>
         </module-layer>
       </module>
       <module name="shaderlab" dirurl="file://$PROJECT_DIR$/shaderlab" current-layer="Default">
