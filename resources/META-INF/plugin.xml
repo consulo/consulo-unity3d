@@ -148,7 +148,7 @@
 
 		<configurationType implementation="org.mustbe.consulo.unity3d.run.Unity3dTestConfigurationType" />
 
-		<projectService serviceImplementation="org.mustbe.consulo.unity3d.run.Unity3dTestSessionManager" />
+		<applicationService serviceImplementation="org.mustbe.consulo.unity3d.run.Unity3dTestSessionManager" />
 
 		<projectImportProvider implementation="org.mustbe.consulo.unity3d.projectImport.Unity3dProjectImportProvider"/>
 		<postStartupActivity implementation="org.mustbe.consulo.unity3d.projectImport.Unity3dPostStartupActivity"/>
@@ -164,5 +164,6 @@
 		<fileBasedIndex implementation="org.mustbe.consulo.unity3d.scene.index.Unity3dYMLSceneIndexExtension"/>
 
 		<httpRequestHandler implementation="org.mustbe.consulo.unity3d.jsonApi.UnityOpenFilePostHandler"/>
+		<httpRequestHandler implementation="org.mustbe.consulo.unity3d.jsonApi.UnityTestStatePostHandler"/>
 	</extensions>
 </idea-plugin>

@@ -5,8 +5,10 @@ import java.io.IOException;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.consulo.lombok.annotations.Logger;
@@ -60,9 +62,17 @@ public class UnityEditorCommunication
 		post.setEntity(new StringEntity(gson.toJson(postObject), CharsetToolkit.UTF8_CHARSET));
 		post.setHeader("Content-Type", "application/json");
 
+		CloseableHttpClient client = null;
 		try
 		{
-			String data = HttpClients.createDefault().execute(post, new ResponseHandler<String>()
+			int timeOut = 1 * 1000;
+			RequestConfig requestConfig = RequestConfig.custom()
+					.setConnectionRequestTimeout(timeOut)
+					.setConnectTimeout(timeOut)
+					.setSocketTimeout(timeOut)
+					.build();
+			client = HttpClients.custom().setDefaultRequestConfig(requestConfig).build();
+			String data = client.execute(post, new ResponseHandler<String>()
 			{
 				@Override
 				public String handleResponse(HttpResponse httpResponse) throws ClientProtocolException, IOException
@@ -88,6 +98,20 @@ public class UnityEditorCommunication
 			if(!silent)
 			{
 				Messages.showErrorDialog(project, "UnityEditor is not opened", "Consulo");
+			}
+		}
+		finally
+		{
+			if(client != null)
+			{
+				try
+				{
+					client.close();
+				}
+				catch(IOException e)
+				{
+					//
+				}
 			}
 		}
 		return false;

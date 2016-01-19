@@ -115,7 +115,7 @@ public class Unity3dTestRunState implements RunProfileState
 		//events processor
 		final GeneralTestEventsProcessor eventsProcessor = new GeneralToSMTRunnerEventsConvertor(consoleProperties.getProject(), resultsViewer.getTestsRootNode(), testFrameworkName);
 
-		final UUID uuid = Unity3dTestSessionManager.getInstance(consoleProperties.getProject()).newSession(eventsProcessor);
+		final UUID uuid = Unity3dTestSessionManager.getInstance().newSession(eventsProcessor);
 
 		// ui actions
 		final SMTRunnerUIActionsHandler uiActionsHandler = new SMTRunnerUIActionsHandler(consoleProperties);
@@ -138,7 +138,7 @@ public class Unity3dTestRunState implements RunProfileState
 
 				eventsProcessor.onFinishTesting();
 
-				Unity3dTestSessionManager.getInstance(consoleProperties.getProject()).disposeSession(uuid);
+				Unity3dTestSessionManager.getInstance().disposeSession(uuid);
 
 				Disposer.dispose(eventsProcessor);
 				Disposer.dispose(outputConsumer);
