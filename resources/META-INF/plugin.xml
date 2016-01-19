@@ -146,6 +146,10 @@
 
 		<lang.defineVersion language="JavaScript" implementationClass="org.mustbe.consulo.unity3d.unityscript.lang.UnityScriptLanguageVersion"/>
 
+		<configurationType implementation="org.mustbe.consulo.unity3d.run.Unity3dTestConfigurationType" />
+
+		<projectService serviceImplementation="org.mustbe.consulo.unity3d.run.Unity3dTestSessionManager" />
+
 		<projectImportProvider implementation="org.mustbe.consulo.unity3d.projectImport.Unity3dProjectImportProvider"/>
 		<postStartupActivity implementation="org.mustbe.consulo.unity3d.projectImport.Unity3dPostStartupActivity"/>
 		<editorNotificationProvider implementation="org.mustbe.consulo.unity3d.ide.ui.SetupUnitySDKProvider"/>

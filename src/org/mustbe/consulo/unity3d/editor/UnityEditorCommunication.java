@@ -27,7 +27,7 @@ import com.jezhumble.javasysmon.ProcessInfo;
 @Logger
 public class UnityEditorCommunication
 {
-	public static void request(@NotNull Project project, @NotNull Object postObject)
+	public static boolean request(@NotNull Project project, @NotNull Object postObject, boolean silent)
 	{
 		JavaSysMon javaSysMon = new JavaSysMon();
 		ProcessInfo[] processInfos = javaSysMon.processTable();
@@ -42,10 +42,14 @@ public class UnityEditorCommunication
 				break;
 			}
 		}
+
 		if(pid == 0)
 		{
-			Messages.showErrorDialog(project, "UnityEditor is not opened", "Consulo");
-			return;
+			if(!silent)
+			{
+				Messages.showErrorDialog(project, "UnityEditor is not opened", "Consulo");
+			}
+			return false;
 		}
 
 		int port = UnityProcessDialog.buildDebuggerPort(pid) + 2000;
@@ -70,14 +74,22 @@ public class UnityEditorCommunication
 			UnityEditorResponse unityEditorResponse = gson.fromJson(data, UnityEditorResponse.class);
 			if(!unityEditorResponse.success)
 			{
-				Messages.showInfoMessage(project, "Unity cant execute this request", "Consulo");
+				if(!silent)
+				{
+					Messages.showInfoMessage(project, "Unity cant execute this request", "Consulo");
+				}
 			}
+			return unityEditorResponse.success;
 		}
 		catch(IOException e)
 		{
 			LOGGER.error(e);
 
-			Messages.showErrorDialog(project, "UnityEditor is not opened", "Consulo");
+			if(!silent)
+			{
+				Messages.showErrorDialog(project, "UnityEditor is not opened", "Consulo");
+			}
 		}
+		return false;
 	}
 }

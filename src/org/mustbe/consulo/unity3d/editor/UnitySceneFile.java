@@ -29,7 +29,7 @@ public class UnitySceneFile extends LightElement implements NavigatablePsiElemen
 	public void navigate(boolean requestFocus)
 	{
 		UnityOpenScene p = new UnityOpenScene(myVirtualFile.getPath());
-		UnityEditorCommunication.request(getProject(), p);
+		UnityEditorCommunication.request(getProject(), p, false);
 	}
 
 	@Override
