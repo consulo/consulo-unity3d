@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.mustbe.consulo.unity3d.run;
+package org.mustbe.consulo.unity3d.run.test;
 
 import java.util.ArrayList;
 import java.util.List;

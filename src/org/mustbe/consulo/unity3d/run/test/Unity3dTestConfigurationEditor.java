@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package org.mustbe.consulo.unity3d.run;
+package org.mustbe.consulo.unity3d.run.test;
 
 import javax.swing.JComponent;
 
 import org.jetbrains.annotations.NotNull;
+import org.mustbe.consulo.unity3d.run.test.Unity3dTestConfiguration;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.ui.LabeledComponent;

@@ -6,10 +6,19 @@ package org.mustbe.consulo.unity3d.jsonApi;
  */
 public class UnityTestStatePostRequest
 {
+	public enum Type
+	{
+		TestStarted,
+		TestFailed,
+		TestFinished,
+		SuiteStarted,
+		SuiteFinished,
+		RunFinished
+	}
+
 	public String uuid;
 	public String name;
-	public boolean suite;
-	public boolean state;
+	public Type type;
 
 	@Override
 	public String toString()
@@ -17,8 +26,7 @@ public class UnityTestStatePostRequest
 		final StringBuilder sb = new StringBuilder("UnityTestStatePostRequest{");
 		sb.append("uuid='").append(uuid).append('\'');
 		sb.append(", name='").append(name).append('\'');
-		sb.append(", suite=").append(suite);
-		sb.append(", state=").append(state);
+		sb.append(", type=").append(type);
 		sb.append('}');
 		return sb.toString();
 	}

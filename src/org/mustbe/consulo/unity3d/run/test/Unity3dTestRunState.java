@@ -1,4 +1,4 @@
-package org.mustbe.consulo.unity3d.run;
+package org.mustbe.consulo.unity3d.run.test;
 
 import java.util.UUID;
 
@@ -115,7 +115,7 @@ public class Unity3dTestRunState implements RunProfileState
 		//events processor
 		final GeneralTestEventsProcessor eventsProcessor = new GeneralToSMTRunnerEventsConvertor(consoleProperties.getProject(), resultsViewer.getTestsRootNode(), testFrameworkName);
 
-		final UUID uuid = Unity3dTestSessionManager.getInstance().newSession(eventsProcessor);
+		final UUID uuid = Unity3dTestSessionManager.getInstance().newSession(processHandler, eventsProcessor);
 
 		// ui actions
 		final SMTRunnerUIActionsHandler uiActionsHandler = new SMTRunnerUIActionsHandler(consoleProperties);
