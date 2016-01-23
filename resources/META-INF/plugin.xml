@@ -147,6 +147,7 @@
 		<lang.defineVersion language="JavaScript" implementationClass="org.mustbe.consulo.unity3d.unityscript.lang.UnityScriptLanguageVersion"/>
 
 		<configurationType implementation="org.mustbe.consulo.unity3d.run.test.Unity3dTestConfigurationType" />
+		<stepsBeforeRunProvider implementation="org.mustbe.consulo.unity3d.run.before.UnityRefreshBeforeRunTaskProvider" />
 
 		<applicationService serviceImplementation="org.mustbe.consulo.unity3d.run.test.Unity3dTestSessionManager" />
 
@@ -165,5 +166,6 @@
 
 		<httpRequestHandler implementation="org.mustbe.consulo.unity3d.jsonApi.UnityOpenFilePostHandler"/>
 		<httpRequestHandler implementation="org.mustbe.consulo.unity3d.jsonApi.UnityTestStatePostHandler"/>
+		<httpRequestHandler implementation="org.mustbe.consulo.unity3d.jsonApi.UnityRefreshResponseHandler"/>
 	</extensions>
 </idea-plugin>

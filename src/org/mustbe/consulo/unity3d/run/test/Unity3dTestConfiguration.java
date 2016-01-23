@@ -22,6 +22,7 @@ import java.util.List;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.mustbe.consulo.RequiredDispatchThread;
 import org.mustbe.consulo.unity3d.module.Unity3dModuleExtension;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
@@ -46,23 +47,10 @@ import com.intellij.util.xmlb.XmlSerializer;
  */
 public class Unity3dTestConfiguration extends LocatableConfigurationBase implements ModuleRunConfiguration
 {
-	public String TYPE_VM_QNAME;
-
 	public Unity3dTestConfiguration(Project project, ConfigurationFactory factory, String name)
 	{
 		super(project, factory, name);
 	}
-
-	public void setTypeVmQName(String typeVmQName)
-	{
-		TYPE_VM_QNAME = typeVmQName;
-	}
-
-	public String getTypeVmQName()
-	{
-		return TYPE_VM_QNAME;
-	}
-
 	@Override
 	public void readExternal(Element element) throws InvalidDataException
 	{
@@ -88,6 +76,7 @@ public class Unity3dTestConfiguration extends LocatableConfigurationBase impleme
 
 	@Nullable
 	@Override
+	@RequiredDispatchThread
 	public RunProfileState getState(@NotNull Executor executor, @NotNull final ExecutionEnvironment environment) throws ExecutionException
 	{
 		return new Unity3dTestRunState(environment);

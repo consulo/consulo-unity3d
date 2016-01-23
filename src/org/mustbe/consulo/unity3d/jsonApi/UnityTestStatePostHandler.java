@@ -46,7 +46,7 @@ public class UnityTestStatePostHandler extends JsonPostRequestHandler<UnityTestS
 				processor.onTestStarted(new TestStartedEvent(name, null));
 				break;
 			case TestFailed:
-				processor.onTestFailure(new TestFailedEvent(name, name, null, false, null, null));
+				processor.onTestFailure(new TestFailedEvent(name, "", null, false, null, null));
 				break;
 			case TestFinished:
 				processor.onTestFinished(new TestFinishedEvent(name, 0L));

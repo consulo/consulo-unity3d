@@ -19,12 +19,8 @@ package org.mustbe.consulo.unity3d.run.test;
 import javax.swing.JComponent;
 
 import org.jetbrains.annotations.NotNull;
-import org.mustbe.consulo.unity3d.run.test.Unity3dTestConfiguration;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
-import com.intellij.openapi.ui.LabeledComponent;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.ui.components.JBTextField;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.components.VerticalLayoutPanel;
 
@@ -34,18 +30,14 @@ import com.intellij.util.ui.components.VerticalLayoutPanel;
  */
 public class Unity3dTestConfigurationEditor extends SettingsEditor<Unity3dTestConfiguration>
 {
-	private JBTextField myTypeQNameField;
-
 	@Override
 	protected void resetEditorFrom(Unity3dTestConfiguration runConfiguration)
 	{
-		myTypeQNameField.setText(runConfiguration.getTypeVmQName());
 	}
 
 	@Override
 	protected void applyEditorTo(Unity3dTestConfiguration runConfiguration) throws ConfigurationException
 	{
-		runConfiguration.setTypeVmQName(StringUtil.nullize(runConfiguration.getTypeVmQName(), true));
 	}
 
 	@NotNull
@@ -53,7 +45,6 @@ public class Unity3dTestConfigurationEditor extends SettingsEditor<Unity3dTestCo
 	protected JComponent createEditor()
 	{
 		VerticalLayoutPanel verticalLayoutPanel = JBUI.Panels.verticalPanel();
-		verticalLayoutPanel.addComponent(LabeledComponent.left(myTypeQNameField = new JBTextField(), "Type"));
 		return verticalLayoutPanel;
 	}
 }

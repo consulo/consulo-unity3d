@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.mustbe.consulo.RequiredDispatchThread;
 import org.mustbe.consulo.unity3d.editor.UnityEditorCommunication;
 import org.mustbe.consulo.unity3d.editor.UnityRunTest;
 import com.intellij.execution.DefaultExecutionResult;
@@ -51,6 +52,7 @@ public class Unity3dTestRunState implements RunProfileState
 
 	@Nullable
 	@Override
+	@RequiredDispatchThread
 	public ExecutionResult execute(Executor executor, @NotNull ProgramRunner runner) throws ExecutionException
 	{
 		Unity3dTestConfiguration profile = (Unity3dTestConfiguration) myEnvironment.getRunProfile();
@@ -84,7 +86,7 @@ public class Unity3dTestRunState implements RunProfileState
 
 		UnityRunTest runTest = new UnityRunTest();
 		runTest.uuid = ref.get().toString();
-		runTest.type = profile.getTypeVmQName();
+		runTest.type = "";
 
 		if(!UnityEditorCommunication.request(profile.getProject(), runTest, true))
 		{
