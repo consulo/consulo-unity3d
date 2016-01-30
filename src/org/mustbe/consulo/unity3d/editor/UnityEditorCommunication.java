@@ -93,7 +93,7 @@ public class UnityEditorCommunication
 		}
 		catch(IOException e)
 		{
-			LOGGER.error(e);
+			LOGGER.warn(e);
 
 			if(!silent)
 			{
