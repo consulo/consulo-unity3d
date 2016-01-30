@@ -16,14 +16,11 @@
 
 package org.mustbe.consulo.unity3d.run.test;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.mustbe.consulo.RequiredDispatchThread;
-import org.mustbe.consulo.unity3d.module.Unity3dModuleExtension;
+import org.mustbe.consulo.RequiredReadAction;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.ConfigurationFactory;
@@ -33,12 +30,11 @@ import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtilCore;
+import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xmlb.XmlSerializer;
 
 /**
@@ -84,22 +80,9 @@ public class Unity3dTestConfiguration extends LocatableConfigurationBase impleme
 
 	@NotNull
 	@Override
+	@RequiredReadAction
 	public Module[] getModules()
 	{
-		List<Module> modules = new ArrayList<Module>();
-		for(Module module : modules)
-		{
-			Unity3dModuleExtension extension = ModuleUtilCore.getExtension(module, Unity3dModuleExtension.class);
-			if(extension == null)
-			{
-				continue;
-			}
-
-			if(module.getName().contains("Editor"))
-			{
-				modules.add(module);
-			}
-		}
-		return ContainerUtil.toArray(modules, Module.ARRAY_FACTORY);
+		return ModuleManager.getInstance(getProject()).getModules();
 	}
 }

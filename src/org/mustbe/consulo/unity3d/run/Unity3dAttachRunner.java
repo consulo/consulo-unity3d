@@ -18,6 +18,7 @@ package org.mustbe.consulo.unity3d.run;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.mustbe.consulo.RequiredDispatchThread;
 import org.mustbe.consulo.dotnet.debugger.DotNetVirtualMachineListener;
 import org.mustbe.consulo.dotnet.execution.DebugConnectionInfo;
 import org.mustbe.consulo.unity3d.run.debugger.UnityDebugProcess;
@@ -31,6 +32,7 @@ import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.process.ProcessOutputTypes;
 import com.intellij.execution.runners.DefaultProgramRunner;
 import com.intellij.execution.runners.ExecutionEnvironment;
+import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.xdebugger.XDebugProcess;
@@ -62,30 +64,37 @@ public class Unity3dAttachRunner extends DefaultProgramRunner
 
 	@Nullable
 	@Override
-	protected RunContentDescriptor doExecute(@NotNull RunProfileState state,
-			@NotNull final ExecutionEnvironment environment) throws ExecutionException
+	@RequiredDispatchThread
+	protected RunContentDescriptor doExecute(@NotNull RunProfileState state, @NotNull final ExecutionEnvironment environment) throws ExecutionException
 	{
 		Unity3dAttachConfiguration runProfile = (Unity3dAttachConfiguration) environment.getRunProfile();
 
 		final UnityProcess selected = runProfile.getUnityProcess();
+		return runContentDescriptor(environment, selected, null);
+	}
+
+	@NotNull
+	@RequiredDispatchThread
+	public static RunContentDescriptor runContentDescriptor(@NotNull final ExecutionEnvironment environment,
+			final UnityProcess selected,
+			@Nullable final ConsoleView consoleView) throws ExecutionException
+	{
 		FileDocumentManager.getInstance().saveAllDocuments();
-		final XDebugSession debugSession = XDebuggerManager.getInstance(environment.getProject()).startSession(environment,
-				new XDebugProcessStarter()
+		final XDebugSession debugSession = XDebuggerManager.getInstance(environment.getProject()).startSession(environment, new XDebugProcessStarter()
 		{
 			@NotNull
 			@Override
 			public XDebugProcess start(@NotNull final XDebugSession session) throws ExecutionException
 			{
 				DebugConnectionInfo debugConnectionInfo = new DebugConnectionInfo(selected.getHost(), selected.getPort(), true);
-				final UnityDebugProcess process = new UnityDebugProcess(session, debugConnectionInfo, environment.getRunProfile());
+				final UnityDebugProcess process = new UnityDebugProcess(session, debugConnectionInfo, environment.getRunProfile(), consoleView);
 				process.getDebugThread().addListener(new DotNetVirtualMachineListener()
 				{
 					@Override
 					public void connectionSuccess(@NotNull VirtualMachine machine)
 					{
 						ProcessHandler processHandler = process.getProcessHandler();
-						processHandler.notifyTextAvailable(String.format("Success attach to '%s' at %s:%d", selected.getName(), selected.getHost(),
-								selected.getPort()), ProcessOutputTypes.STDOUT);
+						processHandler.notifyTextAvailable(String.format("Success attach to '%s' at %s:%d", selected.getName(), selected.getHost(), selected.getPort()), ProcessOutputTypes.STDOUT);
 					}
 
 					@Override
@@ -97,8 +106,7 @@ public class Unity3dAttachRunner extends DefaultProgramRunner
 					public void connectionFailed()
 					{
 						ProcessHandler processHandler = process.getProcessHandler();
-						processHandler.notifyTextAvailable(String.format("Failed attach to '%s' at %s:%d", selected.getName(), selected.getHost(),
-								selected.getPort()), ProcessOutputTypes.STDERR);
+						processHandler.notifyTextAvailable(String.format("Failed attach to '%s' at %s:%d", selected.getName(), selected.getHost(), selected.getPort()), ProcessOutputTypes.STDERR);
 						StopProcessAction.stopProcess(processHandler);
 					}
 				});

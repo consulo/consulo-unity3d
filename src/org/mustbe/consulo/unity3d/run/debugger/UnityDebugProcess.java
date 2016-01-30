@@ -33,9 +33,12 @@ import com.intellij.xdebugger.XDebugSession;
  */
 public class UnityDebugProcess extends DotNetDebugProcess
 {
-	public UnityDebugProcess(XDebugSession session, DebugConnectionInfo debugConnectionInfo, RunProfile runProfile)
+	private ConsoleView myConsoleView;
+
+	public UnityDebugProcess(XDebugSession session, DebugConnectionInfo debugConnectionInfo, RunProfile runProfile, ConsoleView consoleView)
 	{
 		super(session, debugConnectionInfo, runProfile);
+		myConsoleView = consoleView;
 	}
 
 	@Nullable
@@ -49,6 +52,10 @@ public class UnityDebugProcess extends DotNetDebugProcess
 	@Override
 	public ExecutionConsole createConsole()
 	{
+		if(myConsoleView != null)
+		{
+			return myConsoleView;
+		}
 		ConsoleView consoleView = TextConsoleBuilderFactory.getInstance().createBuilder(getSession().getProject()).getConsole();
 		consoleView.attachToProcess(getProcessHandler());
 		return consoleView;

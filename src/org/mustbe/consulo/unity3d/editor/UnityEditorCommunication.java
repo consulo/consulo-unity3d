@@ -13,6 +13,8 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.consulo.lombok.annotations.Logger;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.mustbe.consulo.unity3d.run.debugger.UnityProcess;
 import org.mustbe.consulo.unity3d.run.debugger.UnityProcessDialog;
 import com.google.gson.Gson;
 import com.intellij.openapi.project.Project;
@@ -29,23 +31,31 @@ import com.jezhumble.javasysmon.ProcessInfo;
 @Logger
 public class UnityEditorCommunication
 {
-	public static boolean request(@NotNull Project project, @NotNull Object postObject, boolean silent)
+	@Nullable
+	public static UnityProcess findEditorProcess()
 	{
 		JavaSysMon javaSysMon = new JavaSysMon();
 		ProcessInfo[] processInfos = javaSysMon.processTable();
 
-		int pid = 0;
+		UnityProcess unityProcess = null;
 		for(ProcessInfo processInfo : processInfos)
 		{
 			String name = processInfo.getName();
 			if(name.equalsIgnoreCase("unity.exe") || name.equalsIgnoreCase("unity") || name.equalsIgnoreCase("unity.app"))
 			{
-				pid = processInfo.getPid();
+				unityProcess = new UnityProcess(processInfo.getPid(), processInfo.getName(), "localhost", UnityProcessDialog.buildDebuggerPort(processInfo.getPid()));
 				break;
 			}
 		}
 
-		if(pid == 0)
+		return unityProcess;
+	}
+
+	public static boolean request(@NotNull Project project, @NotNull Object postObject, boolean silent)
+	{
+		UnityProcess editorProcess = findEditorProcess();
+
+		if(editorProcess == null)
 		{
 			if(!silent)
 			{
@@ -54,7 +64,7 @@ public class UnityEditorCommunication
 			return false;
 		}
 
-		int port = UnityProcessDialog.buildDebuggerPort(pid) + 2000;
+		int port = editorProcess.getPort() + 2000;
 
 		Gson gson = new Gson();
 		String urlPart = postObject.getClass().getSimpleName();
@@ -66,11 +76,7 @@ public class UnityEditorCommunication
 		try
 		{
 			int timeOut = 1 * 1000;
-			RequestConfig requestConfig = RequestConfig.custom()
-					.setConnectionRequestTimeout(timeOut)
-					.setConnectTimeout(timeOut)
-					.setSocketTimeout(timeOut)
-					.build();
+			RequestConfig requestConfig = RequestConfig.custom().setConnectionRequestTimeout(timeOut).setConnectTimeout(timeOut).setSocketTimeout(timeOut).build();
 			client = HttpClients.custom().setDefaultRequestConfig(requestConfig).build();
 			String data = client.execute(post, new ResponseHandler<String>()
 			{

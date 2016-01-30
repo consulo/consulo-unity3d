@@ -151,6 +151,7 @@
 
 		<configurationType implementation="org.mustbe.consulo.unity3d.run.test.Unity3dTestConfigurationType" />
 		<stepsBeforeRunProvider implementation="org.mustbe.consulo.unity3d.run.before.UnityRefreshBeforeRunTaskProvider" />
+		<programRunner implementation="org.mustbe.consulo.unity3d.run.test.Unity3dTestDebuggerRunner" />
 
 		<applicationService serviceImplementation="org.mustbe.consulo.unity3d.run.test.Unity3dTestSessionManager" />
 
