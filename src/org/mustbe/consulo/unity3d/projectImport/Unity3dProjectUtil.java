@@ -9,6 +9,7 @@ import org.consulo.lombok.annotations.Logger;
 import org.consulo.module.extension.MutableModuleExtension;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.mustbe.consulo.csharp.lang.CSharpFilePropertyPusher;
 import org.mustbe.consulo.csharp.lang.CSharpFileType;
 import org.mustbe.consulo.dotnet.dll.DotNetModuleFileType;
 import org.mustbe.consulo.dotnet.module.roots.DotNetLibraryOrderEntryImpl;
@@ -42,6 +43,7 @@ import com.intellij.openapi.roots.LibraryOrderEntry;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.impl.ModuleRootLayerImpl;
+import com.intellij.openapi.roots.impl.PushedFilePropertiesUpdater;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.types.BinariesOrderRootType;
 import com.intellij.openapi.roots.types.DocumentationOrderRootType;
@@ -119,7 +121,18 @@ public class Unity3dProjectUtil
 					@Override
 					public void run()
 					{
-						Unity3dProjectUtil.importOrUpdate(project, sdk, null, indicator);
+
+						try
+						{
+							project.putUserData(CSharpFilePropertyPusher.ourDisableAnyEvents, Boolean.TRUE);
+							Unity3dProjectUtil.importOrUpdate(project, sdk, null, indicator);
+						}
+						finally
+						{
+							project.putUserData(CSharpFilePropertyPusher.ourDisableAnyEvents, null);
+
+							PushedFilePropertiesUpdater.getInstance(project).pushAll(new CSharpFilePropertyPusher());
+						}
 					}
 				});
 			}
