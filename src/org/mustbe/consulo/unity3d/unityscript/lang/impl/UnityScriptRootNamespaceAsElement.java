@@ -16,13 +16,16 @@
 
 package org.mustbe.consulo.unity3d.unityscript.lang.impl;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.mustbe.consulo.RequiredReadAction;
 import org.mustbe.consulo.dotnet.lang.psi.impl.BaseDotNetNamespaceAsElement;
+import org.mustbe.consulo.dotnet.lang.psi.impl.DotNetNamespaceCacheManager;
+import org.mustbe.consulo.dotnet.resolve.impl.IndexBasedDotNetPsiSearcher;
 import org.mustbe.consulo.unity3d.unityscript.index.UnityScriptFileByNameIndex;
 import com.intellij.lang.Language;
 import com.intellij.lang.javascript.psi.JSFile;
@@ -36,6 +39,38 @@ import com.intellij.psi.search.GlobalSearchScope;
  */
 public class UnityScriptRootNamespaceAsElement extends BaseDotNetNamespaceAsElement
 {
+	private static final DotNetNamespaceCacheManager.ItemCalculator ourElementsCalculator = new DotNetNamespaceCacheManager.ItemCalculator()
+	{
+		@NotNull
+		@Override
+		@RequiredReadAction
+		public Set<PsiElement> compute(@NotNull final Project project,
+				@Nullable final IndexBasedDotNetPsiSearcher searcher,
+				@NotNull final String indexKey,
+				@NotNull final String thisQName,
+				@NotNull final GlobalSearchScope scope)
+		{
+			Set<PsiElement> elements = new LinkedHashSet<PsiElement>();
+			Collection<String> keys = UnityScriptFileByNameIndex.getInstance().getAllKeys(project);
+			for(String key : keys)
+			{
+				Collection<JSFile> jsFiles = UnityScriptFileByNameIndex.getInstance().get(key, project, scope);
+				for(JSFile jsFile : jsFiles)
+				{
+					elements.add(new UnityScriptDotNetTypeDeclaration(key, jsFile));
+				}
+			}
+			return elements;
+		}
+
+		@NotNull
+		@Override
+		public ChildrenFilter getFilter()
+		{
+			return ChildrenFilter.ONLY_ELEMENTS;
+		}
+	};
+
 	public UnityScriptRootNamespaceAsElement(@NotNull Project project, @NotNull Language language, @NotNull String qName)
 	{
 		super(project, language, qName);
@@ -46,16 +81,6 @@ public class UnityScriptRootNamespaceAsElement extends BaseDotNetNamespaceAsElem
 	@RequiredReadAction
 	protected Collection<? extends PsiElement> getOnlyElements(@NotNull GlobalSearchScope globalSearchScope)
 	{
-		List<PsiElement> elements = new ArrayList<PsiElement>();
-		Collection<String> keys = UnityScriptFileByNameIndex.getInstance().getAllKeys(myProject);
-		for(String key : keys)
-		{
-			Collection<JSFile> jsFiles = UnityScriptFileByNameIndex.getInstance().get(key, myProject, globalSearchScope);
-			for(JSFile jsFile : jsFiles)
-			{
-				elements.add(new UnityScriptDotNetTypeDeclaration(key, jsFile));
-			}
-		}
-		return elements;
+		return DotNetNamespaceCacheManager.getInstance(myProject).computeElements(null, this, myQName, myQName, globalSearchScope, ourElementsCalculator);
 	}
 }
