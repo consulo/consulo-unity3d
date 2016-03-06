@@ -42,6 +42,12 @@ public class Unity3dCSharpModuleExtension extends BaseCSharpSimpleModuleExtensio
 		return getModule().getName();
 	}
 
+	@Override
+	public boolean isSupportedLanguageVersion(@NotNull CSharpLanguageVersion languageVersion)
+	{
+		return languageVersion == getLanguageVersion();
+	}
+
 	@NotNull
 	@Override
 	public CSharpLanguageVersion getLanguageVersion()
