@@ -44,9 +44,7 @@ public class UnityScriptPsiSearcher extends DotNetPsiSearcher
 	@RequiredReadAction
 	@NotNull
 	@Override
-	public Collection<? extends DotNetTypeDeclaration> findTypesImpl(@NotNull String key,
-			@NotNull GlobalSearchScope searchScope,
-			@NotNull TypeResoleKind typeResoleKind)
+	public Collection<? extends DotNetTypeDeclaration> findTypesImpl(@NotNull String key, @NotNull GlobalSearchScope searchScope)
 	{
 		Collection<JSFile> jsFiles = UnityScriptFileByNameIndex.getInstance().get(key, myProject, searchScope);
 		JSFile jsFile = ContainerUtil.getFirstItem(jsFiles);
