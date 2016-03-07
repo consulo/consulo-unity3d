@@ -127,7 +127,7 @@ public class ShaderReference extends ShaderLabElement implements PsiQualifiedRef
 				try
 				{
 					ShaderMaterialAttribute attribute = ShaderMaterialAttribute.valueOf(referenceName);
-					DotNetTypeDeclaration type = DotNetPsiSearcher.getInstance(getProject()).findType(attribute.getType(), scope, DotNetPsiSearcher.TypeResoleKind.UNKNOWN, CSharpTransform.INSTANCE);
+					DotNetTypeDeclaration type = DotNetPsiSearcher.getInstance(getProject()).findType(attribute.getType(), scope, CSharpTransform.INSTANCE);
 					if(type != null)
 					{
 						return type;
