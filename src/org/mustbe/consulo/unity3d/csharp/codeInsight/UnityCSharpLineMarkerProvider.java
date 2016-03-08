@@ -24,6 +24,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.Icon;
+
 import org.consulo.lombok.annotations.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -195,7 +197,14 @@ public class UnityCSharpLineMarkerProvider implements LineMarkerProvider
 								}
 							});
 
-							PsiElementListNavigator.openTargets(e, map.toArray(new NavigatablePsiElement[0]), "View Unity scenes", "View Unity scenes", new DefaultPsiElementCellRenderer());
+							PsiElementListNavigator.openTargets(e, map.toArray(new NavigatablePsiElement[0]), "View Unity scenes", "View Unity scenes", new DefaultPsiElementCellRenderer()
+							{
+								@Override
+								protected Icon getIcon(PsiElement element)
+								{
+									return ((NavigatablePsiElement) element).getPresentation().getIcon(false);
+								}
+							});
 						}
 					}
 				}, GutterIconRenderer.Alignment.LEFT
