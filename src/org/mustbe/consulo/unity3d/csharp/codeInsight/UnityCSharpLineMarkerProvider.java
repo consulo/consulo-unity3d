@@ -63,6 +63,7 @@ import com.intellij.util.CommonProcessors;
 import com.intellij.util.ConstantFunction;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.containers.MultiMap;
 import com.intellij.util.indexing.FileBasedIndex;
 
 /**
@@ -152,18 +153,40 @@ public class UnityCSharpLineMarkerProvider implements LineMarkerProvider
 								return "";
 							}
 
-							Collection<VirtualFile> containingFiles = FileBasedIndex.getInstance().getContainingFiles(Unity3dYMLAssetIndexExtension.KEY, uuid, GlobalSearchScope.projectScope(typeDeclaration.getProject()));
+							Collection<VirtualFile> containingFiles = FileBasedIndex.getInstance().getContainingFiles(Unity3dYMLAssetIndexExtension.KEY, uuid,
+									GlobalSearchScope.projectScope(typeDeclaration.getProject()));
 
-							String text = "Imported in asset(s): ";
-							text += StringUtil.join(containingFiles, new Function<VirtualFile, String>()
+							MultiMap<String, String> map = MultiMap.create();
+							for(VirtualFile file : containingFiles)
 							{
-								@Override
-								public String fun(VirtualFile virtualFile)
+								map.putValue(file.getExtension(), VfsUtil.getRelativePath(file, typeDeclaration.getProject().getBaseDir()));
+							}
+
+							StringBuilder builder = new StringBuilder();
+							boolean first = true;
+							for(Map.Entry<String, Collection<String>> entry : map.entrySet())
+							{
+								String text = "";
+								if(!first)
 								{
-									return VfsUtil.getRelativePath(virtualFile, typeDeclaration.getProject().getBaseDir());
+									text = "<br>";
 								}
-							}, "\n");
-							return text;
+								else
+								{
+									first = false;
+								}
+								text += "<b>Imported in *." + entry.getKey() + ":</b><br>";
+								text += StringUtil.join(entry.getValue(), new Function<String, String>()
+								{
+									@Override
+									public String fun(String s)
+									{
+										return " > " + s;
+									}
+								}, "<br>");
+								builder.append(text);
+							}
+							return builder.toString();
 						}
 						return "";
 					}
