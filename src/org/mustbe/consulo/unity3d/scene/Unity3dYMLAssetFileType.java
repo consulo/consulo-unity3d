@@ -12,11 +12,11 @@ import com.intellij.openapi.fileTypes.PlainTextLanguage;
  * @author VISTALL
  * @since 09.08.2015
  */
-public class Unity3dYMLSceneFileType extends LanguageFileType
+public class Unity3dYMLAssetFileType extends LanguageFileType
 {
-	public static final Unity3dYMLSceneFileType INSTANCE = new Unity3dYMLSceneFileType();
+	public static final Unity3dYMLAssetFileType INSTANCE = new Unity3dYMLAssetFileType();
 
-	private Unity3dYMLSceneFileType()
+	private Unity3dYMLAssetFileType()
 	{
 		super(PlainTextLanguage.INSTANCE);
 	}
@@ -25,14 +25,14 @@ public class Unity3dYMLSceneFileType extends LanguageFileType
 	@Override
 	public String getName()
 	{
-		return "UNITY_YML_SCENE";
+		return "UNITY_YML_ASSET";
 	}
 
 	@NotNull
 	@Override
 	public String getDescription()
 	{
-		return "Unity yml scene file";
+		return "Unity yml asset file";
 	}
 
 	@NotNull

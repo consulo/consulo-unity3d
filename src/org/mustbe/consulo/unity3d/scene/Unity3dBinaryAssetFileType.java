@@ -12,11 +12,11 @@ import com.intellij.openapi.vfs.VirtualFile;
  * @author VISTALL
  * @since 09.08.2015
  */
-public class Unity3dBinarySceneFileType implements FileType
+public class Unity3dBinaryAssetFileType implements FileType
 {
-	public static final Unity3dBinarySceneFileType INSTANCE = new Unity3dBinarySceneFileType();
+	public static final Unity3dBinaryAssetFileType INSTANCE = new Unity3dBinaryAssetFileType();
 
-	private Unity3dBinarySceneFileType()
+	private Unity3dBinaryAssetFileType()
 	{
 	}
 
@@ -24,14 +24,14 @@ public class Unity3dBinarySceneFileType implements FileType
 	@Override
 	public String getName()
 	{
-		return "UNITY_BINARY_SCENE";
+		return "UNITY_BINARY_ASSET";
 	}
 
 	@NotNull
 	@Override
 	public String getDescription()
 	{
-		return "Unity binary scene file";
+		return "Unity binary asset file";
 	}
 
 	@NotNull

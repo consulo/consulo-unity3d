@@ -21,7 +21,7 @@ import java.util.Map;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.mustbe.consulo.unity3d.scene.Unity3dYMLSceneFileType;
+import org.mustbe.consulo.unity3d.scene.Unity3dYMLAssetFileType;
 import com.intellij.util.indexing.DataIndexer;
 import com.intellij.util.indexing.DefaultFileTypeSpecificInputFilter;
 import com.intellij.util.indexing.FileBasedIndex;
@@ -35,9 +35,9 @@ import com.intellij.util.io.KeyDescriptor;
  * @author VISTALL
  * @since 22.12.2015
  */
-public class Unity3dYMLSceneIndexExtension extends ScalarIndexExtension<String>
+public class Unity3dYMLAssetIndexExtension extends ScalarIndexExtension<String>
 {
-	public static final ID<String, Void> KEY = ID.create("unity3d.yml.scene.index");
+	public static final ID<String, Void> KEY = ID.create("unity3d.yml.asset.index");
 
 	private DataIndexer<String, Void, FileContent> myIndexer = new DataIndexer<String, Void, FileContent>()
 	{
@@ -92,7 +92,7 @@ public class Unity3dYMLSceneIndexExtension extends ScalarIndexExtension<String>
 	};
 
 	private final EnumeratorStringDescriptor myKeyDescriptor = new EnumeratorStringDescriptor();
-	private final DefaultFileTypeSpecificInputFilter myInputFilter = new DefaultFileTypeSpecificInputFilter(Unity3dYMLSceneFileType.INSTANCE);
+	private final DefaultFileTypeSpecificInputFilter myInputFilter = new DefaultFileTypeSpecificInputFilter(Unity3dYMLAssetFileType.INSTANCE);
 
 	@NotNull
 	@Override

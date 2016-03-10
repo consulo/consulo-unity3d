@@ -45,7 +45,7 @@ import org.mustbe.consulo.unity3d.Unity3dTypes;
 import org.mustbe.consulo.unity3d.csharp.UnityFunctionManager;
 import org.mustbe.consulo.unity3d.editor.UnitySceneFile;
 import org.mustbe.consulo.unity3d.module.Unity3dModuleExtension;
-import org.mustbe.consulo.unity3d.scene.index.Unity3dYMLSceneIndexExtension;
+import org.mustbe.consulo.unity3d.scene.index.Unity3dYMLAssetIndexExtension;
 import org.yaml.snakeyaml.Yaml;
 import com.intellij.codeHighlighting.Pass;
 import com.intellij.codeInsight.daemon.GutterIconNavigationHandler;
@@ -137,7 +137,7 @@ public class UnityCSharpLineMarkerProvider implements LineMarkerProvider
 			}
 			GlobalSearchScope filter = GlobalSearchScope.projectScope(typeDeclaration.getProject());
 			CommonProcessors.FindFirstProcessor<VirtualFile> processor = new CommonProcessors.FindFirstProcessor<VirtualFile>();
-			FileBasedIndex.getInstance().processFilesContainingAllKeys(Unity3dYMLSceneIndexExtension.KEY, Collections.singleton(uuid), filter, null, processor);
+			FileBasedIndex.getInstance().processFilesContainingAllKeys(Unity3dYMLAssetIndexExtension.KEY, Collections.singleton(uuid), filter, null, processor);
 
 			if(processor.isFound())
 			{
@@ -155,9 +155,9 @@ public class UnityCSharpLineMarkerProvider implements LineMarkerProvider
 								return "";
 							}
 
-							Collection<VirtualFile> containingFiles = FileBasedIndex.getInstance().getContainingFiles(Unity3dYMLSceneIndexExtension.KEY, uuid, GlobalSearchScope.projectScope(typeDeclaration.getProject()));
+							Collection<VirtualFile> containingFiles = FileBasedIndex.getInstance().getContainingFiles(Unity3dYMLAssetIndexExtension.KEY, uuid, GlobalSearchScope.projectScope(typeDeclaration.getProject()));
 
-							String text = "Imported in scene(s): ";
+							String text = "Imported in asset(s): ";
 							text += StringUtil.join(containingFiles, new Function<VirtualFile, String>()
 							{
 								@Override
@@ -185,7 +185,7 @@ public class UnityCSharpLineMarkerProvider implements LineMarkerProvider
 								return;
 							}
 
-							Collection<VirtualFile> containingFiles = FileBasedIndex.getInstance().getContainingFiles(Unity3dYMLSceneIndexExtension.KEY, uuid, GlobalSearchScope.projectScope(typeDeclaration.getProject()));
+							Collection<VirtualFile> containingFiles = FileBasedIndex.getInstance().getContainingFiles(Unity3dYMLAssetIndexExtension.KEY, uuid, GlobalSearchScope.projectScope(typeDeclaration.getProject()));
 
 							List<UnitySceneFile> map = ContainerUtil.map(containingFiles, new Function<VirtualFile, UnitySceneFile>()
 							{
@@ -197,7 +197,7 @@ public class UnityCSharpLineMarkerProvider implements LineMarkerProvider
 								}
 							});
 
-							PsiElementListNavigator.openTargets(e, map.toArray(new NavigatablePsiElement[0]), "View Unity scenes", "View Unity scenes", new DefaultPsiElementCellRenderer()
+							PsiElementListNavigator.openTargets(e, map.toArray(new NavigatablePsiElement[0]), "View Unity assets", "View Unity assets", new DefaultPsiElementCellRenderer()
 							{
 								@Override
 								protected Icon getIcon(PsiElement element)
