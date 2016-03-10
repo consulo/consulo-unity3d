@@ -6,6 +6,7 @@ import org.jetbrains.annotations.Nullable;
 import com.intellij.lang.Language;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.NavigatablePsiElement;
 import com.intellij.psi.PsiManager;
@@ -45,14 +46,14 @@ public class UnitySceneFile extends LightElement implements NavigatablePsiElemen
 			@Override
 			public String getPresentableText()
 			{
-				return myVirtualFile.getName();
+				return VfsUtil.getRelativePath(myVirtualFile, getProject().getBaseDir());
 			}
 
 			@Nullable
 			@Override
 			public String getLocationString()
 			{
-				return myVirtualFile.getPath();
+				return null;
 			}
 
 			@Nullable
