@@ -17,8 +17,6 @@
 package org.mustbe.consulo.unity3d.csharp.codeInsight;
 
 import java.awt.event.MouseEvent;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -40,13 +38,12 @@ import org.mustbe.consulo.dotnet.psi.DotNetParameterListOwner;
 import org.mustbe.consulo.dotnet.psi.DotNetTypeDeclaration;
 import org.mustbe.consulo.dotnet.resolve.DotNetTypeRef;
 import org.mustbe.consulo.unity3d.Unity3dIcons;
-import org.mustbe.consulo.unity3d.Unity3dMetaFileType;
 import org.mustbe.consulo.unity3d.Unity3dTypes;
 import org.mustbe.consulo.unity3d.csharp.UnityFunctionManager;
 import org.mustbe.consulo.unity3d.editor.UnitySceneFile;
 import org.mustbe.consulo.unity3d.module.Unity3dModuleExtension;
+import org.mustbe.consulo.unity3d.scene.Unity3dAssetUtil;
 import org.mustbe.consulo.unity3d.scene.index.Unity3dYMLAssetIndexExtension;
-import org.yaml.snakeyaml.Yaml;
 import com.intellij.codeHighlighting.Pass;
 import com.intellij.codeInsight.daemon.GutterIconNavigationHandler;
 import com.intellij.codeInsight.daemon.LineMarkerInfo;
@@ -130,7 +127,7 @@ public class UnityCSharpLineMarkerProvider implements LineMarkerProvider
 		CSharpTypeDeclaration typeDeclaration = CSharpLineMarkerUtil.getNameIdentifierAs(element, CSharpTypeDeclaration.class);
 		if(typeDeclaration != null)
 		{
-			String uuid = getUUID(PsiUtilCore.getVirtualFile(typeDeclaration));
+			String uuid = Unity3dAssetUtil.getUUID(PsiUtilCore.getVirtualFile(typeDeclaration));
 			if(uuid == null)
 			{
 				return null;
@@ -149,7 +146,7 @@ public class UnityCSharpLineMarkerProvider implements LineMarkerProvider
 						CSharpTypeDeclaration typeDeclaration = CSharpLineMarkerUtil.getNameIdentifierAs(element, CSharpTypeDeclaration.class);
 						if(typeDeclaration != null)
 						{
-							String uuid = getUUID(PsiUtilCore.getVirtualFile(typeDeclaration));
+							String uuid = Unity3dAssetUtil.getUUID(PsiUtilCore.getVirtualFile(typeDeclaration));
 							if(uuid == null)
 							{
 								return "";
@@ -179,7 +176,7 @@ public class UnityCSharpLineMarkerProvider implements LineMarkerProvider
 						CSharpTypeDeclaration typeDeclaration = CSharpLineMarkerUtil.getNameIdentifierAs(elt, CSharpTypeDeclaration.class);
 						if(typeDeclaration != null)
 						{
-							String uuid = getUUID(PsiUtilCore.getVirtualFile(typeDeclaration));
+							String uuid = Unity3dAssetUtil.getUUID(PsiUtilCore.getVirtualFile(typeDeclaration));
 							if(uuid == null)
 							{
 								return;
@@ -209,61 +206,6 @@ public class UnityCSharpLineMarkerProvider implements LineMarkerProvider
 					}
 				}, GutterIconRenderer.Alignment.LEFT
 				);
-			}
-		}
-		return null;
-	}
-
-	@Nullable
-	private static String getUUID(VirtualFile virtualFile)
-	{
-		if(virtualFile == null)
-		{
-			return null;
-		}
-		String name = virtualFile.getName();
-
-		VirtualFile parent = virtualFile.getParent();
-		if(parent == null)
-		{
-			return null;
-		}
-
-		VirtualFile child = parent.findChild(name + "." + Unity3dMetaFileType.INSTANCE.getDefaultExtension());
-		if(child != null)
-		{
-			Yaml yaml = new Yaml();
-			InputStream inputStream = null;
-			try
-			{
-				inputStream = child.getInputStream();
-				Object load = yaml.load(inputStream);
-				if(load instanceof Map)
-				{
-					Object guid = ((Map) load).get("guid");
-					if(guid instanceof String)
-					{
-						return (String) guid;
-					}
-				}
-			}
-			catch(IOException e)
-			{
-				LOGGER.error(e);
-			}
-			finally
-			{
-				if(inputStream != null)
-				{
-					try
-					{
-						inputStream.close();
-					}
-					catch(IOException e)
-					{
-						//
-					}
-				}
 			}
 		}
 		return null;
