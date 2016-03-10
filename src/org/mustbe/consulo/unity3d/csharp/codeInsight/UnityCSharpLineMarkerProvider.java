@@ -128,7 +128,7 @@ public class UnityCSharpLineMarkerProvider implements LineMarkerProvider
 		if(typeDeclaration != null)
 		{
 			String uuid = Unity3dAssetUtil.getUUID(PsiUtilCore.getVirtualFile(typeDeclaration));
-			if(uuid == null)
+			if(uuid == null || typeDeclaration.isNested())
 			{
 				return null;
 			}
