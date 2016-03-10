@@ -28,6 +28,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.mustbe.consulo.RequiredReadAction;
 import org.mustbe.consulo.editor.notifications.EditorNotificationProvider;
+import org.mustbe.consulo.unity3d.editor.UnityEditorCommunication;
+import org.mustbe.consulo.unity3d.editor.UnityOpenScene;
 import org.mustbe.consulo.unity3d.scene.Unity3dAssetUtil;
 import org.mustbe.consulo.unity3d.scene.Unity3dYMLAssetFileType;
 import org.mustbe.consulo.unity3d.scene.index.Unity3dYMLAssetIndexExtension;
@@ -47,6 +49,7 @@ import com.intellij.ui.HyperlinkAdapter;
 import com.intellij.ui.HyperlinkLabel;
 import com.intellij.util.CommonProcessors;
 import com.intellij.util.Function;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.util.ui.PlatformColors;
 
@@ -102,13 +105,13 @@ public class Unity3dPrefabEditorNotificationProvider implements EditorNotificati
 					{
 						Collection<VirtualFile> virtualFiles = getVirtualFiles(uuid);
 						int size = virtualFiles.size();
-						/*if(size == 1)
+						if(size == 1)
 						{
 							VirtualFile firstElement = ContainerUtil.getFirstItem(virtualFiles);
 							assert firstElement != null;
 							UnityEditorCommunication.request(myProject, new UnityOpenScene(firstElement.getPath()), false);
 						}
-						else*/ if(size > 0)
+						else if(size > 0)
 						{
 							BaseListPopupStep<VirtualFile> popupStep = new BaseListPopupStep<VirtualFile>("Open scene", new ArrayList<VirtualFile>(results))
 							{
@@ -128,6 +131,7 @@ public class Unity3dPrefabEditorNotificationProvider implements EditorNotificati
 								@Override
 								public PopupStep onChosen(VirtualFile selectedValue, boolean finalChoice)
 								{
+									UnityEditorCommunication.request(myProject, new UnityOpenScene(selectedValue.getPath()), false);
 									return FINAL_CHOICE;
 								}
 							};
