@@ -52,8 +52,8 @@ import com.intellij.codeInsight.daemon.impl.PsiElementListNavigator;
 import com.intellij.ide.util.DefaultPsiElementCellRenderer;
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.openapi.module.ModuleUtilCore;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.NavigatablePsiElement;
 import com.intellij.psi.PsiElement;
@@ -143,7 +143,7 @@ public class UnityCSharpLineMarkerProvider implements LineMarkerProvider
 					@Override
 					public String fun(final PsiElement element)
 					{
-						CSharpTypeDeclaration typeDeclaration = CSharpLineMarkerUtil.getNameIdentifierAs(element, CSharpTypeDeclaration.class);
+						final CSharpTypeDeclaration typeDeclaration = CSharpLineMarkerUtil.getNameIdentifierAs(element, CSharpTypeDeclaration.class);
 						if(typeDeclaration != null)
 						{
 							String uuid = Unity3dAssetUtil.getUUID(PsiUtilCore.getVirtualFile(typeDeclaration));
@@ -160,7 +160,7 @@ public class UnityCSharpLineMarkerProvider implements LineMarkerProvider
 								@Override
 								public String fun(VirtualFile virtualFile)
 								{
-									return FileUtil.toSystemDependentName(virtualFile.getPath());
+									return VfsUtil.getRelativePath(virtualFile, typeDeclaration.getProject().getBaseDir());
 								}
 							}, "\n");
 							return text;
@@ -182,9 +182,13 @@ public class UnityCSharpLineMarkerProvider implements LineMarkerProvider
 								return;
 							}
 
-							Collection<VirtualFile> containingFiles = FileBasedIndex.getInstance().getContainingFiles(Unity3dYMLAssetIndexExtension.KEY, uuid, GlobalSearchScope.projectScope(typeDeclaration.getProject()));
+							Collection<VirtualFile> temp = FileBasedIndex.getInstance().getContainingFiles(Unity3dYMLAssetIndexExtension.KEY, uuid,
+									GlobalSearchScope.projectScope(typeDeclaration.getProject()));
 
-							List<UnitySceneFile> map = ContainerUtil.map(containingFiles, new Function<VirtualFile, UnitySceneFile>()
+							VirtualFile[] assetFiles = temp.toArray(new VirtualFile[temp.size()]);
+							assetFiles = Unity3dAssetUtil.sortAssetFiles(assetFiles);
+
+							List<UnitySceneFile> map = ContainerUtil.map(assetFiles, new Function<VirtualFile, UnitySceneFile>()
 							{
 								@Override
 								@RequiredReadAction

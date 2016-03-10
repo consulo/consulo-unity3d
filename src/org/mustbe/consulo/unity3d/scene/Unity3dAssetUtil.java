@@ -18,13 +18,17 @@ package org.mustbe.consulo.unity3d.scene;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Comparator;
 import java.util.Map;
 
 import org.consulo.lombok.annotations.Logger;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.mustbe.consulo.unity3d.Unity3dMetaFileType;
 import org.yaml.snakeyaml.Yaml;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.ArrayUtil;
+import com.intellij.util.containers.ContainerUtil;
 
 /**
  * @author VISTALL
@@ -33,6 +37,33 @@ import com.intellij.openapi.vfs.VirtualFile;
 @Logger
 public class Unity3dAssetUtil
 {
+	@NotNull
+	public static VirtualFile[] sortAssetFiles(VirtualFile[] virtualFiles)
+	{
+		ContainerUtil.sort(virtualFiles, new Comparator<VirtualFile>()
+		{
+			@Override
+			public int compare(VirtualFile o1, VirtualFile o2)
+			{
+				return weight(o1) - weight(o2);
+			}
+
+			private int weight(VirtualFile virtualFile)
+			{
+				int i = ArrayUtil.indexOf(Unity3dAssetFileTypeDetector.ourAssetExtensions, virtualFile.getExtension());
+				if(i == -1)
+				{
+					return 1000;
+				}
+				else
+				{
+					return (i + 1) * 10;
+				}
+			}
+		});
+		return virtualFiles;
+	}
+
 	@Nullable
 	public static String getUUID(VirtualFile virtualFile)
 	{

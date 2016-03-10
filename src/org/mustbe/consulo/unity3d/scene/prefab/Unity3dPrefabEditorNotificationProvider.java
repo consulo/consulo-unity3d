@@ -16,8 +16,6 @@
 
 package org.mustbe.consulo.unity3d.scene.prefab;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 
 import javax.swing.Icon;
@@ -47,9 +45,9 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.ui.EditorNotificationPanel;
 import com.intellij.ui.HyperlinkAdapter;
 import com.intellij.ui.HyperlinkLabel;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.CommonProcessors;
 import com.intellij.util.Function;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.util.ui.PlatformColors;
 
@@ -89,8 +87,8 @@ public class Unity3dPrefabEditorNotificationProvider implements EditorNotificati
 		{
 			return null;
 		}
-		final Collection<VirtualFile> results = getVirtualFiles(uuid);
-		if(results.isEmpty())
+		final VirtualFile[] results = getVirtualFiles(uuid);
+		if(results.length == 0)
 		{
 			return null;
 		}
@@ -103,17 +101,17 @@ public class Unity3dPrefabEditorNotificationProvider implements EditorNotificati
 					@Override
 					protected void hyperlinkActivated(HyperlinkEvent e)
 					{
-						Collection<VirtualFile> virtualFiles = getVirtualFiles(uuid);
-						int size = virtualFiles.size();
+						VirtualFile[] virtualFiles = getVirtualFiles(uuid);
+						int size = virtualFiles.length;
 						if(size == 1)
 						{
-							VirtualFile firstElement = ContainerUtil.getFirstItem(virtualFiles);
+							VirtualFile firstElement = ArrayUtil.getFirstElement(virtualFiles);
 							assert firstElement != null;
 							UnityEditorCommunication.request(myProject, new UnityOpenScene(firstElement.getPath()), false);
 						}
 						else if(size > 0)
 						{
-							BaseListPopupStep<VirtualFile> popupStep = new BaseListPopupStep<VirtualFile>("Open scene", new ArrayList<VirtualFile>(results))
+							BaseListPopupStep<VirtualFile> popupStep = new BaseListPopupStep<VirtualFile>("Open scene", results)
 							{
 								@NotNull
 								@Override
@@ -160,17 +158,12 @@ public class Unity3dPrefabEditorNotificationProvider implements EditorNotificati
 	}
 
 	@NotNull
-	private Collection<VirtualFile> getVirtualFiles(String uuid)
+	private VirtualFile[] getVirtualFiles(String uuid)
 	{
 		GlobalSearchScope filter = GlobalSearchScope.projectScope(myProject);
 		CommonProcessors.CollectUniquesProcessor<VirtualFile> processor = new CommonProcessors.CollectUniquesProcessor<VirtualFile>();
 		FileBasedIndex.getInstance().processFilesContainingAllKeys(Unity3dYMLAssetIndexExtension.KEY, Collections.singleton(uuid), filter, null, processor);
 
-		Collection<VirtualFile> results = processor.getResults();
-		if(results.isEmpty())
-		{
-			return Collections.emptyList();
-		}
-		return results;
+		return Unity3dAssetUtil.sortAssetFiles(processor.toArray(VirtualFile.EMPTY_ARRAY));
 	}
 }
