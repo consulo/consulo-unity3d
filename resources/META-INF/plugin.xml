@@ -171,5 +171,7 @@
 		<httpRequestHandler implementation="org.mustbe.consulo.unity3d.jsonApi.UnityOpenFilePostHandler"/>
 		<httpRequestHandler implementation="org.mustbe.consulo.unity3d.jsonApi.UnityTestStatePostHandler"/>
 		<httpRequestHandler implementation="org.mustbe.consulo.unity3d.jsonApi.UnityRefreshResponseHandler"/>
+
+		<editorNotificationProvider implementation="org.mustbe.consulo.unity3d.scene.prefab.Unity3dPrefabEditorNotificationProvider" />
 	</extensions>
 </idea-plugin>
