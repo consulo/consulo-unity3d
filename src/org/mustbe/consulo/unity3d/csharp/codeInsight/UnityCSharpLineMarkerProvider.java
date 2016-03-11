@@ -17,6 +17,7 @@
 package org.mustbe.consulo.unity3d.csharp.codeInsight;
 
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -176,7 +177,16 @@ public class UnityCSharpLineMarkerProvider implements LineMarkerProvider
 									first = false;
 								}
 								text += "<b>Imported in *." + entry.getKey() + ":</b><br>";
-								text += StringUtil.join(entry.getValue(), new Function<String, String>()
+
+								List<String> items = new ArrayList<String>(entry.getValue());
+								ContainerUtil.sort(items);
+
+								List<String> firstItems = ContainerUtil.getFirstItems(items, 10);
+								if(firstItems.size() != items.size())
+								{
+									firstItems.add("<b>...</b>");
+								}
+								text += StringUtil.join(firstItems, new Function<String, String>()
 								{
 									@Override
 									public String fun(String s)
