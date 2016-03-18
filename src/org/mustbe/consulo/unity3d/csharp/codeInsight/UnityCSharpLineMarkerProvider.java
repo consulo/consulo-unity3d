@@ -184,7 +184,7 @@ public class UnityCSharpLineMarkerProvider implements LineMarkerProvider
 								List<String> firstItems = ContainerUtil.getFirstItems(items, 10);
 								if(firstItems.size() != items.size())
 								{
-									firstItems.add("<b>...</b>");
+									firstItems.add("<b>... " + (items.size() - firstItems.size()) + " others.</b>");
 								}
 								text += StringUtil.join(firstItems, new Function<String, String>()
 								{
