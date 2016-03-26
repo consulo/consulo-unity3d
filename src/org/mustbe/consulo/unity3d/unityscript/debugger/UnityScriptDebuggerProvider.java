@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.mustbe.consulo.dotnet.debugger.DotNetDebugContext;
 import org.mustbe.consulo.dotnet.debugger.DotNetDebuggerProvider;
+import org.mustbe.consulo.dotnet.debugger.proxy.DotNetStackFrameMirrorProxy;
 import org.mustbe.consulo.dotnet.psi.DotNetReferenceExpression;
 import org.mustbe.consulo.javascript.lang.JavaScriptLanguage;
 import org.mustbe.consulo.unity3d.unityscript.lang.UnityScriptLanguageVersion;
@@ -34,7 +35,6 @@ import com.intellij.util.Consumer;
 import com.intellij.xdebugger.XSourcePosition;
 import com.intellij.xdebugger.evaluation.XDebuggerEvaluator;
 import com.intellij.xdebugger.frame.XNamedValue;
-import mono.debugger.StackFrameMirror;
 
 /**
  * @author VISTALL
@@ -50,24 +50,23 @@ public class UnityScriptDebuggerProvider extends DotNetDebuggerProvider
 	}
 
 	@Override
-	public void evaluate(@NotNull StackFrameMirror stackFrameMirror,
+	public void evaluate(@NotNull DotNetStackFrameMirrorProxy stackFrameMirror,
 			@NotNull DotNetDebugContext context,
 			@NotNull String s,
 			@Nullable PsiElement element,
-			@NotNull XDebuggerEvaluator.XEvaluationCallback xEvaluationCallback,
+			@NotNull XDebuggerEvaluator.XEvaluationCallback callback,
 			@Nullable XSourcePosition sourcePosition)
 	{
-
+		callback.errorOccurred("UnityScript evaluation is not supported");
 	}
 
 	@Override
-	public void evaluate(@NotNull StackFrameMirror stackFrameMirror,
+	public void evaluate(@NotNull DotNetStackFrameMirrorProxy stackFrameMirror,
 			@NotNull DotNetDebugContext dotNetDebugContext,
 			@NotNull DotNetReferenceExpression dotNetReferenceExpression,
 			@NotNull Set<Object> set,
 			@NotNull Consumer<XNamedValue> consumer)
 	{
-
 	}
 
 	@Override
