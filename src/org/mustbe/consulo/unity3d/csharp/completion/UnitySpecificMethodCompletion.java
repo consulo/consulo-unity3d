@@ -20,6 +20,8 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.jetbrains.annotations.NotNull;
+import org.mustbe.consulo.RequiredDispatchThread;
+import org.mustbe.consulo.RequiredReadAction;
 import org.mustbe.consulo.csharp.CSharpIcons;
 import org.mustbe.consulo.csharp.ide.completion.CSharpMemberAddByCompletionContributor;
 import org.mustbe.consulo.csharp.lang.psi.CSharpMethodDeclaration;
@@ -35,7 +37,6 @@ import org.mustbe.consulo.unity3d.Unity3dTypes;
 import org.mustbe.consulo.unity3d.csharp.UnityFunctionManager;
 import org.mustbe.consulo.unity3d.module.Unity3dModuleExtension;
 import com.intellij.codeInsight.completion.CompletionParameters;
-import com.intellij.codeInsight.completion.CompletionResultSet;
 import com.intellij.codeInsight.completion.InsertHandler;
 import com.intellij.codeInsight.completion.InsertionContext;
 import com.intellij.codeInsight.lookup.LookupElement;
@@ -47,6 +48,7 @@ import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.util.Consumer;
 import com.intellij.util.ProcessingContext;
 
 /**
@@ -55,10 +57,11 @@ import com.intellij.util.ProcessingContext;
  */
 public class UnitySpecificMethodCompletion extends CSharpMemberAddByCompletionContributor
 {
+	@RequiredReadAction
 	@Override
 	public void processCompletion(@NotNull CompletionParameters completionParameters,
-			ProcessingContext processingContext,
-			@NotNull CompletionResultSet completionResultSet,
+			@NotNull ProcessingContext processingContext,
+			@NotNull Consumer<LookupElement> completionResultSet,
 			@NotNull CSharpTypeDeclaration typeDeclaration)
 	{
 		Unity3dModuleExtension extension = ModuleUtilCore.getExtension(typeDeclaration, Unity3dModuleExtension.class);
@@ -78,14 +81,15 @@ public class UnitySpecificMethodCompletion extends CSharpMemberAddByCompletionCo
 			UnityFunctionManager.FunctionInfo nonParameterListCopy = functionInfo.createNonParameterListCopy();
 			if(nonParameterListCopy != null)
 			{
-				completionResultSet.addElement(buildLookupItem(nonParameterListCopy, typeDeclaration));
+				completionResultSet.consume(buildLookupItem(nonParameterListCopy, typeDeclaration));
 			}
 
-			completionResultSet.addElement(buildLookupItem(functionInfo, typeDeclaration));
+			completionResultSet.consume(buildLookupItem(functionInfo, typeDeclaration));
 		}
 	}
 
 	@NotNull
+	@RequiredReadAction
 	private static LookupElementBuilder buildLookupItem(UnityFunctionManager.FunctionInfo functionInfo, CSharpTypeDeclaration scope)
 	{
 		StringBuilder builder = new StringBuilder();
@@ -129,6 +133,7 @@ public class UnitySpecificMethodCompletion extends CSharpMemberAddByCompletionCo
 		lookupElementBuilder = lookupElementBuilder.withInsertHandler(new InsertHandler<LookupElement>()
 		{
 			@Override
+			@RequiredDispatchThread
 			public void handleInsert(InsertionContext context, LookupElement item)
 			{
 				CaretModel caretModel = context.getEditor().getCaretModel();
