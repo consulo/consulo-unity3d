@@ -15,7 +15,7 @@ import com.intellij.psi.PsiDirectory;
  * @author VISTALL
  * @since 26.10.2015
  */
-public class UnityNamespaceGeneratePolicy implements DotNetNamespaceGeneratePolicy
+public class UnityNamespaceGeneratePolicy extends DotNetNamespaceGeneratePolicy
 {
 	public static final UnityNamespaceGeneratePolicy INSTANCE = new UnityNamespaceGeneratePolicy(null);
 
@@ -40,7 +40,7 @@ public class UnityNamespaceGeneratePolicy implements DotNetNamespaceGeneratePoli
 	@RequiredReadAction
 	@Nullable
 	@Override
-	public String calculateNamespace(@NotNull PsiDirectory psiDirectory)
+	public String calculateDirtyNamespace(@NotNull PsiDirectory psiDirectory)
 	{
 		Project project = psiDirectory.getProject();
 		VirtualFile baseDir = project.getBaseDir();
@@ -57,12 +57,11 @@ public class UnityNamespaceGeneratePolicy implements DotNetNamespaceGeneratePoli
 			String relativePath = VfsUtil.getRelativePath(targetDir, assetsDirectory, '.');
 			if(relativePath != null)
 			{
-				String replacedString = StringUtil.replaceChar(relativePath, ' ', '_');
 				if(!StringUtil.isEmpty(myNamespacePrefix))
 				{
-					return myNamespacePrefix + "." + replacedString;
+					return myNamespacePrefix + "." + relativePath;
 				}
-				return replacedString;
+				return relativePath;
 			}
 		}
 		return myNamespacePrefix;
