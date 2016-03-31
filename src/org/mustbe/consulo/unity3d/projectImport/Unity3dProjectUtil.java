@@ -75,6 +75,12 @@ public class Unity3dProjectUtil
 
 	public static final Key<Getter<Sdk>> NEWLY_IMPORTED_PROJECT_SDK = Key.create("unity.new.project");
 
+	public static final String[] FIRST_PASS_PATHS = new String[]{
+			"Assets/Standard Assets",
+			"Assets/Pro Standard Assets",
+			"Assets/Plugins"
+	};
+
 	@Nullable
 	public static String loadVersionFromProject(@NotNull String path)
 	{
@@ -207,13 +213,8 @@ public class Unity3dProjectUtil
 			MultiMap<Module, VirtualFile> virtualFilesByModule,
 			ProgressIndicator progressIndicator)
 	{
-		String[] paths = new String[]{
-				"Assets/Standard Assets",
-				"Assets/Pro Standard Assets",
-				"Assets/Plugins"
-		};
 
-		return createAndSetupModule("Assembly-UnityScript-firstpass", project, newModel, paths, unityBundle, null, "unity3d-unityscript-child", JavaScriptFileType.INSTANCE, virtualFilesByModule,
+		return createAndSetupModule("Assembly-UnityScript-firstpass", project, newModel, FIRST_PASS_PATHS, unityBundle, null, "unity3d-unityscript-child", JavaScriptFileType.INSTANCE, virtualFilesByModule,
 				progressIndicator);
 	}
 
@@ -223,13 +224,7 @@ public class Unity3dProjectUtil
 			MultiMap<Module, VirtualFile> virtualFilesByModule,
 			ProgressIndicator progressIndicator)
 	{
-		String[] paths = new String[]{
-				"Assets/Standard Assets",
-				"Assets/Pro Standard Assets",
-				"Assets/Plugins"
-		};
-
-		return createAndSetupModule("Assembly-CSharp-firstpass", project, newModel, paths, unityBundle, null, "unity3d-csharp-child", CSharpFileType.INSTANCE, virtualFilesByModule,
+		return createAndSetupModule("Assembly-CSharp-firstpass", project, newModel, FIRST_PASS_PATHS, unityBundle, null, "unity3d-csharp-child", CSharpFileType.INSTANCE, virtualFilesByModule,
 				progressIndicator);
 	}
 

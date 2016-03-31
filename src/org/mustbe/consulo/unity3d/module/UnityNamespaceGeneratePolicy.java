@@ -49,12 +49,38 @@ public class UnityNamespaceGeneratePolicy extends DotNetNamespaceGeneratePolicy
 			return myNamespacePrefix;
 		}
 
-		VirtualFile targetDir = psiDirectory.getVirtualFile();
+		VirtualFile currentDirectory = psiDirectory.getVirtualFile();
 
 		VirtualFile assetsDirectory = baseDir.findChild(Unity3dProjectUtil.ASSETS_DIRECTORY);
 		if(assetsDirectory != null)
 		{
-			String relativePath = VfsUtil.getRelativePath(targetDir, assetsDirectory, '.');
+			VirtualFile targetDirectory = assetsDirectory;
+
+			VirtualFile temp = currentDirectory;
+			while(temp != null && !temp.equals(targetDirectory))
+			{
+				if("Editor".equals(temp.getName()))
+				{
+					targetDirectory = temp;
+				}
+				temp = temp.getParent();
+			}
+
+			// if not editor path
+			if(targetDirectory.equals(assetsDirectory))
+			{
+				for(String path : Unity3dProjectUtil.FIRST_PASS_PATHS)
+				{
+					VirtualFile child = baseDir.findFileByRelativePath(path);
+					if(child != null && VfsUtil.isAncestor(child, currentDirectory, false))
+					{
+						targetDirectory = child;
+						break;
+					}
+				}
+			}
+
+			String relativePath = VfsUtil.getRelativePath(currentDirectory, targetDirectory, '.');
 			if(relativePath != null)
 			{
 				if(!StringUtil.isEmpty(myNamespacePrefix))
