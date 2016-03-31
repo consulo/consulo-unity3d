@@ -104,11 +104,6 @@ public class Unity3dProjectUtil
 		return null;
 	}
 
-	public static void main(String[] args)
-	{
-		System.out.println(loadVersionFromProject("R:\\_pragmatix\\unity-client"));
-	}
-
 	public static void syncProject(@NotNull final Project project, @Nullable final Sdk sdk)
 	{
 		new Task.Modal(project, "Sync project", false)
