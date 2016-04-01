@@ -10,9 +10,12 @@ import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.testframework.sm.runner.GeneralTestEventsProcessor;
 import com.intellij.execution.testframework.sm.runner.events.TestFailedEvent;
 import com.intellij.execution.testframework.sm.runner.events.TestFinishedEvent;
+import com.intellij.execution.testframework.sm.runner.events.TestIgnoredEvent;
+import com.intellij.execution.testframework.sm.runner.events.TestOutputEvent;
 import com.intellij.execution.testframework.sm.runner.events.TestStartedEvent;
 import com.intellij.execution.testframework.sm.runner.events.TestSuiteFinishedEvent;
 import com.intellij.execution.testframework.sm.runner.events.TestSuiteStartedEvent;
+import com.intellij.openapi.util.text.StringUtil;
 
 /**
  * @author VISTALL
@@ -45,8 +48,25 @@ public class UnityTestStatePostHandler extends JsonPostRequestHandler<UnityTestS
 			case TestStarted:
 				processor.onTestStarted(new TestStartedEvent(name, null));
 				break;
+			case TestIgnored:
+				processor.onTestIgnored(new TestIgnoredEvent(name, StringUtil.notNullize(request.message), request.stackTrace));
+				break;
 			case TestFailed:
-				processor.onTestFailure(new TestFailedEvent(name, "", null, false, null, null));
+				processor.onTestFailure(new TestFailedEvent(name, StringUtil.notNullize(request.message), request.stackTrace, false, null, null));
+				break;
+			case TestOutput:
+				boolean stdOut = "Log".equals(request.messageType) || "Warning".equals(request.messageType);
+				StringBuilder builder = new StringBuilder(request.message);
+				if(!stdOut)
+				{
+					builder.append("\n");
+					String[] strings = StringUtil.splitByLines(request.stackTrace);
+					for(String line : strings)
+					{
+						builder.append("  at ").append(line).append("\n");
+					}
+				}
+				processor.onTestOutput(new TestOutputEvent(name, builder.toString(), stdOut));
 				break;
 			case TestFinished:
 				processor.onTestFinished(new TestFinishedEvent(name, 0L));

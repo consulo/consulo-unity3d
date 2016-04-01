@@ -10,7 +10,9 @@ public class UnityTestStatePostRequest
 	{
 		TestStarted,
 		TestFailed,
+		TestIgnored,
 		TestFinished,
+		TestOutput,
 		SuiteStarted,
 		SuiteFinished,
 		RunFinished
@@ -19,6 +21,9 @@ public class UnityTestStatePostRequest
 	public String uuid;
 	public String name;
 	public Type type;
+	public String message;
+	public String messageType;
+	public String stackTrace;
 
 	@Override
 	public String toString()
@@ -27,6 +32,9 @@ public class UnityTestStatePostRequest
 		sb.append("uuid='").append(uuid).append('\'');
 		sb.append(", name='").append(name).append('\'');
 		sb.append(", type=").append(type);
+		sb.append(", message=").append(message);
+		sb.append(", messageType=").append(messageType);
+		sb.append(", stackTrace=").append(stackTrace);
 		sb.append('}');
 		return sb.toString();
 	}
