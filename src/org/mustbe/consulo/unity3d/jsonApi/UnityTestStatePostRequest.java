@@ -24,6 +24,7 @@ public class UnityTestStatePostRequest
 	public String message;
 	public String messageType;
 	public String stackTrace;
+	public double time;
 
 	@Override
 	public String toString()
@@ -35,6 +36,7 @@ public class UnityTestStatePostRequest
 		sb.append(", message=").append(message);
 		sb.append(", messageType=").append(messageType);
 		sb.append(", stackTrace=").append(stackTrace);
+		sb.append(", time=").append(time);
 		sb.append('}');
 		return sb.toString();
 	}

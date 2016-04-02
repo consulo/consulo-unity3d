@@ -69,7 +69,8 @@ public class UnityTestStatePostHandler extends JsonPostRequestHandler<UnityTestS
 				processor.onTestOutput(new TestOutputEvent(name, builder.toString(), stdOut));
 				break;
 			case TestFinished:
-				processor.onTestFinished(new TestFinishedEvent(name, 0L));
+				long time = (long) (request.time * 1000L);
+				processor.onTestFinished(new TestFinishedEvent(name, time));
 				break;
 			case SuiteStarted:
 				processor.onSuiteStarted(new TestSuiteStartedEvent(name, null));
