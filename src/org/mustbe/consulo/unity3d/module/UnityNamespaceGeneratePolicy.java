@@ -66,7 +66,21 @@ public class UnityNamespaceGeneratePolicy extends DotNetNamespaceGeneratePolicy
 				temp = temp.getParent();
 			}
 
-			// if not editor path
+			// if path is not changed
+			if(targetDirectory.equals(assetsDirectory))
+			{
+				temp = currentDirectory;
+				while(temp != null && !temp.equals(targetDirectory))
+				{
+					if("Scripts".equals(temp.getName()))
+					{
+						targetDirectory = temp;
+					}
+					temp = temp.getParent();
+				}
+			}
+
+			// if path is not changed
 			if(targetDirectory.equals(assetsDirectory))
 			{
 				for(String path : Unity3dProjectUtil.FIRST_PASS_PATHS)
