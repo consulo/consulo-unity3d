@@ -173,6 +173,10 @@ public class Unity3dRootModuleExtension extends BaseDotNetSimpleModuleExtension<
 			list.add(homePath + "/Contents/Frameworks/Mono/lib/mono/2.0");
 			list.add(homePath + "/Contents/Frameworks/Managed");
 
+			// actual at unity5.4 beta
+			list.add(homePath + "/Contents/Mono/lib/mono/2.0");
+			list.add(homePath + "/Contents/Managed");
+
 			// dead path?
 			addUnityExtensions(list, version, homePath + "/Contents/Frameworks/UnityExtensions/Unity");
 			// actual mac path
