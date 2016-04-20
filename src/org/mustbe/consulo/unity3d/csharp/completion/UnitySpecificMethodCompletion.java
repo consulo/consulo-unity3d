@@ -22,7 +22,6 @@ import java.util.Map;
 import org.jetbrains.annotations.NotNull;
 import org.mustbe.consulo.RequiredDispatchThread;
 import org.mustbe.consulo.RequiredReadAction;
-import org.mustbe.consulo.csharp.CSharpIcons;
 import org.mustbe.consulo.csharp.ide.completion.CSharpMemberAddByCompletionContributor;
 import org.mustbe.consulo.csharp.lang.psi.CSharpMethodDeclaration;
 import org.mustbe.consulo.csharp.lang.psi.CSharpTypeDeclaration;
@@ -125,7 +124,7 @@ public class UnitySpecificMethodCompletion extends CSharpMemberAddByCompletionCo
 		lookupElementBuilder = lookupElementBuilder.withLookupString(functionInfo.getName());
 		lookupElementBuilder = lookupElementBuilder.withTailText("{...}", true);
 
-		IconDescriptor iconDescriptor = new IconDescriptor(new IconDescriptor(AllIcons.Nodes.Method).addLayerIcon(CSharpIcons.Lang).toIcon());
+		IconDescriptor iconDescriptor = new IconDescriptor(new IconDescriptor(AllIcons.Nodes.Method).toIcon());
 		iconDescriptor.setRightIcon(Unity3dIcons.EventMethod);
 
 		lookupElementBuilder = lookupElementBuilder.withIcon(iconDescriptor.toIcon());
