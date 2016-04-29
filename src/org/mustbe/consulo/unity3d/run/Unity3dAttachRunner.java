@@ -19,7 +19,6 @@ package org.mustbe.consulo.unity3d.run;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.mustbe.consulo.RequiredDispatchThread;
-import org.mustbe.consulo.dotnet.debugger.DotNetVirtualMachineListener;
 import org.mustbe.consulo.dotnet.execution.DebugConnectionInfo;
 import org.mustbe.consulo.unity3d.run.debugger.UnityDebugProcess;
 import org.mustbe.consulo.unity3d.run.debugger.UnityProcess;
@@ -39,6 +38,7 @@ import com.intellij.xdebugger.XDebugProcess;
 import com.intellij.xdebugger.XDebugProcessStarter;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebuggerManager;
+import consulo.dotnet.mono.debugger.MonoVirtualMachineListener;
 import mono.debugger.VirtualMachine;
 
 /**
@@ -87,8 +87,8 @@ public class Unity3dAttachRunner extends DefaultProgramRunner
 			public XDebugProcess start(@NotNull final XDebugSession session) throws ExecutionException
 			{
 				DebugConnectionInfo debugConnectionInfo = new DebugConnectionInfo(selected.getHost(), selected.getPort(), true);
-				final UnityDebugProcess process = new UnityDebugProcess(session, debugConnectionInfo, environment.getRunProfile(), consoleView);
-				process.getDebugThread().addListener(new DotNetVirtualMachineListener()
+				final UnityDebugProcess process = new UnityDebugProcess(session, environment.getRunProfile(), debugConnectionInfo, consoleView);
+				process.getDebugThread().addListener(new MonoVirtualMachineListener()
 				{
 					@Override
 					public void connectionSuccess(@NotNull VirtualMachine machine)

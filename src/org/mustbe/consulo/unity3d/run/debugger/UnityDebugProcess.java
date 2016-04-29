@@ -18,7 +18,6 @@ package org.mustbe.consulo.unity3d.run.debugger;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.mustbe.consulo.dotnet.debugger.DotNetDebugProcess;
 import org.mustbe.consulo.dotnet.execution.DebugConnectionInfo;
 import com.intellij.execution.configurations.RunProfile;
 import com.intellij.execution.filters.TextConsoleBuilderFactory;
@@ -26,18 +25,19 @@ import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.ExecutionConsole;
 import com.intellij.xdebugger.XDebugSession;
+import consulo.dotnet.mono.debugger.MonoDebugProcess;
 
 /**
  * @author VISTALL
  * @since 11.11.14
  */
-public class UnityDebugProcess extends DotNetDebugProcess
+public class UnityDebugProcess extends MonoDebugProcess
 {
 	private ConsoleView myConsoleView;
 
-	public UnityDebugProcess(XDebugSession session, DebugConnectionInfo debugConnectionInfo, RunProfile runProfile, ConsoleView consoleView)
+	public UnityDebugProcess(XDebugSession session, RunProfile runProfile, DebugConnectionInfo debugConnectionInfo, ConsoleView consoleView)
 	{
-		super(session, debugConnectionInfo, runProfile);
+		super(session, runProfile, debugConnectionInfo);
 		myConsoleView = consoleView;
 	}
 
