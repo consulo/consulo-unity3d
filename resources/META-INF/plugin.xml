@@ -22,7 +22,7 @@
 	<category>Game Frameworks</category>
 	<resource-bundle>messages.Unity3dBundle</resource-bundle>
 
-	<depends>org.mustbe.consulo.dotnet.core</depends>
+	<depends>org.mustbe.consulo.dotnet.mono</depends>
 	<depends>org.mustbe.consulo.csharp</depends>
 	<depends>org.mustbe.consulo.javascript</depends>
 	<depends>org.mustbe.consulo.nunit</depends>
@@ -46,7 +46,7 @@
 
 		<group id="Unity3dAttachGroup">
 			<separator/>
-			<action id="Unity3Attach" class="org.mustbe.consulo.unity3d.action.Unity3dAttachAction" />
+			<action id="Unity3Attach" class="org.mustbe.consulo.unity3d.action.Unity3dAttachAction"/>
 			<add-to-group group-id="ToolbarRunGroup" anchor="after" relative-to-action="RunnerActions"/>
 		</group>
 	</actions>
@@ -75,11 +75,13 @@
 		<toNativeElementTransformer implementation="org.mustbe.consulo.unity3d.unityscript.lang.impl.csharp.UnityScriptToNativeElementTransformer"/>
 	</extensions>
 
-	<extensions defaultExtensionNs="org.mustbe.consulo.dotnet.core">
-		<debugger.provider implementation="org.mustbe.consulo.unity3d.unityscript.debugger.UnityScriptDebuggerProvider"/>
-		<debugger.sourceLineResolver language="JavaScript"
-									 implementationClass="org.mustbe.consulo.unity3d.unityscript.debugger.UnityScriptSourceLineResolver"/>
+	<extensions defaultExtensionNs="consulo.dotnet">
+		<debuggerProvider implementation="org.mustbe.consulo.unity3d.unityscript.debugger.UnityScriptDebuggerProvider"/>
+		<debuggerSourceLineResolver language="JavaScript"
+									implementationClass="org.mustbe.consulo.unity3d.unityscript.debugger.UnityScriptSourceLineResolver"/>
+	</extensions>
 
+	<extensions defaultExtensionNs="org.mustbe.consulo.dotnet.core">
 		<psiSearcher implementation="org.mustbe.consulo.unity3d.unityscript.lang.impl.UnityScriptPsiSearcher"/>
 	</extensions>
 
@@ -149,11 +151,11 @@
 
 		<lang.defineVersion language="JavaScript" implementationClass="org.mustbe.consulo.unity3d.unityscript.lang.UnityScriptLanguageVersion"/>
 
-		<configurationType implementation="org.mustbe.consulo.unity3d.run.test.Unity3dTestConfigurationType" />
-		<stepsBeforeRunProvider implementation="org.mustbe.consulo.unity3d.run.before.UnityRefreshBeforeRunTaskProvider" />
-		<programRunner implementation="org.mustbe.consulo.unity3d.run.test.Unity3dTestDebuggerRunner" />
+		<configurationType implementation="org.mustbe.consulo.unity3d.run.test.Unity3dTestConfigurationType"/>
+		<stepsBeforeRunProvider implementation="org.mustbe.consulo.unity3d.run.before.UnityRefreshBeforeRunTaskProvider"/>
+		<programRunner implementation="org.mustbe.consulo.unity3d.run.test.Unity3dTestDebuggerRunner"/>
 
-		<applicationService serviceImplementation="org.mustbe.consulo.unity3d.run.test.Unity3dTestSessionManager" />
+		<applicationService serviceImplementation="org.mustbe.consulo.unity3d.run.test.Unity3dTestSessionManager"/>
 
 		<projectImportProvider implementation="org.mustbe.consulo.unity3d.projectImport.Unity3dProjectImportProvider"/>
 		<postStartupActivity implementation="org.mustbe.consulo.unity3d.projectImport.Unity3dPostStartupActivity"/>
@@ -172,6 +174,6 @@
 		<httpRequestHandler implementation="org.mustbe.consulo.unity3d.jsonApi.UnityTestStatePostHandler"/>
 		<httpRequestHandler implementation="org.mustbe.consulo.unity3d.jsonApi.UnityRefreshResponseHandler"/>
 
-		<editorNotificationProvider implementation="org.mustbe.consulo.unity3d.scene.prefab.Unity3dPrefabEditorNotificationProvider" />
+		<editorNotificationProvider implementation="org.mustbe.consulo.unity3d.scene.prefab.Unity3dPrefabEditorNotificationProvider"/>
 	</extensions>
 </idea-plugin>

@@ -20,9 +20,6 @@ import java.util.Set;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.mustbe.consulo.dotnet.debugger.DotNetDebugContext;
-import org.mustbe.consulo.dotnet.debugger.DotNetDebuggerProvider;
-import org.mustbe.consulo.dotnet.debugger.proxy.DotNetStackFrameMirrorProxy;
 import org.mustbe.consulo.dotnet.psi.DotNetReferenceExpression;
 import org.mustbe.consulo.javascript.lang.JavaScriptLanguage;
 import org.mustbe.consulo.unity3d.unityscript.lang.UnityScriptLanguageVersion;
@@ -35,6 +32,9 @@ import com.intellij.util.Consumer;
 import com.intellij.xdebugger.XSourcePosition;
 import com.intellij.xdebugger.evaluation.XDebuggerEvaluator;
 import com.intellij.xdebugger.frame.XNamedValue;
+import consulo.dotnet.debugger.DotNetDebugContext;
+import consulo.dotnet.debugger.DotNetDebuggerProvider;
+import consulo.dotnet.debugger.proxy.DotNetStackFrameProxy;
 
 /**
  * @author VISTALL
@@ -50,7 +50,7 @@ public class UnityScriptDebuggerProvider extends DotNetDebuggerProvider
 	}
 
 	@Override
-	public void evaluate(@NotNull DotNetStackFrameMirrorProxy stackFrameMirror,
+	public void evaluate(@NotNull DotNetStackFrameProxy stackFrameMirror,
 			@NotNull DotNetDebugContext context,
 			@NotNull String s,
 			@Nullable PsiElement element,
@@ -61,7 +61,7 @@ public class UnityScriptDebuggerProvider extends DotNetDebuggerProvider
 	}
 
 	@Override
-	public void evaluate(@NotNull DotNetStackFrameMirrorProxy stackFrameMirror,
+	public void evaluate(@NotNull DotNetStackFrameProxy stackFrameMirror,
 			@NotNull DotNetDebugContext dotNetDebugContext,
 			@NotNull DotNetReferenceExpression dotNetReferenceExpression,
 			@NotNull Set<Object> set,
