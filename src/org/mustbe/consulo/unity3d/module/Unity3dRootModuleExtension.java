@@ -170,12 +170,12 @@ public class Unity3dRootModuleExtension extends BaseDotNetSimpleModuleExtension<
 		List<String> list = new SmartList<String>();
 		if(SystemInfo.isMac)
 		{
-			list.add(homePath + "/Contents/Frameworks/Mono/lib/mono/2.0");
 			list.add(homePath + "/Contents/Frameworks/Managed");
+			list.add(homePath + "/Contents/Frameworks/Mono/lib/mono/2.0");
 
 			// actual at unity5.4 beta
-			list.add(homePath + "/Contents/Mono/lib/mono/2.0");
 			list.add(homePath + "/Contents/Managed");
+			list.add(homePath + "/Contents/Mono/lib/mono/2.0");
 
 			// dead path?
 			addUnityExtensions(list, version, homePath + "/Contents/Frameworks/UnityExtensions/Unity");
@@ -184,8 +184,8 @@ public class Unity3dRootModuleExtension extends BaseDotNetSimpleModuleExtension<
 		}
 		else if(SystemInfo.isWindows || SystemInfo.isLinux)
 		{
-			list.add(homePath + "/Editor/Data/Mono/lib/mono/2.0");
 			list.add(homePath + "/Editor/Data/Managed");
+			list.add(homePath + "/Editor/Data/Mono/lib/mono/2.0");
 
 			addUnityExtensions(list, version, homePath + "/Editor/Data/UnityExtensions/Unity");
 		}
