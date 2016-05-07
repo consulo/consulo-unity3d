@@ -88,8 +88,8 @@
 	<extensions defaultExtensionNs="com.intellij">
 		<errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
 		<stubIndex implementation="org.mustbe.consulo.unity3d.unityscript.index.UnityScriptFileByNameIndex"/>
-		<xdebugger.lineBreakpointResolver filetype="JavaScript"
-										  implementationClass="org.mustbe.consulo.unity3d.unityscript.debugger.UnityScriptLineBreakpointResolver"
+		<xdebugger.lineBreakpointTypeResolver filetype="JavaScript"
+										  implementationClass="org.mustbe.consulo.unity3d.unityscript.debugger.UnityScriptLineBreakpointTypeResolver"
 										  order="before javascript"/>
 		<completion.contributor language="C#" implementationClass="org.mustbe.consulo.unity3d.csharp.completion.UnitySpecificMethodCompletion"/>
 		<codeInsight.lineMarkerProvider language="C#"

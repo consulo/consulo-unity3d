@@ -22,15 +22,15 @@ import org.mustbe.consulo.unity3d.unityscript.module.extension.Unity3dScriptModu
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.xdebugger.breakpoints.XLineBreakpointResolver;
 import com.intellij.xdebugger.breakpoints.XLineBreakpointType;
 import consulo.dotnet.debugger.breakpoint.DotNetLineBreakpointType;
+import consulo.xdebugger.breakpoints.XLineBreakpointTypeResolver;
 
 /**
  * @author VISTALL
  * @since 27.04.2015
  */
-public class UnityScriptLineBreakpointResolver implements XLineBreakpointResolver
+public class UnityScriptLineBreakpointTypeResolver implements XLineBreakpointTypeResolver
 {
 	@Nullable
 	@Override
