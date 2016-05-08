@@ -146,6 +146,7 @@ public abstract class ShaderLabRole
 							case Vector:
 								parseElementsInBraces(builder, ShaderLabTokens.LPAR, ShaderLabTokens.RPAR, ShaderLabTokens.INTEGER_LITERAL);
 								break;
+							case Any:
 							case Cube:
 							case _2D:
 							case _3D:

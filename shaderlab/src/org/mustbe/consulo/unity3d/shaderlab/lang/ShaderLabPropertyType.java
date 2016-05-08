@@ -25,6 +25,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public enum ShaderLabPropertyType
 {
+	Any,
 	Float,
 	Range,
 	Color,
