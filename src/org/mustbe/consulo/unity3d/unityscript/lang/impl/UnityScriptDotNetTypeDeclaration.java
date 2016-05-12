@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.mustbe.consulo.RequiredReadAction;
+import org.mustbe.consulo.RequiredWriteAction;
 import org.mustbe.consulo.csharp.lang.psi.impl.source.resolve.type.CSharpTypeRefByQName;
 import org.mustbe.consulo.dotnet.psi.DotNetGenericParameter;
 import org.mustbe.consulo.dotnet.psi.DotNetGenericParameterList;
@@ -70,11 +71,12 @@ public class UnityScriptDotNetTypeDeclaration extends LightElement implements Do
 		return null;
 	}
 
+	@RequiredReadAction
 	@NotNull
 	@Override
 	public DotNetTypeRef[] getExtendTypeRefs()
 	{
-		return new DotNetTypeRef[] {new CSharpTypeRefByQName(Unity3dTypes.UnityEngine.MonoBehaviour)};
+		return new DotNetTypeRef[] {new CSharpTypeRefByQName(myFile, Unity3dTypes.UnityEngine.MonoBehaviour)};
 	}
 
 	@RequiredReadAction
@@ -84,10 +86,12 @@ public class UnityScriptDotNetTypeDeclaration extends LightElement implements Do
 		return DotNetInheritUtil.isInheritor(this, qname, deep);
 	}
 
+	@NotNull
+	@RequiredReadAction
 	@Override
 	public DotNetTypeRef getTypeRefForEnumConstants()
 	{
-		return null;
+		return DotNetTypeRef.ERROR_TYPE;
 	}
 
 	@RequiredReadAction
@@ -133,6 +137,7 @@ public class UnityScriptDotNetTypeDeclaration extends LightElement implements Do
 		return 0;
 	}
 
+	@RequiredReadAction
 	@NotNull
 	@Override
 	public DotNetNamedElement[] getMembers()
@@ -181,6 +186,7 @@ public class UnityScriptDotNetTypeDeclaration extends LightElement implements Do
 		return getClass() + ":" + myFile;
 	}
 
+	@RequiredReadAction
 	@Nullable
 	@Override
 	public PsiElement getNameIdentifier()
@@ -188,6 +194,7 @@ public class UnityScriptDotNetTypeDeclaration extends LightElement implements Do
 		return null;
 	}
 
+	@RequiredWriteAction
 	@Override
 	public PsiElement setName(@NonNls @NotNull String name) throws IncorrectOperationException
 	{

@@ -49,7 +49,7 @@ public class UnityScriptToNativeElementTransformer implements ToNativeElementTra
 			builder.setNavigationElement(navigationElement);
 			builder.addModifier(DotNetModifier.PUBLIC);
 			builder.putUserData(JS_MARKER, Boolean.TRUE);
-			builder.addExtendType(new CSharpTypeRefByQName(Unity3dTypes.UnityEngine.MonoBehaviour));
+			builder.addExtendType(new CSharpTypeRefByQName(psiElement, Unity3dTypes.UnityEngine.MonoBehaviour));
 
 			if(navigationElement instanceof JSFile)
 			{
@@ -64,7 +64,7 @@ public class UnityScriptToNativeElementTransformer implements ToNativeElementTra
 						}
 						CSharpLightMethodDeclarationBuilder methodDeclarationBuilder = new CSharpLightMethodDeclarationBuilder(psiElement.getProject());
 						methodDeclarationBuilder.addModifier(DotNetModifier.PUBLIC);
-						methodDeclarationBuilder.withReturnType(new CSharpTypeRefByQName(DotNetTypes.System.Void));
+						methodDeclarationBuilder.withReturnType(new CSharpTypeRefByQName(psiElement, DotNetTypes.System.Void));
 						methodDeclarationBuilder.withName(funcName);
 						methodDeclarationBuilder.setNavigationElement(jsSourceElement);
 						builder.addMember(methodDeclarationBuilder);

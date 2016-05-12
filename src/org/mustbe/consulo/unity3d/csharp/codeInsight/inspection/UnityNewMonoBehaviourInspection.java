@@ -52,7 +52,7 @@ public class UnityNewMonoBehaviourInspection extends LocalInspectionTool
 					return;
 				}
 				DotNetTypeRef typeRef = expression.toTypeRef(true);
-				if(CSharpTypeUtil.isInheritable(new CSharpTypeRefByQName(Unity3dTypes.UnityEngine.MonoBehaviour), typeRef, expression))
+				if(CSharpTypeUtil.isInheritable(new CSharpTypeRefByQName(expression, Unity3dTypes.UnityEngine.MonoBehaviour), typeRef, expression))
 				{
 					holder.registerProblem(newType, Unity3dBundle.message("new.mono.behaviour.inspection.message"));
 				}

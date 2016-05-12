@@ -29,10 +29,12 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.NotNull;
+import org.mustbe.consulo.RequiredReadAction;
 import org.mustbe.consulo.csharp.lang.psi.impl.source.resolve.type.CSharpArrayTypeRef;
 import org.mustbe.consulo.csharp.lang.psi.impl.source.resolve.type.CSharpTypeRefByQName;
 import org.mustbe.consulo.dotnet.resolve.DotNetTypeRef;
 import com.intellij.openapi.util.JDOMUtil;
+import com.intellij.psi.PsiElement;
 
 /**
  * @author VISTALL
@@ -43,7 +45,7 @@ public class UnityFunctionManager
 {
 	public static class FunctionInfo
 	{
-		private final Map<String, DotNetTypeRef> myParameters = new LinkedHashMap<String, DotNetTypeRef>();
+		private final Map<String, String> myParameters = new LinkedHashMap<String, String>();
 		private final String myDescription;
 		private final String myName;
 
@@ -58,7 +60,7 @@ public class UnityFunctionManager
 				{
 					String name = parameters.getAttributeValue("name");
 					String type = parameters.getAttributeValue("type");
-					myParameters.put(name, createTypeRef(type));
+					myParameters.put(name, type);
 				}
 			}
 		}
@@ -75,7 +77,7 @@ public class UnityFunctionManager
 		}
 
 		@NotNull
-		public Map<String, DotNetTypeRef> getParameters()
+		public Map<String, String> getParameters()
 		{
 			return myParameters;
 		}
@@ -93,25 +95,6 @@ public class UnityFunctionManager
 			}
 
 			return new FunctionInfo(myName, myDescription);
-		}
-
-		@NotNull
-		private static DotNetTypeRef createTypeRef(@NotNull String type)
-		{
-			int count = 0;
-			int i = 0;
-			while((i = type.lastIndexOf("[]")) != -1)
-			{
-				type = type.substring(0, i);
-				count ++;
-			}
-			DotNetTypeRef typeRef = new CSharpTypeRefByQName(type);
-
-			for(int j = 0; j < count; j++)
-			{
-				typeRef = new CSharpArrayTypeRef(typeRef, 0);
-			}
-			return typeRef;
 		}
 	}
 
@@ -143,6 +126,27 @@ public class UnityFunctionManager
 		{
 			LOGGER.error(e);
 		}
+	}
+
+
+	@NotNull
+	@RequiredReadAction
+	public static DotNetTypeRef createTypeRef(@NotNull PsiElement scope, @NotNull String type)
+	{
+		int count = 0;
+		int i = 0;
+		while((i = type.lastIndexOf("[]")) != -1)
+		{
+			type = type.substring(0, i);
+			count ++;
+		}
+		DotNetTypeRef typeRef = new CSharpTypeRefByQName(scope, type);
+
+		for(int j = 0; j < count; j++)
+		{
+			typeRef = new CSharpArrayTypeRef(scope, typeRef, 0);
+		}
+		return typeRef;
 	}
 
 	@NotNull

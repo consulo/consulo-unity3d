@@ -98,7 +98,7 @@ public class UnitySpecificMethodCompletion extends CSharpMemberAddByCompletionCo
 		builder.append("(");
 
 		boolean first = true;
-		for(Map.Entry<String, DotNetTypeRef> entry : functionInfo.getParameters().entrySet())
+		for(Map.Entry<String, String> entry : functionInfo.getParameters().entrySet())
 		{
 			if(first)
 			{
@@ -109,7 +109,8 @@ public class UnitySpecificMethodCompletion extends CSharpMemberAddByCompletionCo
 				builder.append(", ");
 			}
 
-			builder.append(CSharpTypeRefPresentationUtil.buildShortText(entry.getValue(), scope));
+			DotNetTypeRef typeRef = UnityFunctionManager.createTypeRef(scope, entry.getKey());
+			builder.append(CSharpTypeRefPresentationUtil.buildShortText(typeRef, scope));
 			builder.append(" ");
 			builder.append(entry.getKey());
 		}

@@ -249,7 +249,7 @@ public class UnityCSharpLineMarkerProvider implements LineMarkerProvider
 	}
 
 	@RequiredReadAction
-	private static boolean isEqualParameters(Map<String, DotNetTypeRef> funcParameters, DotNetParameterListOwner parameterListOwner)
+	private static boolean isEqualParameters(Map<String, String> funcParameters, DotNetParameterListOwner parameterListOwner)
 	{
 		DotNetParameter[] parameters = parameterListOwner.getParameters();
 		if(parameters.length == 0)
@@ -262,11 +262,12 @@ public class UnityCSharpLineMarkerProvider implements LineMarkerProvider
 		}
 
 		int i = 0;
-		for(DotNetTypeRef expectedTypeRef : funcParameters.values())
+		for(String expectedType : funcParameters.values())
 		{
 			DotNetParameter parameter = parameters[i++];
 
-			if(!CSharpTypeUtil.isTypeEqual(parameter.toTypeRef(true), expectedTypeRef, parameter))
+			DotNetTypeRef typeRef = UnityFunctionManager.createTypeRef(parameter, expectedType);
+			if(!CSharpTypeUtil.isTypeEqual(parameter.toTypeRef(true), typeRef, parameter))
 			{
 				return false;
 			}

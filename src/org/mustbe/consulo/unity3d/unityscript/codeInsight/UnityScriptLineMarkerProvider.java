@@ -7,7 +7,6 @@ import java.util.Map;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.mustbe.consulo.RequiredReadAction;
-import org.mustbe.consulo.dotnet.resolve.DotNetTypeRef;
 import org.mustbe.consulo.unity3d.Unity3dIcons;
 import org.mustbe.consulo.unity3d.csharp.UnityFunctionManager;
 import org.mustbe.consulo.unity3d.module.Unity3dModuleExtension;
@@ -83,7 +82,7 @@ public class UnityScriptLineMarkerProvider implements LineMarkerProvider
 		return null;
 	}
 
-	private static boolean isEqualParameters(Map<String, DotNetTypeRef> funcParameters, JSFunction function)
+	private static boolean isEqualParameters(Map<String, String> funcParameters, JSFunction function)
 	{
 		JSParameter[] parameters = function.getParameterList().getParameters();
 		if(parameters.length == 0)
