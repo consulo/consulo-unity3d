@@ -12,7 +12,6 @@ import org.jetbrains.annotations.Nullable;
 import org.mustbe.consulo.csharp.lang.CSharpFilePropertyPusher;
 import org.mustbe.consulo.csharp.lang.CSharpFileType;
 import org.mustbe.consulo.dotnet.dll.DotNetModuleFileType;
-import org.mustbe.consulo.dotnet.module.roots.DotNetLibraryOrderEntryImpl;
 import org.mustbe.consulo.roots.impl.ExcludedContentFolderTypeProvider;
 import org.mustbe.consulo.unity3d.Unity3dBundle;
 import org.mustbe.consulo.unity3d.Unity3dMetaFileType;
@@ -63,6 +62,7 @@ import com.intellij.util.Consumer;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import com.intellij.util.ui.UIUtil;
+import consulo.dotnet.roots.orderEntry.DotNetLibraryOrderEntryImpl;
 
 /**
  * @author VISTALL
