@@ -169,8 +169,11 @@
 		<possibleModuleForFileResolver implementation="org.mustbe.consulo.unity3d.projectImport.Unity3dPossibleModuleForFileResolver"/>
 		<fileTypeDetector implementation="org.mustbe.consulo.unity3d.scene.Unity3dAssetFileTypeDetector"/>
 		<fileBasedIndex implementation="org.mustbe.consulo.unity3d.scene.index.Unity3dYMLAssetIndexExtension"/>
+		<projectService serviceImplementation="consulo.unity3d.UnityConsoleService" />
 
 		<httpRequestHandler implementation="org.mustbe.consulo.unity3d.jsonApi.UnityOpenFilePostHandler"/>
+		<httpRequestHandler implementation="consulo.unity3d.jsonApi.UnityLogPostHandler"/>
+		<httpRequestHandler implementation="consulo.unity3d.jsonApi.UnityPlayStateHandler"/>
 		<httpRequestHandler implementation="org.mustbe.consulo.unity3d.jsonApi.UnityTestStatePostHandler"/>
 		<httpRequestHandler implementation="org.mustbe.consulo.unity3d.jsonApi.UnityRefreshResponseHandler"/>
 
