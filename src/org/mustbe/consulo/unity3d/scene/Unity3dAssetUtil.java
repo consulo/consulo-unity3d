@@ -21,7 +21,7 @@ import java.io.InputStream;
 import java.util.Comparator;
 import java.util.Map;
 
-import org.consulo.lombok.annotations.Logger;
+import consulo.lombok.annotations.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.mustbe.consulo.unity3d.Unity3dMetaFileType;

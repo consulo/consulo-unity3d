@@ -23,8 +23,6 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.consulo.lombok.annotations.LazyInstance;
-import org.consulo.lombok.annotations.Logger;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -35,6 +33,8 @@ import org.mustbe.consulo.csharp.lang.psi.impl.source.resolve.type.CSharpTypeRef
 import org.mustbe.consulo.dotnet.resolve.DotNetTypeRef;
 import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.psi.PsiElement;
+import consulo.lombok.annotations.Lazy;
+import consulo.lombok.annotations.Logger;
 
 /**
  * @author VISTALL
@@ -100,7 +100,7 @@ public class UnityFunctionManager
 
 	private Map<String, FunctionInfo> myFunctions = new THashMap<String, FunctionInfo>();
 
-	@LazyInstance
+	@Lazy
 	@NotNull
 	public static UnityFunctionManager getInstance()
 	{

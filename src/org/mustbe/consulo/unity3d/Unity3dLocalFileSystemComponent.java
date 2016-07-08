@@ -19,7 +19,7 @@ package org.mustbe.consulo.unity3d;
 import java.io.File;
 import java.io.IOException;
 
-import org.consulo.lombok.annotations.Logger;
+import consulo.lombok.annotations.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import com.intellij.openapi.components.ApplicationComponent;

@@ -16,7 +16,6 @@
 
 package org.mustbe.consulo.unity3d.run.test;
 
-import org.consulo.lombok.annotations.LazyInstance;
 import org.jetbrains.annotations.NotNull;
 import org.mustbe.consulo.RequiredReadAction;
 import org.mustbe.consulo.unity3d.Unity3dIcons;
@@ -27,6 +26,7 @@ import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.IconDescriptor;
 import com.intellij.openapi.project.Project;
+import consulo.lombok.annotations.Lazy;
 
 /**
  * @author VISTALL
@@ -35,7 +35,7 @@ import com.intellij.openapi.project.Project;
 public class Unity3dTestConfigurationType extends ConfigurationTypeBase
 {
 	@NotNull
-	@LazyInstance
+	@Lazy
 	public static Unity3dTestConfigurationType getInstance()
 	{
 		return CONFIGURATION_TYPE_EP.findExtension(Unity3dTestConfigurationType.class);

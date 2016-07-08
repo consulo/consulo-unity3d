@@ -16,11 +16,11 @@
 
 package org.mustbe.consulo.unity3d.shaderlab.lang.psi.stub.index;
 
-import org.consulo.lombok.annotations.LazyInstance;
 import org.jetbrains.annotations.NotNull;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderDef;
 import com.intellij.psi.stubs.StringStubIndexExtension;
 import com.intellij.psi.stubs.StubIndexKey;
+import consulo.lombok.annotations.Lazy;
 
 /**
  * @author VISTALL
@@ -29,7 +29,7 @@ import com.intellij.psi.stubs.StubIndexKey;
 public class ShaderDefIndex extends StringStubIndexExtension<ShaderDef>
 {
 	@NotNull
-	@LazyInstance
+	@Lazy
 	public static ShaderDefIndex getInstance()
 	{
 		return EP_NAME.findExtension(ShaderDefIndex.class);

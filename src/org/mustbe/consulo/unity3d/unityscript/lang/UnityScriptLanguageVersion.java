@@ -1,6 +1,5 @@
 package org.mustbe.consulo.unity3d.unityscript.lang;
 
-import org.consulo.lombok.annotations.LazyInstance;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.mustbe.consulo.javascript.lang.BaseJavaScriptLanguageVersion;
@@ -12,6 +11,7 @@ import com.intellij.lang.javascript.JavaScriptParsingFlexLexer;
 import com.intellij.lang.javascript.highlighting.JSHighlighter;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.project.Project;
+import consulo.lombok.annotations.Lazy;
 
 /**
  * @author VISTALL
@@ -20,7 +20,7 @@ import com.intellij.openapi.project.Project;
 public class UnityScriptLanguageVersion extends BaseJavaScriptLanguageVersion
 {
 	@NotNull
-	@LazyInstance
+	@Lazy
 	public static UnityScriptLanguageVersion getInstance()
 	{
 		return JavaScriptLanguage.INSTANCE.findVersionByClass(UnityScriptLanguageVersion.class);
