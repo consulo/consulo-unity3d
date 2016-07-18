@@ -47,6 +47,9 @@ public enum Unity3dDefineByVersion
 	UNITY_4_6("4.6.\\d", UNITY_4_0),
 	UNITY_5_0("5.0.\\d"),
 	UNITY_5_1("5.1.\\d", UNITY_5_0),
+	UNITY_5_2("5.2.\\d", UNITY_5_0),
+	UNITY_5_3("5.3.\\d", UNITY_5_0),
+	UNITY_5_4("5.4.\\d", UNITY_5_0),
 	UNKNOWN("\\d.\\d.\\d");
 
 	private final Pattern myVersionPattern;
