@@ -38,7 +38,7 @@ public class SyncUnity3dProjectAction extends AnAction
 			return;
 		}
 
-		Unity3dProjectUtil.syncProject(project, rootModuleExtension.getSdk());
+		Unity3dProjectUtil.syncProject(project, rootModuleExtension.getSdk(), true);
 	}
 
 	@RequiredDispatchThread

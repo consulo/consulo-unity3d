@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import consulo.lombok.annotations.Logger;
 import org.consulo.module.extension.MutableModuleExtension;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -63,6 +62,8 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import com.intellij.util.ui.UIUtil;
 import consulo.dotnet.roots.orderEntry.DotNetLibraryOrderEntryImpl;
+import consulo.lombok.annotations.Logger;
+import consulo.unity3d.UnityPluginFileValidator;
 
 /**
  * @author VISTALL
@@ -110,7 +111,7 @@ public class Unity3dProjectUtil
 		return null;
 	}
 
-	public static void syncProject(@NotNull final Project project, @Nullable final Sdk sdk)
+	public static void syncProject(@NotNull final Project project, @Nullable final Sdk sdk, final boolean runValidator)
 	{
 		new Task.Modal(project, "Sync project", false)
 		{
@@ -133,6 +134,11 @@ public class Unity3dProjectUtil
 							project.putUserData(CSharpFilePropertyPusher.ourDisableAnyEvents, null);
 
 							PushedFilePropertiesUpdater.getInstance(project).pushAll(new CSharpFilePropertyPusher());
+						}
+
+						if(runValidator)
+						{
+							UnityPluginFileValidator.runValidation(project);
 						}
 					}
 				});
@@ -214,8 +220,8 @@ public class Unity3dProjectUtil
 			ProgressIndicator progressIndicator)
 	{
 
-		return createAndSetupModule("Assembly-UnityScript-firstpass", project, newModel, FIRST_PASS_PATHS, unityBundle, null, "unity3d-unityscript-child", JavaScriptFileType.INSTANCE, virtualFilesByModule,
-				progressIndicator);
+		return createAndSetupModule("Assembly-UnityScript-firstpass", project, newModel, FIRST_PASS_PATHS, unityBundle, null, "unity3d-unityscript-child", JavaScriptFileType.INSTANCE,
+				virtualFilesByModule, progressIndicator);
 	}
 
 	private static Module createAssemblyCSharpModuleFirstPass(final Project project,
@@ -485,8 +491,7 @@ public class Unity3dProjectUtil
 				Library library = layer.getModuleLibraryTable().createLibrary();
 				Library.ModifiableModel modifiableModel = library.getModifiableModel();
 				modifiableModel.addRoot(archiveRootForLocalFile, BinariesOrderRootType.getInstance());
-				VirtualFile docFile = virtualFile.getParent().findChild(virtualFile.getNameWithoutExtension() + "" +
-						".xml");
+				VirtualFile docFile = virtualFile.getParent().findChild(virtualFile.getNameWithoutExtension() + ".xml");
 				if(docFile != null)
 				{
 					modifiableModel.addRoot(docFile, DocumentationOrderRootType.getInstance());
@@ -550,8 +555,7 @@ public class Unity3dProjectUtil
 
 			extension.getVariables().add(unity3dTarget.getDefineName());
 
-			Version currentBundleVersion = parseBundleVersion(unityBundle);
-			Unity3dDefineByVersion unity3dDefineByVersion = Unity3dDefineByVersion.find(currentBundleVersion.toString());
+			Unity3dDefineByVersion unity3dDefineByVersion = getUnity3dDefineByVersion(unityBundle);
 			if(unity3dDefineByVersion != Unity3dDefineByVersion.UNKNOWN)
 			{
 				for(Unity3dDefineByVersion majorVersion : unity3dDefineByVersion.getMajorVersions())
@@ -579,5 +583,12 @@ public class Unity3dProjectUtil
 			}
 		}.execute();
 		return rootModule;
+	}
+
+	@NotNull
+	public static Unity3dDefineByVersion getUnity3dDefineByVersion(@Nullable Sdk sdk)
+	{
+		Version currentBundleVersion = parseBundleVersion(sdk);
+		return Unity3dDefineByVersion.find(currentBundleVersion.toString());
 	}
 }

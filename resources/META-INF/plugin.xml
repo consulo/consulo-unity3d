@@ -65,6 +65,9 @@
 			<implementation-class>org.mustbe.consulo.unity3d.module.UnitySubscriber</implementation-class>
 			<skipForDefaultProject/>
 		</component>
+		<component>
+			<implementation-class>consulo.unity3d.UnityPluginFileValidator</implementation-class>
+		</component>
 	</project-components>
 
 	<extensions defaultExtensionNs="org.mustbe.consulo.javascript">

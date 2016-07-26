@@ -21,6 +21,7 @@ import java.util.regex.Pattern;
 
 import org.intellij.lang.annotations.RegExp;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import com.intellij.util.ArrayUtil;
 
 /**
@@ -29,36 +30,46 @@ import com.intellij.util.ArrayUtil;
  */
 public enum Unity3dDefineByVersion
 {
-	UNITY_2_6("2.6.\\d"),
-	UNITY_2_6_1("2.6.1", UNITY_2_6),
-	UNITY_3_0("3.0.\\d"),
-	UNITY_3_0_0("3.0.0", UNITY_3_0),
-	UNITY_3_1("3.1.\\d", UNITY_3_0),
-	UNITY_3_2("3.2.\\d", UNITY_3_0),
-	UNITY_3_3("3.3.\\d", UNITY_3_0),
-	UNITY_3_4("3.4.\\d", UNITY_3_0),
-	UNITY_3_5("3.5.\\d", UNITY_3_0),
-	UNITY_4_0("4.0.\\d"),
-	UNITY_4_0_1("4.0.1", UNITY_4_0),
-	UNITY_4_1("4.1.\\d", UNITY_4_0),
-	UNITY_4_2("4.2.\\d", UNITY_4_0),
-	UNITY_4_3("4.3.\\d", UNITY_4_0),
-	UNITY_4_5("4.5.\\d", UNITY_4_0),
-	UNITY_4_6("4.6.\\d", UNITY_4_0),
-	UNITY_5_0("5.0.\\d"),
-	UNITY_5_1("5.1.\\d", UNITY_5_0),
-	UNITY_5_2("5.2.\\d", UNITY_5_0),
-	UNITY_5_3("5.3.\\d", UNITY_5_0),
-	UNITY_5_4("5.4.\\d", UNITY_5_0),
-	UNKNOWN("\\d.\\d.\\d");
+	UNITY_2_6("2.6.\\d", null),
+	UNITY_2_6_1("2.6.1", null, UNITY_2_6),
+	UNITY_3_0("3.0.\\d", null),
+	UNITY_3_0_0("3.0.0", null, UNITY_3_0),
+	UNITY_3_1("3.1.\\d", null, UNITY_3_0),
+	UNITY_3_2("3.2.\\d", null, UNITY_3_0),
+	UNITY_3_3("3.3.\\d", null, UNITY_3_0),
+	UNITY_3_4("3.4.\\d", null, UNITY_3_0),
+	UNITY_3_5("3.5.\\d", null, UNITY_3_0),
+	UNITY_4_0("4.0.\\d", null),
+	UNITY_4_0_1("4.0.1", null, UNITY_4_0),
+	UNITY_4_1("4.1.\\d", null, UNITY_4_0),
+	UNITY_4_2("4.2.\\d", null, UNITY_4_0),
+	UNITY_4_3("4.3.\\d", null, UNITY_4_0),
+	UNITY_4_5("4.5.\\d", null, UNITY_4_0),
+	UNITY_4_6("4.6.\\d", "UnityEditorConsuloPlugin4.6.dll", UNITY_4_0),
+	UNITY_4_7("4.7.\\d", "UnityEditorConsuloPlugin4.6.dll", UNITY_4_0),
+	UNITY_5_0("5.0.\\d", "UnityEditorConsuloPlugin5.dll"),
+	UNITY_5_1("5.1.\\d", "UnityEditorConsuloPlugin5.dll", UNITY_5_0),
+	UNITY_5_2("5.2.\\d", "UnityEditorConsuloPlugin5.dll", UNITY_5_0),
+	UNITY_5_3("5.3.\\d", "UnityEditorConsuloPlugin5.3.dll", UNITY_5_0),
+	UNITY_5_4("5.4.\\d", "UnityEditorConsuloPlugin5.3.dll", UNITY_5_0),
+	UNKNOWN("\\d.\\d.\\d", null);
 
 	private final Pattern myVersionPattern;
+	@Nullable
+	private String myPluginFileName;
 	private Unity3dDefineByVersion[] myMajorVersions;
 
-	Unity3dDefineByVersion(@RegExp String versionRegexp, Unity3dDefineByVersion... majorVersions)
+	Unity3dDefineByVersion(@RegExp String versionRegexp, @Nullable String pluginFileName, Unity3dDefineByVersion... majorVersions)
 	{
+		myPluginFileName = pluginFileName;
 		myMajorVersions = majorVersions;
 		myVersionPattern = Pattern.compile(versionRegexp);
+	}
+
+	@Nullable
+	public String getPluginFileName()
+	{
+		return myPluginFileName;
 	}
 
 	@NotNull

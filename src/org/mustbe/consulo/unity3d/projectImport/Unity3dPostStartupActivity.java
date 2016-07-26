@@ -47,7 +47,7 @@ public class Unity3dPostStartupActivity implements StartupActivity
 				{
 					project.putUserData(Unity3dProjectUtil.NEWLY_IMPORTED_PROJECT_SDK, null);
 
-					Unity3dProjectUtil.syncProject(project, getter.get());
+					Unity3dProjectUtil.syncProject(project, getter.get(), false);
 				}
 			}
 		});
