@@ -16,6 +16,9 @@
 
 package org.mustbe.consulo.unity3d.bundle;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.jetbrains.annotations.NotNull;
 import com.intellij.openapi.util.io.FileUtil;
 import com.sun.jna.Library;
@@ -47,6 +50,22 @@ public class WindowsVersionHelper
 
 	public static class VS_FIXEDFILEINFO extends com.sun.jna.Structure
 	{
+		private static final List __FIELDS = Arrays.asList(
+				"dwSignature",
+				"dwStrucVersion",
+				"dwFileVersionMS",
+				"dwFileVersionLS",
+				"dwProductVersionMS",
+				"dwProductVersionLS",
+				"dwFileFlagsMask",
+				"dwFileFlags",
+				"dwFileOS",
+				"dwFileType",
+				"dwFileSubtype",
+				"dwFileDateMS",
+				"dwFileDateLS"
+		);
+
 		public int dwSignature;
 		public int dwStrucVersion;
 		public int dwFileVersionMS;
@@ -64,6 +83,12 @@ public class WindowsVersionHelper
 		public VS_FIXEDFILEINFO(com.sun.jna.Pointer p)
 		{
 			super(p);
+		}
+
+		@Override
+		protected List getFieldOrder()
+		{
+			return __FIELDS;
 		}
 	}
 
