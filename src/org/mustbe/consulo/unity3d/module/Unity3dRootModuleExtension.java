@@ -27,7 +27,7 @@ import org.mustbe.consulo.dotnet.module.DotNetNamespaceGeneratePolicy;
 import org.mustbe.consulo.dotnet.module.extension.BaseDotNetSimpleModuleExtension;
 import org.mustbe.consulo.dotnet.module.extension.DotNetModuleExtension;
 import org.mustbe.consulo.unity3d.bundle.Unity3dBundleType;
-import org.mustbe.consulo.unity3d.projectImport.Unity3dProjectUtil;
+import consulo.unity3d.projectImport.Unity3dProjectUtil;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkType;
 import com.intellij.openapi.roots.ModuleRootLayer;

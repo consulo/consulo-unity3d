@@ -1,4 +1,4 @@
-package org.mustbe.consulo.unity3d.projectImport;
+package consulo.unity3d.projectImport;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

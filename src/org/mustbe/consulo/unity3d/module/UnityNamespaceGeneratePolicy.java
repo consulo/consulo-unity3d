@@ -4,7 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.mustbe.consulo.RequiredReadAction;
 import org.mustbe.consulo.dotnet.module.DotNetNamespaceGeneratePolicy;
-import org.mustbe.consulo.unity3d.projectImport.Unity3dProjectUtil;
+import consulo.unity3d.projectImport.Unity3dProjectUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;

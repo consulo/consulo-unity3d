@@ -160,8 +160,8 @@
 
 		<applicationService serviceImplementation="org.mustbe.consulo.unity3d.run.test.Unity3dTestSessionManager"/>
 
-		<projectImportProvider implementation="org.mustbe.consulo.unity3d.projectImport.Unity3dProjectImportProvider"/>
-		<postStartupActivity implementation="org.mustbe.consulo.unity3d.projectImport.Unity3dPostStartupActivity"/>
+		<projectImportProvider implementation="consulo.unity3d.projectImport.Unity3dProjectImportProvider"/>
+		<postStartupActivity implementation="consulo.unity3d.projectImport.Unity3dPostStartupActivity"/>
 		<editorNotificationProvider implementation="org.mustbe.consulo.unity3d.ide.ui.SetupUnitySDKProvider"/>
 
 		<fileTypeFactory implementation="org.mustbe.consulo.unity3d.Unity3dFileTypeFactory"/>
@@ -169,7 +169,7 @@
 		<treeStructureProvider implementation="org.mustbe.consulo.unity3d.unityscript.projectView.UnityScriptFileProjectViewProvider"/>
 		<projectViewOptionProvider implementation="org.mustbe.consulo.unity3d.ide.projectView.Unity3dShowMetaFileProjectViewPaneOptionProvider"/>
 		<projectViewNodeDecorator implementation="org.mustbe.consulo.unity3d.ide.projectView.Unity3dProjectViewNodeDecorator"/>
-		<possibleModuleForFileResolver implementation="org.mustbe.consulo.unity3d.projectImport.Unity3dPossibleModuleForFileResolver"/>
+		<possibleModuleForFileResolver implementation="consulo.unity3d.projectImport.Unity3dPossibleModuleForFileResolver"/>
 		<fileTypeDetector implementation="org.mustbe.consulo.unity3d.scene.Unity3dAssetFileTypeDetector"/>
 		<fileBasedIndex implementation="org.mustbe.consulo.unity3d.scene.index.Unity3dYMLAssetIndexExtension"/>
 		<projectService serviceImplementation="consulo.unity3d.UnityConsoleService" />

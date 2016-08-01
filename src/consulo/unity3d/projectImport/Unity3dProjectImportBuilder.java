@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.mustbe.consulo.unity3d.projectImport;
+package consulo.unity3d.projectImport;
 
 import java.util.Arrays;
 import java.util.List;

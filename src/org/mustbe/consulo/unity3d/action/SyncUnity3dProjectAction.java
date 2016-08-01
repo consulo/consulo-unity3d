@@ -5,7 +5,7 @@ import org.mustbe.consulo.RequiredDispatchThread;
 import org.mustbe.consulo.unity3d.Unity3dIcons;
 import org.mustbe.consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import org.mustbe.consulo.unity3d.module.Unity3dRootModuleExtension;
-import org.mustbe.consulo.unity3d.projectImport.Unity3dProjectUtil;
+import consulo.unity3d.projectImport.Unity3dProjectUtil;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;

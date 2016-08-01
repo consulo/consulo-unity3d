@@ -31,7 +31,7 @@ import org.mustbe.consulo.dotnet.dll.DotNetModuleFileType;
 import org.mustbe.consulo.unity3d.bundle.Unity3dDefineByVersion;
 import org.mustbe.consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import org.mustbe.consulo.unity3d.module.Unity3dRootModuleExtension;
-import org.mustbe.consulo.unity3d.projectImport.Unity3dProjectUtil;
+import consulo.unity3d.projectImport.Unity3dProjectUtil;
 import com.intellij.ide.plugins.PluginManager;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationDisplayType;

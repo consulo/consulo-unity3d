@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package org.mustbe.consulo.unity3d.projectImport.ui;
+package consulo.unity3d.projectImport.ui;
 
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 
 import org.mustbe.consulo.unity3d.Unity3dBundle;
-import org.mustbe.consulo.unity3d.projectImport.Unity3dProjectImportBuilder;
-import org.mustbe.consulo.unity3d.projectImport.Unity3dProjectUtil;
+import consulo.unity3d.projectImport.Unity3dProjectImportBuilder;
+import consulo.unity3d.projectImport.Unity3dProjectUtil;
 import com.intellij.ide.util.newProjectWizard.ProjectNameStep;
 import com.intellij.ide.util.projectWizard.WizardContext;
 import com.intellij.ui.JBColor;

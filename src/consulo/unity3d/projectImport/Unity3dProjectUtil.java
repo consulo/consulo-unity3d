@@ -1,4 +1,4 @@
-package org.mustbe.consulo.unity3d.projectImport;
+package consulo.unity3d.projectImport;
 
 import java.io.File;
 import java.io.IOException;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.mustbe.consulo.unity3d.projectImport.ui;
+package consulo.unity3d.projectImport.ui;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
