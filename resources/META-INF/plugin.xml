@@ -177,6 +177,7 @@
 		<httpRequestHandler implementation="org.mustbe.consulo.unity3d.jsonApi.UnityOpenFilePostHandler"/>
 		<httpRequestHandler implementation="consulo.unity3d.jsonApi.UnityLogPostHandler"/>
 		<httpRequestHandler implementation="consulo.unity3d.jsonApi.UnityPlayStateHandler"/>
+        <httpRequestHandler implementation="consulo.unity3d.jsonApi.UnityScriptingDefinesHandler"/>
 		<httpRequestHandler implementation="org.mustbe.consulo.unity3d.jsonApi.UnityTestStatePostHandler"/>
 		<httpRequestHandler implementation="org.mustbe.consulo.unity3d.jsonApi.UnityRefreshResponseHandler"/>
 

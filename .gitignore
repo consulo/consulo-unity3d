@@ -2,3 +2,5 @@
 /out
 /dep
 /.consulo/sandbox
+.DS_Store
+.idea/*
