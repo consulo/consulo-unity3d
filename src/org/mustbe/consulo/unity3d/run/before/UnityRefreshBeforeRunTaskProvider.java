@@ -14,7 +14,6 @@ import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ApplicationNamesInfo;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -24,6 +23,7 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.util.TimeoutUtil;
 import com.intellij.util.concurrency.Semaphore;
 import com.intellij.util.ui.UIUtil;
+import consulo.unity3d.jsonApi.UnityPingPong;
 
 /**
  * @author VISTALL
@@ -107,20 +107,15 @@ public class UnityRefreshBeforeRunTaskProvider extends BeforeRunTaskProvider<Uni
 				new Task.Backgroundable(env.getProject(), "Queue UnityEditor refresh", true)
 				{
 					private boolean myReceiveData;
-					private AccessToken myAccessToken;
+					private UnityPingPong.Token<Boolean> myAccessToken;
 
 					@Override
 					public void run(@NotNull ProgressIndicator indicator)
 					{
 						UnityRefresh postObject = new UnityRefresh();
-						myAccessToken = UnityRefreshQueue.wantRefresh(postObject.uuid, new Runnable()
-						{
-							@Override
-							public void run()
-							{
-								ref.set(Boolean.TRUE);
-								myReceiveData = true;
-							}
+						myAccessToken = UnityPingPong.wantReply(postObject.uuid, o -> {
+							ref.set(o);
+							myReceiveData = o;
 						});
 
 						boolean request = UnityEditorCommunication.request(env.getProject(), postObject, true);
@@ -128,8 +123,7 @@ public class UnityRefreshBeforeRunTaskProvider extends BeforeRunTaskProvider<Uni
 						{
 							new Notification("unity", ApplicationNamesInfo.getInstance().getProductName(), "UnityEditor is not responding", NotificationType.WARNING).notify(env.getProject());
 
-							myAccessToken.finish();
-							ref.set(Boolean.FALSE);
+							myAccessToken.finish(Boolean.FALSE);
 							done.up();
 							return;
 						}
@@ -138,8 +132,7 @@ public class UnityRefreshBeforeRunTaskProvider extends BeforeRunTaskProvider<Uni
 						{
 							if(indicator.isCanceled())
 							{
-								myAccessToken.finish();
-								ref.set(Boolean.FALSE);
+								myAccessToken.finish(Boolean.FALSE);
 								break;
 							}
 

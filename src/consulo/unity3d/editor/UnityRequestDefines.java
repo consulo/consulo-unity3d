@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 must-be.org
+ * Copyright 2013-2016 must-be.org
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,26 +14,17 @@
  * limitations under the License.
  */
 
-package org.mustbe.consulo.unity3d.module;
+package consulo.unity3d.editor;
 
-import com.intellij.ProjectTopics;
-import com.intellij.openapi.components.AbstractProjectComponent;
-import com.intellij.openapi.project.Project;
+import java.util.UUID;
 
 /**
  * @author VISTALL
- * @since 25.01.15
+ * @since 28-Aug-16
+ *
+ * WARNING: dont change name, if unity plugin is not changed, name used in request url gen
  */
-public class UnitySubscriber extends AbstractProjectComponent
+public class UnityRequestDefines
 {
-	public UnitySubscriber(Project project)
-	{
-		super(project);
-	}
-
-	@Override
-	public void initComponent()
-	{
-		myProject.getMessageBus().connect().subscribe(ProjectTopics.MODULE_LAYERS, new UnitySyncModuleRootLayerListener());
-	}
+	public String uuid = UUID.randomUUID().toString();
 }

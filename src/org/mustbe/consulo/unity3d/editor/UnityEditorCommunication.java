@@ -11,7 +11,6 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
-import consulo.lombok.annotations.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.mustbe.consulo.unity3d.run.debugger.UnityProcess;
@@ -23,6 +22,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.CharsetToolkit;
 import com.jezhumble.javasysmon.JavaSysMon;
 import com.jezhumble.javasysmon.ProcessInfo;
+import consulo.lombok.annotations.Logger;
 
 /**
  * @author VISTALL
@@ -75,7 +75,7 @@ public class UnityEditorCommunication
 		CloseableHttpClient client = null;
 		try
 		{
-			int timeOut = 1 * 1000;
+			int timeOut = 5 * 1000;
 			RequestConfig requestConfig = RequestConfig.custom().setConnectionRequestTimeout(timeOut).setConnectTimeout(timeOut).setSocketTimeout(timeOut).build();
 			client = HttpClients.custom().setDefaultRequestConfig(requestConfig).build();
 			String data = client.execute(post, new ResponseHandler<String>()

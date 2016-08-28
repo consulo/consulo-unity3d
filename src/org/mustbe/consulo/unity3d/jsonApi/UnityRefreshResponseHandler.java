@@ -2,7 +2,7 @@ package org.mustbe.consulo.unity3d.jsonApi;
 
 import org.jetbrains.annotations.NotNull;
 import org.mustbe.buildInWebServer.api.JsonPostRequestHandler;
-import org.mustbe.consulo.unity3d.run.before.UnityRefreshQueue;
+import consulo.unity3d.jsonApi.UnityPingPong;
 
 /**
  * @author VISTALL
@@ -19,7 +19,8 @@ public class UnityRefreshResponseHandler extends JsonPostRequestHandler<UnityRef
 	@Override
 	public JsonResponse handle(@NotNull UnityRefreshResponse unityRefreshResponse)
 	{
-		UnityRefreshQueue.refreshReceived(unityRefreshResponse.uuid);
+		UnityPingPong.replyReceived(unityRefreshResponse.uuid, Boolean.TRUE);
+
 		return JsonResponse.asSuccess(null);
 	}
 }

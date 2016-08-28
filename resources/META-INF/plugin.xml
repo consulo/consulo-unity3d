@@ -62,11 +62,8 @@
 
 	<project-components>
 		<component>
-			<implementation-class>org.mustbe.consulo.unity3d.module.UnitySubscriber</implementation-class>
-			<skipForDefaultProject/>
-		</component>
-		<component>
 			<implementation-class>consulo.unity3d.UnityPluginFileValidator</implementation-class>
+			<skipForDefaultProject />
 		</component>
 	</project-components>
 
@@ -110,7 +107,6 @@
 		<colorProvider implementation="org.mustbe.consulo.unity3d.csharp.codeInsight.UnityCSharpStaticElementColor32Provider"/>
 		<iconDescriptorUpdater implementation="org.mustbe.consulo.unity3d.unityscript.UnityScriptIconDescriptorUpdater"/>
 		<gotoClassContributor implementation="org.mustbe.consulo.unity3d.unityscript.navigation.UnityScriptGotoClassContributor"/>
-		<macro implementation="org.mustbe.consulo.unity3d.module.UnityFileNameMacro"/>
 		<sdkType implementation="org.mustbe.consulo.unity3d.bundle.Unity3dBundleType"/>
 		<xdebugger.settings implementation="org.mustbe.consulo.unity3d.run.debugger.Unity3dDebuggerSettings"/>
 
@@ -179,6 +175,7 @@
 		<httpRequestHandler implementation="consulo.unity3d.jsonApi.UnityPlayStateHandler"/>
 		<httpRequestHandler implementation="org.mustbe.consulo.unity3d.jsonApi.UnityTestStatePostHandler"/>
 		<httpRequestHandler implementation="org.mustbe.consulo.unity3d.jsonApi.UnityRefreshResponseHandler"/>
+		<httpRequestHandler implementation="consulo.unity3d.jsonApi.UnitySetDefinesHandler"/>
 
 		<editorNotificationProvider implementation="org.mustbe.consulo.unity3d.scene.prefab.Unity3dPrefabEditorNotificationProvider"/>
 	</extensions>

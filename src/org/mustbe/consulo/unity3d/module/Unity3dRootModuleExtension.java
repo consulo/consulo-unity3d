@@ -25,19 +25,17 @@ import org.jetbrains.annotations.Nullable;
 import org.mustbe.consulo.RequiredReadAction;
 import org.mustbe.consulo.dotnet.module.DotNetNamespaceGeneratePolicy;
 import org.mustbe.consulo.dotnet.module.extension.BaseDotNetSimpleModuleExtension;
-import org.mustbe.consulo.dotnet.module.extension.DotNetModuleExtension;
 import org.mustbe.consulo.unity3d.bundle.Unity3dBundleType;
-import consulo.unity3d.projectImport.Unity3dProjectUtil;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkType;
 import com.intellij.openapi.roots.ModuleRootLayer;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.Version;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.SmartList;
+import consulo.unity3d.projectImport.Unity3dProjectUtil;
 
 /**
  * @author VISTALL
@@ -47,9 +45,6 @@ public class Unity3dRootModuleExtension extends BaseDotNetSimpleModuleExtension<
 {
 	public static final String FILE_NAME = "$ModuleName$";
 
-	protected Unity3dTarget myBuildTarget = Unity3dTarget.Editor;
-	protected String myFileName = FILE_NAME;
-	protected String myOutputDirectory = DotNetModuleExtension.DEFAULT_OUTPUT_DIR;
 	protected String myNamespacePrefix = null;
 
 	public Unity3dRootModuleExtension(@NotNull String id, @NotNull ModuleRootLayer rootModel)
@@ -68,9 +63,6 @@ public class Unity3dRootModuleExtension extends BaseDotNetSimpleModuleExtension<
 	public void commit(@NotNull Unity3dRootModuleExtension mutableModuleExtension)
 	{
 		super.commit(mutableModuleExtension);
-		myBuildTarget = mutableModuleExtension.getBuildTarget();
-		myFileName = mutableModuleExtension.myFileName;
-		myOutputDirectory = mutableModuleExtension.myOutputDirectory;
 		myNamespacePrefix = mutableModuleExtension.myNamespacePrefix;
 	}
 
@@ -78,9 +70,6 @@ public class Unity3dRootModuleExtension extends BaseDotNetSimpleModuleExtension<
 	protected void getStateImpl(@NotNull Element element)
 	{
 		super.getStateImpl(element);
-		element.setAttribute("output-dir", myOutputDirectory);
-		element.setAttribute("build-target", myBuildTarget.name());
-		element.setAttribute("file-name", myFileName);
 		if(myNamespacePrefix != null)
 		{
 			element.setAttribute("namespace-prefix", myNamespacePrefix);
@@ -92,34 +81,13 @@ public class Unity3dRootModuleExtension extends BaseDotNetSimpleModuleExtension<
 	protected void loadStateImpl(@NotNull Element element)
 	{
 		super.loadStateImpl(element);
-		myFileName = element.getAttributeValue("file-name", FILE_NAME);
-		myOutputDirectory = element.getAttributeValue("output-dir", DotNetModuleExtension.DEFAULT_OUTPUT_DIR);
-		myBuildTarget = Unity3dTarget.valueOf(element.getAttributeValue("build-target", Unity3dTarget.Editor.name()));
 		myNamespacePrefix = element.getAttributeValue("namespace-prefix");
-	}
-
-	@NotNull
-	public String getFileName()
-	{
-		return StringUtil.notNullizeIfEmpty(myFileName, FILE_NAME);
-	}
-
-	@NotNull
-	public String getOutputDir()
-	{
-		return StringUtil.notNullizeIfEmpty(myOutputDirectory, DotNetModuleExtension.DEFAULT_OUTPUT_DIR);
 	}
 
 	@Nullable
 	public String getNamespacePrefix()
 	{
 		return myNamespacePrefix;
-	}
-
-	@NotNull
-	public Unity3dTarget getBuildTarget()
-	{
-		return myBuildTarget;
 	}
 
 	@Override

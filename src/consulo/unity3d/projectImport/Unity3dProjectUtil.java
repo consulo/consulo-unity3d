@@ -3,7 +3,10 @@ package consulo.unity3d.projectImport;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
+import java.util.TreeSet;
 
 import org.consulo.module.extension.MutableModuleExtension;
 import org.jetbrains.annotations.NotNull;
@@ -16,14 +19,17 @@ import org.mustbe.consulo.unity3d.Unity3dBundle;
 import org.mustbe.consulo.unity3d.Unity3dMetaFileType;
 import org.mustbe.consulo.unity3d.bundle.Unity3dBundleType;
 import org.mustbe.consulo.unity3d.bundle.Unity3dDefineByVersion;
+import org.mustbe.consulo.unity3d.editor.UnityEditorCommunication;
 import org.mustbe.consulo.unity3d.module.Unity3dChildMutableModuleExtension;
 import org.mustbe.consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import org.mustbe.consulo.unity3d.module.Unity3dRootModuleExtension;
 import org.mustbe.consulo.unity3d.module.Unity3dRootMutableModuleExtension;
-import org.mustbe.consulo.unity3d.module.Unity3dTarget;
 import org.mustbe.consulo.unity3d.nunit.module.extension.Unity3dNUnitMutableModuleExtension;
 import com.intellij.lang.javascript.JavaScriptFileType;
+import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationType;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ApplicationNamesInfo;
 import com.intellij.openapi.application.Result;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.fileTypes.FileType;
@@ -48,6 +54,7 @@ import com.intellij.openapi.roots.types.DocumentationOrderRootType;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Getter;
 import com.intellij.openapi.util.Key;
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.Version;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -58,12 +65,16 @@ import com.intellij.openapi.vfs.VirtualFileVisitor;
 import com.intellij.openapi.vfs.util.ArchiveVfsUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Consumer;
+import com.intellij.util.TimeoutUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import com.intellij.util.ui.UIUtil;
 import consulo.dotnet.roots.orderEntry.DotNetLibraryOrderEntryImpl;
 import consulo.lombok.annotations.Logger;
 import consulo.unity3d.UnityPluginFileValidator;
+import consulo.unity3d.editor.UnityRequestDefines;
+import consulo.unity3d.jsonApi.UnityPingPong;
+import consulo.unity3d.jsonApi.UnitySetDefines;
 
 /**
  * @author VISTALL
@@ -73,7 +84,6 @@ import consulo.unity3d.UnityPluginFileValidator;
 public class Unity3dProjectUtil
 {
 	public static final String ASSETS_DIRECTORY = "Assets";
-
 	public static final Key<Getter<Sdk>> NEWLY_IMPORTED_PROJECT_SDK = Key.create("unity.new.project");
 
 	public static final String[] FIRST_PASS_PATHS = new String[]{
@@ -81,6 +91,8 @@ public class Unity3dProjectUtil
 			"Assets/Pro Standard Assets",
 			"Assets/Plugins"
 	};
+
+	private static final String UNITY_EDITOR = "UNITY_EDITOR";
 
 	@Nullable
 	public static String loadVersionFromProject(@NotNull String path)
@@ -124,21 +136,32 @@ public class Unity3dProjectUtil
 					public void run()
 					{
 
-						try
-						{
-							project.putUserData(CSharpFilePropertyPusher.ourDisableAnyEvents, Boolean.TRUE);
-							Unity3dProjectUtil.importOrUpdate(project, sdk, null, indicator);
-						}
-						finally
-						{
-							project.putUserData(CSharpFilePropertyPusher.ourDisableAnyEvents, null);
+						indicator.setText("Fetching defines from UnityEditor");
 
-							PushedFilePropertiesUpdater.getInstance(project).pushAll(new CSharpFilePropertyPusher());
-						}
+						UnityRequestDefines request = new UnityRequestDefines();
 
-						if(runValidator)
+						Ref<Boolean> received = Ref.create(Boolean.FALSE);
+
+						UnityPingPong.Token<UnitySetDefines> token = UnityPingPong.wantReply(request.uuid, o -> {
+							received.set(Boolean.TRUE);
+
+							importAfterDefines(project, sdk, runValidator, indicator, o);
+						});
+
+						UnityEditorCommunication.request(project, request, true);
+
+						int i = 0;
+						while(!received.get())
 						{
-							UnityPluginFileValidator.runValidation(project);
+							if(i == 5)
+							{
+								token.finish(null);
+								break;
+							}
+
+							TimeoutUtil.sleep(500L);
+
+							i++;
 						}
 					}
 				});
@@ -146,8 +169,44 @@ public class Unity3dProjectUtil
 		}.queue();
 	}
 
+	private static void importAfterDefines(@NotNull final Project project, @Nullable final Sdk sdk, final boolean runValidator, @NotNull ProgressIndicator indicator,
+			@Nullable UnitySetDefines setDefines)
+	{
+		try
+		{
+			project.putUserData(CSharpFilePropertyPusher.ourDisableAnyEvents, Boolean.TRUE);
+
+			Collection<String> defines = null;
+			if(setDefines != null)
+			{
+				VirtualFile maybeProjectDir = LocalFileSystem.getInstance().findFileByPath(setDefines.projectPath);
+				if(maybeProjectDir != null && maybeProjectDir.equals(project.getBaseDir()))
+				{
+					defines = new TreeSet<>(Arrays.<String>asList(setDefines.defines));
+				}
+			}
+
+			Unity3dProjectUtil.importOrUpdate(project, sdk, null, indicator, defines);
+		}
+		finally
+		{
+			project.putUserData(CSharpFilePropertyPusher.ourDisableAnyEvents, null);
+
+			PushedFilePropertiesUpdater.getInstance(project).pushAll(new CSharpFilePropertyPusher());
+		}
+
+		if(runValidator)
+		{
+			UnityPluginFileValidator.runValidation(project);
+		}
+	}
+
 	@NotNull
-	private static List<Module> importOrUpdate(@NotNull final Project project, @Nullable Sdk unitySdk, @Nullable ModifiableModuleModel originalModel, @NotNull ProgressIndicator progressIndicator)
+	private static List<Module> importOrUpdate(@NotNull final Project project,
+			@Nullable Sdk unitySdk,
+			@Nullable ModifiableModuleModel originalModel,
+			@NotNull ProgressIndicator progressIndicator,
+			@Nullable Collection<String> defines)
 	{
 		boolean fromProjectStructure = originalModel != null;
 
@@ -162,7 +221,7 @@ public class Unity3dProjectUtil
 
 		List<Module> modules = new ArrayList<Module>(5);
 
-		ContainerUtil.addIfNotNull(modules, createRootModule(project, newModel, unitySdk, progressIndicator));
+		ContainerUtil.addIfNotNull(modules, createRootModule(project, newModel, unitySdk, progressIndicator, defines));
 		progressIndicator.setFraction(0.1);
 
 		MultiMap<Module, VirtualFile> sourceFilesByModule = MultiMap.create();
@@ -293,6 +352,7 @@ public class Unity3dProjectUtil
 	}
 
 	@NotNull
+	@SuppressWarnings("unchecked")
 	private static Module createAndSetupModule(@NotNull String moduleName,
 			@NotNull Project project,
 			@NotNull ModifiableModuleModel modifiableModuleModels,
@@ -330,8 +390,6 @@ public class Unity3dProjectUtil
 				return ModuleRootManager.getInstance(module).getModifiableModel();
 			}
 		});
-
-		modifiableModel.removeAllLayers(false);
 
 		final List<VirtualFile> toAdd = new ArrayList<VirtualFile>();
 		final List<VirtualFile> libraryFiles = new ArrayList<VirtualFile>();
@@ -386,63 +444,62 @@ public class Unity3dProjectUtil
 			});
 		}
 
-		for(final Unity3dTarget unity3dTarget : Unity3dTarget.values())
+		modifiableModel.removeAllLayers(true);
+
+		// it will return Default layer
+		final ModuleRootLayerImpl layer = (ModuleRootLayerImpl) modifiableModel.getCurrentLayer();
+
+		for(VirtualFile virtualFile : toAdd)
 		{
-			final ModuleRootLayerImpl layer = (ModuleRootLayerImpl) modifiableModel.addLayer(unity3dTarget.getPresentation(), null, false);
-
-			for(VirtualFile virtualFile : toAdd)
-			{
-				layer.addContentEntry(virtualFile);
-			}
-
-			if(setupConsumer != null)
-			{
-				ApplicationManager.getApplication().runReadAction(new Runnable()
-				{
-					@Override
-					public void run()
-					{
-						setupConsumer.consume(layer);
-					}
-				});
-			}
-
-			layer.getExtensionWithoutCheck(Unity3dChildMutableModuleExtension.class).setEnabled(true);
-			// enable correct unity lang extension
-			layer.<MutableModuleExtension>getExtensionWithoutCheck(moduleExtensionId).setEnabled(true);
-
-			layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "mscorlib"));
-			layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEditor"));
-			layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEngine"));
-			if(isVersionHigherOrEqual(unitySdk, "4.6.0"))
-			{
-				layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEngine.UI"));
-			}
-			if(isVersionHigherOrEqual(unitySdk, "5.1.0"))
-			{
-				layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEngine.Networking"));
-				layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEngine.Analytics"));
-			}
-			if(isVersionHigherOrEqual(unitySdk, "5.2.0"))
-			{
-				layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEngine.Advertisements"));
-			}
-			if(isVersionHigherOrEqual(unitySdk, "5.3.0"))
-			{
-				layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEngine.Purchasing"));
-			}
-			layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "System"));
-			layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "System.Core"));
-			layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "System.Xml"));
-			layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "System.Xml.Linq"));
-
-			for(VirtualFile virtualFile : libraryFiles)
-			{
-				addAsLibrary(virtualFile, layer);
-			}
+			layer.addContentEntry(virtualFile);
 		}
 
-		modifiableModel.setCurrentLayer(Unity3dTarget.Editor.name());
+		if(setupConsumer != null)
+		{
+			ApplicationManager.getApplication().runReadAction(new Runnable()
+			{
+				@Override
+				public void run()
+				{
+					setupConsumer.consume(layer);
+				}
+			});
+		}
+
+		layer.getExtensionWithoutCheck(Unity3dChildMutableModuleExtension.class).setEnabled(true);
+		// enable correct unity lang extension
+		layer.<MutableModuleExtension>getExtensionWithoutCheck(moduleExtensionId).setEnabled(true);
+
+		layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "mscorlib"));
+		layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEditor"));
+		layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEngine"));
+		if(isVersionHigherOrEqual(unitySdk, "4.6.0"))
+		{
+			layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEngine.UI"));
+		}
+		if(isVersionHigherOrEqual(unitySdk, "5.1.0"))
+		{
+			layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEngine.Networking"));
+			layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEngine.Analytics"));
+		}
+		if(isVersionHigherOrEqual(unitySdk, "5.2.0"))
+		{
+			layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEngine.Advertisements"));
+		}
+		if(isVersionHigherOrEqual(unitySdk, "5.3.0"))
+		{
+			layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEngine.Purchasing"));
+		}
+		layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "System"));
+		layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "System.Core"));
+		layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "System.Xml"));
+		layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "System.Xml.Linq"));
+
+		for(VirtualFile virtualFile : libraryFiles)
+		{
+			addAsLibrary(virtualFile, layer);
+		}
+
 		new WriteAction<Object>()
 		{
 			@Override
@@ -514,7 +571,11 @@ public class Unity3dProjectUtil
 	}
 
 	@NotNull
-	private static Module createRootModule(@NotNull final Project project, @NotNull ModifiableModuleModel newModel, @Nullable Sdk unityBundle, @NotNull ProgressIndicator progressIndicator)
+	private static Module createRootModule(@NotNull final Project project,
+			@NotNull ModifiableModuleModel newModel,
+			@Nullable Sdk unityBundle,
+			@NotNull ProgressIndicator progressIndicator,
+			@Nullable Collection<String> defines)
 	{
 		final Module rootModule;
 		Unity3dRootModuleExtension rootModuleExtension = ApplicationManager.getApplication().runReadAction(new Computable<Unity3dRootModuleExtension>()
@@ -547,40 +608,49 @@ public class Unity3dProjectUtil
 				return ModuleRootManager.getInstance(rootModule).getModifiableModel();
 			}
 		});
-		modifiableModel.removeAllLayers(false);
 
-		for(Unity3dTarget unity3dTarget : Unity3dTarget.values())
+		modifiableModel.removeAllLayers(true);
+
+		// return Default layer
+		ModuleRootLayerImpl layer = (ModuleRootLayerImpl) modifiableModel.getCurrentLayer();
+
+		ContentEntry contentEntry = layer.addContentEntry(projectUrl);
+
+		Unity3dRootMutableModuleExtension extension = layer.getExtensionWithoutCheck(Unity3dRootMutableModuleExtension.class);
+		assert extension != null;
+		extension.setEnabled(true);
+		extension.getInheritableSdk().set(null, unityBundle);
+
+		List<String> variables = extension.getVariables();
+		if(defines != null)
 		{
-			ModuleRootLayerImpl layer = (ModuleRootLayerImpl) modifiableModel.addLayer(unity3dTarget.getPresentation(), null, false);
+			variables.addAll(defines);
+		}
+		// fallback
+		else
+		{
+			new Notification("unity", ApplicationNamesInfo.getInstance().getProductName(), "UnityEditor is not responding.<br>Defines is not resolved.", NotificationType.WARNING).notify(project);
 
-			ContentEntry contentEntry = layer.addContentEntry(projectUrl);
-
-			Unity3dRootMutableModuleExtension extension = layer.getExtensionWithoutCheck(Unity3dRootMutableModuleExtension.class);
-			assert extension != null;
-			extension.setEnabled(true);
-			extension.setBuildTarget(unity3dTarget);
-			extension.getInheritableSdk().set(null, unityBundle);
-
-			extension.getVariables().add(unity3dTarget.getDefineName());
+			variables.add(UNITY_EDITOR);
+			variables.add("DEBUG");
+			variables.add("TRACE");
 
 			Unity3dDefineByVersion unity3dDefineByVersion = getUnity3dDefineByVersion(unityBundle);
 			if(unity3dDefineByVersion != Unity3dDefineByVersion.UNKNOWN)
 			{
 				for(Unity3dDefineByVersion majorVersion : unity3dDefineByVersion.getMajorVersions())
 				{
-					extension.getVariables().add(majorVersion.name());
+					variables.add(majorVersion.name());
 				}
-				extension.getVariables().add(unity3dDefineByVersion.name());
+				variables.add(unity3dDefineByVersion.name());
 			}
-
-			// exclude temp dirs
-			contentEntry.addFolder(projectUrl + "/" + Project.DIRECTORY_STORE_FOLDER, ExcludedContentFolderTypeProvider.getInstance());
-			contentEntry.addFolder(projectUrl + "/Library", ExcludedContentFolderTypeProvider.getInstance());
-			contentEntry.addFolder(projectUrl + "/Temp", ExcludedContentFolderTypeProvider.getInstance());
-			contentEntry.addFolder(projectUrl + "/test_Data", ExcludedContentFolderTypeProvider.getInstance());
 		}
 
-		modifiableModel.setCurrentLayer(Unity3dTarget.Editor.name());
+		// exclude temp dirs
+		contentEntry.addFolder(projectUrl + "/" + Project.DIRECTORY_STORE_FOLDER, ExcludedContentFolderTypeProvider.getInstance());
+		contentEntry.addFolder(projectUrl + "/Library", ExcludedContentFolderTypeProvider.getInstance());
+		contentEntry.addFolder(projectUrl + "/Temp", ExcludedContentFolderTypeProvider.getInstance());
+		contentEntry.addFolder(projectUrl + "/test_Data", ExcludedContentFolderTypeProvider.getInstance());
 
 		new WriteAction<Object>()
 		{

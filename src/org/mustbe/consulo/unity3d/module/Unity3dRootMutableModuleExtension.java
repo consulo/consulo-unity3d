@@ -39,21 +39,6 @@ public class Unity3dRootMutableModuleExtension extends Unity3dRootModuleExtensio
 		super(id, rootModel);
 	}
 
-	public void setBuildTarget(Unity3dTarget target)
-	{
-		myBuildTarget = target;
-	}
-
-	public void setFileName(@NotNull String name)
-	{
-		myFileName = name;
-	}
-
-	public void setOutputDir(@NotNull String dir)
-	{
-		myOutputDirectory = dir;
-	}
-
 	public void setNamespacePrefix(@Nullable String prefix)
 	{
 		myNamespacePrefix = prefix;
@@ -84,9 +69,6 @@ public class Unity3dRootMutableModuleExtension extends Unity3dRootModuleExtensio
 	public boolean isModified(@NotNull Unity3dRootModuleExtension ex)
 	{
 		return isModifiedImpl(ex) ||
-				myBuildTarget != ex.getBuildTarget() ||
-				!Comparing.equal(getFileName(), ex.getFileName()) ||
-				!Comparing.equal(getNamespacePrefix(), ex.getNamespacePrefix()) ||
-				!Comparing.equal(getOutputDir(), ex.getOutputDir());
+				!Comparing.equal(getNamespacePrefix(), ex.getNamespacePrefix());
 	}
 }
