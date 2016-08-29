@@ -78,7 +78,7 @@
       <module name="shaderlab" dirurl="file://$PROJECT_DIR$/shaderlab" current-layer="Default">
         <module-layer name="Default">
           <extension id="consulo-plugin" sdk-module-name="consulo-unity3d" sdk-name="" custom-plugin-dir-url="file://$MODULE_DIR$/../dep" />
-          <extension id="java" sdk-module-name="consulo-unity3d" sdk-name="" language-level-module-name="consulo-unity3d" language-level-name="" special-dir-location="SOURCE_DIR" />
+          <extension id="java" sdk-module-name="consulo-unity3d" sdk-name="" language-level-module-name="consulo-unity3d" language-level-name="" special-dir-location="SOURCE_DIR" bytecode-version="1.8" />
           <content url="file://$MODULE_DIR$">
             <content-folder type="PRODUCTION" url="file://$MODULE_DIR$/src" />
           </content>
@@ -112,7 +112,7 @@
       <module name="cg-shader" dirurl="file://$PROJECT_DIR$/cg-shader" current-layer="Default">
         <module-layer name="Default">
           <extension id="consulo-plugin" sdk-module-name="consulo-unity3d" sdk-name="" />
-          <extension id="java" sdk-module-name="" sdk-name="1.6" language-level-module-name="consulo-unity3d" language-level-name="" special-dir-location="SOURCE_DIR" />
+          <extension id="java" sdk-module-name="consulo-unity3d" sdk-name="1.6" language-level-module-name="consulo-unity3d" language-level-name="" special-dir-location="SOURCE_DIR" bytecode-version="1.8" />
           <content url="file://$MODULE_DIR$">
             <content-folder type="PRODUCTION" url="file://$MODULE_DIR$/src" />
           </content>
