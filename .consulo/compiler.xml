@@ -6,6 +6,7 @@
         <processorPath useClasspath="true" />
       </profile>
     </annotation-processing>
+    <bytecode-target-level target="1.8" />
   </component>
   <component name="ResourceCompilerConfiguration">
     <resourceExtensions />
