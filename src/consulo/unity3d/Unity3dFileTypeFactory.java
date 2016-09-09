@@ -17,10 +17,10 @@
 package consulo.unity3d;
 
 import org.jetbrains.annotations.NotNull;
-import consulo.unity3d.scene.Unity3dBinaryAssetFileType;
-import consulo.unity3d.scene.Unity3dYMLAssetFileType;
 import com.intellij.openapi.fileTypes.FileTypeConsumer;
 import com.intellij.openapi.fileTypes.FileTypeFactory;
+import consulo.unity3d.scene.Unity3dBinaryAssetFileType;
+import consulo.unity3d.scene.Unity3dYMLAssetFileType;
 
 /**
  * @author VISTALL

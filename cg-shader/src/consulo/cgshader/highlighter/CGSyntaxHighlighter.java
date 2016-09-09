@@ -20,13 +20,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.jetbrains.annotations.NotNull;
-import consulo.cgshader.lexer.CGLexer;
-import consulo.cgshader.lexer.CGTokens;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.fileTypes.SyntaxHighlighterBase;
 import com.intellij.psi.tree.IElementType;
+import consulo.cgshader.lexer.CGLexer;
+import consulo.cgshader.lexer.CGTokens;
 
 /**
  * @author VISTALL

@@ -4,8 +4,6 @@ import java.util.UUID;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import consulo.unity3d.editor.UnityEditorCommunication;
-import consulo.unity3d.editor.UnityRunTest;
 import com.intellij.execution.DefaultExecutionResult;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionResult;
@@ -34,6 +32,8 @@ import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Ref;
 import com.intellij.xdebugger.DefaultDebugProcessHandler;
 import consulo.annotations.RequiredDispatchThread;
+import consulo.unity3d.editor.UnityEditorCommunication;
+import consulo.unity3d.editor.UnityRunTest;
 
 /**
  * @author VISTALL

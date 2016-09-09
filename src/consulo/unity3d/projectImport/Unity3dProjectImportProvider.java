@@ -19,13 +19,13 @@ package consulo.unity3d.projectImport;
 import javax.swing.Icon;
 
 import org.jetbrains.annotations.Nullable;
-import consulo.unity3d.Unity3dIcons;
-import consulo.unity3d.projectImport.ui.Unity3dWizardStep;
 import com.intellij.ide.util.projectWizard.ModuleWizardStep;
 import com.intellij.ide.util.projectWizard.WizardContext;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.projectImport.ProjectImportProvider;
+import consulo.unity3d.Unity3dIcons;
+import consulo.unity3d.projectImport.ui.Unity3dWizardStep;
 
 /**
  * @author VISTALL

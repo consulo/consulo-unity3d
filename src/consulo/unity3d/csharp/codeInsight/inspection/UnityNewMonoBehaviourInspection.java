@@ -17,8 +17,6 @@
 package consulo.unity3d.csharp.codeInsight.inspection;
 
 import org.jetbrains.annotations.NotNull;
-import consulo.unity3d.Unity3dBundle;
-import consulo.unity3d.Unity3dTypes;
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElementVisitor;
@@ -29,6 +27,8 @@ import consulo.csharp.lang.psi.impl.CSharpTypeUtil;
 import consulo.csharp.lang.psi.impl.source.resolve.type.CSharpTypeRefByQName;
 import consulo.dotnet.psi.DotNetType;
 import consulo.dotnet.resolve.DotNetTypeRef;
+import consulo.unity3d.Unity3dBundle;
+import consulo.unity3d.Unity3dTypes;
 
 /**
  * @author VISTALL

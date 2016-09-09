@@ -13,8 +13,6 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import consulo.unity3d.run.debugger.UnityProcess;
-import consulo.unity3d.run.debugger.UnityProcessDialog;
 import com.google.gson.Gson;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
@@ -23,6 +21,8 @@ import com.intellij.openapi.vfs.CharsetToolkit;
 import com.jezhumble.javasysmon.JavaSysMon;
 import com.jezhumble.javasysmon.ProcessInfo;
 import consulo.lombok.annotations.Logger;
+import consulo.unity3d.run.debugger.UnityProcess;
+import consulo.unity3d.run.debugger.UnityProcessDialog;
 
 /**
  * @author VISTALL

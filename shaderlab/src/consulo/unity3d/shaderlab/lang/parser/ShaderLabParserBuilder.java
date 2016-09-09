@@ -17,12 +17,12 @@
 package consulo.unity3d.shaderlab.lang.parser;
 
 import org.jetbrains.annotations.NotNull;
-import consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabRole;
-import consulo.unity3d.shaderlab.lang.psi.ShaderLabKeyTokens;
-import consulo.unity3d.shaderlab.lang.psi.ShaderLabTokens;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.impl.PsiBuilderAdapter;
 import com.intellij.psi.tree.IElementType;
+import consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabRole;
+import consulo.unity3d.shaderlab.lang.psi.ShaderLabKeyTokens;
+import consulo.unity3d.shaderlab.lang.psi.ShaderLabTokens;
 
 /**
  * @author VISTALL

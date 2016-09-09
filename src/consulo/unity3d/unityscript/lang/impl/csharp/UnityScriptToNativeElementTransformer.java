@@ -2,8 +2,6 @@ package consulo.unity3d.unityscript.lang.impl.csharp;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import consulo.unity3d.Unity3dTypes;
-import consulo.unity3d.unityscript.lang.impl.UnityScriptDotNetTypeDeclaration;
 import com.intellij.lang.Language;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.JSFunction;
@@ -18,6 +16,8 @@ import consulo.csharp.lang.psi.impl.source.resolve.type.CSharpTypeRefByQName;
 import consulo.dotnet.DotNetTypes;
 import consulo.dotnet.psi.DotNetModifier;
 import consulo.javascript.lang.JavaScriptLanguage;
+import consulo.unity3d.Unity3dTypes;
+import consulo.unity3d.unityscript.lang.impl.UnityScriptDotNetTypeDeclaration;
 
 /**
  * @author VISTALL

@@ -17,8 +17,6 @@
 package consulo.cgshader;
 
 import org.jetbrains.annotations.NotNull;
-import consulo.cgshader.lexer.CGLexer;
-import consulo.cgshader.lexer.CGTokens;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.extapi.psi.PsiFileBase;
 import com.intellij.lang.ASTNode;
@@ -32,6 +30,8 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.IFileElementType;
 import com.intellij.psi.tree.TokenSet;
+import consulo.cgshader.lexer.CGLexer;
+import consulo.cgshader.lexer.CGTokens;
 import consulo.lang.LanguageVersion;
 
 /**
@@ -51,7 +51,7 @@ public class CGParserDefinition implements ParserDefinition
 
 	@NotNull
 	@Override
-	public PsiParser createParser( @NotNull LanguageVersion languageVersion)
+	public PsiParser createParser(@NotNull LanguageVersion languageVersion)
 	{
 		return new PsiParser()
 		{

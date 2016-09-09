@@ -17,7 +17,6 @@
 package consulo.unity3d.ide.projectView;
 
 import org.jetbrains.annotations.NotNull;
-import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import com.intellij.ide.projectView.ProjectView;
 import com.intellij.ide.projectView.impl.AbstractProjectViewPane;
 import com.intellij.ide.projectView.impl.ProjectViewPane;
@@ -28,6 +27,7 @@ import com.intellij.openapi.actionSystem.ToggleAction;
 import com.intellij.openapi.util.KeyWithDefaultValue;
 import consulo.annotations.RequiredDispatchThread;
 import consulo.ide.projectView.impl.ProjectViewPaneOptionProvider;
+import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 
 /**
  * @author VISTALL
@@ -79,8 +79,7 @@ public class Unity3dShowMetaFileProjectViewPaneOptionProvider extends ProjectVie
 			super.update(e);
 			final Presentation presentation = e.getPresentation();
 			final ProjectView projectView = ProjectView.getInstance(myPane.getProject());
-			presentation.setVisible(projectView.getCurrentProjectViewPane() == myPane && Unity3dModuleExtensionUtil.getRootModuleExtension(myPane
-					.getProject()) != null);
+			presentation.setVisible(projectView.getCurrentProjectViewPane() == myPane && Unity3dModuleExtensionUtil.getRootModuleExtension(myPane.getProject()) != null);
 		}
 	}
 

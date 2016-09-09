@@ -16,11 +16,11 @@
 
 package consulo.unity3d.jsonApi;
 
-import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import com.intellij.openapi.project.Project;
 import consulo.annotations.RequiredReadAction;
 import consulo.csharp.compiler.MSBaseDotNetCompilerOptionsBuilder;
 import consulo.dotnet.compiler.DotNetCompilerMessage;
+import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 
 /**
  * @author VISTALL

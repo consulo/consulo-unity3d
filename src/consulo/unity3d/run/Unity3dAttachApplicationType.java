@@ -17,11 +17,11 @@
 package consulo.unity3d.run;
 
 import org.jetbrains.annotations.NotNull;
-import consulo.unity3d.Unity3dIcons;
 import com.intellij.execution.configuration.ConfigurationFactoryEx;
 import com.intellij.execution.configurations.ConfigurationTypeBase;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.openapi.project.Project;
+import consulo.unity3d.Unity3dIcons;
 
 /**
  * @author VISTALL

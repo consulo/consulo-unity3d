@@ -21,12 +21,12 @@ import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import consulo.unity3d.shaderlab.lang.ShaderLabFileType;
-import consulo.unity3d.shaderlab.lang.ShaderLabLanguage;
 import com.intellij.extapi.psi.PsiFileBase;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.stubs.StubElement;
+import consulo.unity3d.shaderlab.lang.ShaderLabFileType;
+import consulo.unity3d.shaderlab.lang.ShaderLabLanguage;
 
 /**
  * @author VISTALL

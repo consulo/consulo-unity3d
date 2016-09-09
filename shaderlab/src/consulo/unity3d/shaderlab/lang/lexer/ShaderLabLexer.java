@@ -16,9 +16,9 @@
 
 package consulo.unity3d.shaderlab.lang.lexer;
 
-import consulo.unity3d.shaderlab.lang.psi.ShaderLabTokens;
 import com.intellij.lexer.MergingLexerAdapter;
 import com.intellij.psi.tree.TokenSet;
+import consulo.unity3d.shaderlab.lang.psi.ShaderLabTokens;
 
 /**
  * @author VISTALL

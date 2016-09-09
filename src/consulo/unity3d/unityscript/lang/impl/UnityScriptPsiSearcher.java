@@ -5,7 +5,6 @@ import java.util.Collections;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import consulo.unity3d.unityscript.index.UnityScriptFileByNameIndex;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -15,6 +14,7 @@ import consulo.dotnet.psi.DotNetTypeDeclaration;
 import consulo.dotnet.resolve.DotNetNamespaceAsElement;
 import consulo.dotnet.resolve.DotNetPsiSearcher;
 import consulo.javascript.lang.JavaScriptLanguage;
+import consulo.unity3d.unityscript.index.UnityScriptFileByNameIndex;
 
 /**
  * @author VISTALL

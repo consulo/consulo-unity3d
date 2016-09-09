@@ -17,14 +17,6 @@
 package consulo.unity3d.shaderlab.ide.highlight;
 
 import org.jetbrains.annotations.NotNull;
-import consulo.annotations.RequiredReadAction;
-import consulo.unity3d.shaderlab.lang.ShaderLabPropertyType;
-import consulo.unity3d.shaderlab.lang.psi.ShaderLabFile;
-import consulo.unity3d.shaderlab.lang.psi.ShaderLabKeyTokens;
-import consulo.unity3d.shaderlab.lang.psi.ShaderPropertyElement;
-import consulo.unity3d.shaderlab.lang.psi.ShaderPropertyTypeElement;
-import consulo.unity3d.shaderlab.lang.psi.ShaderReference;
-import consulo.unity3d.shaderlab.lang.psi.SharpLabElementVisitor;
 import com.intellij.codeInsight.daemon.impl.HighlightInfo;
 import com.intellij.codeInsight.daemon.impl.HighlightInfoType;
 import com.intellij.codeInsight.daemon.impl.HighlightVisitor;
@@ -34,6 +26,14 @@ import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import consulo.annotations.RequiredReadAction;
+import consulo.unity3d.shaderlab.lang.ShaderLabPropertyType;
+import consulo.unity3d.shaderlab.lang.psi.ShaderLabFile;
+import consulo.unity3d.shaderlab.lang.psi.ShaderLabKeyTokens;
+import consulo.unity3d.shaderlab.lang.psi.ShaderPropertyElement;
+import consulo.unity3d.shaderlab.lang.psi.ShaderPropertyTypeElement;
+import consulo.unity3d.shaderlab.lang.psi.ShaderReference;
+import consulo.unity3d.shaderlab.lang.psi.SharpLabElementVisitor;
 
 /**
  * @author VISTALL
@@ -51,8 +51,7 @@ public class SharpLabHighlightVisitor extends SharpLabElementVisitor implements 
 		PsiElement nameIdentifier = p.getNameIdentifier();
 		if(nameIdentifier != null)
 		{
-			myHolder.add(HighlightInfo.newHighlightInfo(HighlightInfoType.INFORMATION).range(nameIdentifier).textAttributes
-					(DefaultLanguageHighlighterColors.INSTANCE_FIELD).create());
+			myHolder.add(HighlightInfo.newHighlightInfo(HighlightInfoType.INFORMATION).range(nameIdentifier).textAttributes(DefaultLanguageHighlighterColors.INSTANCE_FIELD).create());
 		}
 	}
 
@@ -70,8 +69,7 @@ public class SharpLabHighlightVisitor extends SharpLabElementVisitor implements 
 		}
 		else
 		{
-			myHolder.add(HighlightInfo.newHighlightInfo(HighlightInfoType.INFORMATION).range(element).textAttributes
-					(DefaultLanguageHighlighterColors.TYPE_ALIAS_NAME).create());
+			myHolder.add(HighlightInfo.newHighlightInfo(HighlightInfoType.INFORMATION).range(element).textAttributes(DefaultLanguageHighlighterColors.TYPE_ALIAS_NAME).create());
 		}
 	}
 
@@ -84,8 +82,8 @@ public class SharpLabHighlightVisitor extends SharpLabElementVisitor implements 
 			PsiElement resolve = reference.resolve();
 			if(resolve == null)
 			{
-				myHolder.add(HighlightInfo.newHighlightInfo(HighlightInfoType.WRONG_REF).range(reference.getReferenceElement())
-						.descriptionAndTooltip("'" + reference.getReferenceName() + "' is not resolved").create());
+				myHolder.add(HighlightInfo.newHighlightInfo(HighlightInfoType.WRONG_REF).range(reference.getReferenceElement()).descriptionAndTooltip("'" + reference.getReferenceName() + "' is not " +
+						"resolved").create());
 			}
 			else
 			{
@@ -102,8 +100,7 @@ public class SharpLabHighlightVisitor extends SharpLabElementVisitor implements 
 					default:
 						return;
 				}
-				myHolder.add(HighlightInfo.newHighlightInfo(HighlightInfoType.INFORMATION).range(reference.getReferenceElement()).textAttributes
-						(key).create());
+				myHolder.add(HighlightInfo.newHighlightInfo(HighlightInfoType.INFORMATION).range(reference.getReferenceElement()).textAttributes(key).create());
 			}
 		}
 	}
@@ -119,13 +116,11 @@ public class SharpLabHighlightVisitor extends SharpLabElementVisitor implements 
 		{
 			if(node.getElementType() == ShaderLabKeyTokens.VALUE_KEYWORD)
 			{
-				myHolder.add(HighlightInfo.newHighlightInfo(HighlightInfoType.INFORMATION).range(node).textAttributes
-						(DefaultLanguageHighlighterColors.MACRO_KEYWORD).create());
+				myHolder.add(HighlightInfo.newHighlightInfo(HighlightInfoType.INFORMATION).range(node).textAttributes(DefaultLanguageHighlighterColors.MACRO_KEYWORD).create());
 			}
 			else if(node.getElementType() == ShaderLabKeyTokens.START_KEYWORD)
 			{
-				myHolder.add(HighlightInfo.newHighlightInfo(HighlightInfoType.INFORMATION).range(node).textAttributes
-						(DefaultLanguageHighlighterColors.KEYWORD).create());
+				myHolder.add(HighlightInfo.newHighlightInfo(HighlightInfoType.INFORMATION).range(node).textAttributes(DefaultLanguageHighlighterColors.KEYWORD).create());
 			}
 		}
 	}

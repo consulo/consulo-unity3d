@@ -3,8 +3,6 @@ package consulo.unity3d.jsonApi;
 import java.util.UUID;
 
 import org.jetbrains.annotations.NotNull;
-import consulo.unity3d.run.test.Unity3dTestSession;
-import consulo.unity3d.run.test.Unity3dTestSessionManager;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.testframework.sm.runner.GeneralTestEventsProcessor;
 import com.intellij.execution.testframework.sm.runner.events.TestFailedEvent;
@@ -16,6 +14,8 @@ import com.intellij.execution.testframework.sm.runner.events.TestSuiteFinishedEv
 import com.intellij.execution.testframework.sm.runner.events.TestSuiteStartedEvent;
 import com.intellij.openapi.util.text.StringUtil;
 import consulo.buildInWebServer.api.JsonPostRequestHandler;
+import consulo.unity3d.run.test.Unity3dTestSession;
+import consulo.unity3d.run.test.Unity3dTestSessionManager;
 
 /**
  * @author VISTALL

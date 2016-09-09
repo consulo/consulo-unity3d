@@ -93,7 +93,10 @@ public class UnityLogPostHandler extends JsonPostRequestHandler<UnityLogPostHand
 						}
 						else
 						{
-							panel.addMessage(value, new String[]{request.condition, request.stackTrace}, null, -1, -1, null);
+							panel.addMessage(value, new String[]{
+									request.condition,
+									request.stackTrace
+							}, null, -1, -1, null);
 						}
 					}
 				});

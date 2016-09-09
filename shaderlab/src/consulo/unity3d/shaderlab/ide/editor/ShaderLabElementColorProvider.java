@@ -21,6 +21,8 @@ import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import com.intellij.openapi.editor.ElementColorProvider;
+import com.intellij.psi.PsiElement;
 import consulo.unity3d.shaderlab.lang.ShaderLabPropertyType;
 import consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabColorRole;
 import consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabRole;
@@ -29,8 +31,6 @@ import consulo.unity3d.shaderlab.lang.psi.ShaderProperty;
 import consulo.unity3d.shaderlab.lang.psi.ShaderPropertyType;
 import consulo.unity3d.shaderlab.lang.psi.ShaderPropertyValue;
 import consulo.unity3d.shaderlab.lang.psi.ShaderSimpleValue;
-import com.intellij.openapi.editor.ElementColorProvider;
-import com.intellij.psi.PsiElement;
 
 /**
  * @author VISTALL

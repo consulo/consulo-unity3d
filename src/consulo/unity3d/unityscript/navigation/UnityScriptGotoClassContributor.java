@@ -4,8 +4,6 @@ import javax.swing.Icon;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import consulo.unity3d.Unity3dIcons;
-import consulo.unity3d.unityscript.index.UnityScriptIndexKeys;
 import com.intellij.icons.AllIcons;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.navigation.ChooseByNameContributorEx;
@@ -24,6 +22,8 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.FindSymbolParameters;
 import com.intellij.util.indexing.IdFilter;
 import consulo.ide.IconDescriptor;
+import consulo.unity3d.Unity3dIcons;
+import consulo.unity3d.unityscript.index.UnityScriptIndexKeys;
 
 /**
  * @author VISTALL
@@ -58,10 +58,8 @@ public class UnityScriptGotoClassContributor implements ChooseByNameContributorE
 	@Override
 	public NavigationItem[] getItemsByName(String name, String pattern, Project project, boolean includeNonProjectItems)
 	{
-		CommonProcessors.CollectProcessor<NavigationItem> processor = new CommonProcessors.CollectProcessor<NavigationItem>(ContainerUtil
-				.<NavigationItem>newTroveSet());
-		processElementsWithName(name, processor, new FindSymbolParameters(pattern, name, GlobalSearchScope.allScope(project),
-				IdFilter.getProjectIdFilter(project, includeNonProjectItems)));
+		CommonProcessors.CollectProcessor<NavigationItem> processor = new CommonProcessors.CollectProcessor<NavigationItem>(ContainerUtil.<NavigationItem>newTroveSet());
+		processElementsWithName(name, processor, new FindSymbolParameters(pattern, name, GlobalSearchScope.allScope(project), IdFilter.getProjectIdFilter(project, includeNonProjectItems)));
 		return processor.toArray(NavigationItem.ARRAY_FACTORY);
 	}
 
@@ -72,12 +70,10 @@ public class UnityScriptGotoClassContributor implements ChooseByNameContributorE
 	}
 
 	@Override
-	public void processElementsWithName(@NotNull String name,
-			@NotNull final Processor<NavigationItem> processor,
-			@NotNull FindSymbolParameters parameters)
+	public void processElementsWithName(@NotNull String name, @NotNull final Processor<NavigationItem> processor, @NotNull FindSymbolParameters parameters)
 	{
-		StubIndex.getInstance().processElements(UnityScriptIndexKeys.FILE_BY_NAME_INDEX, name, parameters.getProject(), parameters.getSearchScope(),
-				parameters.getIdFilter(), JSFile.class, new Processor<JSFile>()
+		StubIndex.getInstance().processElements(UnityScriptIndexKeys.FILE_BY_NAME_INDEX, name, parameters.getProject(), parameters.getSearchScope(), parameters.getIdFilter(), JSFile.class,
+				new Processor<JSFile>()
 		{
 			@Override
 			public boolean process(final JSFile file)

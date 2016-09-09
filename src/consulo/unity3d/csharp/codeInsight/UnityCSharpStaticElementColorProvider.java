@@ -8,7 +8,6 @@ import java.util.Map;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import consulo.unity3d.Unity3dTypes;
 import com.intellij.openapi.editor.ElementColorProvider;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
@@ -34,6 +33,7 @@ import consulo.csharp.lang.psi.impl.source.resolve.util.CSharpResolveUtil;
 import consulo.dotnet.psi.DotNetExpression;
 import consulo.dotnet.psi.DotNetType;
 import consulo.dotnet.psi.DotNetVariable;
+import consulo.unity3d.Unity3dTypes;
 
 /**
  * @author VISTALL
@@ -107,8 +107,7 @@ public class UnityCSharpStaticElementColorProvider implements ElementColorProvid
 
 			if(parentIsColorType(resolvedElementMaybeConstructor, Unity3dTypes.UnityEngine.Color))
 			{
-				ResolveResult validResult = CSharpResolveUtil.findFirstValidResult(((CSharpNewExpression) parent)
-						.multiResolve(false));
+				ResolveResult validResult = CSharpResolveUtil.findFirstValidResult(((CSharpNewExpression) parent).multiResolve(false));
 				if(!(validResult instanceof MethodResolveResult))
 				{
 					return null;
@@ -152,8 +151,7 @@ public class UnityCSharpStaticElementColorProvider implements ElementColorProvid
 
 				if(map.size() == 3 || map.size() == 4)
 				{
-					return new Color(map.get("r"), map.get("g"), map.get("b"), ObjectUtil.<Float>notNull(map.get("a"),
-							1f));
+					return new Color(map.get("r"), map.get("g"), map.get("b"), ObjectUtil.<Float>notNull(map.get("a"), 1f));
 				}
 			}
 		}
@@ -165,8 +163,7 @@ public class UnityCSharpStaticElementColorProvider implements ElementColorProvid
 	public static boolean parentIsColorType(PsiElement resolvedElement, @NotNull String type)
 	{
 		PsiElement typeParent = resolvedElement.getParent();
-		return typeParent instanceof CSharpTypeDeclaration && type.equals(((CSharpTypeDeclaration) typeParent)
-				.getVmQName());
+		return typeParent instanceof CSharpTypeDeclaration && type.equals(((CSharpTypeDeclaration) typeParent).getVmQName());
 	}
 
 	@Override
@@ -201,8 +198,7 @@ public class UnityCSharpStaticElementColorProvider implements ElementColorProvid
 		{
 			// for example Color.grey or UnityEngine.Color.grey
 			PsiElement qualifier = ((CSharpReferenceExpression) targetElement).getQualifier();
-			qualified = qualifier instanceof CSharpReferenceExpression && ((CSharpReferenceExpression) qualifier)
-					.getQualifier() != null;
+			qualified = qualifier instanceof CSharpReferenceExpression && ((CSharpReferenceExpression) qualifier).getQualifier() != null;
 		}
 		else
 		{

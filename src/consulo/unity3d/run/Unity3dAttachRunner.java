@@ -18,8 +18,6 @@ package consulo.unity3d.run;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import consulo.unity3d.run.debugger.UnityDebugProcess;
-import consulo.unity3d.run.debugger.UnityProcess;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.actions.StopProcessAction;
 import com.intellij.execution.configurations.RunProfile;
@@ -39,6 +37,8 @@ import com.intellij.xdebugger.XDebuggerManager;
 import consulo.annotations.RequiredDispatchThread;
 import consulo.dotnet.execution.DebugConnectionInfo;
 import consulo.dotnet.mono.debugger.MonoVirtualMachineListener;
+import consulo.unity3d.run.debugger.UnityDebugProcess;
+import consulo.unity3d.run.debugger.UnityProcess;
 import mono.debugger.VirtualMachine;
 
 /**

@@ -21,12 +21,12 @@ import javax.swing.JPanel;
 
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.Nullable;
-import consulo.unity3d.Unity3dBundle;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.ui.VerticalFlowLayout;
 import com.intellij.ui.components.JBCheckBox;
 import com.intellij.xdebugger.impl.settings.XDebuggerSettingManagerImpl;
+import consulo.unity3d.Unity3dBundle;
 
 /**
  * @author VISTALL
@@ -62,8 +62,7 @@ public class Unity3dDebuggerConfigurable implements Configurable
 	public JComponent createComponent()
 	{
 		JPanel root = new JPanel(new VerticalFlowLayout(true, false));
-		myAttachToSingleProcessWithoutDialogBox = new JBCheckBox(Unity3dBundle.message("attach.to.single.process.without.dialog.box"),
-				mySettings.myAttachToSingleProcessWithoutDialog);
+		myAttachToSingleProcessWithoutDialogBox = new JBCheckBox(Unity3dBundle.message("attach.to.single.process.without.dialog.box"), mySettings.myAttachToSingleProcessWithoutDialog);
 		root.add(myAttachToSingleProcessWithoutDialogBox);
 
 		return root;

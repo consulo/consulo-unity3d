@@ -16,9 +16,6 @@
 
 package consulo.unity3d.ide.projectView;
 
-import consulo.unity3d.Unity3dMetaFileType;
-import consulo.unity3d.module.Unity3dModuleExtensionUtil;
-import consulo.unity3d.module.Unity3dRootModuleExtension;
 import com.intellij.ide.projectView.PresentationData;
 import com.intellij.ide.projectView.ProjectViewNode;
 import com.intellij.ide.projectView.ProjectViewNodeDecorator;
@@ -28,6 +25,9 @@ import com.intellij.packageDependencies.ui.PackageDependenciesNode;
 import com.intellij.ui.ColoredTreeCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
 import consulo.annotations.RequiredDispatchThread;
+import consulo.unity3d.Unity3dMetaFileType;
+import consulo.unity3d.module.Unity3dModuleExtensionUtil;
+import consulo.unity3d.module.Unity3dRootModuleExtension;
 
 /**
  * @author VISTALL

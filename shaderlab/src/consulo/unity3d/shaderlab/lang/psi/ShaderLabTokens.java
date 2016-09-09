@@ -16,9 +16,9 @@
 
 package consulo.unity3d.shaderlab.lang.psi;
 
-import consulo.unity3d.shaderlab.lang.ShaderLabLanguage;
 import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IElementType;
+import consulo.unity3d.shaderlab.lang.ShaderLabLanguage;
 
 /**
  * @author VISTALL

@@ -23,14 +23,6 @@ import javax.swing.Icon;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import consulo.unity3d.Unity3dIcons;
-import consulo.unity3d.module.Unity3dModuleExtensionUtil;
-import consulo.unity3d.run.Unity3dAttachApplicationType;
-import consulo.unity3d.run.Unity3dAttachConfiguration;
-import consulo.unity3d.run.Unity3dAttachRunner;
-import consulo.unity3d.run.debugger.Unity3dDebuggerSettings;
-import consulo.unity3d.run.debugger.UnityProcess;
-import consulo.unity3d.run.debugger.UnityProcessDialog;
 import com.intellij.execution.ExecutionManager;
 import com.intellij.execution.RunManager;
 import com.intellij.execution.RunnerAndConfigurationSettings;
@@ -55,6 +47,14 @@ import com.intellij.util.ui.UIUtil;
 import com.intellij.xdebugger.impl.settings.XDebuggerSettingManagerImpl;
 import consulo.annotations.RequiredDispatchThread;
 import consulo.lombok.annotations.Logger;
+import consulo.unity3d.Unity3dIcons;
+import consulo.unity3d.module.Unity3dModuleExtensionUtil;
+import consulo.unity3d.run.Unity3dAttachApplicationType;
+import consulo.unity3d.run.Unity3dAttachConfiguration;
+import consulo.unity3d.run.Unity3dAttachRunner;
+import consulo.unity3d.run.debugger.Unity3dDebuggerSettings;
+import consulo.unity3d.run.debugger.UnityProcess;
+import consulo.unity3d.run.debugger.UnityProcessDialog;
 
 /**
  * @author VISTALL
@@ -146,12 +146,10 @@ public class Unity3dAttachAction extends DumbAwareAction
 
 			ExecutionEnvironmentBuilder builder = new ExecutionEnvironmentBuilder(project, DefaultDebugExecutor.getDebugExecutorInstance());
 
-			Unity3dAttachConfiguration configuration = new Unity3dAttachConfiguration(project, Unity3dAttachApplicationType.ourDummyInstance
-					.getConfigurationFactories()[0], firstItem);
+			Unity3dAttachConfiguration configuration = new Unity3dAttachConfiguration(project, Unity3dAttachApplicationType.ourDummyInstance.getConfigurationFactories()[0], firstItem);
 
 			RunManager runManager = RunManager.getInstance(project);
-			RunnerAndConfigurationSettingsImpl runnerAndConfigurationSettings = new RunnerAndConfigurationSettingsImpl((RunManagerImpl) runManager,
-					configuration, false);
+			RunnerAndConfigurationSettingsImpl runnerAndConfigurationSettings = new RunnerAndConfigurationSettingsImpl((RunManagerImpl) runManager, configuration, false);
 			runnerAndConfigurationSettings.setSingleton(true);
 
 			builder.runnerAndSettings(Unity3dAttachRunner.ourDummyInstance, runnerAndConfigurationSettings);

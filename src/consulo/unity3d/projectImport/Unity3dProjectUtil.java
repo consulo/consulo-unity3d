@@ -10,16 +10,6 @@ import java.util.TreeSet;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import consulo.unity3d.Unity3dBundle;
-import consulo.unity3d.Unity3dMetaFileType;
-import consulo.unity3d.bundle.Unity3dBundleType;
-import consulo.unity3d.bundle.Unity3dDefineByVersion;
-import consulo.unity3d.editor.UnityEditorCommunication;
-import consulo.unity3d.module.Unity3dChildMutableModuleExtension;
-import consulo.unity3d.module.Unity3dModuleExtensionUtil;
-import consulo.unity3d.module.Unity3dRootModuleExtension;
-import consulo.unity3d.module.Unity3dRootMutableModuleExtension;
-import consulo.unity3d.nunit.module.extension.Unity3dNUnitMutableModuleExtension;
 import com.intellij.lang.javascript.JavaScriptFileType;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
@@ -70,10 +60,20 @@ import consulo.roots.impl.ExcludedContentFolderTypeProvider;
 import consulo.roots.impl.ModuleRootLayerImpl;
 import consulo.roots.types.BinariesOrderRootType;
 import consulo.roots.types.DocumentationOrderRootType;
+import consulo.unity3d.Unity3dBundle;
+import consulo.unity3d.Unity3dMetaFileType;
 import consulo.unity3d.UnityPluginFileValidator;
+import consulo.unity3d.bundle.Unity3dBundleType;
+import consulo.unity3d.bundle.Unity3dDefineByVersion;
+import consulo.unity3d.editor.UnityEditorCommunication;
 import consulo.unity3d.editor.UnityRequestDefines;
 import consulo.unity3d.jsonApi.UnityPingPong;
 import consulo.unity3d.jsonApi.UnitySetDefines;
+import consulo.unity3d.module.Unity3dChildMutableModuleExtension;
+import consulo.unity3d.module.Unity3dModuleExtensionUtil;
+import consulo.unity3d.module.Unity3dRootModuleExtension;
+import consulo.unity3d.module.Unity3dRootMutableModuleExtension;
+import consulo.unity3d.nunit.module.extension.Unity3dNUnitMutableModuleExtension;
 import consulo.vfs.util.ArchiveVfsUtil;
 
 /**
@@ -169,7 +169,10 @@ public class Unity3dProjectUtil
 		}.queue();
 	}
 
-	private static void importAfterDefines(@NotNull final Project project, @Nullable final Sdk sdk, final boolean runValidator, @NotNull ProgressIndicator indicator,
+	private static void importAfterDefines(@NotNull final Project project,
+			@Nullable final Sdk sdk,
+			final boolean runValidator,
+			@NotNull ProgressIndicator indicator,
 			@Nullable UnitySetDefines setDefines)
 	{
 		try

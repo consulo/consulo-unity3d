@@ -19,15 +19,15 @@ package consulo.unity3d.shaderlab.lang;
 import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
-import consulo.unity3d.shaderlab.lang.psi.ShaderBraceOwner;
-import consulo.unity3d.shaderlab.lang.psi.ShaderRoleOwner;
-import consulo.unity3d.shaderlab.lang.psi.SharpLabElementVisitor;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.folding.CustomFoldingBuilder;
 import com.intellij.lang.folding.FoldingDescriptor;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
+import consulo.unity3d.shaderlab.lang.psi.ShaderBraceOwner;
+import consulo.unity3d.shaderlab.lang.psi.ShaderRoleOwner;
+import consulo.unity3d.shaderlab.lang.psi.SharpLabElementVisitor;
 
 /**
  * @author VISTALL
@@ -36,10 +36,7 @@ import com.intellij.psi.PsiElement;
 public class ShaderLabFoldingBuilder extends CustomFoldingBuilder
 {
 	@Override
-	protected void buildLanguageFoldRegions(@NotNull final List<FoldingDescriptor> descriptors,
-			@NotNull PsiElement root,
-			@NotNull Document document,
-			boolean quick)
+	protected void buildLanguageFoldRegions(@NotNull final List<FoldingDescriptor> descriptors, @NotNull PsiElement root, @NotNull Document document, boolean quick)
 	{
 		root.accept(new SharpLabElementVisitor()
 		{

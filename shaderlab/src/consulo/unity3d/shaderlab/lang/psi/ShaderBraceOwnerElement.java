@@ -18,9 +18,9 @@ package consulo.unity3d.shaderlab.lang.psi;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabRole;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabRole;
 
 /**
  * @author VISTALL

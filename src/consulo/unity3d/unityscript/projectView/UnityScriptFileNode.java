@@ -1,8 +1,6 @@
 package consulo.unity3d.unityscript.projectView;
 
-import consulo.lombok.annotations.Logger;
 import org.jetbrains.annotations.NotNull;
-import consulo.ide.IconDescriptorUpdaters;
 import com.intellij.ide.projectView.PresentationData;
 import com.intellij.ide.projectView.ViewSettings;
 import com.intellij.ide.projectView.impl.nodes.PsiFileNode;
@@ -11,6 +9,8 @@ import com.intellij.openapi.util.Iconable;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import consulo.ide.IconDescriptorUpdaters;
+import consulo.lombok.annotations.Logger;
 
 /**
  * @author VISTALL

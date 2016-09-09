@@ -22,7 +22,6 @@ import java.util.Set;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import consulo.unity3d.bundle.Unity3dBundleType;
 import com.intellij.ide.actions.ImportModuleAction;
 import com.intellij.ide.util.newProjectWizard.AddModuleWizard;
 import com.intellij.openapi.fileEditor.FileEditorManager;
@@ -45,6 +44,7 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.UIUtil;
 import consulo.buildInWebServer.api.JsonPostRequestHandler;
 import consulo.buildInWebServer.api.RequestFocusHttpRequestHandler;
+import consulo.unity3d.bundle.Unity3dBundleType;
 import consulo.unity3d.projectImport.Unity3dProjectImportBuilder;
 import consulo.unity3d.projectImport.Unity3dProjectImportProvider;
 
@@ -97,7 +97,7 @@ public class UnityOpenFilePostHandler extends JsonPostRequestHandler<UnityOpenFi
 							String sdkPath = SystemInfo.isMac ? body.editorPath : new File(body.editorPath).getParentFile().getParentFile().getPath();
 
 							VirtualFile sdkFileHome = LocalFileSystem.getInstance().findFileByPath(sdkPath);
-							if(sdkFileHome ==null)
+							if(sdkFileHome == null)
 							{
 								RequestFocusHttpRequestHandler.activateFrame(WindowManager.getInstance().findVisibleFrame());
 								Messages.showErrorDialog("Unity path is not resolved: " + sdkPath, "Consulo");
@@ -121,7 +121,7 @@ public class UnityOpenFilePostHandler extends JsonPostRequestHandler<UnityOpenFi
 								targetSdk = SdkConfigurationUtil.createAndAddSDK(sdkPath, Unity3dBundleType.getInstance(), false);
 							}
 
-							if(targetSdk ==null)
+							if(targetSdk == null)
 							{
 								RequestFocusHttpRequestHandler.activateFrame(WindowManager.getInstance().findVisibleFrame());
 								Messages.showErrorDialog("Unity SDK cant add by path: " + sdkPath, "Consulo");

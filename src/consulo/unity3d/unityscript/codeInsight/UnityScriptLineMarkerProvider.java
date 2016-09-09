@@ -6,9 +6,6 @@ import java.util.Map;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import consulo.unity3d.Unity3dIcons;
-import consulo.unity3d.csharp.UnityFunctionManager;
-import consulo.unity3d.module.Unity3dModuleExtension;
 import com.intellij.codeHighlighting.Pass;
 import com.intellij.codeInsight.daemon.LineMarkerInfo;
 import com.intellij.codeInsight.daemon.LineMarkerProvider;
@@ -22,6 +19,9 @@ import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.ConstantFunction;
 import consulo.annotations.RequiredReadAction;
+import consulo.unity3d.Unity3dIcons;
+import consulo.unity3d.csharp.UnityFunctionManager;
+import consulo.unity3d.module.Unity3dModuleExtension;
 
 /**
  * @author VISTALL
@@ -54,8 +54,7 @@ public class UnityScriptLineMarkerProvider implements LineMarkerProvider
 	@RequiredReadAction
 	private static LineMarkerInfo createMarker(PsiElement element)
 	{
-		if(element.getNode().getElementType() == JSTokenTypes.IDENTIFIER && element.getParent() instanceof JSReferenceExpression && element
-				.getParent().getParent() instanceof JSFunction)
+		if(element.getNode().getElementType() == JSTokenTypes.IDENTIFIER && element.getParent() instanceof JSReferenceExpression && element.getParent().getParent() instanceof JSFunction)
 		{
 			UnityFunctionManager.FunctionInfo functionInfo = UnityFunctionManager.getInstance().getFunctionInfo(element.getText());
 			if(functionInfo == null)
@@ -75,8 +74,8 @@ public class UnityScriptLineMarkerProvider implements LineMarkerProvider
 					return null;
 				}
 
-				return new LineMarkerInfo<PsiElement>(element, element.getTextRange(), Unity3dIcons.EventMethod, Pass.UPDATE_OVERRIDEN_MARKERS,
-						new ConstantFunction<PsiElement, String>(functionInfo.getDescription()), null, GutterIconRenderer.Alignment.LEFT);
+				return new LineMarkerInfo<PsiElement>(element, element.getTextRange(), Unity3dIcons.EventMethod, Pass.UPDATE_OVERRIDEN_MARKERS, new ConstantFunction<PsiElement,
+						String>(functionInfo.getDescription()), null, GutterIconRenderer.Alignment.LEFT);
 			}
 		}
 		return null;

@@ -3,7 +3,6 @@ package consulo.unity3d.unityscript.lang.impl;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import consulo.unity3d.Unity3dTypes;
 import com.intellij.lang.javascript.JavaScriptFileType;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.psi.PsiElement;
@@ -22,6 +21,7 @@ import consulo.dotnet.psi.DotNetNamedElement;
 import consulo.dotnet.psi.DotNetTypeDeclaration;
 import consulo.dotnet.psi.DotNetTypeList;
 import consulo.dotnet.resolve.DotNetTypeRef;
+import consulo.unity3d.Unity3dTypes;
 
 /**
  * @author VISTALL
@@ -76,7 +76,7 @@ public class UnityScriptDotNetTypeDeclaration extends LightElement implements Do
 	@Override
 	public DotNetTypeRef[] getExtendTypeRefs()
 	{
-		return new DotNetTypeRef[] {new CSharpTypeRefByQName(myFile, Unity3dTypes.UnityEngine.MonoBehaviour)};
+		return new DotNetTypeRef[]{new CSharpTypeRefByQName(myFile, Unity3dTypes.UnityEngine.MonoBehaviour)};
 	}
 
 	@RequiredReadAction

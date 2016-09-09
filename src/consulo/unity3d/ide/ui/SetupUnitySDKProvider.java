@@ -18,9 +18,6 @@ package consulo.unity3d.ide.ui;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import consulo.unity3d.Unity3dBundle;
-import consulo.unity3d.module.Unity3dModuleExtensionUtil;
-import consulo.unity3d.module.Unity3dRootModuleExtension;
 import com.intellij.ProjectTopics;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileEditor.FileEditor;
@@ -41,6 +38,9 @@ import consulo.annotations.RequiredReadAction;
 import consulo.editor.notifications.EditorNotificationProvider;
 import consulo.module.extension.ModuleExtension;
 import consulo.module.extension.ModuleExtensionChangeListener;
+import consulo.unity3d.Unity3dBundle;
+import consulo.unity3d.module.Unity3dModuleExtensionUtil;
+import consulo.unity3d.module.Unity3dRootModuleExtension;
 
 /**
  * @author VISTALL
@@ -96,8 +96,7 @@ public class SetupUnitySDKProvider implements EditorNotificationProvider<EditorN
 		}
 		if(rootModuleExtension.getSdk() == null)
 		{
-			return createPanel(rootModuleExtension.getInheritableSdk().isNull() ? null : rootModuleExtension.getInheritableSdk()
-					.getName(), rootModuleExtension.getModule());
+			return createPanel(rootModuleExtension.getInheritableSdk().isNull() ? null : rootModuleExtension.getInheritableSdk().getName(), rootModuleExtension.getModule());
 		}
 		return null;
 	}

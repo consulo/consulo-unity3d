@@ -17,8 +17,6 @@
 package consulo.unity3d.run.test;
 
 import org.jetbrains.annotations.NotNull;
-import consulo.unity3d.Unity3dIcons;
-import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.ConfigurationTypeBase;
 import com.intellij.execution.configurations.RunConfiguration;
@@ -27,6 +25,8 @@ import com.intellij.openapi.project.Project;
 import consulo.annotations.RequiredReadAction;
 import consulo.ide.IconDescriptor;
 import consulo.lombok.annotations.Lazy;
+import consulo.unity3d.Unity3dIcons;
+import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 
 /**
  * @author VISTALL

@@ -21,10 +21,10 @@ import static consulo.unity3d.shaderlab.lang.parser.ShaderLabParser.parseElement
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import com.intellij.lang.PsiBuilder;
 import consulo.unity3d.shaderlab.lang.parser.ShaderLabParserBuilder;
 import consulo.unity3d.shaderlab.lang.psi.ShaderLabElements;
 import consulo.unity3d.shaderlab.lang.psi.ShaderLabTokens;
-import com.intellij.lang.PsiBuilder;
 
 /**
  * @author VISTALL

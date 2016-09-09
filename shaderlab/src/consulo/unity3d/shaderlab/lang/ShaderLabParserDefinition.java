@@ -17,11 +17,6 @@
 package consulo.unity3d.shaderlab.lang;
 
 import org.jetbrains.annotations.NotNull;
-import consulo.unity3d.shaderlab.lang.lexer.ShaderLabLexer;
-import consulo.unity3d.shaderlab.lang.parser.ShaderLabParser;
-import consulo.unity3d.shaderlab.lang.psi.ShaderLabFile;
-import consulo.unity3d.shaderlab.lang.psi.ShaderLabStubElements;
-import consulo.unity3d.shaderlab.lang.psi.ShaderLabTokenSets;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.ParserDefinition;
@@ -33,6 +28,11 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.IFileElementType;
 import com.intellij.psi.tree.TokenSet;
 import consulo.lang.LanguageVersion;
+import consulo.unity3d.shaderlab.lang.lexer.ShaderLabLexer;
+import consulo.unity3d.shaderlab.lang.parser.ShaderLabParser;
+import consulo.unity3d.shaderlab.lang.psi.ShaderLabFile;
+import consulo.unity3d.shaderlab.lang.psi.ShaderLabStubElements;
+import consulo.unity3d.shaderlab.lang.psi.ShaderLabTokenSets;
 
 /**
  * @author VISTALL

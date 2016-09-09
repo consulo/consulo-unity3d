@@ -47,6 +47,7 @@ public class Unity3dTestConfiguration extends LocatableConfigurationBase impleme
 	{
 		super(project, factory, name);
 	}
+
 	@Override
 	public void readExternal(Element element) throws InvalidDataException
 	{

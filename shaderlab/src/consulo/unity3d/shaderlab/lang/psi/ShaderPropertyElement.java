@@ -19,10 +19,10 @@ package consulo.unity3d.shaderlab.lang.psi;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import consulo.unity3d.shaderlab.ide.refactoring.ShaderRefactorUtil;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.IncorrectOperationException;
+import consulo.unity3d.shaderlab.ide.refactoring.ShaderRefactorUtil;
 
 /**
  * @author VISTALL

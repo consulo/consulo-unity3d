@@ -4,10 +4,6 @@ import javax.swing.Icon;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import consulo.unity3d.Unity3dIcons;
-import consulo.unity3d.editor.UnityEditorCommunication;
-import consulo.unity3d.editor.UnityRefresh;
-import consulo.unity3d.run.test.Unity3dTestConfiguration;
 import com.intellij.execution.BeforeRunTaskProvider;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.runners.ExecutionEnvironment;
@@ -23,7 +19,11 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.util.TimeoutUtil;
 import com.intellij.util.concurrency.Semaphore;
 import com.intellij.util.ui.UIUtil;
+import consulo.unity3d.Unity3dIcons;
+import consulo.unity3d.editor.UnityEditorCommunication;
+import consulo.unity3d.editor.UnityRefresh;
 import consulo.unity3d.jsonApi.UnityPingPong;
+import consulo.unity3d.run.test.Unity3dTestConfiguration;
 
 /**
  * @author VISTALL

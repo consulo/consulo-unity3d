@@ -22,7 +22,6 @@ import java.util.Set;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import consulo.unity3d.unityscript.index.UnityScriptFileByNameIndex;
 import com.intellij.lang.Language;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.project.Project;
@@ -32,6 +31,7 @@ import consulo.annotations.RequiredReadAction;
 import consulo.dotnet.lang.psi.impl.BaseDotNetNamespaceAsElement;
 import consulo.dotnet.lang.psi.impl.DotNetNamespaceCacheManager;
 import consulo.dotnet.resolve.impl.IndexBasedDotNetPsiSearcher;
+import consulo.unity3d.unityscript.index.UnityScriptFileByNameIndex;
 
 /**
  * @author VISTALL

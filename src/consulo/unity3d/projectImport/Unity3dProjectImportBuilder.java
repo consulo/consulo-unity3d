@@ -23,8 +23,6 @@ import javax.swing.Icon;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import consulo.annotations.RequiredReadAction;
-import consulo.unity3d.Unity3dIcons;
 import com.intellij.openapi.application.Result;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.module.ModifiableModuleModel;
@@ -37,6 +35,8 @@ import com.intellij.openapi.roots.ui.configuration.ModulesProvider;
 import com.intellij.openapi.util.StaticGetter;
 import com.intellij.packaging.artifacts.ModifiableArtifactModel;
 import com.intellij.projectImport.ProjectImportBuilder;
+import consulo.annotations.RequiredReadAction;
+import consulo.unity3d.Unity3dIcons;
 
 /**
  * @author VISTALL
@@ -91,18 +91,14 @@ public class Unity3dProjectImportBuilder extends ProjectImportBuilder
 	@Nullable
 	@Override
 	@RequiredReadAction
-	public List<Module> commit(final Project project,
-			@Nullable ModifiableModuleModel originalModel,
-			ModulesProvider modulesProvider,
-			ModifiableArtifactModel artifactModel)
+	public List<Module> commit(final Project project, @Nullable ModifiableModuleModel originalModel, ModulesProvider modulesProvider, ModifiableArtifactModel artifactModel)
 	{
 		Sdk unitySdk = myUnitySdk;
 		myUnitySdk = null; // drop link to sdk
 
 		boolean fromProjectStructure = originalModel != null;
 
-		final ModifiableModuleModel newModel = fromProjectStructure ? originalModel : ModuleManager.getInstance
-				(project).getModifiableModel();
+		final ModifiableModuleModel newModel = fromProjectStructure ? originalModel : ModuleManager.getInstance(project).getModifiableModel();
 
 		Module rootModule = newModel.newModule(project.getName(), project.getBasePath());
 

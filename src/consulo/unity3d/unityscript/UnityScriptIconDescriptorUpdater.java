@@ -1,9 +1,6 @@
 package consulo.unity3d.unityscript;
 
 import org.jetbrains.annotations.NotNull;
-import consulo.unity3d.Unity3dIcons;
-import consulo.unity3d.unityscript.lang.impl.csharp.UnityScriptToNativeElementTransformer;
-import consulo.unity3d.unityscript.module.extension.Unity3dScriptModuleExtension;
 import com.intellij.icons.AllIcons;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.module.ModuleUtilCore;
@@ -14,6 +11,9 @@ import consulo.annotations.RequiredReadAction;
 import consulo.csharp.lang.psi.impl.light.builder.CSharpLightTypeDeclarationBuilder;
 import consulo.ide.IconDescriptor;
 import consulo.ide.IconDescriptorUpdater;
+import consulo.unity3d.Unity3dIcons;
+import consulo.unity3d.unityscript.lang.impl.csharp.UnityScriptToNativeElementTransformer;
+import consulo.unity3d.unityscript.module.extension.Unity3dScriptModuleExtension;
 
 /**
  * @author VISTALL

@@ -17,11 +17,11 @@
 package consulo.unity3d.shaderlab.lang.psi.stub;
 
 import org.jetbrains.annotations.Nullable;
-import consulo.unity3d.shaderlab.lang.psi.ShaderDef;
 import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.stubs.NamedStubBase;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.util.io.StringRef;
+import consulo.unity3d.shaderlab.lang.psi.ShaderDef;
 
 /**
  * @author VISTALL

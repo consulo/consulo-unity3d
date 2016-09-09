@@ -27,13 +27,6 @@ import javax.swing.Icon;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import consulo.unity3d.Unity3dIcons;
-import consulo.unity3d.Unity3dTypes;
-import consulo.unity3d.csharp.UnityFunctionManager;
-import consulo.unity3d.editor.UnitySceneFile;
-import consulo.unity3d.module.Unity3dModuleExtension;
-import consulo.unity3d.scene.Unity3dAssetUtil;
-import consulo.unity3d.scene.index.Unity3dYMLAssetIndexExtension;
 import com.intellij.codeHighlighting.Pass;
 import com.intellij.codeInsight.daemon.GutterIconNavigationHandler;
 import com.intellij.codeInsight.daemon.LineMarkerInfo;
@@ -66,6 +59,13 @@ import consulo.dotnet.psi.DotNetParameterListOwner;
 import consulo.dotnet.psi.DotNetTypeDeclaration;
 import consulo.dotnet.resolve.DotNetTypeRef;
 import consulo.lombok.annotations.Logger;
+import consulo.unity3d.Unity3dIcons;
+import consulo.unity3d.Unity3dTypes;
+import consulo.unity3d.csharp.UnityFunctionManager;
+import consulo.unity3d.editor.UnitySceneFile;
+import consulo.unity3d.module.Unity3dModuleExtension;
+import consulo.unity3d.scene.Unity3dAssetUtil;
+import consulo.unity3d.scene.index.Unity3dYMLAssetIndexExtension;
 
 /**
  * @author VISTALL

@@ -2,8 +2,6 @@ package consulo.unity3d.jsonApi;
 
 import org.jetbrains.annotations.NotNull;
 import consulo.buildInWebServer.api.JsonPostRequestHandler;
-import consulo.unity3d.jsonApi.UnityPingPong;
-import consulo.unity3d.jsonApi.UnityRefreshResponse;
 
 /**
  * @author VISTALL

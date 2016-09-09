@@ -50,21 +50,8 @@ public class WindowsVersionHelper
 
 	public static class VS_FIXEDFILEINFO extends com.sun.jna.Structure
 	{
-		private static final List __FIELDS = Arrays.asList(
-				"dwSignature",
-				"dwStrucVersion",
-				"dwFileVersionMS",
-				"dwFileVersionLS",
-				"dwProductVersionMS",
-				"dwProductVersionLS",
-				"dwFileFlagsMask",
-				"dwFileFlags",
-				"dwFileOS",
-				"dwFileType",
-				"dwFileSubtype",
-				"dwFileDateMS",
-				"dwFileDateLS"
-		);
+		private static final List __FIELDS = Arrays.asList("dwSignature", "dwStrucVersion", "dwFileVersionMS", "dwFileVersionLS", "dwProductVersionMS", "dwProductVersionLS", "dwFileFlagsMask",
+				"dwFileFlags", "dwFileOS", "dwFileType", "dwFileSubtype", "dwFileDateMS", "dwFileDateLS");
 
 		public int dwSignature;
 		public int dwStrucVersion;

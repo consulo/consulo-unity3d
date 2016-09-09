@@ -21,7 +21,6 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 import org.jetbrains.annotations.Nullable;
-import consulo.unity3d.bundle.Unity3dBundleType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkTable;
@@ -35,6 +34,7 @@ import com.intellij.openapi.util.Conditions;
 import com.intellij.ui.components.panels.HorizontalLayout;
 import consulo.annotations.RequiredDispatchThread;
 import consulo.roots.ui.configuration.SdkComboBox;
+import consulo.unity3d.bundle.Unity3dBundleType;
 
 /**
  * @author VISTALL

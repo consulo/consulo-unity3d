@@ -21,10 +21,6 @@ import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import consulo.unity3d.shaderlab.ide.refactoring.ShaderRefactorUtil;
-import consulo.unity3d.shaderlab.lang.ShaderMaterialAttribute;
-import consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabRole;
-import consulo.unity3d.shaderlab.lang.psi.stub.index.ShaderDefIndex;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.icons.AllIcons;
@@ -44,6 +40,10 @@ import consulo.annotations.RequiredReadAction;
 import consulo.csharp.lang.psi.impl.msil.CSharpTransform;
 import consulo.dotnet.psi.DotNetTypeDeclaration;
 import consulo.dotnet.resolve.DotNetPsiSearcher;
+import consulo.unity3d.shaderlab.ide.refactoring.ShaderRefactorUtil;
+import consulo.unity3d.shaderlab.lang.ShaderMaterialAttribute;
+import consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabRole;
+import consulo.unity3d.shaderlab.lang.psi.stub.index.ShaderDefIndex;
 
 /**
  * @author VISTALL

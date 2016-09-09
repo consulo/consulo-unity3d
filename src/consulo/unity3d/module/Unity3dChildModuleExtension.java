@@ -36,8 +36,7 @@ import consulo.roots.ModuleRootLayer;
  * @author VISTALL
  * @since 29.03.2015
  */
-public class Unity3dChildModuleExtension extends ModuleExtensionImpl<Unity3dChildModuleExtension> implements
-		Unity3dModuleExtension<Unity3dChildModuleExtension>
+public class Unity3dChildModuleExtension extends ModuleExtensionImpl<Unity3dChildModuleExtension> implements Unity3dModuleExtension<Unity3dChildModuleExtension>
 {
 	public Unity3dChildModuleExtension(@NotNull String id, @NotNull ModuleRootLayer moduleRootLayer)
 	{

@@ -20,10 +20,6 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.jetbrains.annotations.NotNull;
-import consulo.unity3d.Unity3dIcons;
-import consulo.unity3d.Unity3dTypes;
-import consulo.unity3d.csharp.UnityFunctionManager;
-import consulo.unity3d.module.Unity3dModuleExtension;
 import com.intellij.codeInsight.completion.CompletionParameters;
 import com.intellij.codeInsight.completion.InsertHandler;
 import com.intellij.codeInsight.completion.InsertionContext;
@@ -49,6 +45,10 @@ import consulo.dotnet.psi.DotNetStatement;
 import consulo.dotnet.psi.DotNetVirtualImplementOwner;
 import consulo.dotnet.resolve.DotNetTypeRef;
 import consulo.ide.IconDescriptor;
+import consulo.unity3d.Unity3dIcons;
+import consulo.unity3d.Unity3dTypes;
+import consulo.unity3d.csharp.UnityFunctionManager;
+import consulo.unity3d.module.Unity3dModuleExtension;
 
 /**
  * @author VISTALL

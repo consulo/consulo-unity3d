@@ -4,10 +4,10 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-import consulo.lombok.annotations.ApplicationService;
 import org.jetbrains.annotations.Nullable;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.testframework.sm.runner.GeneralTestEventsProcessor;
+import consulo.lombok.annotations.ApplicationService;
 
 /**
  * @author VISTALL

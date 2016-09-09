@@ -15,7 +15,10 @@ import com.intellij.util.ArrayUtil;
  */
 public class Unity3dAssetFileTypeDetector implements FileTypeRegistry.FileTypeDetector
 {
-	public static final String[] ourAssetExtensions = {"unity", "prefab"};
+	public static final String[] ourAssetExtensions = {
+			"unity",
+			"prefab"
+	};
 
 	@Nullable
 	@Override

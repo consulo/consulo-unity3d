@@ -20,8 +20,6 @@ import java.util.Arrays;
 import java.util.TreeSet;
 
 import org.jetbrains.annotations.NotNull;
-import consulo.unity3d.module.Unity3dModuleExtensionUtil;
-import consulo.unity3d.module.Unity3dRootMutableModuleExtension;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.application.ApplicationManager;
@@ -36,6 +34,8 @@ import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import consulo.buildInWebServer.api.JsonPostRequestHandler;
+import consulo.unity3d.module.Unity3dModuleExtensionUtil;
+import consulo.unity3d.module.Unity3dRootMutableModuleExtension;
 
 /**
  * @author VISTALL

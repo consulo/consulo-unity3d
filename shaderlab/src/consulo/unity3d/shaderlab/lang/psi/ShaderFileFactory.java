@@ -17,10 +17,10 @@
 package consulo.unity3d.shaderlab.lang.psi;
 
 import org.jetbrains.annotations.NotNull;
-import consulo.unity3d.shaderlab.lang.ShaderLabFileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFileFactory;
+import consulo.unity3d.shaderlab.lang.ShaderLabFileType;
 
 /**
  * @author VISTALL
@@ -31,8 +31,8 @@ public class ShaderFileFactory
 	@NotNull
 	public static PsiElement createSimpleIdentifier(@NotNull Project project, @NotNull String name)
 	{
-		ShaderLabFile fileFromText = (ShaderLabFile) PsiFileFactory.getInstance(project).createFileFromText("dummy.shader",
-				ShaderLabFileType.INSTANCE, "Shader \"dummy\" { Properties { " + name + "(\"dummy\", Int) = 1 }}");
+		ShaderLabFile fileFromText = (ShaderLabFile) PsiFileFactory.getInstance(project).createFileFromText("dummy.shader", ShaderLabFileType.INSTANCE,
+				"Shader \"dummy\" { Properties { " + name + "(\"dummy\", Int) = 1 }}");
 		return fileFromText.getShaderDef().getProperties().get(0).getNameIdentifier();
 	}
 }

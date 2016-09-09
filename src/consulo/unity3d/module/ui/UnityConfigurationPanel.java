@@ -22,7 +22,6 @@ import javax.swing.JPanel;
 import javax.swing.event.DocumentEvent;
 
 import org.jetbrains.annotations.NotNull;
-import consulo.unity3d.module.Unity3dRootMutableModuleExtension;
 import com.intellij.openapi.ui.InputValidator;
 import com.intellij.openapi.ui.LabeledComponent;
 import com.intellij.openapi.ui.Messages;
@@ -37,6 +36,7 @@ import com.intellij.ui.components.JBTextField;
 import consulo.annotations.RequiredDispatchThread;
 import consulo.dotnet.DotNetBundle;
 import consulo.extension.ui.ModuleExtensionSdkBoxBuilder;
+import consulo.unity3d.module.Unity3dRootMutableModuleExtension;
 
 /**
  * @author VISTALL

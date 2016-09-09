@@ -21,14 +21,14 @@ import java.io.InputStream;
 import java.util.Comparator;
 import java.util.Map;
 
-import consulo.lombok.annotations.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import consulo.unity3d.Unity3dMetaFileType;
 import org.yaml.snakeyaml.Yaml;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.containers.ContainerUtil;
+import consulo.lombok.annotations.Logger;
+import consulo.unity3d.Unity3dMetaFileType;
 
 /**
  * @author VISTALL

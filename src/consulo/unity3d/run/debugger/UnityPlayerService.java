@@ -34,13 +34,13 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import consulo.lombok.annotations.Logger;
 import org.jetbrains.annotations.NotNull;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.util.EventDispatcher;
 import com.intellij.util.ExceptionUtil;
+import consulo.lombok.annotations.Logger;
 
 /**
  * @author VISTALL
@@ -75,7 +75,7 @@ public class UnityPlayerService implements ApplicationComponent
 
 	private EventDispatcher<UpdateListener> myUpdateListenerEventDispatcher = EventDispatcher.create(UpdateListener.class);
 
-	private ScheduledExecutorService myExecutorService =  Executors.newScheduledThreadPool(1);
+	private ScheduledExecutorService myExecutorService = Executors.newScheduledThreadPool(1);
 
 	@Override
 	public void initComponent()

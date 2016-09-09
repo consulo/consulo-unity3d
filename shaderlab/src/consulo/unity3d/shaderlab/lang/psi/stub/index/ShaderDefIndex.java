@@ -17,10 +17,10 @@
 package consulo.unity3d.shaderlab.lang.psi.stub.index;
 
 import org.jetbrains.annotations.NotNull;
-import consulo.unity3d.shaderlab.lang.psi.ShaderDef;
 import com.intellij.psi.stubs.StringStubIndexExtension;
 import com.intellij.psi.stubs.StubIndexKey;
 import consulo.lombok.annotations.Lazy;
+import consulo.unity3d.shaderlab.lang.psi.ShaderDef;
 
 /**
  * @author VISTALL

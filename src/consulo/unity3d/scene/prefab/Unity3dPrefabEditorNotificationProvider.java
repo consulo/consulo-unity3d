@@ -24,11 +24,6 @@ import javax.swing.event.HyperlinkEvent;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import consulo.unity3d.editor.UnityEditorCommunication;
-import consulo.unity3d.editor.UnityOpenScene;
-import consulo.unity3d.scene.Unity3dAssetUtil;
-import consulo.unity3d.scene.Unity3dYMLAssetFileType;
-import consulo.unity3d.scene.index.Unity3dYMLAssetIndexExtension;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
@@ -50,6 +45,11 @@ import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.util.ui.PlatformColors;
 import consulo.annotations.RequiredReadAction;
 import consulo.editor.notifications.EditorNotificationProvider;
+import consulo.unity3d.editor.UnityEditorCommunication;
+import consulo.unity3d.editor.UnityOpenScene;
+import consulo.unity3d.scene.Unity3dAssetUtil;
+import consulo.unity3d.scene.Unity3dYMLAssetFileType;
+import consulo.unity3d.scene.index.Unity3dYMLAssetIndexExtension;
 
 /**
  * @author VISTALL

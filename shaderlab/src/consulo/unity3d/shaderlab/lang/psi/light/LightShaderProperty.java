@@ -19,15 +19,15 @@ package consulo.unity3d.shaderlab.lang.psi.light;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import consulo.unity3d.shaderlab.lang.ShaderLabLanguage;
-import consulo.unity3d.shaderlab.lang.psi.ShaderProperty;
-import consulo.unity3d.shaderlab.lang.psi.ShaderPropertyType;
-import consulo.unity3d.shaderlab.lang.psi.ShaderPropertyValue;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.impl.light.LightElement;
 import com.intellij.util.IncorrectOperationException;
+import consulo.unity3d.shaderlab.lang.ShaderLabLanguage;
+import consulo.unity3d.shaderlab.lang.psi.ShaderProperty;
+import consulo.unity3d.shaderlab.lang.psi.ShaderPropertyType;
+import consulo.unity3d.shaderlab.lang.psi.ShaderPropertyValue;
 
 /**
  * @author VISTALL

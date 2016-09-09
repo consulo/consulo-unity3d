@@ -16,9 +16,9 @@
 
 package consulo.unity3d.shaderlab.lang.psi.stub.elementType;
 
-import consulo.unity3d.shaderlab.lang.ShaderLabLanguage;
 import com.intellij.psi.stubs.PsiFileStub;
 import com.intellij.psi.tree.IStubFileElementType;
+import consulo.unity3d.shaderlab.lang.ShaderLabLanguage;
 
 /**
  * @author VISTALL

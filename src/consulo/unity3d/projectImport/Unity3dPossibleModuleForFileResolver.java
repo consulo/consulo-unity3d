@@ -2,7 +2,6 @@ package consulo.unity3d.projectImport;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import com.intellij.lang.javascript.JavaScriptFileType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
@@ -12,6 +11,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import consulo.annotations.RequiredReadAction;
 import consulo.csharp.lang.CSharpFileType;
 import consulo.roots.ContentEntryFileListener;
+import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 
 /**
  * @author VISTALL

@@ -17,9 +17,9 @@
 package consulo.unity3d.run.debugger;
 
 /**
-* @author VISTALL
-* @since 15.04.2015
-*/
+ * @author VISTALL
+ * @since 15.04.2015
+ */
 public class UnityProcess
 {
 	private int myPid;

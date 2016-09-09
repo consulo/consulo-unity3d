@@ -41,17 +41,12 @@ public class BracesInsertHandler<T extends LookupElement> implements InsertHandl
 	private final boolean myMayInsertRightParenthesis;
 	private final boolean myAllowParametersOnNextLine;
 
-	protected BracesInsertHandler(final boolean spaceBeforeParentheses,
-			final boolean spaceBetweenParentheses,
-			final boolean mayInsertRightParenthesis)
+	protected BracesInsertHandler(final boolean spaceBeforeParentheses, final boolean spaceBetweenParentheses, final boolean mayInsertRightParenthesis)
 	{
 		this(spaceBeforeParentheses, spaceBetweenParentheses, mayInsertRightParenthesis, false);
 	}
 
-	protected BracesInsertHandler(boolean spaceBeforeParentheses,
-			boolean spaceBetweenParentheses,
-			boolean mayInsertRightParenthesis,
-			boolean allowParametersOnNextLine)
+	protected BracesInsertHandler(boolean spaceBeforeParentheses, boolean spaceBetweenParentheses, boolean mayInsertRightParenthesis, boolean allowParametersOnNextLine)
 	{
 		mySpaceBeforeParentheses = spaceBeforeParentheses;
 		mySpaceBetweenParentheses = spaceBetweenParentheses;

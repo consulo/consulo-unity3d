@@ -17,8 +17,8 @@
 package consulo.unity3d.shaderlab.ide.refactoring;
 
 import org.jetbrains.annotations.NotNull;
-import consulo.unity3d.shaderlab.lang.psi.ShaderFileFactory;
 import com.intellij.psi.PsiElement;
+import consulo.unity3d.shaderlab.lang.psi.ShaderFileFactory;
 
 /**
  * @author VISTALL

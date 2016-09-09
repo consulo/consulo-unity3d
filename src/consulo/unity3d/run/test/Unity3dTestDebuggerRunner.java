@@ -17,9 +17,6 @@
 package consulo.unity3d.run.test;
 
 import org.jetbrains.annotations.NotNull;
-import consulo.unity3d.editor.UnityEditorCommunication;
-import consulo.unity3d.run.Unity3dAttachRunner;
-import consulo.unity3d.run.debugger.UnityProcess;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionResult;
 import com.intellij.execution.configurations.RunProfile;
@@ -31,6 +28,9 @@ import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import consulo.annotations.RequiredDispatchThread;
+import consulo.unity3d.editor.UnityEditorCommunication;
+import consulo.unity3d.run.Unity3dAttachRunner;
+import consulo.unity3d.run.debugger.UnityProcess;
 
 /**
  * @author VISTALL

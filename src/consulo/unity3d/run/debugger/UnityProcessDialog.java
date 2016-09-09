@@ -28,8 +28,6 @@ import javax.swing.event.ChangeListener;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import consulo.unity3d.Unity3dBundle;
-import consulo.unity3d.Unity3dIcons;
 import com.intellij.ide.util.ChooseElementsDialog;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
@@ -39,6 +37,8 @@ import com.intellij.util.ui.UIUtil;
 import com.intellij.xdebugger.impl.settings.XDebuggerSettingManagerImpl;
 import com.jezhumble.javasysmon.JavaSysMon;
 import com.jezhumble.javasysmon.ProcessInfo;
+import consulo.unity3d.Unity3dBundle;
+import consulo.unity3d.Unity3dIcons;
 
 /**
  * @author VISTALL
@@ -104,9 +104,8 @@ public class UnityProcessDialog extends ChooseElementsDialog<UnityProcess>
 		for(ProcessInfo processInfo : processInfos)
 		{
 			String name = processInfo.getName();
-			if((StringUtil.startsWithIgnoreCase(name, "unity") ||
-					StringUtil.containsIgnoreCase(name, "Unity.app"))
-					&& !(StringUtil.containsIgnoreCase(name, "Unity") && StringUtil.containsIgnoreCase(name, "Helper")) //ignore 'UnityHelper' and 'Unity Helper'
+			if((StringUtil.startsWithIgnoreCase(name, "unity") || StringUtil.containsIgnoreCase(name, "Unity.app")) && !(StringUtil.containsIgnoreCase(name,
+					"Unity") && StringUtil.containsIgnoreCase(name, "Helper")) //ignore 'UnityHelper' and 'Unity Helper'
 					&& !StringUtil.containsIgnoreCase(name, "UnityShader"))
 			{
 				items.add(new UnityProcess(processInfo.getPid(), name, "localhost", buildDebuggerPort(processInfo.getPid())));
@@ -127,8 +126,7 @@ public class UnityProcessDialog extends ChooseElementsDialog<UnityProcess>
 		assert centerPanel != null;
 
 		final Unity3dDebuggerSettings settings = XDebuggerSettingManagerImpl.getInstanceImpl().getSettings(Unity3dDebuggerSettings.class);
-		final JBCheckBox comp = new JBCheckBox(Unity3dBundle.message("attach.to.single.process.without.dialog.box"),
-				settings.myAttachToSingleProcessWithoutDialog);
+		final JBCheckBox comp = new JBCheckBox(Unity3dBundle.message("attach.to.single.process.without.dialog.box"), settings.myAttachToSingleProcessWithoutDialog);
 		comp.addChangeListener(new ChangeListener()
 		{
 			@Override

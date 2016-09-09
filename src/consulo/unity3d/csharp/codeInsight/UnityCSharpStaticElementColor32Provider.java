@@ -6,7 +6,6 @@ import java.util.Map;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import consulo.unity3d.Unity3dTypes;
 import com.intellij.openapi.editor.ElementColorProvider;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveResult;
@@ -26,6 +25,7 @@ import consulo.csharp.lang.psi.impl.source.resolve.methodResolving.arguments.NCa
 import consulo.csharp.lang.psi.impl.source.resolve.util.CSharpResolveUtil;
 import consulo.dotnet.psi.DotNetExpression;
 import consulo.dotnet.psi.DotNetType;
+import consulo.unity3d.Unity3dTypes;
 
 /**
  * @author VISTALL
@@ -60,11 +60,9 @@ public class UnityCSharpStaticElementColor32Provider implements ElementColorProv
 				return null;
 			}
 
-			if(UnityCSharpStaticElementColorProvider.parentIsColorType(resolvedElementMaybeConstructor,
-					Unity3dTypes.UnityEngine.Color32))
+			if(UnityCSharpStaticElementColorProvider.parentIsColorType(resolvedElementMaybeConstructor, Unity3dTypes.UnityEngine.Color32))
 			{
-				ResolveResult validResult = CSharpResolveUtil.findFirstValidResult(((CSharpNewExpression) parent)
-						.multiResolve(false));
+				ResolveResult validResult = CSharpResolveUtil.findFirstValidResult(((CSharpNewExpression) parent).multiResolve(false));
 				if(!(validResult instanceof MethodResolveResult))
 				{
 					return null;
@@ -131,8 +129,7 @@ public class UnityCSharpStaticElementColor32Provider implements ElementColorProv
 		builder.append(color.getAlpha());
 		builder.append(")");
 
-		CSharpNewExpression expression = (CSharpNewExpression) CSharpFileFactory.createExpression(element.getProject()
-				, builder.toString());
+		CSharpNewExpression expression = (CSharpNewExpression) CSharpFileFactory.createExpression(element.getProject(), builder.toString());
 
 		newExpression.getParameterList().replace(expression.getParameterList());
 	}

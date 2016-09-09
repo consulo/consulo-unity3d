@@ -18,7 +18,6 @@ package consulo.unity3d.run;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import consulo.unity3d.run.debugger.UnityProcess;
 import com.intellij.compiler.options.CompileStepBeforeRun;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
@@ -36,13 +35,14 @@ import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
 import consulo.annotations.RequiredReadAction;
+import consulo.unity3d.run.debugger.UnityProcess;
 
 /**
  * @author VISTALL
  * @since 10.11.14
  */
-public class Unity3dAttachConfiguration extends LocatableConfigurationBase implements ModuleRunProfile,
-		RunConfigurationWithSuppressedDefaultRunAction, CompileStepBeforeRun.Suppressor, CompatibilityAwareRunProfile
+public class Unity3dAttachConfiguration extends LocatableConfigurationBase implements ModuleRunProfile, RunConfigurationWithSuppressedDefaultRunAction, CompileStepBeforeRun.Suppressor,
+		CompatibilityAwareRunProfile
 {
 	private UnityProcess myUnityProcess;
 
@@ -88,7 +88,6 @@ public class Unity3dAttachConfiguration extends LocatableConfigurationBase imple
 	@Override
 	public boolean mustBeStoppedToRun(@NotNull RunConfiguration configuration)
 	{
-		return configuration != this && configuration instanceof Unity3dAttachConfiguration && myUnityProcess.hashCode() == (
-				(Unity3dAttachConfiguration) configuration).getUnityProcess().hashCode();
+		return configuration != this && configuration instanceof Unity3dAttachConfiguration && myUnityProcess.hashCode() == ((Unity3dAttachConfiguration) configuration).getUnityProcess().hashCode();
 	}
 }

@@ -21,7 +21,7 @@ import java.util.UUID;
 /**
  * @author VISTALL
  * @since 28-Aug-16
- *
+ * <p>
  * WARNING: dont change name, if unity plugin is not changed, name used in request url gen
  */
 public class UnityRequestDefines

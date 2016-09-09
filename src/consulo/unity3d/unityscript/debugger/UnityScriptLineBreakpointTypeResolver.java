@@ -18,12 +18,12 @@ package consulo.unity3d.unityscript.debugger;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import consulo.unity3d.unityscript.module.extension.Unity3dScriptModuleExtension;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.xdebugger.breakpoints.XLineBreakpointType;
 import consulo.dotnet.debugger.breakpoint.DotNetLineBreakpointType;
+import consulo.unity3d.unityscript.module.extension.Unity3dScriptModuleExtension;
 import consulo.xdebugger.breakpoints.XLineBreakpointTypeResolver;
 
 /**

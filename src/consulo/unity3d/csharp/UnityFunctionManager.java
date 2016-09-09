@@ -138,7 +138,7 @@ public class UnityFunctionManager
 		while((i = type.lastIndexOf("[]")) != -1)
 		{
 			type = type.substring(0, i);
-			count ++;
+			count++;
 		}
 		DotNetTypeRef typeRef = new CSharpTypeRefByQName(scope, type);
 

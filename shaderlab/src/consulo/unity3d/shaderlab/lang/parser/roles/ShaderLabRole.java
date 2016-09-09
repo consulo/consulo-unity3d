@@ -28,15 +28,15 @@ import java.util.Map;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import com.intellij.lang.PsiBuilder;
+import com.intellij.lang.PsiBuilderUtil;
+import com.intellij.psi.tree.IElementType;
+import com.intellij.util.ThreeState;
 import consulo.unity3d.shaderlab.lang.ShaderLabPropertyType;
 import consulo.unity3d.shaderlab.lang.parser.ShaderLabParser;
 import consulo.unity3d.shaderlab.lang.parser.ShaderLabParserBuilder;
 import consulo.unity3d.shaderlab.lang.psi.ShaderLabElements;
 import consulo.unity3d.shaderlab.lang.psi.ShaderLabTokens;
-import com.intellij.lang.PsiBuilder;
-import com.intellij.lang.PsiBuilderUtil;
-import com.intellij.psi.tree.IElementType;
-import com.intellij.util.ThreeState;
 
 /**
  * @author VISTALL
@@ -365,17 +365,14 @@ public abstract class ShaderLabRole
 
 	public static final ShaderLabRole Emission = new ShaderLabColorRole();
 
-	public static final ShaderLabRole Material = new ShaderLabCompositeRole(ShaderLabElements.MATERIAL, Diffuse, Ambient, Shininess, Specular,
-			Emission);
+	public static final ShaderLabRole Material = new ShaderLabCompositeRole(ShaderLabElements.MATERIAL, Diffuse, Ambient, Shininess, Specular, Emission);
 
 	public static final ShaderLabRole LOD = new ShaderLabTokenRole(ShaderLabTokens.INTEGER_LITERAL);
 
-	public static final ShaderLabRole Offset = new ShaderLabCommaPairRole(new ShaderLabTokenRole(ShaderLabTokens.INTEGER_LITERAL),
-			new ShaderLabTokenRole(ShaderLabTokens.INTEGER_LITERAL));
+	public static final ShaderLabRole Offset = new ShaderLabCommaPairRole(new ShaderLabTokenRole(ShaderLabTokens.INTEGER_LITERAL), new ShaderLabTokenRole(ShaderLabTokens.INTEGER_LITERAL));
 
-	public static final ShaderLabRole AlphaTest = new ShaderLabOrRole(new ShaderLabSimpleRole("Off"), new ShaderLabPairRole(new ShaderLabSimpleRole
-			("Always", "Less", "Greater", "LEqual", "GEqual", "Equal", "NotEqual", "Never"), new ShaderLabOrRole(new ShaderLabTokenRole
-			(ShaderLabTokens.INTEGER_LITERAL), ShaderLabReferenceRole.INSTANCE)))
+	public static final ShaderLabRole AlphaTest = new ShaderLabOrRole(new ShaderLabSimpleRole("Off"), new ShaderLabPairRole(new ShaderLabSimpleRole("Always", "Less", "Greater", "LEqual", "GEqual",
+			"Equal", "NotEqual", "Never"), new ShaderLabOrRole(new ShaderLabTokenRole(ShaderLabTokens.INTEGER_LITERAL), ShaderLabReferenceRole.INSTANCE)))
 	{
 		@Nullable
 		@Override
@@ -387,11 +384,9 @@ public abstract class ShaderLabRole
 
 	public static final ShaderLabRole Fog = new ShaderLabCompositeRole(ShaderLabElements.FOG, Color, Mode);
 
-	public static final ShaderLabRole Pass = new ShaderLabCompositeRole(ShaderLabElements.PASS, Color, SetTexture, Lighting, ZWrite, Cull, Fog,
-			ZTest, SeparateSpecular, Material, AlphaTest, Offset);
+	public static final ShaderLabRole Pass = new ShaderLabCompositeRole(ShaderLabElements.PASS, Color, SetTexture, Lighting, ZWrite, Cull, Fog, ZTest, SeparateSpecular, Material, AlphaTest, Offset);
 
-	public static final ShaderLabRole SubShader = new ShaderLabCompositeRole(ShaderLabElements.SUB_SHADER, Pass, Tags, Lighting, ZWrite, Cull, Fog,
-			UsePass, Material, LOD);
+	public static final ShaderLabRole SubShader = new ShaderLabCompositeRole(ShaderLabElements.SUB_SHADER, Pass, Tags, Lighting, ZWrite, Cull, Fog, UsePass, Material, LOD);
 
 	public static final ShaderLabRole Shader = new ShaderLabCompositeRole(ShaderLabElements.SHADER_DEF, Properties, Fallback, SubShader)
 	{

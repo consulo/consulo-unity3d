@@ -19,18 +19,6 @@ package consulo.unity3d.shaderlab.ide.completion;
 import java.util.Collection;
 
 import org.jetbrains.annotations.NotNull;
-import consulo.unity3d.shaderlab.lang.ShaderLabFileType;
-import consulo.unity3d.shaderlab.lang.ShaderLabPropertyType;
-import consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabCompositeRole;
-import consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabRole;
-import consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabSimpleRole;
-import consulo.unity3d.shaderlab.lang.psi.ShaderBraceOwner;
-import consulo.unity3d.shaderlab.lang.psi.ShaderDef;
-import consulo.unity3d.shaderlab.lang.psi.ShaderLabKeyTokens;
-import consulo.unity3d.shaderlab.lang.psi.ShaderLabTokens;
-import consulo.unity3d.shaderlab.lang.psi.ShaderPropertyTypeElement;
-import consulo.unity3d.shaderlab.lang.psi.ShaderSimpleValue;
-import consulo.unity3d.shaderlab.lang.psi.stub.index.ShaderDefIndex;
 import com.intellij.codeInsight.TailType;
 import com.intellij.codeInsight.completion.CompletionContributor;
 import com.intellij.codeInsight.completion.CompletionParameters;
@@ -50,6 +38,18 @@ import com.intellij.util.Processor;
 import consulo.annotations.RequiredReadAction;
 import consulo.codeInsight.completion.CompletionProvider;
 import consulo.csharp.ide.completion.util.SpaceInsertHandler;
+import consulo.unity3d.shaderlab.lang.ShaderLabFileType;
+import consulo.unity3d.shaderlab.lang.ShaderLabPropertyType;
+import consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabCompositeRole;
+import consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabRole;
+import consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabSimpleRole;
+import consulo.unity3d.shaderlab.lang.psi.ShaderBraceOwner;
+import consulo.unity3d.shaderlab.lang.psi.ShaderDef;
+import consulo.unity3d.shaderlab.lang.psi.ShaderLabKeyTokens;
+import consulo.unity3d.shaderlab.lang.psi.ShaderLabTokens;
+import consulo.unity3d.shaderlab.lang.psi.ShaderPropertyTypeElement;
+import consulo.unity3d.shaderlab.lang.psi.ShaderSimpleValue;
+import consulo.unity3d.shaderlab.lang.psi.stub.index.ShaderDefIndex;
 
 /**
  * @author VISTALL

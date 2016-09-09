@@ -39,7 +39,7 @@ public abstract class ShaderLabElement extends ASTWrapperPsiElement
 	{
 		if(visitor instanceof SharpLabElementVisitor)
 		{
-			accept((SharpLabElementVisitor)visitor);
+			accept((SharpLabElementVisitor) visitor);
 		}
 		else
 		{

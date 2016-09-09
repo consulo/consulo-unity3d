@@ -20,14 +20,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.jetbrains.annotations.NotNull;
-import consulo.unity3d.shaderlab.lang.lexer.ShaderLabLexer;
-import consulo.unity3d.shaderlab.lang.psi.ShaderLabTokenSets;
-import consulo.unity3d.shaderlab.lang.psi.ShaderLabTokens;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.fileTypes.SyntaxHighlighterBase;
 import com.intellij.psi.tree.IElementType;
+import consulo.unity3d.shaderlab.lang.lexer.ShaderLabLexer;
+import consulo.unity3d.shaderlab.lang.psi.ShaderLabTokenSets;
+import consulo.unity3d.shaderlab.lang.psi.ShaderLabTokens;
 
 /**
  * @author VISTALL

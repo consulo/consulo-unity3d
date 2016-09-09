@@ -20,13 +20,13 @@ import javax.swing.JComponent;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import consulo.unity3d.module.ui.UnityConfigurationPanel;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.Comparing;
 import consulo.annotations.RequiredDispatchThread;
 import consulo.dotnet.module.extension.DotNetSimpleMutableModuleExtension;
 import consulo.module.extension.MutableModuleInheritableNamedPointer;
 import consulo.roots.ModuleRootLayer;
+import consulo.unity3d.module.ui.UnityConfigurationPanel;
 
 /**
  * @author VISTALL
@@ -68,7 +68,6 @@ public class Unity3dRootMutableModuleExtension extends Unity3dRootModuleExtensio
 	@Override
 	public boolean isModified(@NotNull Unity3dRootModuleExtension ex)
 	{
-		return isModifiedImpl(ex) ||
-				!Comparing.equal(getNamespacePrefix(), ex.getNamespacePrefix());
+		return isModifiedImpl(ex) || !Comparing.equal(getNamespacePrefix(), ex.getNamespacePrefix());
 	}
 }
