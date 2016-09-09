@@ -17,7 +17,7 @@
 package org.mustbe.consulo.unity3d.shaderlab.ide.highlight;
 
 import org.jetbrains.annotations.NotNull;
-import org.mustbe.consulo.RequiredReadAction;
+import consulo.annotations.RequiredReadAction;
 import org.mustbe.consulo.unity3d.shaderlab.lang.ShaderLabPropertyType;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderLabFile;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderLabKeyTokens;

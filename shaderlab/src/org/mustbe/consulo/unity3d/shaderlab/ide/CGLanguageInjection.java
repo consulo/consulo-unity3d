@@ -17,7 +17,7 @@
 package org.mustbe.consulo.unity3d.shaderlab.ide;
 
 import org.jetbrains.annotations.NotNull;
-import org.mustbe.consulo.RequiredReadAction;
+import consulo.annotations.RequiredReadAction;
 import org.mustbe.consulo.cgshader.CGLanguage;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderCGScript;
 import com.intellij.lang.injection.MultiHostInjector;

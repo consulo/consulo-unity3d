@@ -20,8 +20,6 @@ import java.util.Set;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.mustbe.consulo.dotnet.psi.DotNetReferenceExpression;
-import org.mustbe.consulo.javascript.lang.JavaScriptLanguage;
 import org.mustbe.consulo.unity3d.unityscript.lang.UnityScriptLanguageVersion;
 import com.intellij.lang.Language;
 import com.intellij.lang.javascript.psi.JSFile;
@@ -35,6 +33,8 @@ import com.intellij.xdebugger.frame.XNamedValue;
 import consulo.dotnet.debugger.DotNetDebugContext;
 import consulo.dotnet.debugger.DotNetDebuggerProvider;
 import consulo.dotnet.debugger.proxy.DotNetStackFrameProxy;
+import consulo.dotnet.psi.DotNetReferenceExpression;
+import consulo.javascript.lang.JavaScriptLanguage;
 
 /**
  * @author VISTALL

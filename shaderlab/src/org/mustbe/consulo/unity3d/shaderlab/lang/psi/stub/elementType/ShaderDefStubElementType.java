@@ -30,8 +30,8 @@ import com.intellij.psi.stubs.IndexSink;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.stubs.StubInputStream;
 import com.intellij.psi.stubs.StubOutputStream;
-import com.intellij.psi.tree.IElementTypeAsPsiFactory;
 import com.intellij.util.io.StringRef;
+import consulo.psi.tree.IElementTypeAsPsiFactory;
 
 /**
  * @author VISTALL

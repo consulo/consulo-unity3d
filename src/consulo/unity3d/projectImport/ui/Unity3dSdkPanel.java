@@ -21,13 +21,11 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 import org.jetbrains.annotations.Nullable;
-import org.mustbe.consulo.RequiredDispatchThread;
 import org.mustbe.consulo.unity3d.bundle.Unity3dBundleType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkTable;
 import com.intellij.openapi.projectRoots.SdkTypeId;
-import com.intellij.openapi.roots.ui.configuration.SdkComboBox;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel;
 import com.intellij.openapi.ui.LabeledComponent;
 import com.intellij.openapi.ui.VerticalFlowLayout;
@@ -35,6 +33,8 @@ import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Conditions;
 import com.intellij.ui.components.panels.HorizontalLayout;
+import consulo.annotations.RequiredDispatchThread;
+import consulo.roots.ui.configuration.SdkComboBox;
 
 /**
  * @author VISTALL

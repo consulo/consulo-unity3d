@@ -20,17 +20,17 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.consulo.module.extension.ModuleInheritableNamedPointer;
-import org.consulo.module.extension.impl.ModuleExtensionImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.mustbe.consulo.RequiredReadAction;
-import org.mustbe.consulo.dotnet.module.DotNetNamespaceGeneratePolicy;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkType;
-import com.intellij.openapi.roots.ModuleRootLayer;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.util.ArrayUtil;
+import consulo.annotations.RequiredReadAction;
+import consulo.dotnet.module.DotNetNamespaceGeneratePolicy;
+import consulo.extension.impl.ModuleExtensionImpl;
+import consulo.module.extension.ModuleInheritableNamedPointer;
+import consulo.roots.ModuleRootLayer;
 
 /**
  * @author VISTALL

@@ -18,7 +18,6 @@ package org.mustbe.consulo.unity3d.run;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.mustbe.consulo.RequiredReadAction;
 import org.mustbe.consulo.unity3d.run.debugger.UnityProcess;
 import com.intellij.compiler.options.CompileStepBeforeRun;
 import com.intellij.execution.ExecutionException;
@@ -36,6 +35,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
+import consulo.annotations.RequiredReadAction;
 
 /**
  * @author VISTALL

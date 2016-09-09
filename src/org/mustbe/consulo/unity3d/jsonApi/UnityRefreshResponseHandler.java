@@ -1,7 +1,7 @@
 package org.mustbe.consulo.unity3d.jsonApi;
 
 import org.jetbrains.annotations.NotNull;
-import org.mustbe.buildInWebServer.api.JsonPostRequestHandler;
+import consulo.buildInWebServer.api.JsonPostRequestHandler;
 import consulo.unity3d.jsonApi.UnityPingPong;
 
 /**

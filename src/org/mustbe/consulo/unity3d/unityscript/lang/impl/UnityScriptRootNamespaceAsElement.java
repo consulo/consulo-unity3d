@@ -22,16 +22,16 @@ import java.util.Set;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.mustbe.consulo.RequiredReadAction;
-import org.mustbe.consulo.dotnet.lang.psi.impl.BaseDotNetNamespaceAsElement;
-import org.mustbe.consulo.dotnet.lang.psi.impl.DotNetNamespaceCacheManager;
-import org.mustbe.consulo.dotnet.resolve.impl.IndexBasedDotNetPsiSearcher;
 import org.mustbe.consulo.unity3d.unityscript.index.UnityScriptFileByNameIndex;
 import com.intellij.lang.Language;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
+import consulo.annotations.RequiredReadAction;
+import consulo.dotnet.lang.psi.impl.BaseDotNetNamespaceAsElement;
+import consulo.dotnet.lang.psi.impl.DotNetNamespaceCacheManager;
+import consulo.dotnet.resolve.impl.IndexBasedDotNetPsiSearcher;
 
 /**
  * @author VISTALL

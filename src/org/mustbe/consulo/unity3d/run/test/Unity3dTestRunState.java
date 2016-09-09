@@ -4,7 +4,6 @@ import java.util.UUID;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.mustbe.consulo.RequiredDispatchThread;
 import org.mustbe.consulo.unity3d.editor.UnityEditorCommunication;
 import org.mustbe.consulo.unity3d.editor.UnityRunTest;
 import com.intellij.execution.DefaultExecutionResult;
@@ -34,6 +33,7 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Ref;
 import com.intellij.xdebugger.DefaultDebugProcessHandler;
+import consulo.annotations.RequiredDispatchThread;
 
 /**
  * @author VISTALL

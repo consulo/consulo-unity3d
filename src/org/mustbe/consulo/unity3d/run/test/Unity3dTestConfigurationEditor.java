@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.util.ui.JBUI;
-import com.intellij.util.ui.components.VerticalLayoutPanel;
+import consulo.util.ui.components.VerticalLayoutPanel;
 
 /**
  * @author VISTALL

@@ -24,8 +24,6 @@ import javax.swing.event.HyperlinkEvent;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.mustbe.consulo.RequiredReadAction;
-import org.mustbe.consulo.editor.notifications.EditorNotificationProvider;
 import org.mustbe.consulo.unity3d.editor.UnityEditorCommunication;
 import org.mustbe.consulo.unity3d.editor.UnityOpenScene;
 import org.mustbe.consulo.unity3d.scene.Unity3dAssetUtil;
@@ -50,6 +48,8 @@ import com.intellij.util.CommonProcessors;
 import com.intellij.util.Function;
 import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.util.ui.PlatformColors;
+import consulo.annotations.RequiredReadAction;
+import consulo.editor.notifications.EditorNotificationProvider;
 
 /**
  * @author VISTALL

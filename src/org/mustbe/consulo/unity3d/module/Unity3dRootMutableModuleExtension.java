@@ -18,15 +18,15 @@ package org.mustbe.consulo.unity3d.module;
 
 import javax.swing.JComponent;
 
-import org.consulo.module.extension.MutableModuleInheritableNamedPointer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.mustbe.consulo.RequiredDispatchThread;
-import org.mustbe.consulo.dotnet.module.extension.DotNetSimpleMutableModuleExtension;
 import org.mustbe.consulo.unity3d.module.ui.UnityConfigurationPanel;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.roots.ModuleRootLayer;
 import com.intellij.openapi.util.Comparing;
+import consulo.annotations.RequiredDispatchThread;
+import consulo.dotnet.module.extension.DotNetSimpleMutableModuleExtension;
+import consulo.module.extension.MutableModuleInheritableNamedPointer;
+import consulo.roots.ModuleRootLayer;
 
 /**
  * @author VISTALL

@@ -16,12 +16,12 @@
 
 package org.mustbe.consulo.unity3d.module;
 
-import org.consulo.module.extension.ModuleInheritableNamedPointer;
-import org.consulo.module.extension.MutableModuleInheritableNamedPointer;
-import org.consulo.util.pointers.Named;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import com.intellij.openapi.module.Module;
+import consulo.module.extension.ModuleInheritableNamedPointer;
+import consulo.module.extension.MutableModuleInheritableNamedPointer;
+import consulo.util.pointers.Named;
 
 /**
  * @author VISTALL

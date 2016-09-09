@@ -36,7 +36,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.components.JBCheckBox;
 import com.intellij.util.ui.UIUtil;
-import com.intellij.xdebugger.impl.settings.XDebuggerSettingsManager;
+import com.intellij.xdebugger.impl.settings.XDebuggerSettingManagerImpl;
 import com.jezhumble.javasysmon.JavaSysMon;
 import com.jezhumble.javasysmon.ProcessInfo;
 
@@ -126,7 +126,7 @@ public class UnityProcessDialog extends ChooseElementsDialog<UnityProcess>
 		JComponent centerPanel = super.createCenterPanel();
 		assert centerPanel != null;
 
-		final Unity3dDebuggerSettings settings = XDebuggerSettingsManager.getInstanceImpl().getSettings(Unity3dDebuggerSettings.class);
+		final Unity3dDebuggerSettings settings = XDebuggerSettingManagerImpl.getInstanceImpl().getSettings(Unity3dDebuggerSettings.class);
 		final JBCheckBox comp = new JBCheckBox(Unity3dBundle.message("attach.to.single.process.without.dialog.box"),
 				settings.myAttachToSingleProcessWithoutDialog);
 		comp.addChangeListener(new ChangeListener()

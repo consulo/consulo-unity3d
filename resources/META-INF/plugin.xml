@@ -15,17 +15,17 @@
   -->
 
 <idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
-	<id>org.mustbe.consulo.unity3d</id>
+	<id>consulo.unity3d</id>
 	<name>Unity3D</name>
 	<vendor>Must-Be</vendor>
 	<version>SNAPSHOT</version>
 	<category>Game Frameworks</category>
 	<resource-bundle>messages.Unity3dBundle</resource-bundle>
 
-	<depends>org.mustbe.consulo.dotnet.mono</depends>
-	<depends>org.mustbe.consulo.csharp</depends>
-	<depends>org.mustbe.consulo.javascript</depends>
-	<depends>org.mustbe.consulo.nunit</depends>
+	<depends>consulo.dotnet.mono</depends>
+	<depends>consulo.csharp</depends>
+	<depends>consulo.javascript</depends>
+	<depends>consulo.nunit</depends>
 
 	<xi:include href="/META-INF/SharderLab.xml" xpointer="xpointer(/idea-plugin/*)">
 		<xi:fallback/>
@@ -67,11 +67,11 @@
 		</component>
 	</project-components>
 
-	<extensions defaultExtensionNs="org.mustbe.consulo.javascript">
+	<extensions defaultExtensionNs="consulo.javascript">
 		<indexer implementation="org.mustbe.consulo.unity3d.unityscript.index.UnityScriptIndexer"/>
 	</extensions>
 
-	<extensions defaultExtensionNs="org.mustbe.consulo.csharp">
+	<extensions defaultExtensionNs="consulo.csharp">
 		<toNativeElementTransformer implementation="org.mustbe.consulo.unity3d.unityscript.lang.impl.csharp.UnityScriptToNativeElementTransformer"/>
 	</extensions>
 
@@ -81,12 +81,11 @@
 									implementationClass="org.mustbe.consulo.unity3d.unityscript.debugger.UnityScriptSourceLineResolver"/>
 	</extensions>
 
-	<extensions defaultExtensionNs="org.mustbe.consulo.dotnet.core">
+	<extensions defaultExtensionNs="consulo.dotnet">
 		<psiSearcher implementation="org.mustbe.consulo.unity3d.unityscript.lang.impl.UnityScriptPsiSearcher"/>
 	</extensions>
 
 	<extensions defaultExtensionNs="com.intellij">
-		<errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
 		<stubIndex implementation="org.mustbe.consulo.unity3d.unityscript.index.UnityScriptFileByNameIndex"/>
 		<xdebugger.lineBreakpointTypeResolver filetype="JavaScript"
 										  implementationClass="org.mustbe.consulo.unity3d.unityscript.debugger.UnityScriptLineBreakpointTypeResolver"

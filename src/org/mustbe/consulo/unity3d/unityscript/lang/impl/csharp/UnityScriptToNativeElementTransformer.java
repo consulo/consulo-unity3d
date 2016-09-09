@@ -2,14 +2,6 @@ package org.mustbe.consulo.unity3d.unityscript.lang.impl.csharp;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.mustbe.consulo.RequiredReadAction;
-import org.mustbe.consulo.csharp.lang.psi.ToNativeElementTransformer;
-import org.mustbe.consulo.csharp.lang.psi.impl.light.builder.CSharpLightMethodDeclarationBuilder;
-import org.mustbe.consulo.csharp.lang.psi.impl.light.builder.CSharpLightTypeDeclarationBuilder;
-import org.mustbe.consulo.csharp.lang.psi.impl.source.resolve.type.CSharpTypeRefByQName;
-import org.mustbe.consulo.dotnet.DotNetTypes;
-import org.mustbe.consulo.dotnet.psi.DotNetModifier;
-import org.mustbe.consulo.javascript.lang.JavaScriptLanguage;
 import org.mustbe.consulo.unity3d.Unity3dTypes;
 import org.mustbe.consulo.unity3d.unityscript.lang.impl.UnityScriptDotNetTypeDeclaration;
 import com.intellij.lang.Language;
@@ -18,6 +10,14 @@ import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.JSSourceElement;
 import com.intellij.openapi.util.Key;
 import com.intellij.psi.PsiElement;
+import consulo.annotations.RequiredReadAction;
+import consulo.csharp.lang.psi.ToNativeElementTransformer;
+import consulo.csharp.lang.psi.impl.light.builder.CSharpLightMethodDeclarationBuilder;
+import consulo.csharp.lang.psi.impl.light.builder.CSharpLightTypeDeclarationBuilder;
+import consulo.csharp.lang.psi.impl.source.resolve.type.CSharpTypeRefByQName;
+import consulo.dotnet.DotNetTypes;
+import consulo.dotnet.psi.DotNetModifier;
+import consulo.javascript.lang.JavaScriptLanguage;
 
 /**
  * @author VISTALL

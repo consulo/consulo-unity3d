@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="consulo-plugin: consulo.javascript">
+    <binaries>
+      <root url="jar://$PROJECT_DIR$/dep/consulo.javascript/lib/json-impl.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dep/consulo.javascript/lib/javascript.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dep/consulo.javascript/lib/debugger-impl.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dep/consulo.javascript/lib/json_simple-1.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dep/consulo.javascript/lib/lib.org.chromium.sdk.jar!/" />
+    </binaries>
+  </library>
+</component>

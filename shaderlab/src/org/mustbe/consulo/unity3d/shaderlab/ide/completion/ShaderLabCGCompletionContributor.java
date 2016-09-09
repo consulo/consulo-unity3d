@@ -17,14 +17,12 @@
 package org.mustbe.consulo.unity3d.shaderlab.ide.completion;
 
 import org.jetbrains.annotations.NotNull;
-import org.mustbe.consulo.RequiredReadAction;
 import org.mustbe.consulo.cgshader.CGLanguage;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderCGScript;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderLabFile;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderReference;
 import com.intellij.codeInsight.completion.CompletionContributor;
 import com.intellij.codeInsight.completion.CompletionParameters;
-import com.intellij.codeInsight.completion.CompletionProvider;
 import com.intellij.codeInsight.completion.CompletionResultSet;
 import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.codeInsight.lookup.LookupElement;
@@ -34,6 +32,8 @@ import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.psi.impl.source.tree.injected.Place;
 import com.intellij.util.Consumer;
 import com.intellij.util.ProcessingContext;
+import consulo.annotations.RequiredReadAction;
+import consulo.codeInsight.completion.CompletionProvider;
 
 /**
  * @author VISTALL
@@ -43,11 +43,11 @@ public class ShaderLabCGCompletionContributor extends CompletionContributor
 {
 	public ShaderLabCGCompletionContributor()
 	{
-		extend(CompletionType.BASIC, StandardPatterns.psiElement().withLanguage(CGLanguage.INSTANCE), new CompletionProvider<CompletionParameters>()
+		extend(CompletionType.BASIC, StandardPatterns.psiElement().withLanguage(CGLanguage.INSTANCE), new CompletionProvider()
 		{
 			@RequiredReadAction
 			@Override
-			protected void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext context, @NotNull final CompletionResultSet result)
+			public void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext context, @NotNull final CompletionResultSet result)
 			{
 				Place shreds = InjectedLanguageUtil.getShreds(parameters.getOriginalFile());
 

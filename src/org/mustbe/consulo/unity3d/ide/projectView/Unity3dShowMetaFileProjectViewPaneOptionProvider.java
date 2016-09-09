@@ -17,17 +17,17 @@
 package org.mustbe.consulo.unity3d.ide.projectView;
 
 import org.jetbrains.annotations.NotNull;
-import org.mustbe.consulo.RequiredDispatchThread;
 import org.mustbe.consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import com.intellij.ide.projectView.ProjectView;
 import com.intellij.ide.projectView.impl.AbstractProjectViewPane;
 import com.intellij.ide.projectView.impl.ProjectViewPane;
-import com.intellij.ide.projectView.impl.ProjectViewPaneOptionProvider;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.actionSystem.ToggleAction;
 import com.intellij.openapi.util.KeyWithDefaultValue;
+import consulo.annotations.RequiredDispatchThread;
+import consulo.ide.projectView.impl.ProjectViewPaneOptionProvider;
 
 /**
  * @author VISTALL

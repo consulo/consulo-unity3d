@@ -16,7 +16,7 @@
 
 package org.mustbe.consulo.unity3d.module;
 
-import org.mustbe.consulo.dotnet.module.extension.DotNetSimpleModuleExtension;
+import consulo.dotnet.module.extension.DotNetSimpleModuleExtension;
 
 /**
  * @author VISTALL

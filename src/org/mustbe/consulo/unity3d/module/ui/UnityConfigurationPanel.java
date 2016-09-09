@@ -21,10 +21,7 @@ import java.util.List;
 import javax.swing.JPanel;
 import javax.swing.event.DocumentEvent;
 
-import org.consulo.module.extension.ui.ModuleExtensionSdkBoxBuilder;
 import org.jetbrains.annotations.NotNull;
-import org.mustbe.consulo.RequiredDispatchThread;
-import org.mustbe.consulo.dotnet.DotNetBundle;
 import org.mustbe.consulo.unity3d.module.Unity3dRootMutableModuleExtension;
 import com.intellij.openapi.ui.InputValidator;
 import com.intellij.openapi.ui.LabeledComponent;
@@ -37,10 +34,13 @@ import com.intellij.ui.ToolbarDecorator;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBList;
 import com.intellij.ui.components.JBTextField;
+import consulo.annotations.RequiredDispatchThread;
+import consulo.dotnet.DotNetBundle;
+import consulo.extension.ui.ModuleExtensionSdkBoxBuilder;
 
 /**
  * @author VISTALL
- * @see org.mustbe.consulo.dotnet.module.extension.DotNetConfigurationPanel
+ * @see consulo.dotnet.module.extension.DotNetConfigurationPanel
  * @since 27.10.14
  */
 public class UnityConfigurationPanel extends JPanel

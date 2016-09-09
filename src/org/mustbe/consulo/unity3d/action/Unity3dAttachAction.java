@@ -21,10 +21,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.swing.Icon;
 
-import consulo.lombok.annotations.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.mustbe.consulo.RequiredDispatchThread;
 import org.mustbe.consulo.unity3d.Unity3dIcons;
 import org.mustbe.consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import org.mustbe.consulo.unity3d.run.Unity3dAttachApplicationType;
@@ -54,7 +52,9 @@ import com.intellij.openapi.util.Condition;
 import com.intellij.util.IconUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.UIUtil;
-import com.intellij.xdebugger.impl.settings.XDebuggerSettingsManager;
+import com.intellij.xdebugger.impl.settings.XDebuggerSettingManagerImpl;
+import consulo.annotations.RequiredDispatchThread;
+import consulo.lombok.annotations.Logger;
 
 /**
  * @author VISTALL
@@ -89,7 +89,7 @@ public class Unity3dAttachAction extends DumbAwareAction
 
 		myBusyState.set(true);
 
-		Unity3dDebuggerSettings settings = XDebuggerSettingsManager.getInstanceImpl().getSettings(Unity3dDebuggerSettings.class);
+		Unity3dDebuggerSettings settings = XDebuggerSettingManagerImpl.getInstanceImpl().getSettings(Unity3dDebuggerSettings.class);
 		if(settings.myAttachToSingleProcessWithoutDialog)
 		{
 			new Task.Backgroundable(project, "Searching Unity3D process", false)

@@ -1,0 +1,7 @@
+<component name="libraryTable">
+  <library name="consulo-plugin: consulo.nunit">
+    <binaries>
+      <root url="jar://$PROJECT_DIR$/dep/consulo.nunit/lib/nunit.jar!/" />
+    </binaries>
+  </library>
+</component>

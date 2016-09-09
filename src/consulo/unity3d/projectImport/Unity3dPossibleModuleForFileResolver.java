@@ -2,9 +2,6 @@ package consulo.unity3d.projectImport;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.mustbe.consulo.RequiredReadAction;
-import org.mustbe.consulo.csharp.lang.CSharpFileType;
-import org.mustbe.consulo.roots.ContentEntryFileListener;
 import org.mustbe.consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import com.intellij.lang.javascript.JavaScriptFileType;
 import com.intellij.openapi.module.Module;
@@ -12,6 +9,9 @@ import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import consulo.annotations.RequiredReadAction;
+import consulo.csharp.lang.CSharpFileType;
+import consulo.roots.ContentEntryFileListener;
 
 /**
  * @author VISTALL

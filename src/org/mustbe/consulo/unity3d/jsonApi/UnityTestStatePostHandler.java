@@ -3,7 +3,6 @@ package org.mustbe.consulo.unity3d.jsonApi;
 import java.util.UUID;
 
 import org.jetbrains.annotations.NotNull;
-import org.mustbe.buildInWebServer.api.JsonPostRequestHandler;
 import org.mustbe.consulo.unity3d.run.test.Unity3dTestSession;
 import org.mustbe.consulo.unity3d.run.test.Unity3dTestSessionManager;
 import com.intellij.execution.process.ProcessHandler;
@@ -16,6 +15,7 @@ import com.intellij.execution.testframework.sm.runner.events.TestStartedEvent;
 import com.intellij.execution.testframework.sm.runner.events.TestSuiteFinishedEvent;
 import com.intellij.execution.testframework.sm.runner.events.TestSuiteStartedEvent;
 import com.intellij.openapi.util.text.StringUtil;
+import consulo.buildInWebServer.api.JsonPostRequestHandler;
 
 /**
  * @author VISTALL

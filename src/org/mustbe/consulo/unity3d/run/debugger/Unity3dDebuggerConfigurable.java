@@ -26,7 +26,7 @@ import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.ui.VerticalFlowLayout;
 import com.intellij.ui.components.JBCheckBox;
-import com.intellij.xdebugger.impl.settings.XDebuggerSettingsManager;
+import com.intellij.xdebugger.impl.settings.XDebuggerSettingManagerImpl;
 
 /**
  * @author VISTALL
@@ -40,7 +40,7 @@ public class Unity3dDebuggerConfigurable implements Configurable
 
 	public Unity3dDebuggerConfigurable()
 	{
-		mySettings = XDebuggerSettingsManager.getInstanceImpl().getSettings(Unity3dDebuggerSettings.class);
+		mySettings = XDebuggerSettingManagerImpl.getInstanceImpl().getSettings(Unity3dDebuggerSettings.class);
 	}
 
 	@Nls

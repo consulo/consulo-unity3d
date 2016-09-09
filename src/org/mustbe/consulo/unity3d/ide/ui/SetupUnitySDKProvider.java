@@ -16,12 +16,8 @@
 
 package org.mustbe.consulo.unity3d.ide.ui;
 
-import org.consulo.module.extension.ModuleExtension;
-import org.consulo.module.extension.ModuleExtensionChangeListener;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.mustbe.consulo.RequiredDispatchThread;
-import org.mustbe.consulo.RequiredReadAction;
 import org.mustbe.consulo.unity3d.Unity3dBundle;
 import org.mustbe.consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import org.mustbe.consulo.unity3d.module.Unity3dRootModuleExtension;
@@ -40,12 +36,17 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.ui.EditorNotificationPanel;
 import com.intellij.ui.EditorNotifications;
+import consulo.annotations.RequiredDispatchThread;
+import consulo.annotations.RequiredReadAction;
+import consulo.editor.notifications.EditorNotificationProvider;
+import consulo.module.extension.ModuleExtension;
+import consulo.module.extension.ModuleExtensionChangeListener;
 
 /**
  * @author VISTALL
  * @since 29.07.2015
  */
-public class SetupUnitySDKProvider extends EditorNotifications.Provider<EditorNotificationPanel>
+public class SetupUnitySDKProvider implements EditorNotificationProvider<EditorNotificationPanel>
 {
 	private static final Key<EditorNotificationPanel> KEY = Key.create("setup.unity.sdk.notifier");
 

@@ -1,10 +1,10 @@
 package org.mustbe.consulo.unity3d.unityscript.index;
 
 import org.jetbrains.annotations.NotNull;
-import com.intellij.lang.javascript.index.JavaScriptIndexer;
-import com.intellij.lang.javascript.psi.stubs.JSFileStub;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.psi.stubs.IndexSink;
+import consulo.javascript.index.JavaScriptIndexer;
+import consulo.javascript.psi.stubs.JSFileStub;
 
 /**
  * @author VISTALL

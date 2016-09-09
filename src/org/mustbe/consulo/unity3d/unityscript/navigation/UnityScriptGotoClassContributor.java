@@ -7,7 +7,6 @@ import org.jetbrains.annotations.Nullable;
 import org.mustbe.consulo.unity3d.Unity3dIcons;
 import org.mustbe.consulo.unity3d.unityscript.index.UnityScriptIndexKeys;
 import com.intellij.icons.AllIcons;
-import com.intellij.ide.IconDescriptor;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.navigation.ChooseByNameContributorEx;
 import com.intellij.navigation.GotoClassContributor;
@@ -24,6 +23,7 @@ import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.FindSymbolParameters;
 import com.intellij.util.indexing.IdFilter;
+import consulo.ide.IconDescriptor;
 
 /**
  * @author VISTALL

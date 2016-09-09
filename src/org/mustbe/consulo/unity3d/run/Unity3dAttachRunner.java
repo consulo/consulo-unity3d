@@ -18,8 +18,6 @@ package org.mustbe.consulo.unity3d.run;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.mustbe.consulo.RequiredDispatchThread;
-import org.mustbe.consulo.dotnet.execution.DebugConnectionInfo;
 import org.mustbe.consulo.unity3d.run.debugger.UnityDebugProcess;
 import org.mustbe.consulo.unity3d.run.debugger.UnityProcess;
 import com.intellij.execution.ExecutionException;
@@ -38,6 +36,8 @@ import com.intellij.xdebugger.XDebugProcess;
 import com.intellij.xdebugger.XDebugProcessStarter;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebuggerManager;
+import consulo.annotations.RequiredDispatchThread;
+import consulo.dotnet.execution.DebugConnectionInfo;
 import consulo.dotnet.mono.debugger.MonoVirtualMachineListener;
 import mono.debugger.VirtualMachine;
 

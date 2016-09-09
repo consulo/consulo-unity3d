@@ -17,7 +17,6 @@
 package org.mustbe.consulo.unity3d.run.test;
 
 import org.jetbrains.annotations.NotNull;
-import org.mustbe.consulo.RequiredDispatchThread;
 import org.mustbe.consulo.unity3d.editor.UnityEditorCommunication;
 import org.mustbe.consulo.unity3d.run.Unity3dAttachRunner;
 import org.mustbe.consulo.unity3d.run.debugger.UnityProcess;
@@ -31,6 +30,7 @@ import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
+import consulo.annotations.RequiredDispatchThread;
 
 /**
  * @author VISTALL

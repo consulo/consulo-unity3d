@@ -16,10 +16,10 @@
 
 package org.mustbe.consulo.unity3d.nunit.module.extension;
 
-import org.consulo.module.extension.impl.ModuleExtensionImpl;
 import org.jetbrains.annotations.NotNull;
-import org.mustbe.consulo.nunit.module.extension.NUnitSimpleModuleExtension;
-import com.intellij.openapi.roots.ModuleRootLayer;
+import consulo.extension.impl.ModuleExtensionImpl;
+import consulo.nunit.module.extension.NUnitSimpleModuleExtension;
+import consulo.roots.ModuleRootLayer;
 
 /**
  * @author VISTALL

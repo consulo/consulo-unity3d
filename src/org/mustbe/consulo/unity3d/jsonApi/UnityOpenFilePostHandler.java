@@ -22,11 +22,7 @@ import java.util.Set;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.mustbe.buildInWebServer.api.JsonPostRequestHandler;
-import org.mustbe.buildInWebServer.api.RequestFocusHttpRequestHandler;
 import org.mustbe.consulo.unity3d.bundle.Unity3dBundleType;
-import consulo.unity3d.projectImport.Unity3dProjectImportBuilder;
-import consulo.unity3d.projectImport.Unity3dProjectImportProvider;
 import com.intellij.ide.actions.ImportModuleAction;
 import com.intellij.ide.util.newProjectWizard.AddModuleWizard;
 import com.intellij.openapi.fileEditor.FileEditorManager;
@@ -47,6 +43,10 @@ import com.intellij.openapi.wm.IdeFrame;
 import com.intellij.openapi.wm.WindowManager;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.UIUtil;
+import consulo.buildInWebServer.api.JsonPostRequestHandler;
+import consulo.buildInWebServer.api.RequestFocusHttpRequestHandler;
+import consulo.unity3d.projectImport.Unity3dProjectImportBuilder;
+import consulo.unity3d.projectImport.Unity3dProjectImportProvider;
 
 /**
  * @author VISTALL

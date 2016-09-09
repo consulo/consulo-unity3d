@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="consulo-plugin: consulo.csharp">
+    <binaries>
+      <root url="jar://$PROJECT_DIR$/dep/consulo.csharp/lib/jel.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dep/consulo.csharp/lib/csharp.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dep/consulo.csharp/lib/mono-csharp.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dep/consulo.csharp/lib/microsoft-csharp.jar!/" />
+    </binaries>
+  </library>
+</component>

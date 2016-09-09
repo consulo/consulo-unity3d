@@ -18,11 +18,11 @@ package org.mustbe.consulo.unity3d.nunit.module.extension;
 
 import javax.swing.JComponent;
 
-import org.consulo.module.extension.MutableModuleExtension;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.mustbe.consulo.RequiredDispatchThread;
-import com.intellij.openapi.roots.ModuleRootLayer;
+import consulo.annotations.RequiredDispatchThread;
+import consulo.module.extension.MutableModuleExtension;
+import consulo.roots.ModuleRootLayer;
 
 /**
  * @author VISTALL
