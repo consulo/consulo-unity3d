@@ -14,21 +14,22 @@
  * limitations under the License.
  */
 
-package org.mustbe.consulo.cgshader;
+package consulo.cgshader.highlighter;
 
 import org.jetbrains.annotations.NotNull;
-import com.intellij.openapi.fileTypes.FileTypeConsumer;
-import com.intellij.openapi.fileTypes.FileTypeFactory;
+import com.intellij.openapi.fileTypes.SingleLazyInstanceSyntaxHighlighterFactory;
+import com.intellij.openapi.fileTypes.SyntaxHighlighter;
 
 /**
  * @author VISTALL
  * @since 11.10.2015
  */
-public class CGFileTypeFactory extends FileTypeFactory
+public class CGSingleLazyInstanceSyntaxHighlighterFactory extends SingleLazyInstanceSyntaxHighlighterFactory
 {
+	@NotNull
 	@Override
-	public void createFileTypes(@NotNull FileTypeConsumer consumer)
+	protected SyntaxHighlighter createHighlighter()
 	{
-		consumer.consume(CGFileType.INSTANCE);
+		return new CGSyntaxHighlighter();
 	}
 }

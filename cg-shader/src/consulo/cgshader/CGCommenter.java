@@ -14,22 +14,49 @@
  * limitations under the License.
  */
 
-package org.mustbe.consulo.cgshader.highlighter;
+package consulo.cgshader;
 
-import org.jetbrains.annotations.NotNull;
-import com.intellij.openapi.fileTypes.SingleLazyInstanceSyntaxHighlighterFactory;
-import com.intellij.openapi.fileTypes.SyntaxHighlighter;
+import org.jetbrains.annotations.Nullable;
+import com.intellij.lang.Commenter;
 
 /**
  * @author VISTALL
  * @since 11.10.2015
  */
-public class CGSingleLazyInstanceSyntaxHighlighterFactory extends SingleLazyInstanceSyntaxHighlighterFactory
+public class CGCommenter implements Commenter
 {
-	@NotNull
+	@Nullable
 	@Override
-	protected SyntaxHighlighter createHighlighter()
+	public String getLineCommentPrefix()
 	{
-		return new CGSyntaxHighlighter();
+		return "//";
+	}
+
+	@Nullable
+	@Override
+	public String getBlockCommentPrefix()
+	{
+		return "/*";
+	}
+
+	@Nullable
+	@Override
+	public String getBlockCommentSuffix()
+	{
+		return "*/";
+	}
+
+	@Nullable
+	@Override
+	public String getCommentedBlockCommentPrefix()
+	{
+		return null;
+	}
+
+	@Nullable
+	@Override
+	public String getCommentedBlockCommentSuffix()
+	{
+		return null;
 	}
 }

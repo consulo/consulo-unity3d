@@ -17,7 +17,6 @@
 package org.mustbe.consulo.unity3d.shaderlab.ide.completion;
 
 import org.jetbrains.annotations.NotNull;
-import org.mustbe.consulo.cgshader.CGLanguage;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderCGScript;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderLabFile;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderReference;
@@ -33,6 +32,7 @@ import com.intellij.psi.impl.source.tree.injected.Place;
 import com.intellij.util.Consumer;
 import com.intellij.util.ProcessingContext;
 import consulo.annotations.RequiredReadAction;
+import consulo.cgshader.CGLanguage;
 import consulo.codeInsight.completion.CompletionProvider;
 
 /**

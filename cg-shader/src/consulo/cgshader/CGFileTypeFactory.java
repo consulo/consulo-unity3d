@@ -14,53 +14,21 @@
  * limitations under the License.
  */
 
-package org.mustbe.consulo.cgshader;
-
-import javax.swing.Icon;
+package consulo.cgshader;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import com.intellij.icons.AllIcons;
-import com.intellij.openapi.fileTypes.LanguageFileType;
+import com.intellij.openapi.fileTypes.FileTypeConsumer;
+import com.intellij.openapi.fileTypes.FileTypeFactory;
 
 /**
  * @author VISTALL
  * @since 11.10.2015
  */
-public class CGFileType extends LanguageFileType
+public class CGFileTypeFactory extends FileTypeFactory
 {
-	public static final CGFileType INSTANCE = new CGFileType();
-
-	public CGFileType()
-	{
-		super(CGLanguage.INSTANCE);
-	}
-
-	@NotNull
 	@Override
-	public String getName()
+	public void createFileTypes(@NotNull FileTypeConsumer consumer)
 	{
-		return "CG";
-	}
-
-	@NotNull
-	@Override
-	public String getDescription()
-	{
-		return "CG shader files";
-	}
-
-	@NotNull
-	@Override
-	public String getDefaultExtension()
-	{
-		return "cg";
-	}
-
-	@Nullable
-	@Override
-	public Icon getIcon()
-	{
-		return AllIcons.FileTypes.Text;
+		consumer.consume(CGFileType.INSTANCE);
 	}
 }

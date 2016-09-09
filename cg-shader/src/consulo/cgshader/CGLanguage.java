@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.mustbe.consulo.cgshader;
+package consulo.cgshader;
 
 import com.intellij.lang.Language;
 

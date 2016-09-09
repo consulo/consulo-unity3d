@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package org.mustbe.consulo.cgshader.lexer;
+package consulo.cgshader.lexer;
 
-import org.mustbe.consulo.cgshader.CGLanguage;
 import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IElementType;
+import consulo.cgshader.CGLanguage;
 
 /**
  * @author VISTALL

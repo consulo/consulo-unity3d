@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package org.mustbe.consulo.cgshader.highlighter;
+package consulo.cgshader.highlighter;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import org.jetbrains.annotations.NotNull;
-import org.mustbe.consulo.cgshader.lexer.CGLexer;
-import org.mustbe.consulo.cgshader.lexer.CGTokens;
+import consulo.cgshader.lexer.CGLexer;
+import consulo.cgshader.lexer.CGTokens;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;

@@ -17,13 +17,13 @@
 package org.mustbe.consulo.unity3d.shaderlab.ide;
 
 import org.jetbrains.annotations.NotNull;
-import consulo.annotations.RequiredReadAction;
-import org.mustbe.consulo.cgshader.CGLanguage;
 import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderCGScript;
 import com.intellij.lang.injection.MultiHostInjector;
 import com.intellij.lang.injection.MultiHostRegistrar;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
+import consulo.annotations.RequiredReadAction;
+import consulo.cgshader.CGLanguage;
 
 /**
  * @author VISTALL

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.mustbe.consulo.cgshader.lexer;
+package consulo.cgshader.lexer;
 
 import java.util.Set;
 

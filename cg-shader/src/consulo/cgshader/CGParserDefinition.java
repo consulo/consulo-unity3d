@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package org.mustbe.consulo.cgshader;
+package consulo.cgshader;
 
 import org.jetbrains.annotations.NotNull;
-import org.mustbe.consulo.cgshader.lexer.CGLexer;
-import org.mustbe.consulo.cgshader.lexer.CGTokens;
+import consulo.cgshader.lexer.CGLexer;
+import consulo.cgshader.lexer.CGTokens;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.extapi.psi.PsiFileBase;
 import com.intellij.lang.ASTNode;

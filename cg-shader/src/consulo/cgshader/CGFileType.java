@@ -14,49 +14,53 @@
  * limitations under the License.
  */
 
-package org.mustbe.consulo.cgshader;
+package consulo.cgshader;
 
+import javax.swing.Icon;
+
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import com.intellij.lang.Commenter;
+import com.intellij.icons.AllIcons;
+import com.intellij.openapi.fileTypes.LanguageFileType;
 
 /**
  * @author VISTALL
  * @since 11.10.2015
  */
-public class CGCommenter implements Commenter
+public class CGFileType extends LanguageFileType
 {
-	@Nullable
-	@Override
-	public String getLineCommentPrefix()
+	public static final CGFileType INSTANCE = new CGFileType();
+
+	public CGFileType()
 	{
-		return "//";
+		super(CGLanguage.INSTANCE);
+	}
+
+	@NotNull
+	@Override
+	public String getName()
+	{
+		return "CG";
+	}
+
+	@NotNull
+	@Override
+	public String getDescription()
+	{
+		return "CG shader files";
+	}
+
+	@NotNull
+	@Override
+	public String getDefaultExtension()
+	{
+		return "cg";
 	}
 
 	@Nullable
 	@Override
-	public String getBlockCommentPrefix()
+	public Icon getIcon()
 	{
-		return "/*";
-	}
-
-	@Nullable
-	@Override
-	public String getBlockCommentSuffix()
-	{
-		return "*/";
-	}
-
-	@Nullable
-	@Override
-	public String getCommentedBlockCommentPrefix()
-	{
-		return null;
-	}
-
-	@Nullable
-	@Override
-	public String getCommentedBlockCommentSuffix()
-	{
-		return null;
+		return AllIcons.FileTypes.Text;
 	}
 }

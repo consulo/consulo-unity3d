@@ -16,16 +16,16 @@
 
 <idea-plugin>
 	<extensions defaultExtensionNs="com.intellij">
-		<completion.contributor language="CG" implementationClass="org.mustbe.consulo.cgshader.completion.CGCompletionContributor" />
+		<completion.contributor language="CG" implementationClass="consulo.cgshader.completion.CGCompletionContributor" />
 
-		<lang.commenter language="CG" implementationClass="org.mustbe.consulo.cgshader.CGCommenter" />
+		<lang.commenter language="CG" implementationClass="consulo.cgshader.CGCommenter" />
 
-		<fileTypeFactory implementation="org.mustbe.consulo.cgshader.CGFileTypeFactory" />
+		<fileTypeFactory implementation="consulo.cgshader.CGFileTypeFactory" />
 
-		<lang.parserDefinition language="CG" implementationClass="org.mustbe.consulo.cgshader.CGParserDefinition" />
+		<lang.parserDefinition language="CG" implementationClass="consulo.cgshader.CGParserDefinition" />
 
-		<lang.syntaxHighlighterFactory key="CG" implementationClass="org.mustbe.consulo.cgshader.highlighter.CGSingleLazyInstanceSyntaxHighlighterFactory" />
+		<lang.syntaxHighlighterFactory key="CG" implementationClass="consulo.cgshader.highlighter.CGSingleLazyInstanceSyntaxHighlighterFactory" />
 
-		<lang.braceMatcher language="CG" implementationClass="org.mustbe.consulo.cgshader.CGBraceMatcher" />
+		<lang.braceMatcher language="CG" implementationClass="consulo.cgshader.CGBraceMatcher" />
 	</extensions>
 </idea-plugin>
