@@ -16,28 +16,28 @@
 
 <idea-plugin>
 	<extensions defaultExtensionNs="com.intellij">
-		<fileTypeFactory implementation="org.mustbe.consulo.unity3d.shaderlab.lang.ShaderLabFileTypeFactory"/>
+		<fileTypeFactory implementation="consulo.unity3d.shaderlab.lang.ShaderLabFileTypeFactory"/>
 
 		<completion.contributor language="SHADERLAB"
-								implementationClass="org.mustbe.consulo.unity3d.shaderlab.ide.completion.ShaderLabCompletionContributor"/>
+								implementationClass="consulo.unity3d.shaderlab.ide.completion.ShaderLabCompletionContributor"/>
 
 		<completion.contributor language="CG"
-								implementationClass="org.mustbe.consulo.unity3d.shaderlab.ide.completion.ShaderLabCGCompletionContributor"/>
+								implementationClass="consulo.unity3d.shaderlab.ide.completion.ShaderLabCGCompletionContributor"/>
 
-		<stubElementTypeHolder class="org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderLabStubElements"/>
-		<stubIndex implementation="org.mustbe.consulo.unity3d.shaderlab.lang.psi.stub.index.ShaderDefIndex"/>
+		<stubElementTypeHolder class="consulo.unity3d.shaderlab.lang.psi.ShaderLabStubElements"/>
+		<stubIndex implementation="consulo.unity3d.shaderlab.lang.psi.stub.index.ShaderDefIndex"/>
 
 		<codeInsight.lineMarkerProvider language="SHADERLAB" implementationClass="com.intellij.ui.ColorLineMarkerProvider"/>
 
-		<colorProvider implementation="org.mustbe.consulo.unity3d.shaderlab.ide.editor.ShaderLabElementColorProvider"/>
+		<colorProvider implementation="consulo.unity3d.shaderlab.ide.editor.ShaderLabElementColorProvider"/>
 
-		<highlightVisitor implementation="org.mustbe.consulo.unity3d.shaderlab.ide.highlight.SharpLabHighlightVisitor"/>
-		<lang.parserDefinition language="SHADERLAB" implementationClass="org.mustbe.consulo.unity3d.shaderlab.lang.ShaderLabParserDefinition"/>
+		<highlightVisitor implementation="consulo.unity3d.shaderlab.ide.highlight.SharpLabHighlightVisitor"/>
+		<lang.parserDefinition language="SHADERLAB" implementationClass="consulo.unity3d.shaderlab.lang.ShaderLabParserDefinition"/>
 		<lang.syntaxHighlighterFactory key="SHADERLAB"
-									   implementationClass="org.mustbe.consulo.unity3d.shaderlab.ide.highlight.ShaderLabHighlighterFactory"/>
-		<lang.foldingBuilder language="SHADERLAB" implementationClass="org.mustbe.consulo.unity3d.shaderlab.lang.ShaderLabFoldingBuilder"/>
-		<lang.braceMatcher language="SHADERLAB" implementationClass="org.mustbe.consulo.unity3d.shaderlab.lang.ShaderLabPairedBraceMatcher"/>
+									   implementationClass="consulo.unity3d.shaderlab.ide.highlight.ShaderLabHighlighterFactory"/>
+		<lang.foldingBuilder language="SHADERLAB" implementationClass="consulo.unity3d.shaderlab.lang.ShaderLabFoldingBuilder"/>
+		<lang.braceMatcher language="SHADERLAB" implementationClass="consulo.unity3d.shaderlab.lang.ShaderLabPairedBraceMatcher"/>
 
-		<multiHostInjector forClass="org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderCGScript" implementationClass="org.mustbe.consulo.unity3d.shaderlab.ide.CGLanguageInjection"/>
+		<multiHostInjector forClass="consulo.unity3d.shaderlab.lang.psi.ShaderCGScript" implementationClass="consulo.unity3d.shaderlab.ide.CGLanguageInjection"/>
 	</extensions>
 </idea-plugin>
