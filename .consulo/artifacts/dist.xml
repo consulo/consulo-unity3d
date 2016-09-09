@@ -2,7 +2,7 @@
   <artifact name="dist">
     <output-path>$PROJECT_DIR$/out/artifacts/dist</output-path>
     <root id="root">
-      <element id="directory" name="unity3d">
+      <element id="directory" name="consulo.unity3d">
         <element id="directory" name="lib">
           <element id="zip-archive" name="unity3d.jar">
             <element id="module-production-resource-output" name="consulo-unity3d" />
