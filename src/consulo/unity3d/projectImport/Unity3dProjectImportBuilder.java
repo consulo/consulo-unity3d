@@ -24,7 +24,7 @@ import javax.swing.Icon;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import consulo.annotations.RequiredReadAction;
-import org.mustbe.consulo.unity3d.Unity3dIcons;
+import consulo.unity3d.Unity3dIcons;
 import com.intellij.openapi.application.Result;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.module.ModifiableModuleModel;

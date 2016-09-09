@@ -38,7 +38,7 @@
 	<actions>
 		<group id="Unity3dProjectGroup">
 			<separator/>
-			<action id="SyncUnity3dProject" class="org.mustbe.consulo.unity3d.action.SyncUnity3dProjectAction"
+			<action id="SyncUnity3dProject" class="consulo.unity3d.action.SyncUnity3dProjectAction"
 					can-use-project-as-default="false"
 					require-module-extensions="unity3d"/>
 			<add-to-group anchor="last" group-id="ProjectViewPopupMenuSettingsGroup"/>
@@ -46,17 +46,17 @@
 
 		<group id="Unity3dAttachGroup">
 			<separator/>
-			<action id="Unity3Attach" class="org.mustbe.consulo.unity3d.action.Unity3dAttachAction"/>
+			<action id="Unity3Attach" class="consulo.unity3d.action.Unity3dAttachAction"/>
 			<add-to-group group-id="ToolbarRunGroup" anchor="after" relative-to-action="RunnerActions"/>
 		</group>
 	</actions>
 
 	<application-components>
 		<component>
-			<implementation-class>org.mustbe.consulo.unity3d.run.debugger.UnityPlayerService</implementation-class>
+			<implementation-class>consulo.unity3d.run.debugger.UnityPlayerService</implementation-class>
 		</component>
 		<component>
-			<implementation-class>org.mustbe.consulo.unity3d.Unity3dLocalFileSystemComponent</implementation-class>
+			<implementation-class>consulo.unity3d.Unity3dLocalFileSystemComponent</implementation-class>
 		</component>
 	</application-components>
 
@@ -68,114 +68,114 @@
 	</project-components>
 
 	<extensions defaultExtensionNs="consulo.javascript">
-		<indexer implementation="org.mustbe.consulo.unity3d.unityscript.index.UnityScriptIndexer"/>
+		<indexer implementation="consulo.unity3d.unityscript.index.UnityScriptIndexer"/>
 	</extensions>
 
 	<extensions defaultExtensionNs="consulo.csharp">
-		<toNativeElementTransformer implementation="org.mustbe.consulo.unity3d.unityscript.lang.impl.csharp.UnityScriptToNativeElementTransformer"/>
+		<toNativeElementTransformer implementation="consulo.unity3d.unityscript.lang.impl.csharp.UnityScriptToNativeElementTransformer"/>
 	</extensions>
 
 	<extensions defaultExtensionNs="consulo.dotnet">
-		<debuggerProvider implementation="org.mustbe.consulo.unity3d.unityscript.debugger.UnityScriptDebuggerProvider"/>
+		<debuggerProvider implementation="consulo.unity3d.unityscript.debugger.UnityScriptDebuggerProvider"/>
 		<debuggerSourceLineResolver language="JavaScript"
-									implementationClass="org.mustbe.consulo.unity3d.unityscript.debugger.UnityScriptSourceLineResolver"/>
+									implementationClass="consulo.unity3d.unityscript.debugger.UnityScriptSourceLineResolver"/>
 	</extensions>
 
 	<extensions defaultExtensionNs="consulo.dotnet">
-		<psiSearcher implementation="org.mustbe.consulo.unity3d.unityscript.lang.impl.UnityScriptPsiSearcher"/>
+		<psiSearcher implementation="consulo.unity3d.unityscript.lang.impl.UnityScriptPsiSearcher"/>
 	</extensions>
 
 	<extensions defaultExtensionNs="com.intellij">
-		<stubIndex implementation="org.mustbe.consulo.unity3d.unityscript.index.UnityScriptFileByNameIndex"/>
+		<stubIndex implementation="consulo.unity3d.unityscript.index.UnityScriptFileByNameIndex"/>
 		<xdebugger.lineBreakpointTypeResolver filetype="JavaScript"
-										  implementationClass="org.mustbe.consulo.unity3d.unityscript.debugger.UnityScriptLineBreakpointTypeResolver"
+										  implementationClass="consulo.unity3d.unityscript.debugger.UnityScriptLineBreakpointTypeResolver"
 										  order="before javascript"/>
-		<completion.contributor language="C#" implementationClass="org.mustbe.consulo.unity3d.csharp.completion.UnitySpecificMethodCompletion"/>
+		<completion.contributor language="C#" implementationClass="consulo.unity3d.csharp.completion.UnitySpecificMethodCompletion"/>
 		<codeInsight.lineMarkerProvider language="C#"
-										implementationClass="org.mustbe.consulo.unity3d.csharp.codeInsight.UnityCSharpLineMarkerProvider"/>
+										implementationClass="consulo.unity3d.csharp.codeInsight.UnityCSharpLineMarkerProvider"/>
 		<codeInsight.lineMarkerProvider language="JavaScript"
-										implementationClass="org.mustbe.consulo.unity3d.unityscript.codeInsight.UnityScriptLineMarkerProvider"/>
+										implementationClass="consulo.unity3d.unityscript.codeInsight.UnityScriptLineMarkerProvider"/>
 		<localInspection
 				enabledByDefault="true"
 				level="WARNING"
 				language="C#"
 				groupName="Unity"
 				displayName="Creation MonoBehaviour object via new expression"
-				implementationClass="org.mustbe.consulo.unity3d.csharp.codeInsight.inspection.UnityNewMonoBehaviourInspection"/>
-		<colorProvider implementation="org.mustbe.consulo.unity3d.csharp.codeInsight.UnityCSharpStaticElementColorProvider"/>
-		<colorProvider implementation="org.mustbe.consulo.unity3d.csharp.codeInsight.UnityCSharpStaticElementColor32Provider"/>
-		<iconDescriptorUpdater implementation="org.mustbe.consulo.unity3d.unityscript.UnityScriptIconDescriptorUpdater"/>
-		<gotoClassContributor implementation="org.mustbe.consulo.unity3d.unityscript.navigation.UnityScriptGotoClassContributor"/>
-		<sdkType implementation="org.mustbe.consulo.unity3d.bundle.Unity3dBundleType"/>
-		<xdebugger.settings implementation="org.mustbe.consulo.unity3d.run.debugger.Unity3dDebuggerSettings"/>
+				implementationClass="consulo.unity3d.csharp.codeInsight.inspection.UnityNewMonoBehaviourInspection"/>
+		<colorProvider implementation="consulo.unity3d.csharp.codeInsight.UnityCSharpStaticElementColorProvider"/>
+		<colorProvider implementation="consulo.unity3d.csharp.codeInsight.UnityCSharpStaticElementColor32Provider"/>
+		<iconDescriptorUpdater implementation="consulo.unity3d.unityscript.UnityScriptIconDescriptorUpdater"/>
+		<gotoClassContributor implementation="consulo.unity3d.unityscript.navigation.UnityScriptGotoClassContributor"/>
+		<sdkType implementation="consulo.unity3d.bundle.Unity3dBundleType"/>
+		<xdebugger.settings implementation="consulo.unity3d.run.debugger.Unity3dDebuggerSettings"/>
 
 		<moduleExtensionProvider
 				key="unity3d"
 				name="Unity3D"
 				icon="/icons/unity3d.png"
-				immutableClass="org.mustbe.consulo.unity3d.module.Unity3dRootModuleExtension"
-				mutableClass="org.mustbe.consulo.unity3d.module.Unity3dRootMutableModuleExtension"/>
+				immutableClass="consulo.unity3d.module.Unity3dRootModuleExtension"
+				mutableClass="consulo.unity3d.module.Unity3dRootMutableModuleExtension"/>
 
 		<moduleExtensionProvider
 				key="unity3d-child"
 				name="Unity3D (child)"
 				icon="/icons/unity3d.png"
-				immutableClass="org.mustbe.consulo.unity3d.module.Unity3dChildModuleExtension"
-				mutableClass="org.mustbe.consulo.unity3d.module.Unity3dChildMutableModuleExtension"/>
+				immutableClass="consulo.unity3d.module.Unity3dChildModuleExtension"
+				mutableClass="consulo.unity3d.module.Unity3dChildMutableModuleExtension"/>
 
 		<moduleExtensionProvider
 				key="unity3d-nunit-child"
 				parentKey="unity3d-child"
 				name="NUnit"
 				icon="/icons/nunit.png"
-				immutableClass="org.mustbe.consulo.unity3d.nunit.module.extension.Unity3dNUnitModuleExtension"
-				mutableClass="org.mustbe.consulo.unity3d.nunit.module.extension.Unity3dNUnitMutableModuleExtension"/>
+				immutableClass="consulo.unity3d.nunit.module.extension.Unity3dNUnitModuleExtension"
+				mutableClass="consulo.unity3d.nunit.module.extension.Unity3dNUnitMutableModuleExtension"/>
 
 		<moduleExtensionProvider
 				key="unity3d-csharp-child"
 				parentKey="unity3d-child"
 				name="C#"
 				icon="/icons/unity3d.png"
-				immutableClass="org.mustbe.consulo.unity3d.csharp.module.extension.Unity3dCSharpModuleExtension"
-				mutableClass="org.mustbe.consulo.unity3d.csharp.module.extension.Unity3dCSharpMutableModuleExtension"/>
+				immutableClass="consulo.unity3d.csharp.module.extension.Unity3dCSharpModuleExtension"
+				mutableClass="consulo.unity3d.csharp.module.extension.Unity3dCSharpMutableModuleExtension"/>
 
 		<moduleExtensionProvider
 				key="unity3d-unityscript-child"
 				parentKey="unity3d-child"
 				name="UnityScript"
 				icon="/icons/unity3d.png"
-				immutableClass="org.mustbe.consulo.unity3d.unityscript.module.extension.Unity3dScriptModuleExtension"
-				mutableClass="org.mustbe.consulo.unity3d.unityscript.module.extension.Unity3dScriptMutableModuleExtension"/>
+				immutableClass="consulo.unity3d.unityscript.module.extension.Unity3dScriptModuleExtension"
+				mutableClass="consulo.unity3d.unityscript.module.extension.Unity3dScriptMutableModuleExtension"/>
 
-		<lang.defineVersion language="JavaScript" implementationClass="org.mustbe.consulo.unity3d.unityscript.lang.UnityScriptLanguageVersion"/>
+		<lang.defineVersion language="JavaScript" implementationClass="consulo.unity3d.unityscript.lang.UnityScriptLanguageVersion"/>
 
-		<configurationType implementation="org.mustbe.consulo.unity3d.run.test.Unity3dTestConfigurationType"/>
-		<stepsBeforeRunProvider implementation="org.mustbe.consulo.unity3d.run.before.UnityRefreshBeforeRunTaskProvider"/>
-		<programRunner implementation="org.mustbe.consulo.unity3d.run.test.Unity3dTestDebuggerRunner"/>
+		<configurationType implementation="consulo.unity3d.run.test.Unity3dTestConfigurationType"/>
+		<stepsBeforeRunProvider implementation="consulo.unity3d.run.before.UnityRefreshBeforeRunTaskProvider"/>
+		<programRunner implementation="consulo.unity3d.run.test.Unity3dTestDebuggerRunner"/>
 
-		<applicationService serviceImplementation="org.mustbe.consulo.unity3d.run.test.Unity3dTestSessionManager"/>
+		<applicationService serviceImplementation="consulo.unity3d.run.test.Unity3dTestSessionManager"/>
 
 		<projectImportProvider implementation="consulo.unity3d.projectImport.Unity3dProjectImportProvider"/>
 		<postStartupActivity implementation="consulo.unity3d.projectImport.Unity3dPostStartupActivity"/>
-		<editorNotificationProvider implementation="org.mustbe.consulo.unity3d.ide.ui.SetupUnitySDKProvider"/>
+		<editorNotificationProvider implementation="consulo.unity3d.ide.ui.SetupUnitySDKProvider"/>
 
-		<fileTypeFactory implementation="org.mustbe.consulo.unity3d.Unity3dFileTypeFactory"/>
-		<treeStructureProvider implementation="org.mustbe.consulo.unity3d.ide.projectView.Unity3dMetaFileProjectViewProvider"/>
-		<treeStructureProvider implementation="org.mustbe.consulo.unity3d.unityscript.projectView.UnityScriptFileProjectViewProvider"/>
-		<projectViewOptionProvider implementation="org.mustbe.consulo.unity3d.ide.projectView.Unity3dShowMetaFileProjectViewPaneOptionProvider"/>
-		<projectViewNodeDecorator implementation="org.mustbe.consulo.unity3d.ide.projectView.Unity3dProjectViewNodeDecorator"/>
+		<fileTypeFactory implementation="consulo.unity3d.Unity3dFileTypeFactory"/>
+		<treeStructureProvider implementation="consulo.unity3d.ide.projectView.Unity3dMetaFileProjectViewProvider"/>
+		<treeStructureProvider implementation="consulo.unity3d.unityscript.projectView.UnityScriptFileProjectViewProvider"/>
+		<projectViewOptionProvider implementation="consulo.unity3d.ide.projectView.Unity3dShowMetaFileProjectViewPaneOptionProvider"/>
+		<projectViewNodeDecorator implementation="consulo.unity3d.ide.projectView.Unity3dProjectViewNodeDecorator"/>
 		<possibleModuleForFileResolver implementation="consulo.unity3d.projectImport.Unity3dPossibleModuleForFileResolver"/>
-		<fileTypeDetector implementation="org.mustbe.consulo.unity3d.scene.Unity3dAssetFileTypeDetector"/>
-		<fileBasedIndex implementation="org.mustbe.consulo.unity3d.scene.index.Unity3dYMLAssetIndexExtension"/>
+		<fileTypeDetector implementation="consulo.unity3d.scene.Unity3dAssetFileTypeDetector"/>
+		<fileBasedIndex implementation="consulo.unity3d.scene.index.Unity3dYMLAssetIndexExtension"/>
 		<projectService serviceImplementation="consulo.unity3d.UnityConsoleService" />
 
-		<httpRequestHandler implementation="org.mustbe.consulo.unity3d.jsonApi.UnityOpenFilePostHandler"/>
+		<httpRequestHandler implementation="consulo.unity3d.jsonApi.UnityOpenFilePostHandler"/>
 		<httpRequestHandler implementation="consulo.unity3d.jsonApi.UnityLogPostHandler"/>
 		<httpRequestHandler implementation="consulo.unity3d.jsonApi.UnityPlayStateHandler"/>
-		<httpRequestHandler implementation="org.mustbe.consulo.unity3d.jsonApi.UnityTestStatePostHandler"/>
-		<httpRequestHandler implementation="org.mustbe.consulo.unity3d.jsonApi.UnityRefreshResponseHandler"/>
+		<httpRequestHandler implementation="consulo.unity3d.jsonApi.UnityTestStatePostHandler"/>
+		<httpRequestHandler implementation="consulo.unity3d.jsonApi.UnityRefreshResponseHandler"/>
 		<httpRequestHandler implementation="consulo.unity3d.jsonApi.UnitySetDefinesHandler"/>
 
-		<editorNotificationProvider implementation="org.mustbe.consulo.unity3d.scene.prefab.Unity3dPrefabEditorNotificationProvider"/>
+		<editorNotificationProvider implementation="consulo.unity3d.scene.prefab.Unity3dPrefabEditorNotificationProvider"/>
 	</extensions>
 </idea-plugin>

@@ -20,7 +20,7 @@ import javax.swing.Icon;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.mustbe.consulo.unity3d.Unity3dIcons;
+import consulo.unity3d.Unity3dIcons;
 import com.intellij.openapi.fileTypes.LanguageFileType;
 
 /**

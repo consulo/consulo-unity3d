@@ -20,8 +20,8 @@ import java.util.Arrays;
 import java.util.TreeSet;
 
 import org.jetbrains.annotations.NotNull;
-import org.mustbe.consulo.unity3d.module.Unity3dModuleExtensionUtil;
-import org.mustbe.consulo.unity3d.module.Unity3dRootMutableModuleExtension;
+import consulo.unity3d.module.Unity3dModuleExtensionUtil;
+import consulo.unity3d.module.Unity3dRootMutableModuleExtension;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.application.ApplicationManager;

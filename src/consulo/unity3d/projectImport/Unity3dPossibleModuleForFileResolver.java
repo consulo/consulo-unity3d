@@ -2,7 +2,7 @@ package consulo.unity3d.projectImport;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.mustbe.consulo.unity3d.module.Unity3dModuleExtensionUtil;
+import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import com.intellij.lang.javascript.JavaScriptFileType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;

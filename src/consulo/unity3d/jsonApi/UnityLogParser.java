@@ -16,7 +16,7 @@
 
 package consulo.unity3d.jsonApi;
 
-import org.mustbe.consulo.unity3d.module.Unity3dModuleExtensionUtil;
+import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import com.intellij.openapi.project.Project;
 import consulo.annotations.RequiredReadAction;
 import consulo.csharp.compiler.MSBaseDotNetCompilerOptionsBuilder;

@@ -1,9 +1,9 @@
-package org.mustbe.consulo.unity3d.shaderlab.lang.lexer;
+package consulo.unity3d.shaderlab.lang.lexer;
 
 import java.util.*;
 import com.intellij.lexer.LexerBase;
 import com.intellij.psi.tree.IElementType;
-import org.mustbe.consulo.unity3d.shaderlab.lang.psi.ShaderLabTokens;
+import consulo.unity3d.shaderlab.lang.psi.ShaderLabTokens;
 
 %%
 

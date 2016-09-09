@@ -1,4 +1,4 @@
-package org.mustbe.consulo.cgshader.lexer;
+package consulo.cgshader.lexer;
 
 import com.intellij.lexer.LexerBase;
 import com.intellij.psi.tree.IElementType;
@@ -76,7 +76,7 @@ ESCAPE_SEQUENCE=\\[^\r\n]
 <YYINITIAL> {IDENTIFIER}
 {
  CharSequence text = yytext();
- if(org.mustbe.consulo.cgshader.lexer.CGKeywords.KEYWORDS.contains(text.toString())) // toString is bad
+ if(consulo.cgshader.lexer.CGKeywords.KEYWORDS.contains(text.toString())) // toString is bad
  {
    return CGTokens.KEYWORD;
  }

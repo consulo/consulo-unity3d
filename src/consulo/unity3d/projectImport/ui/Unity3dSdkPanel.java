@@ -21,7 +21,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 import org.jetbrains.annotations.Nullable;
-import org.mustbe.consulo.unity3d.bundle.Unity3dBundleType;
+import consulo.unity3d.bundle.Unity3dBundleType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkTable;

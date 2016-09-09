@@ -19,7 +19,7 @@ package consulo.unity3d.projectImport.ui;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 
-import org.mustbe.consulo.unity3d.Unity3dBundle;
+import consulo.unity3d.Unity3dBundle;
 import consulo.unity3d.projectImport.Unity3dProjectImportBuilder;
 import consulo.unity3d.projectImport.Unity3dProjectUtil;
 import com.intellij.ide.util.newProjectWizard.ProjectNameStep;

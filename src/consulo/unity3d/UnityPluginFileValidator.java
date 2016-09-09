@@ -25,9 +25,9 @@ import javax.swing.event.HyperlinkEvent;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.mustbe.consulo.unity3d.bundle.Unity3dDefineByVersion;
-import org.mustbe.consulo.unity3d.module.Unity3dModuleExtensionUtil;
-import org.mustbe.consulo.unity3d.module.Unity3dRootModuleExtension;
+import consulo.unity3d.bundle.Unity3dDefineByVersion;
+import consulo.unity3d.module.Unity3dModuleExtensionUtil;
+import consulo.unity3d.module.Unity3dRootModuleExtension;
 import com.intellij.ide.plugins.PluginManager;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationDisplayType;
