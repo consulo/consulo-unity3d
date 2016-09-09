@@ -20,10 +20,8 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.MulticastSocket;
 import java.net.NetworkInterface;
-
-import com.google.code.regexp.Matcher;
-import com.google.code.regexp.Pattern;
-
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author VISTALL

@@ -16,8 +16,9 @@
 
 package org.mustbe.consulo.unity3d.run.debugger;
 
+import java.util.regex.Matcher;
+
 import org.jetbrains.annotations.NotNull;
-import com.google.code.regexp.Matcher;
 import com.intellij.openapi.util.text.StringUtil;
 
 /**
