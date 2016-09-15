@@ -74,7 +74,7 @@ public class UnityScriptLineMarkerProvider implements LineMarkerProvider
 					return null;
 				}
 
-				return new LineMarkerInfo<PsiElement>(element, element.getTextRange(), Unity3dIcons.EventMethod, Pass.UPDATE_OVERRIDEN_MARKERS, new ConstantFunction<PsiElement,
+				return new LineMarkerInfo<PsiElement>(element, element.getTextRange(), Unity3dIcons.EventMethod, Pass.LINE_MARKERS, new ConstantFunction<PsiElement,
 						String>(functionInfo.getDescription()), null, GutterIconRenderer.Alignment.LEFT);
 			}
 		}

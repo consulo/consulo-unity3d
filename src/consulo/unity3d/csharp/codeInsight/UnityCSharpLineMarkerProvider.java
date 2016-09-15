@@ -79,21 +79,7 @@ public class UnityCSharpLineMarkerProvider implements LineMarkerProvider
 	@Override
 	public LineMarkerInfo getLineMarkerInfo(@NotNull PsiElement element)
 	{
-		return null;
-	}
-
-	@Override
-	@RequiredReadAction
-	public void collectSlowLineMarkers(@NotNull List<PsiElement> elements, @NotNull Collection<LineMarkerInfo> result)
-	{
-		for(PsiElement element : elements)
-		{
-			LineMarkerInfo marker = createMarker(element);
-			if(marker != null)
-			{
-				result.add(marker);
-			}
-		}
+		return createMarker(element);
 	}
 
 	@Nullable
@@ -121,7 +107,7 @@ public class UnityCSharpLineMarkerProvider implements LineMarkerProvider
 					return null;
 				}
 
-				return new LineMarkerInfo<PsiElement>(element, element.getTextRange(), Unity3dIcons.EventMethod, Pass.UPDATE_OVERRIDEN_MARKERS, new ConstantFunction<PsiElement,
+				return new LineMarkerInfo<PsiElement>(element, element.getTextRange(), Unity3dIcons.EventMethod, Pass.LINE_MARKERS, new ConstantFunction<PsiElement,
 						String>(functionInfo.getDescription()), null, GutterIconRenderer.Alignment.LEFT);
 			}
 		}
@@ -140,7 +126,7 @@ public class UnityCSharpLineMarkerProvider implements LineMarkerProvider
 
 			if(processor.isFound())
 			{
-				return new LineMarkerInfo<PsiElement>(element, element.getTextRange(), Unity3dIcons.Unity3dLineMarker, Pass.UPDATE_OVERRIDEN_MARKERS, new Function<PsiElement, String>()
+				return new LineMarkerInfo<PsiElement>(element, element.getTextRange(), Unity3dIcons.Unity3dLineMarker, Pass.LINE_MARKERS, new Function<PsiElement, String>()
 				{
 					@Override
 					public String fun(final PsiElement element)
