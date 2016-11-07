@@ -123,7 +123,7 @@ public class Unity3dLocalFileSystemComponent implements ApplicationComponent
 				}
 				catch(IOException e)
 				{
-					Unity3dLocalFileSystemComponent.LOGGER.error(e);
+					LOGGER.error(e);
 				}
 			}
 			return false;

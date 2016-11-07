@@ -20,9 +20,9 @@ import javax.swing.Icon;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.yaml.YAMLLanguage;
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.openapi.fileTypes.PlainTextFileType;
-import com.intellij.openapi.fileTypes.PlainTextLanguage;
 
 /**
  * @author VISTALL
@@ -34,12 +34,12 @@ public class Unity3dMetaFileType extends LanguageFileType
 
 	public Unity3dMetaFileType()
 	{
-		super(PlainTextLanguage.INSTANCE);
+		super(YAMLLanguage.INSTANCE);
 	}
 
 	@NotNull
 	@Override
-	public String getName()
+	public String getId()
 	{
 		return "META";
 	}

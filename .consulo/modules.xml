@@ -31,6 +31,7 @@
           <orderEntry type="library" name="consulo-plugin: consulo.nunit" level="project" />
           <orderEntry type="library" name="consulo-plugin: consulo.javascript" level="project" />
           <orderEntry type="library" name="consulo-plugin: consulo.dotnet.mono" level="project" />
+          <orderEntry type="library" name="consulo-plugin: org.jetbrains.plugins.yaml" level="project" />
         </module-layer>
       </module>
       <module name="shaderlab" dirurl="file://$PROJECT_DIR$/shaderlab" current-layer="Default">

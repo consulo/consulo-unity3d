@@ -1,0 +1,7 @@
+<component name="libraryTable">
+  <library name="consulo-plugin: org.jetbrains.plugins.yaml" type="consulo-plugin">
+    <binaries>
+      <root url="jar://$PROJECT_DIR$/dep/org.jetbrains.plugins.yaml/lib/yaml.jar!/" />
+    </binaries>
+  </library>
+</component>

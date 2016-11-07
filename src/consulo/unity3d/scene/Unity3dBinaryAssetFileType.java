@@ -22,7 +22,7 @@ public class Unity3dBinaryAssetFileType implements FileType
 
 	@NotNull
 	@Override
-	public String getName()
+	public String getId()
 	{
 		return "UNITY_BINARY_ASSET";
 	}

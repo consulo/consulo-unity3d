@@ -6,7 +6,7 @@
     <option name="ALT_CONSULO_SDK_PATH" />
     <option name="INTERNAL_MODE" value="false" />
     <java-sdk name="1.8" />
-    <consulo-sdk name="Consulo 1.SNAPSHOT" />
+    <consulo-sdk name="Consulo SNAPSHOT" />
     <artifact name="plugin" />
     <predefined_log_file id="IDEA_LOG" enabled="true" />
     <RunnerSettings RunnerId="ConsuloDebuggerRunner">

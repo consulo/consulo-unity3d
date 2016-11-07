@@ -4,8 +4,8 @@ import javax.swing.Icon;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.yaml.YAMLLanguage;
 import com.intellij.openapi.fileTypes.LanguageFileType;
-import com.intellij.openapi.fileTypes.PlainTextLanguage;
 import consulo.unity3d.Unity3dIcons;
 
 /**
@@ -18,12 +18,12 @@ public class Unity3dYMLAssetFileType extends LanguageFileType
 
 	private Unity3dYMLAssetFileType()
 	{
-		super(PlainTextLanguage.INSTANCE);
+		super(YAMLLanguage.INSTANCE);
 	}
 
 	@NotNull
 	@Override
-	public String getName()
+	public String getId()
 	{
 		return "UNITY_YML_ASSET";
 	}

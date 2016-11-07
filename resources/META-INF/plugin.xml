@@ -26,6 +26,7 @@
 	<depends>consulo.csharp</depends>
 	<depends>consulo.javascript</depends>
 	<depends>consulo.nunit</depends>
+	<depends>org.jetbrains.plugins.yaml</depends>
 
 	<xi:include href="/META-INF/SharderLab.xml" xpointer="xpointer(/idea-plugin/*)">
 		<xi:fallback/>
