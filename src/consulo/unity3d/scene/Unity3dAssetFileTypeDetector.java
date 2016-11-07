@@ -17,7 +17,8 @@ public class Unity3dAssetFileTypeDetector implements FileTypeRegistry.FileTypeDe
 {
 	public static final String[] ourAssetExtensions = {
 			"unity",
-			"prefab"
+			"prefab",
+			"physicsMaterial2D"
 	};
 
 	@Nullable
@@ -47,6 +48,6 @@ public class Unity3dAssetFileTypeDetector implements FileTypeRegistry.FileTypeDe
 	@Override
 	public int getVersion()
 	{
-		return 3;
+		return 4;
 	}
 }
