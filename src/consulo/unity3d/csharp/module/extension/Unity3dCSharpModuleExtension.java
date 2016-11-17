@@ -18,10 +18,13 @@ package consulo.unity3d.csharp.module.extension;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import com.intellij.openapi.projectRoots.Sdk;
 import consulo.annotations.RequiredReadAction;
 import consulo.csharp.module.extension.BaseCSharpSimpleModuleExtension;
 import consulo.csharp.module.extension.CSharpLanguageVersion;
 import consulo.roots.ModuleRootLayer;
+import consulo.unity3d.bundle.Unity3dDefineByVersion;
+import consulo.unity3d.module.Unity3dChildModuleExtension;
 
 /**
  * @author VISTALL
@@ -52,6 +55,19 @@ public class Unity3dCSharpModuleExtension extends BaseCSharpSimpleModuleExtensio
 	@Override
 	public CSharpLanguageVersion getLanguageVersion()
 	{
+		Unity3dChildModuleExtension extension = getModuleRootLayer().getExtension(Unity3dChildModuleExtension.class);
+		if(extension != null)
+		{
+			Sdk sdk = extension.getSdk();
+			if(sdk != null)
+			{
+				Unity3dDefineByVersion version = Unity3dDefineByVersion.find(sdk.getVersionString());
+				if(version.ordinal() >= Unity3dDefineByVersion.UNITY_5_5.ordinal())
+				{
+					return CSharpLanguageVersion._6_0;
+				}
+			}
+		}
 		return CSharpLanguageVersion._4_0;
 	}
 }

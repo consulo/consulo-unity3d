@@ -52,6 +52,7 @@ public enum Unity3dDefineByVersion
 	UNITY_5_2("5.2.\\d", "UnityEditorConsuloPlugin5.dll", UNITY_5_0),
 	UNITY_5_3("5.3.\\d", "UnityEditorConsuloPlugin5.3.dll", UNITY_5_0),
 	UNITY_5_4("5.4.\\d", "UnityEditorConsuloPlugin5.3.dll", UNITY_5_0),
+	UNITY_5_5("5.5.\\d", "UnityEditorConsuloPlugin5.3.dll", UNITY_5_0),
 	UNKNOWN("\\d.\\d.\\d", null);
 
 	private final Pattern myVersionPattern;
@@ -79,8 +80,13 @@ public enum Unity3dDefineByVersion
 	}
 
 	@NotNull
-	public static Unity3dDefineByVersion find(String version)
+	public static Unity3dDefineByVersion find(@Nullable String version)
 	{
+		if(version == null)
+		{
+			return UNKNOWN;
+		}
+
 		Unity3dDefineByVersion[] values = Unity3dDefineByVersion.values();
 		for(Unity3dDefineByVersion unity3dDefineByVersion : ArrayUtil.reverseArray(values))
 		{
