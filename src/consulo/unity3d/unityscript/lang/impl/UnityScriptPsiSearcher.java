@@ -6,6 +6,7 @@ import java.util.Collections;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import com.intellij.lang.javascript.psi.JSFile;
+import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.containers.ContainerUtil;
@@ -46,6 +47,11 @@ public class UnityScriptPsiSearcher extends DotNetPsiSearcher
 	@Override
 	public Collection<? extends DotNetTypeDeclaration> findTypesImpl(@NotNull String key, @NotNull GlobalSearchScope searchScope)
 	{
+		if(DumbService.isDumb(myProject))
+		{
+			return Collections.emptyList();
+		}
+
 		Collection<JSFile> jsFiles = UnityScriptFileByNameIndex.getInstance().get(key, myProject, searchScope);
 		JSFile jsFile = ContainerUtil.getFirstItem(jsFiles);
 		if(jsFile == null)
