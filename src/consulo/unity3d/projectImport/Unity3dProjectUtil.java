@@ -52,6 +52,8 @@ import com.intellij.util.containers.MultiMap;
 import com.intellij.util.ui.UIUtil;
 import consulo.csharp.lang.CSharpFilePropertyPusher;
 import consulo.csharp.lang.CSharpFileType;
+import consulo.csharp.module.extension.CSharpLanguageVersion;
+import consulo.csharp.module.extension.CSharpSimpleMutableModuleExtension;
 import consulo.dotnet.dll.DotNetModuleFileType;
 import consulo.dotnet.roots.orderEntry.DotNetLibraryOrderEntryImpl;
 import consulo.lombok.annotations.Logger;
@@ -213,7 +215,8 @@ public class Unity3dProjectUtil
 	{
 		boolean fromProjectStructure = originalModel != null;
 
-		final ModifiableModuleModel newModel = fromProjectStructure ? originalModel : ApplicationManager.getApplication().runReadAction(new Computable<ModifiableModuleModel>()
+		final ModifiableModuleModel newModel = fromProjectStructure ? originalModel : ApplicationManager.getApplication().runReadAction(new
+																																				Computable<ModifiableModuleModel>()
 		{
 			@Override
 			public ModifiableModuleModel compute()
@@ -229,10 +232,12 @@ public class Unity3dProjectUtil
 
 		MultiMap<Module, VirtualFile> sourceFilesByModule = MultiMap.create();
 
-		ContainerUtil.addIfNotNull(modules, createAssemblyCSharpModuleFirstPass(project, newModel, unitySdk, sourceFilesByModule, progressIndicator));
+		ContainerUtil.addIfNotNull(modules, createAssemblyCSharpModuleFirstPass(project, newModel, unitySdk, sourceFilesByModule,
+				progressIndicator));
 		progressIndicator.setFraction(0.25);
 
-		ContainerUtil.addIfNotNull(modules, createAssemblyUnityScriptModuleFirstPass(project, newModel, unitySdk, sourceFilesByModule, progressIndicator));
+		ContainerUtil.addIfNotNull(modules, createAssemblyUnityScriptModuleFirstPass(project, newModel, unitySdk, sourceFilesByModule,
+				progressIndicator));
 		progressIndicator.setFraction(0.5);
 
 		ContainerUtil.addIfNotNull(modules, createAssemblyCSharpModuleEditor(project, newModel, unitySdk, sourceFilesByModule, progressIndicator));
@@ -282,8 +287,8 @@ public class Unity3dProjectUtil
 			ProgressIndicator progressIndicator)
 	{
 
-		return createAndSetupModule("Assembly-UnityScript-firstpass", project, newModel, FIRST_PASS_PATHS, unityBundle, null, "unity3d-unityscript-child", JavaScriptFileType.INSTANCE,
-				virtualFilesByModule, progressIndicator);
+		return createAndSetupModule("Assembly-UnityScript-firstpass", project, newModel, FIRST_PASS_PATHS, unityBundle, null,
+				"unity3d-unityscript-child", JavaScriptFileType.INSTANCE, virtualFilesByModule, progressIndicator);
 	}
 
 	private static Module createAssemblyCSharpModuleFirstPass(final Project project,
@@ -292,8 +297,8 @@ public class Unity3dProjectUtil
 			MultiMap<Module, VirtualFile> virtualFilesByModule,
 			ProgressIndicator progressIndicator)
 	{
-		return createAndSetupModule("Assembly-CSharp-firstpass", project, newModel, FIRST_PASS_PATHS, unityBundle, null, "unity3d-csharp-child", CSharpFileType.INSTANCE, virtualFilesByModule,
-				progressIndicator);
+		return createAndSetupModule("Assembly-CSharp-firstpass", project, newModel, FIRST_PASS_PATHS, unityBundle, null, "unity3d-csharp-child",
+				CSharpFileType.INSTANCE, virtualFilesByModule, progressIndicator);
 	}
 
 	private static Module createAssemblyCSharpModuleEditor(final Project project,
@@ -471,7 +476,15 @@ public class Unity3dProjectUtil
 
 		layer.getExtensionWithoutCheck(Unity3dChildMutableModuleExtension.class).setEnabled(true);
 		// enable correct unity lang extension
-		layer.<MutableModuleExtension>getExtensionWithoutCheck(moduleExtensionId).setEnabled(true);
+		MutableModuleExtension langExtension = layer.<MutableModuleExtension>getExtensionWithoutCheck(moduleExtensionId);
+		assert langExtension != null;
+		langExtension.setEnabled(true);
+		if(langExtension instanceof CSharpSimpleMutableModuleExtension)
+		{
+			CSharpLanguageVersion languageVersion = isVersionHigherOrEqual(unitySdk, "5.5.0") ? CSharpLanguageVersion._6_0 : CSharpLanguageVersion
+					._4_0;
+			((CSharpSimpleMutableModuleExtension) langExtension).setLanguageVersion(languageVersion);
+		}
 
 		layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "mscorlib"));
 		layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEditor"));
@@ -581,7 +594,8 @@ public class Unity3dProjectUtil
 			@Nullable Collection<String> defines)
 	{
 		final Module rootModule;
-		Unity3dRootModuleExtension rootModuleExtension = ApplicationManager.getApplication().runReadAction(new Computable<Unity3dRootModuleExtension>()
+		Unity3dRootModuleExtension rootModuleExtension = ApplicationManager.getApplication().runReadAction(new
+																												   Computable<Unity3dRootModuleExtension>()
 
 		{
 			@Override
@@ -632,7 +646,8 @@ public class Unity3dProjectUtil
 		// fallback
 		else
 		{
-			new Notification("unity", ApplicationNamesInfo.getInstance().getProductName(), "UnityEditor is not responding.<br>Defines is not resolved.", NotificationType.WARNING).notify(project);
+			new Notification("unity", ApplicationNamesInfo.getInstance().getProductName(), "UnityEditor is not responding.<br>Defines is not " +
+					"resolved.", NotificationType.WARNING).notify(project);
 
 			variables.add(UNITY_EDITOR);
 			variables.add("DEBUG");

@@ -16,11 +16,7 @@
 
 package consulo.unity3d.csharp.module.extension;
 
-import javax.swing.JComponent;
-
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import consulo.annotations.RequiredDispatchThread;
 import consulo.csharp.module.extension.CSharpSimpleMutableModuleExtension;
 import consulo.roots.ModuleRootLayer;
 
@@ -28,19 +24,12 @@ import consulo.roots.ModuleRootLayer;
  * @author VISTALL
  * @since 27.10.14
  */
-public class Unity3dCSharpMutableModuleExtension extends Unity3dCSharpModuleExtension implements CSharpSimpleMutableModuleExtension<Unity3dCSharpModuleExtension>
+public class Unity3dCSharpMutableModuleExtension extends Unity3dCSharpModuleExtension implements
+		CSharpSimpleMutableModuleExtension<Unity3dCSharpModuleExtension>
 {
 	public Unity3dCSharpMutableModuleExtension(@NotNull String id, @NotNull ModuleRootLayer module)
 	{
 		super(id, module);
-	}
-
-	@RequiredDispatchThread
-	@Nullable
-	@Override
-	public JComponent createConfigurablePanel(@NotNull Runnable runnable)
-	{
-		return null;
 	}
 
 	@Override
@@ -50,8 +39,9 @@ public class Unity3dCSharpMutableModuleExtension extends Unity3dCSharpModuleExte
 	}
 
 	@Override
-	public boolean isModified(@NotNull Unity3dCSharpModuleExtension unity3dCSharpModuleExtension)
+	public boolean isModified(@NotNull Unity3dCSharpModuleExtension mutableModuleExtension)
 	{
-		return isEnabled() != unity3dCSharpModuleExtension.isEnabled();
+		return isEnabled() != mutableModuleExtension.isEnabled() ||
+				!myLanguageVersionPointer.equals(mutableModuleExtension.getLanguageVersionPointer());
 	}
 }
