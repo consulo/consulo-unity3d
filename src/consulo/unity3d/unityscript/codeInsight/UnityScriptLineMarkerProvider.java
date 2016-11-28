@@ -16,8 +16,6 @@
 
 package consulo.unity3d.unityscript.codeInsight;
 
-import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 import org.jetbrains.annotations.NotNull;
@@ -36,6 +34,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.util.ConstantFunction;
 import consulo.annotations.RequiredReadAction;
 import consulo.unity3d.Unity3dIcons;
+import consulo.unity3d.Unity3dTypes;
 import consulo.unity3d.csharp.UnityFunctionManager;
 import consulo.unity3d.module.Unity3dModuleExtension;
 
@@ -45,34 +44,28 @@ import consulo.unity3d.module.Unity3dModuleExtension;
  */
 public class UnityScriptLineMarkerProvider implements LineMarkerProvider
 {
+	@RequiredReadAction
 	@Nullable
 	@Override
 	public LineMarkerInfo getLineMarkerInfo(@NotNull PsiElement element)
 	{
-		return null;
-	}
-
-	@Override
-	@RequiredReadAction
-	public void collectSlowLineMarkers(@NotNull List<PsiElement> elements, @NotNull Collection<LineMarkerInfo> result)
-	{
-		for(PsiElement element : elements)
-		{
-			LineMarkerInfo marker = createMarker(element);
-			if(marker != null)
-			{
-				result.add(marker);
-			}
-		}
+		return createMarker(element);
 	}
 
 	@Nullable
 	@RequiredReadAction
 	private static LineMarkerInfo createMarker(PsiElement element)
 	{
-		if(element.getNode().getElementType() == JSTokenTypes.IDENTIFIER && element.getParent() instanceof JSReferenceExpression && element.getParent().getParent() instanceof JSFunction)
+		if(element.getNode().getElementType() == JSTokenTypes.IDENTIFIER && element.getParent() instanceof JSReferenceExpression && element
+				.getParent().getParent() instanceof JSFunction)
 		{
-			UnityFunctionManager.FunctionInfo functionInfo = UnityFunctionManager.getInstance().getFunctionInfo(element.getText());
+			UnityFunctionManager functionManager = UnityFunctionManager.getInstance();
+			Map<String, UnityFunctionManager.FunctionInfo> map = functionManager.getFunctionsByType().get(Unity3dTypes.UnityEngine.MonoBehaviour);
+			if(map == null)
+			{
+				return null;
+			}
+			UnityFunctionManager.FunctionInfo functionInfo = map.get(element.getText());
 			if(functionInfo == null)
 			{
 				return null;
@@ -90,8 +83,8 @@ public class UnityScriptLineMarkerProvider implements LineMarkerProvider
 					return null;
 				}
 
-				return new LineMarkerInfo<PsiElement>(element, element.getTextRange(), Unity3dIcons.EventMethod, Pass.LINE_MARKERS, new ConstantFunction<PsiElement,
-						String>(functionInfo.getDescription()), null, GutterIconRenderer.Alignment.LEFT);
+				return new LineMarkerInfo<>(element, element.getTextRange(), Unity3dIcons.EventMethod, Pass.LINE_MARKERS, new ConstantFunction<>
+						(functionInfo.getDescription()), null, GutterIconRenderer.Alignment.LEFT);
 			}
 		}
 		return null;
