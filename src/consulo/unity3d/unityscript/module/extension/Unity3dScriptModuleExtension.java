@@ -22,7 +22,6 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkType;
 import consulo.annotations.RequiredReadAction;
 import consulo.extension.impl.ModuleExtensionImpl;
-import consulo.javascript.lang.JavaScriptLanguage;
 import consulo.javascript.module.extension.JavaScriptModuleExtension;
 import consulo.lang.LanguageVersion;
 import consulo.module.extension.ModuleInheritableNamedPointer;
@@ -85,7 +84,7 @@ public class Unity3dScriptModuleExtension extends ModuleExtensionImpl<Unity3dScr
 
 	@NotNull
 	@Override
-	public LanguageVersion<JavaScriptLanguage> getLanguageVersion()
+	public LanguageVersion getLanguageVersion()
 	{
 		return UnityScriptLanguageVersion.getInstance();
 	}
