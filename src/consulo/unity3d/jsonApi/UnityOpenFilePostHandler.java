@@ -71,112 +71,100 @@ public class UnityOpenFilePostHandler extends JsonPostRequestHandler<UnityOpenFi
 			return JsonResponse.asError("unsupported-content-type");
 		}
 
-		UIUtil.invokeLaterIfNeeded(new Runnable()
-		{
-			@Override
-			public void run()
+		UIUtil.invokeLaterIfNeeded(() -> {
+			VirtualFile projectVirtualFile = LocalFileSystem.getInstance().findFileByPath(body.projectPath);
+			if(projectVirtualFile != null)
 			{
-				VirtualFile projectVirtualFile = LocalFileSystem.getInstance().findFileByPath(body.projectPath);
-				if(projectVirtualFile != null)
+				Project openedProject = null;
+				Project[] openProjects = ProjectManager.getInstance().getOpenProjects();
+				for(Project openProject : openProjects)
 				{
-					Project openedProject = null;
-					Project[] openProjects = ProjectManager.getInstance().getOpenProjects();
-					for(Project openProject : openProjects)
+					if(projectVirtualFile.equals(openProject.getBaseDir()))
 					{
-						if(projectVirtualFile.equals(openProject.getBaseDir()))
-						{
-							openedProject = openProject;
-							break;
-						}
+						openedProject = openProject;
+						break;
 					}
+				}
 
-					if(openedProject == null)
+				if(openedProject == null)
+				{
+					if(!new File(projectVirtualFile.getPath(), Project.DIRECTORY_STORE_FOLDER).exists())
 					{
-						if(!new File(projectVirtualFile.getPath(), Project.DIRECTORY_STORE_FOLDER).exists())
+						String sdkPath = SystemInfo.isMac ? body.editorPath : new File(body.editorPath).getParentFile().getParentFile().getPath();
+
+						VirtualFile sdkFileHome = LocalFileSystem.getInstance().findFileByPath(sdkPath);
+						if(sdkFileHome == null)
 						{
-							String sdkPath = SystemInfo.isMac ? body.editorPath : new File(body.editorPath).getParentFile().getParentFile().getPath();
-
-							VirtualFile sdkFileHome = LocalFileSystem.getInstance().findFileByPath(sdkPath);
-							if(sdkFileHome == null)
-							{
-								RequestFocusHttpRequestHandler.activateFrame(WindowManager.getInstance().findVisibleFrame());
-								Messages.showErrorDialog("Unity path is not resolved: " + sdkPath, "Consulo");
-								return;
-							}
-
-							Sdk targetSdk = null;
-							List<Sdk> sdksOfType = SdkTable.getInstance().getSdksOfType(Unity3dBundleType.getInstance());
-							for(Sdk sdk : sdksOfType)
-							{
-								VirtualFile homeDirectory = sdk.getHomeDirectory();
-								if(sdkFileHome.equals(homeDirectory))
-								{
-									targetSdk = sdk;
-									break;
-								}
-							}
-
-							if(targetSdk == null)
-							{
-								targetSdk = SdkConfigurationUtil.createAndAddSDK(sdkPath, Unity3dBundleType.getInstance(), false);
-							}
-
-							if(targetSdk == null)
-							{
-								RequestFocusHttpRequestHandler.activateFrame(WindowManager.getInstance().findVisibleFrame());
-								Messages.showErrorDialog("Unity SDK cant add by path: " + sdkPath, "Consulo");
-								return;
-							}
-
-							Unity3dProjectImportProvider importProvider = new Unity3dProjectImportProvider();
-							Unity3dProjectImportBuilder builder = (Unity3dProjectImportBuilder) importProvider.getBuilder();
-							builder.setUnitySdk(targetSdk);
-
-							AddModuleWizard wizard = ImportModuleAction.createImportWizard(null, null, projectVirtualFile, importProvider);
-							if(wizard == null)
-							{
-								return;
-							}
-
-							List<Module> fromWizard = ImportModuleAction.createFromWizard(null, wizard);
-							if(fromWizard.isEmpty())
-							{
-								return;
-							}
-
-							wizard.close(DialogWrapper.OK_EXIT_CODE);
-
-							final Project temp = fromWizard.get(0).getProject();
-							activateFrame(temp, body);
-							StartupManager.getInstance(temp).registerPostStartupActivity(new Runnable()
-							{
-								@Override
-								public void run()
-								{
-									openFile(temp, body);
-								}
-							});
+							RequestFocusHttpRequestHandler.activateFrame(WindowManager.getInstance().findVisibleFrame());
+							Messages.showErrorDialog("Unity path is not resolved: " + sdkPath, "Consulo");
+							return;
 						}
-						else
+
+						Sdk targetSdk = null;
+						List<Sdk> sdksOfType = SdkTable.getInstance().getSdksOfType(Unity3dBundleType.getInstance());
+						for(Sdk sdk : sdksOfType)
 						{
-							try
+							VirtualFile homeDirectory = sdk.getHomeDirectory();
+							if(sdkFileHome.equals(homeDirectory))
 							{
-								openedProject = ProjectManager.getInstance().loadAndOpenProject(projectVirtualFile.getPath());
+								targetSdk = sdk;
+								break;
 							}
-							catch(Exception e)
-							{
-								Messages.showErrorDialog("Fail to open project by path: " + projectVirtualFile.getPath(), "Consulo");
-							}
-
-							activateFrame(openedProject, body);
-							openFile(openedProject, body);
 						}
+
+						if(targetSdk == null)
+						{
+							targetSdk = SdkConfigurationUtil.createAndAddSDK(sdkPath, Unity3dBundleType.getInstance(), false);
+						}
+
+						if(targetSdk == null)
+						{
+							RequestFocusHttpRequestHandler.activateFrame(WindowManager.getInstance().findVisibleFrame());
+							Messages.showErrorDialog("Unity SDK cant add by path: " + sdkPath, "Consulo");
+							return;
+						}
+
+						Unity3dProjectImportProvider importProvider = new Unity3dProjectImportProvider();
+						Unity3dProjectImportBuilder builder = (Unity3dProjectImportBuilder) importProvider.getBuilder();
+						builder.setUnitySdk(targetSdk);
+
+						AddModuleWizard wizard = ImportModuleAction.createImportWizard(null, null, projectVirtualFile, importProvider);
+						if(wizard == null)
+						{
+							return;
+						}
+
+						List<Module> fromWizard = ImportModuleAction.createFromWizard(null, wizard);
+						if(fromWizard.isEmpty())
+						{
+							return;
+						}
+
+						wizard.close(DialogWrapper.OK_EXIT_CODE);
+
+						final Project temp = fromWizard.get(0).getProject();
+						activateFrame(temp, body);
+						StartupManager.getInstance(temp).registerPostStartupActivity(() -> openFile(temp, body));
 					}
 					else
 					{
+						try
+						{
+							openedProject = ProjectManager.getInstance().loadAndOpenProject(projectVirtualFile.getPath());
+						}
+						catch(Exception e)
+						{
+							Messages.showErrorDialog("Fail to open project by path: " + projectVirtualFile.getPath(), "Consulo");
+						}
+
 						activateFrame(openedProject, body);
 						openFile(openedProject, body);
 					}
+				}
+				else
+				{
+					activateFrame(openedProject, body);
+					openFile(openedProject, body);
 				}
 			}
 		});
