@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2014 must-be.org
+ * Copyright 2013-2016 consulo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 package consulo.unity3d.csharp.completion;
 
-import java.util.Collection;
 import java.util.Map;
 
 import org.jetbrains.annotations.NotNull;
@@ -46,7 +45,6 @@ import consulo.dotnet.psi.DotNetVirtualImplementOwner;
 import consulo.dotnet.resolve.DotNetTypeRef;
 import consulo.ide.IconDescriptor;
 import consulo.unity3d.Unity3dIcons;
-import consulo.unity3d.Unity3dTypes;
 import consulo.unity3d.csharp.UnityFunctionManager;
 import consulo.unity3d.module.Unity3dModuleExtension;
 
@@ -69,21 +67,25 @@ public class UnitySpecificMethodCompletion extends CSharpMemberAddByCompletionCo
 			return;
 		}
 
-		if(!DotNetInheritUtil.isParent(Unity3dTypes.UnityEngine.MonoBehaviour, typeDeclaration, true))
+		for(Map.Entry<String, Map<String, UnityFunctionManager.FunctionInfo>> entry : UnityFunctionManager.getInstance().getFunctionsByType().entrySet())
 		{
-			return;
-		}
+			String typeName = entry.getKey();
 
-		Collection<UnityFunctionManager.FunctionInfo> functionInfos = UnityFunctionManager.getInstance().getFunctionInfos();
-		for(UnityFunctionManager.FunctionInfo functionInfo : functionInfos)
-		{
-			UnityFunctionManager.FunctionInfo nonParameterListCopy = functionInfo.createNonParameterListCopy();
-			if(nonParameterListCopy != null)
+			if(!DotNetInheritUtil.isParent(typeName, typeDeclaration, true))
 			{
-				completionResultSet.consume(buildLookupItem(nonParameterListCopy, typeDeclaration));
+				continue;
 			}
 
-			completionResultSet.consume(buildLookupItem(functionInfo, typeDeclaration));
+			for(UnityFunctionManager.FunctionInfo functionInfo : entry.getValue().values())
+			{
+				UnityFunctionManager.FunctionInfo nonParameterListCopy = functionInfo.createNonParameterListCopy();
+				if(nonParameterListCopy != null)
+				{
+					completionResultSet.consume(buildLookupItem(nonParameterListCopy, typeDeclaration));
+				}
+
+				completionResultSet.consume(buildLookupItem(functionInfo, typeDeclaration));
+			}
 		}
 	}
 

@@ -1,3 +1,19 @@
+/*
+ * Copyright 2013-2016 consulo.io
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package consulo.unity3d.unityscript.lang.impl;
 
 import java.util.Collection;
@@ -6,6 +22,7 @@ import java.util.Collections;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import com.intellij.lang.javascript.psi.JSFile;
+import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.containers.ContainerUtil;
@@ -46,6 +63,11 @@ public class UnityScriptPsiSearcher extends DotNetPsiSearcher
 	@Override
 	public Collection<? extends DotNetTypeDeclaration> findTypesImpl(@NotNull String key, @NotNull GlobalSearchScope searchScope)
 	{
+		if(DumbService.isDumb(myProject))
+		{
+			return Collections.emptyList();
+		}
+
 		Collection<JSFile> jsFiles = UnityScriptFileByNameIndex.getInstance().get(key, myProject, searchScope);
 		JSFile jsFile = ContainerUtil.getFirstItem(jsFiles);
 		if(jsFile == null)

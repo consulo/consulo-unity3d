@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2014 must-be.org
+ * Copyright 2013-2016 consulo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -98,7 +98,7 @@ public class UnityFunctionManager
 		}
 	}
 
-	private Map<String, FunctionInfo> myFunctions = new THashMap<String, FunctionInfo>();
+	private Map<String, Map<String, FunctionInfo>> myFunctionsByType = new THashMap<>();
 
 	@Lazy
 	@NotNull
@@ -112,22 +112,23 @@ public class UnityFunctionManager
 		try
 		{
 			Document document = JDOMUtil.loadDocument(UnityFunctionManager.class.getResourceAsStream("/functions.xml"));
-			for(Element element : document.getRootElement().getChildren())
+			for(Element typeElement : document.getRootElement().getChildren())
 			{
-				FunctionInfo functionInfo = new FunctionInfo(element);
-				myFunctions.put(functionInfo.myName, functionInfo);
+				String typeName = typeElement.getAttributeValue("name");
+				Map<String, FunctionInfo> value = new THashMap<>();
+				myFunctionsByType.put(typeName, value);
+				for(Element element : typeElement.getChildren())
+				{
+					FunctionInfo functionInfo = new FunctionInfo(element);
+					value.put(functionInfo.myName, functionInfo);
+				}
 			}
 		}
-		catch(JDOMException e)
+		catch(JDOMException | IOException e)
 		{
-			UnityFunctionManager.LOGGER.error(e);
-		}
-		catch(IOException e)
-		{
-			UnityFunctionManager.LOGGER.error(e);
+			LOGGER.error(e);
 		}
 	}
-
 
 	@NotNull
 	@RequiredReadAction
@@ -150,13 +151,8 @@ public class UnityFunctionManager
 	}
 
 	@NotNull
-	public Collection<FunctionInfo> getFunctionInfos()
+	public Map<String, Map<String, FunctionInfo>> getFunctionsByType()
 	{
-		return myFunctions.values();
-	}
-
-	public FunctionInfo getFunctionInfo(String name)
-	{
-		return myFunctions.get(name);
+		return myFunctionsByType;
 	}
 }
