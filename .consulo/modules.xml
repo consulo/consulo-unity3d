@@ -4,8 +4,8 @@
     <modules>
       <module name="consulo-unity3d" dirurl="file://$PROJECT_DIR$" current-layer="Default">
         <module-layer name="Default">
-          <extension id="consulo-plugin" sdk-module-name="" sdk-name="Consulo SNAPSHOT" />
-          <extension id="java" sdk-module-name="" sdk-name="1.8" language-level-module-name="" language-level-name="JDK_1_8" special-dir-location="SOURCE_DIR" bytecode-version="1.8" />
+          <extension id="consulo-plugin" sdk-name="Consulo SNAPSHOT" />
+          <extension id="java" sdk-name="1.8" language-level-name="JDK_1_8" bytecode-version="1.8" />
           <extension id="lombok" />
           <content url="file://$MODULE_DIR$">
             <content-folder type="PRODUCTION_RESOURCE" url="file://$MODULE_DIR$/resources" />
@@ -36,8 +36,8 @@
       </module>
       <module name="shaderlab" dirurl="file://$PROJECT_DIR$/shaderlab" current-layer="Default">
         <module-layer name="Default">
-          <extension id="consulo-plugin" sdk-module-name="consulo-unity3d" sdk-name="" />
-          <extension id="java" sdk-module-name="consulo-unity3d" sdk-name="" language-level-module-name="consulo-unity3d" language-level-name="" special-dir-location="SOURCE_DIR" bytecode-version="1.8" />
+          <extension id="consulo-plugin" sdk-module-name="consulo-unity3d" />
+          <extension id="java" sdk-module-name="consulo-unity3d" language-level-module-name="consulo-unity3d" bytecode-version="1.8" />
           <content url="file://$MODULE_DIR$">
             <content-folder type="PRODUCTION" url="file://$MODULE_DIR$/src" />
           </content>
@@ -52,8 +52,8 @@
       </module>
       <module name="cg-shader" dirurl="file://$PROJECT_DIR$/cg-shader" current-layer="Default">
         <module-layer name="Default">
-          <extension id="consulo-plugin" sdk-module-name="consulo-unity3d" sdk-name="" />
-          <extension id="java" sdk-module-name="consulo-unity3d" sdk-name="" language-level-module-name="consulo-unity3d" language-level-name="" special-dir-location="SOURCE_DIR" bytecode-version="1.8" />
+          <extension id="consulo-plugin" sdk-module-name="consulo-unity3d" />
+          <extension id="java" sdk-module-name="consulo-unity3d" language-level-module-name="consulo-unity3d" bytecode-version="1.8" />
           <content url="file://$MODULE_DIR$">
             <content-folder type="PRODUCTION" url="file://$MODULE_DIR$/src" />
           </content>
