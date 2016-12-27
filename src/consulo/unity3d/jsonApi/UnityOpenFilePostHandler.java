@@ -192,7 +192,7 @@ public class UnityOpenFilePostHandler extends JsonPostRequestHandler<UnityOpenFi
 		VirtualFile fileByPath = LocalFileSystem.getInstance().findFileByPath(body.filePath);
 		if(fileByPath != null)
 		{
-			OpenFileDescriptor descriptor = new OpenFileDescriptor(openedProject, fileByPath, body.line, -1);
+			OpenFileDescriptor descriptor = new OpenFileDescriptor(openedProject, fileByPath, body.line - 1, -1);
 			FileEditorManager.getInstance(openedProject).openTextEditor(descriptor, true);
 		}
 	}
