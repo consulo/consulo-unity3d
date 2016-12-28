@@ -192,7 +192,7 @@ public class UnityOpenFilePostHandler extends JsonPostRequestHandler<UnityOpenFi
 			ID id = MacUtil.findWindowFromJavaWindow((Window) ideFrame);
 			if(id != null)
 			{
-				Foundation.invoke(id, "makeKeyAndOrderFront", new Object[]{null});
+				Foundation.invoke(id, "makeKeyAndOrderFront", ID.NIL);
 			}
 		}
 		else if(SystemInfo.isWindows)
