@@ -41,6 +41,9 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.IdeFrame;
 import com.intellij.openapi.wm.WindowManager;
+import com.intellij.ui.mac.foundation.Foundation;
+import com.intellij.ui.mac.foundation.ID;
+import com.intellij.ui.mac.foundation.MacUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.UIUtil;
 import com.sun.jna.Native;
@@ -187,11 +190,11 @@ public class UnityOpenFilePostHandler extends JsonPostRequestHandler<UnityOpenFi
 		if(SystemInfo.isMac)
 		{
 			RequestFocusHttpRequestHandler.activateFrame(ideFrame);
-			/*ID id = MacUtil.findWindowFromJavaWindow((Window) ideFrame);
+			ID id = MacUtil.findWindowFromJavaWindow((Window) ideFrame);
 			if(id != null)
 			{
-				Foundation.invoke(id, "orderFront", ID.NIL);
-			} */
+				Foundation.invoke(id, "orderFront:", ID.NIL);
+			}
 		}
 		else if(SystemInfo.isWindows)
 		{
