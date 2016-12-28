@@ -16,6 +16,7 @@
 
 package consulo.unity3d.jsonApi;
 
+import java.awt.Window;
 import java.io.File;
 import java.util.List;
 import java.util.Set;
@@ -40,8 +41,15 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.IdeFrame;
 import com.intellij.openapi.wm.WindowManager;
+import com.intellij.ui.mac.foundation.Foundation;
+import com.intellij.ui.mac.foundation.ID;
+import com.intellij.ui.mac.foundation.MacUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.UIUtil;
+import com.sun.jna.Native;
+import com.sun.jna.Pointer;
+import com.sun.jna.platform.win32.User32;
+import com.sun.jna.platform.win32.WinDef;
 import consulo.buildInWebServer.api.JsonPostRequestHandler;
 import consulo.buildInWebServer.api.RequestFocusHttpRequestHandler;
 import consulo.unity3d.bundle.Unity3dBundleType;
@@ -179,7 +187,23 @@ public class UnityOpenFilePostHandler extends JsonPostRequestHandler<UnityOpenFi
 		}
 
 		IdeFrame ideFrame = WindowManager.getInstance().getIdeFrame(openedProject);
-		RequestFocusHttpRequestHandler.activateFrame(ideFrame);
+		if(SystemInfo.isMac)
+		{
+			ID id = MacUtil.findWindowFromJavaWindow((Window) ideFrame);
+			if(id != null)
+			{
+				Foundation.invoke(id, "makeKeyAndOrderFront", new Object[]{null});
+			}
+		}
+		else if(SystemInfo.isWindows)
+		{
+			Pointer windowPointer = Native.getWindowPointer((Window) ideFrame);
+			User32.INSTANCE.SetForegroundWindow(new WinDef.HWND(windowPointer));
+		}
+		else
+		{
+			RequestFocusHttpRequestHandler.activateFrame(ideFrame);
+		}
 	}
 
 	private void openFile(@Nullable Project openedProject, @NotNull UnityOpenFilePostHandlerRequest body)
