@@ -64,7 +64,7 @@
 	<project-components>
 		<component>
 			<implementation-class>consulo.unity3d.UnityPluginFileValidator</implementation-class>
-			<skipForDefaultProject />
+			<skipForDefaultProject/>
 		</component>
 	</project-components>
 
@@ -89,8 +89,8 @@
 	<extensions defaultExtensionNs="com.intellij">
 		<stubIndex implementation="consulo.unity3d.unityscript.index.UnityScriptFileByNameIndex"/>
 		<xdebugger.lineBreakpointTypeResolver filetype="JavaScript"
-										  implementationClass="consulo.unity3d.unityscript.debugger.UnityScriptLineBreakpointTypeResolver"
-										  order="before javascript"/>
+											  implementationClass="consulo.unity3d.unityscript.debugger.UnityScriptLineBreakpointTypeResolver"
+											  order="before javascript"/>
 		<completion.contributor language="C#" implementationClass="consulo.unity3d.csharp.completion.UnitySpecificMethodCompletion"/>
 		<codeInsight.lineMarkerProvider language="C#"
 										implementationClass="consulo.unity3d.csharp.codeInsight.UnityCSharpLineMarkerProvider"/>
@@ -168,7 +168,7 @@
 		<possibleModuleForFileResolver implementation="consulo.unity3d.projectImport.Unity3dPossibleModuleForFileResolver"/>
 		<fileTypeDetector implementation="consulo.unity3d.scene.Unity3dAssetFileTypeDetector"/>
 		<fileBasedIndex implementation="consulo.unity3d.scene.index.Unity3dYMLAssetIndexExtension"/>
-		<projectService serviceImplementation="consulo.unity3d.UnityConsoleService" />
+		<projectService serviceImplementation="consulo.unity3d.UnityConsoleService"/>
 
 		<httpRequestHandler implementation="consulo.unity3d.jsonApi.UnityOpenFilePostHandler"/>
 		<httpRequestHandler implementation="consulo.unity3d.jsonApi.UnityLogPostHandler"/>
@@ -178,5 +178,7 @@
 		<httpRequestHandler implementation="consulo.unity3d.jsonApi.UnitySetDefinesHandler"/>
 
 		<editorNotificationProvider implementation="consulo.unity3d.scene.prefab.Unity3dPrefabEditorNotificationProvider"/>
+
+		<psi.referenceContributor language="C#" implementation="consulo.unity3d.csharp.psi.reference.Unity3dEventMethodReferenceProvider" />
 	</extensions>
 </idea-plugin>
