@@ -35,6 +35,7 @@ import com.intellij.execution.runners.ExecutionUtil;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.DumbAwareAction;
@@ -46,7 +47,6 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.xdebugger.impl.settings.XDebuggerSettingManagerImpl;
 import consulo.annotations.RequiredDispatchThread;
-import consulo.lombok.annotations.Logger;
 import consulo.unity3d.Unity3dIcons;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import consulo.unity3d.run.Unity3dAttachApplicationType;
@@ -60,9 +60,10 @@ import consulo.unity3d.run.debugger.UnityProcessDialog;
  * @author VISTALL
  * @since 17.04.2015
  */
-@Logger
 public class Unity3dAttachAction extends DumbAwareAction
 {
+	private static final Logger LOGGER = Logger.getInstance(Unity3dAttachAction.class);
+
 	private AtomicBoolean myBusyState = new AtomicBoolean();
 
 	public Unity3dAttachAction()

@@ -30,13 +30,13 @@ import org.apache.http.util.EntityUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import com.google.gson.Gson;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.CharsetToolkit;
 import com.jezhumble.javasysmon.JavaSysMon;
 import com.jezhumble.javasysmon.ProcessInfo;
-import consulo.lombok.annotations.Logger;
 import consulo.unity3d.run.debugger.UnityProcess;
 import consulo.unity3d.run.debugger.UnityProcessDialog;
 
@@ -44,9 +44,10 @@ import consulo.unity3d.run.debugger.UnityProcessDialog;
  * @author VISTALL
  * @since 17.01.2016
  */
-@Logger
 public class UnityEditorCommunication
 {
+	private static final Logger LOGGER = Logger.getInstance(UnityEditorCommunication.class);
+
 	@Nullable
 	public static UnityProcess findEditorProcess()
 	{

@@ -19,7 +19,6 @@ package consulo.unity3d.shaderlab.lang.psi.stub.index;
 import org.jetbrains.annotations.NotNull;
 import com.intellij.psi.stubs.StringStubIndexExtension;
 import com.intellij.psi.stubs.StubIndexKey;
-import consulo.lombok.annotations.Lazy;
 import consulo.unity3d.shaderlab.lang.psi.ShaderDef;
 
 /**
@@ -29,7 +28,6 @@ import consulo.unity3d.shaderlab.lang.psi.ShaderDef;
 public class ShaderDefIndex extends StringStubIndexExtension<ShaderDef>
 {
 	@NotNull
-	@Lazy
 	public static ShaderDefIndex getInstance()
 	{
 		return EP_NAME.findExtension(ShaderDefIndex.class);

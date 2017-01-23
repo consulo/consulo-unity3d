@@ -24,19 +24,20 @@ import java.util.Map;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.yaml.snakeyaml.Yaml;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.containers.ContainerUtil;
-import consulo.lombok.annotations.Logger;
 import consulo.unity3d.Unity3dMetaFileType;
 
 /**
  * @author VISTALL
  * @since 10.03.2016
  */
-@Logger
 public class Unity3dAssetUtil
 {
+	private static final Logger LOGGER = Logger.getInstance(Unity3dAssetUtil.class);
+
 	@NotNull
 	public static VirtualFile[] sortAssetFiles(VirtualFile[] virtualFiles)
 	{

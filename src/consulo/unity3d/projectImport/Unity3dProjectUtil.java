@@ -33,6 +33,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ApplicationNamesInfo;
 import com.intellij.openapi.application.Result;
 import com.intellij.openapi.application.WriteAction;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.module.ModifiableModuleModel;
 import com.intellij.openapi.module.Module;
@@ -72,7 +73,6 @@ import consulo.csharp.module.extension.CSharpLanguageVersion;
 import consulo.csharp.module.extension.CSharpSimpleMutableModuleExtension;
 import consulo.dotnet.dll.DotNetModuleFileType;
 import consulo.dotnet.roots.orderEntry.DotNetLibraryOrderEntryImpl;
-import consulo.lombok.annotations.Logger;
 import consulo.module.extension.MutableModuleExtension;
 import consulo.roots.impl.ExcludedContentFolderTypeProvider;
 import consulo.roots.impl.ModuleRootLayerImpl;
@@ -98,9 +98,10 @@ import consulo.vfs.util.ArchiveVfsUtil;
  * @author VISTALL
  * @since 03.04.2015
  */
-@Logger
 public class Unity3dProjectUtil
 {
+	private static final Logger LOGGER = Logger.getInstance(Unity3dProjectUtil.class);
+
 	public static final String ASSETS_DIRECTORY = "Assets";
 	public static final Key<Getter<Sdk>> NEWLY_IMPORTED_PROJECT_SDK = Key.create("unity.new.project");
 

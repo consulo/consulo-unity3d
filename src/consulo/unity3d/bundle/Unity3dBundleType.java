@@ -28,19 +28,20 @@ import com.dd.plist.NSDictionary;
 import com.dd.plist.NSObject;
 import com.dd.plist.NSString;
 import com.dd.plist.PropertyListParser;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.projectRoots.SdkType;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.util.SmartList;
-import consulo.lombok.annotations.Logger;
 import consulo.unity3d.Unity3dIcons;
 
 /**
  * @author VISTALL
  * @since 28.09.14
  */
-@Logger
 public class Unity3dBundleType extends SdkType
 {
+	private static final Logger LOGGER = Logger.getInstance(Unity3dBundleType.class);
+
 	public static final String UNKNOWN_VERSION = "0.0.0";
 
 	@Nullable

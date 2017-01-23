@@ -25,7 +25,6 @@ import com.intellij.lexer.Lexer;
 import consulo.javascript.lang.BaseJavaScriptLanguageVersion;
 import consulo.javascript.lang.JavaScriptLanguage;
 import consulo.javascript.lang.parsing.EcmaScript4Parser;
-import consulo.lombok.annotations.Lazy;
 
 /**
  * @author VISTALL
@@ -34,7 +33,6 @@ import consulo.lombok.annotations.Lazy;
 public class UnityScriptLanguageVersion extends BaseJavaScriptLanguageVersion
 {
 	@NotNull
-	@Lazy
 	public static UnityScriptLanguageVersion getInstance()
 	{
 		return JavaScriptLanguage.INSTANCE.findVersionByClass(UnityScriptLanguageVersion.class);

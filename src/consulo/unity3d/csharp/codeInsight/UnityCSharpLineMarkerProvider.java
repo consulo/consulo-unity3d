@@ -33,6 +33,7 @@ import com.intellij.codeInsight.daemon.LineMarkerInfo;
 import com.intellij.codeInsight.daemon.LineMarkerProvider;
 import com.intellij.codeInsight.daemon.impl.PsiElementListNavigator;
 import com.intellij.ide.util.DefaultPsiElementCellRenderer;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.util.text.StringUtil;
@@ -58,7 +59,6 @@ import consulo.dotnet.psi.DotNetParameter;
 import consulo.dotnet.psi.DotNetParameterListOwner;
 import consulo.dotnet.psi.DotNetTypeDeclaration;
 import consulo.dotnet.resolve.DotNetTypeRef;
-import consulo.lombok.annotations.Logger;
 import consulo.unity3d.Unity3dIcons;
 import consulo.unity3d.csharp.UnityFunctionManager;
 import consulo.unity3d.editor.UnitySceneFile;
@@ -70,9 +70,10 @@ import consulo.unity3d.scene.index.Unity3dYMLAssetIndexExtension;
  * @author VISTALL
  * @since 19.12.14
  */
-@Logger
 public class UnityCSharpLineMarkerProvider implements LineMarkerProvider
 {
+	private static final Logger LOGGER = Logger.getInstance(UnityCSharpLineMarkerProvider.class);
+
 	@RequiredReadAction
 	@Nullable
 	@Override

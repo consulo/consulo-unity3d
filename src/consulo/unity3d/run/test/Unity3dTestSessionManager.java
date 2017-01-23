@@ -20,18 +20,24 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.testframework.sm.runner.GeneralTestEventsProcessor;
-import consulo.lombok.annotations.ApplicationService;
+import com.intellij.openapi.components.ServiceManager;
 
 /**
  * @author VISTALL
  * @since 18.01.2016
  */
-@ApplicationService
 public class Unity3dTestSessionManager
 {
+	@NotNull
+	public static Unity3dTestSessionManager getInstance()
+	{
+		return ServiceManager.getService(Unity3dTestSessionManager.class);
+	}
+
 	private Map<UUID, Unity3dTestSession> mySessions = new ConcurrentHashMap<UUID, Unity3dTestSession>();
 
 	public UUID newSession(ProcessHandler processHandler, GeneralTestEventsProcessor processor)

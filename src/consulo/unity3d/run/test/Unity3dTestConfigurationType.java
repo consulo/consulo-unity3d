@@ -24,7 +24,6 @@ import com.intellij.icons.AllIcons;
 import com.intellij.openapi.project.Project;
 import consulo.annotations.RequiredReadAction;
 import consulo.ide.IconDescriptor;
-import consulo.lombok.annotations.Lazy;
 import consulo.unity3d.Unity3dIcons;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 
@@ -35,7 +34,6 @@ import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 public class Unity3dTestConfigurationType extends ConfigurationTypeBase
 {
 	@NotNull
-	@Lazy
 	public static Unity3dTestConfigurationType getInstance()
 	{
 		return CONFIGURATION_TYPE_EP.findExtension(Unity3dTestConfigurationType.class);

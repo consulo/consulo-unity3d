@@ -37,18 +37,19 @@ import java.util.concurrent.TimeUnit;
 import org.jetbrains.annotations.NotNull;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ApplicationComponent;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.util.EventDispatcher;
 import com.intellij.util.ExceptionUtil;
-import consulo.lombok.annotations.Logger;
 
 /**
  * @author VISTALL
  * @since 10.11.14
  */
-@Logger
 public class UnityPlayerService implements ApplicationComponent
 {
+	private static final Logger LOGGER = Logger.getInstance(UnityPlayerService.class);
+
 	public interface UpdateListener extends EventListener
 	{
 		void update(@NotNull List<UnityPlayer> unityPlayers);

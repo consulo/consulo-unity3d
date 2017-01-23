@@ -22,19 +22,20 @@ import java.io.IOException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import com.intellij.openapi.components.ApplicationComponent;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.vfs.LocalFileOperationsHandler;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ThrowableConsumer;
-import consulo.lombok.annotations.Logger;
 
 /**
  * @author VISTALL
  * @since 17.12.2015
  */
-@Logger
 public class Unity3dLocalFileSystemComponent implements ApplicationComponent
 {
+	private static final Logger LOGGER = Logger.getInstance(Unity3dLocalFileSystemComponent.class);
+
 	private static final String META_SUFFIX = ".meta";
 
 	private LocalFileOperationsHandler myHandler = new LocalFileOperationsHandler()

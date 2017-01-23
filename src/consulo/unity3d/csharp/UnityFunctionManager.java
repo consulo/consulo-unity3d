@@ -19,7 +19,6 @@ package consulo.unity3d.csharp;
 import gnu.trove.THashMap;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -27,20 +26,18 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.NotNull;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.psi.PsiElement;
 import consulo.annotations.RequiredReadAction;
 import consulo.csharp.lang.psi.impl.source.resolve.type.CSharpArrayTypeRef;
 import consulo.csharp.lang.psi.impl.source.resolve.type.CSharpTypeRefByQName;
 import consulo.dotnet.resolve.DotNetTypeRef;
-import consulo.lombok.annotations.Lazy;
-import consulo.lombok.annotations.Logger;
 
 /**
  * @author VISTALL
  * @since 19.12.14
  */
-@Logger
 public class UnityFunctionManager
 {
 	public static class FunctionInfo
@@ -98,13 +95,16 @@ public class UnityFunctionManager
 		}
 	}
 
+	private static final Logger LOGGER = Logger.getInstance(UnityFunctionManager.class);
+
 	private Map<String, Map<String, FunctionInfo>> myFunctionsByType = new THashMap<>();
 
-	@Lazy
+	private static UnityFunctionManager ourInstance = new UnityFunctionManager();
+
 	@NotNull
 	public static UnityFunctionManager getInstance()
 	{
-		return new UnityFunctionManager();
+		return ourInstance;
 	}
 
 	public UnityFunctionManager()

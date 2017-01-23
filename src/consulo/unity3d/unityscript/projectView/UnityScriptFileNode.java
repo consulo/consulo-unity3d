@@ -20,21 +20,22 @@ import org.jetbrains.annotations.NotNull;
 import com.intellij.ide.projectView.PresentationData;
 import com.intellij.ide.projectView.ViewSettings;
 import com.intellij.ide.projectView.impl.nodes.PsiFileNode;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Iconable;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import consulo.ide.IconDescriptorUpdaters;
-import consulo.lombok.annotations.Logger;
 
 /**
  * @author VISTALL
  * @since 19.07.2015
  */
-@Logger
 public class UnityScriptFileNode extends PsiFileNode
 {
+	private static final Logger LOGGER = Logger.getInstance(UnityScriptFileNode.class);
+
 	public UnityScriptFileNode(Project project, @NotNull PsiFile value, ViewSettings viewSettings)
 	{
 		super(project, value, viewSettings);
@@ -49,7 +50,7 @@ public class UnityScriptFileNode extends PsiFileNode
 		}
 
 		final PsiElement value = extractPsiFromValue();
-		UnityScriptFileNode.LOGGER.assertTrue(value.isValid());
+		LOGGER.assertTrue(value.isValid());
 
 		data.setIcon(IconDescriptorUpdaters.getIcon(getValue(), Iconable.ICON_FLAG_VISIBILITY));
 		data.setPresentableText(FileUtil.getNameWithoutExtension(getValue().getName()));

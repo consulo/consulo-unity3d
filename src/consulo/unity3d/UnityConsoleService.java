@@ -25,6 +25,7 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.actionSystem.ToggleAction;
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.util.Condition;
@@ -40,15 +41,19 @@ import com.intellij.ui.content.MessageView;
 import com.intellij.util.PairConsumer;
 import com.intellij.util.containers.ContainerUtil;
 import consulo.annotations.RequiredDispatchThread;
-import consulo.lombok.annotations.ProjectService;
 
 /**
  * @author VISTALL
  * @since 09-Jun-16
  */
-@ProjectService
 public class UnityConsoleService
 {
+	@NotNull
+	public static UnityConsoleService getInstance(@NotNull Project project)
+	{
+		return ServiceManager.getService(project, UnityConsoleService.class);
+	}
+
 	@RequiredDispatchThread
 	public static void byPath(@NotNull String projectPath, @NotNull PairConsumer<Project, NewErrorTreeViewPanel> consumer)
 	{

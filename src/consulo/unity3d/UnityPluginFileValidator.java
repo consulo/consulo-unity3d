@@ -34,6 +34,7 @@ import com.intellij.notification.NotificationType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.components.AbstractProjectComponent;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -54,7 +55,6 @@ import com.intellij.util.PathUtil;
 import consulo.annotations.RequiredReadAction;
 import consulo.annotations.RequiredWriteAction;
 import consulo.dotnet.dll.DotNetModuleFileType;
-import consulo.lombok.annotations.Logger;
 import consulo.roots.ModifiableModuleRootLayer;
 import consulo.roots.ModuleRootLayer;
 import consulo.roots.types.BinariesOrderRootType;
@@ -68,9 +68,10 @@ import consulo.vfs.util.ArchiveVfsUtil;
  * @author VISTALL
  * @since 26-Jul-16
  */
-@Logger
 public class UnityPluginFileValidator extends AbstractProjectComponent
 {
+	private static final Logger LOGGER = Logger.getInstance(UnityPluginFileValidator.class);
+
 	private static final String ourPath = "Assets/Editor/Plugins";
 	private static final NotificationGroup ourGroup = new NotificationGroup("consulo.unity", NotificationDisplayType.STICKY_BALLOON, true);
 
