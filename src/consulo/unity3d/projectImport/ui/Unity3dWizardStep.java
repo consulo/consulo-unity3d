@@ -17,15 +17,15 @@
 package consulo.unity3d.projectImport.ui;
 
 import java.awt.GridBagConstraints;
-import java.awt.Insets;
 
 import com.intellij.ide.util.newProjectWizard.ProjectNameStep;
 import com.intellij.ide.util.projectWizard.WizardContext;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBLabel;
+import com.intellij.util.ui.JBUI;
 import consulo.unity3d.Unity3dBundle;
-import consulo.unity3d.projectImport.Unity3dProjectImportBuilder;
 import consulo.unity3d.projectImport.Unity3dProjectUtil;
+import consulo.unity3d.projectImport.UnityModuleImportContext;
 
 /**
  * @author VISTALL
@@ -34,22 +34,23 @@ import consulo.unity3d.projectImport.Unity3dProjectUtil;
 public class Unity3dWizardStep extends ProjectNameStep
 {
 	private Unity3dSdkPanel mySdkPanel;
+	private UnityModuleImportContext myContext;
 
-	public Unity3dWizardStep(WizardContext context)
+	public Unity3dWizardStep(UnityModuleImportContext context, WizardContext wizardContext)
 	{
-		super(context, null);
+		super(wizardContext);
+		myContext = context;
 
-		String version = Unity3dProjectUtil.loadVersionFromProject(context.getProjectFileDirectory());
+		String version = Unity3dProjectUtil.loadVersionFromProject(wizardContext.getProjectFileDirectory());
 		mySdkPanel = new Unity3dSdkPanel(version);
-		myAdditionalContentPanel.add(mySdkPanel, new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 1, 1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0,
+		myAdditionalContentPanel.add(mySdkPanel, new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 1, 1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, JBUI.emptyInsets(), 0,
 				0));
 
 		if(version != null)
 		{
 			JBLabel versionLabel = new JBLabel(Unity3dBundle.message("required.unity.version.is.0", version));
 			versionLabel.setForeground(JBColor.GRAY);
-			myAdditionalContentPanel.add(versionLabel, new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 1, 1, GridBagConstraints.NORTHEAST, GridBagConstraints.BOTH, new Insets(0, 0, 0,
-					0), 0, 0));
+			myAdditionalContentPanel.add(versionLabel, new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 1, 1, GridBagConstraints.NORTHEAST, GridBagConstraints.BOTH, JBUI.emptyInsets(), 0, 0));
 		}
 	}
 
@@ -58,8 +59,6 @@ public class Unity3dWizardStep extends ProjectNameStep
 	{
 		super.updateDataModel();
 
-		Unity3dProjectImportBuilder projectBuilder = (Unity3dProjectImportBuilder) myWizardContext.getProjectBuilder();
-		assert projectBuilder != null;
-		projectBuilder.setUnitySdk(mySdkPanel.getSdk());
+		myContext.setSdk(mySdkPanel.getSdk());
 	}
 }

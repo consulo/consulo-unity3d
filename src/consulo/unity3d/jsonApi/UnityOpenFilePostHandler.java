@@ -18,6 +18,7 @@ package consulo.unity3d.jsonApi;
 
 import java.awt.Window;
 import java.io.File;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -33,7 +34,6 @@ import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkTable;
 import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil;
-import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.SystemInfo;
@@ -53,8 +53,8 @@ import com.sun.jna.platform.win32.WinDef;
 import consulo.buildInWebServer.api.JsonPostRequestHandler;
 import consulo.buildInWebServer.api.RequestFocusHttpRequestHandler;
 import consulo.unity3d.bundle.Unity3dBundleType;
-import consulo.unity3d.projectImport.Unity3dProjectImportBuilder;
-import consulo.unity3d.projectImport.Unity3dProjectImportProvider;
+import consulo.unity3d.projectImport.Unity3dModuleImportProvider;
+import consulo.unity3d.projectImport.UnityModuleImportContext;
 
 /**
  * @author VISTALL
@@ -132,15 +132,17 @@ public class UnityOpenFilePostHandler extends JsonPostRequestHandler<UnityOpenFi
 							return;
 						}
 
-						Unity3dProjectImportProvider importProvider = new Unity3dProjectImportProvider();
-						Unity3dProjectImportBuilder builder = (Unity3dProjectImportBuilder) importProvider.getBuilder();
-						builder.setUnitySdk(targetSdk);
+						Unity3dModuleImportProvider importProvider = new Unity3dModuleImportProvider();
 
-						AddModuleWizard wizard = ImportModuleAction.createImportWizard(null, null, projectVirtualFile, importProvider);
+						AddModuleWizard wizard = ImportModuleAction.createImportWizard(null, null, projectVirtualFile, Collections.singletonList(importProvider));
 						if(wizard == null)
 						{
 							return;
 						}
+
+						UnityModuleImportContext importContext = (UnityModuleImportContext) wizard.getWizardContext().getModuleImportContext(importProvider);
+						importContext.setSdk(targetSdk);
+						importContext.setRequestor(body);
 
 						List<Module> fromWizard = ImportModuleAction.createFromWizard(null, wizard);
 						if(fromWizard.isEmpty())
@@ -152,7 +154,6 @@ public class UnityOpenFilePostHandler extends JsonPostRequestHandler<UnityOpenFi
 
 						final Project temp = fromWizard.get(0).getProject();
 						activateFrame(temp, body);
-						StartupManager.getInstance(temp).registerPostStartupActivity(() -> openFile(temp, body));
 					}
 					else
 					{
@@ -207,7 +208,7 @@ public class UnityOpenFilePostHandler extends JsonPostRequestHandler<UnityOpenFi
 		}
 	}
 
-	private void openFile(@Nullable Project openedProject, @NotNull UnityOpenFilePostHandlerRequest body)
+	public static void openFile(@Nullable Project openedProject, @NotNull UnityOpenFilePostHandlerRequest body)
 	{
 		if(openedProject == null)
 		{

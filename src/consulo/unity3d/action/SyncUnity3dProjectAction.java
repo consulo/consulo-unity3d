@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
+import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import consulo.annotations.RequiredDispatchThread;
@@ -54,28 +55,31 @@ public class SyncUnity3dProjectAction extends AnAction
 			return;
 		}
 
-		Unity3dProjectUtil.syncProject(project, rootModuleExtension.getSdk(), true);
+		Unity3dProjectUtil.syncProjectStep1(project, rootModuleExtension.getSdk(), null, true);
 	}
 
 	@RequiredDispatchThread
 	@Override
 	public void update(@NotNull AnActionEvent e)
 	{
-		if(!e.getPresentation().isVisible())
+		Presentation presentation = e.getPresentation();
+		Project project = e.getProject();
+		if(project == null || Unity3dModuleExtensionUtil.getRootModuleExtension(project) == null)
 		{
+			presentation.setEnabledAndVisible(false);
 			return;
 		}
 
-		Project project = e.getProject();
-		if(project == null)
-		{
-			e.getPresentation().setEnabledAndVisible(false);
-			return;
-		}
 		VirtualFile virtualFile = e.getData(CommonDataKeys.VIRTUAL_FILE);
 		if(virtualFile == null || !virtualFile.equals(project.getBaseDir()))
 		{
-			e.getPresentation().setEnabledAndVisible(false);
+			presentation.setEnabledAndVisible(false);
+		}
+
+		if(project.getUserData(Unity3dProjectUtil.ourInProgressFlag) == Boolean.TRUE)
+		{
+			presentation.setEnabled(false);
+			presentation.setVisible(true);
 		}
 	}
 }

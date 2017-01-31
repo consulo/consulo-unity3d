@@ -29,11 +29,11 @@ import org.jetbrains.annotations.Nullable;
 import com.intellij.lang.javascript.JavaScriptFileType;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
+import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ApplicationNamesInfo;
 import com.intellij.openapi.application.Result;
 import com.intellij.openapi.application.WriteAction;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.module.ModifiableModuleModel;
 import com.intellij.openapi.module.Module;
@@ -51,7 +51,6 @@ import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.impl.PushedFilePropertiesUpdater;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.util.Computable;
-import com.intellij.openapi.util.Getter;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.Version;
@@ -66,6 +65,7 @@ import com.intellij.util.Consumer;
 import com.intellij.util.TimeoutUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
+import com.intellij.util.io.storage.HeavyProcessLatch;
 import com.intellij.util.ui.UIUtil;
 import consulo.csharp.lang.CSharpFilePropertyPusher;
 import consulo.csharp.lang.CSharpFileType;
@@ -83,8 +83,9 @@ import consulo.unity3d.Unity3dMetaFileType;
 import consulo.unity3d.UnityPluginFileValidator;
 import consulo.unity3d.bundle.Unity3dBundleType;
 import consulo.unity3d.bundle.Unity3dDefineByVersion;
-import consulo.unity3d.editor.UnityEditorCommunication;
 import consulo.unity3d.editor.UnityRequestDefines;
+import consulo.unity3d.jsonApi.UnityOpenFilePostHandler;
+import consulo.unity3d.jsonApi.UnityOpenFilePostHandlerRequest;
 import consulo.unity3d.jsonApi.UnityPingPong;
 import consulo.unity3d.jsonApi.UnitySetDefines;
 import consulo.unity3d.module.Unity3dChildMutableModuleExtension;
@@ -100,10 +101,7 @@ import consulo.vfs.util.ArchiveVfsUtil;
  */
 public class Unity3dProjectUtil
 {
-	private static final Logger LOGGER = Logger.getInstance(Unity3dProjectUtil.class);
-
 	public static final String ASSETS_DIRECTORY = "Assets";
-	public static final Key<Getter<Sdk>> NEWLY_IMPORTED_PROJECT_SDK = Key.create("unity.new.project");
 
 	public static final String[] FIRST_PASS_PATHS = new String[]{
 			"Assets/Standard Assets",
@@ -112,6 +110,8 @@ public class Unity3dProjectUtil
 	};
 
 	private static final String UNITY_EDITOR = "UNITY_EDITOR";
+
+	public static final Key<Boolean> ourInProgressFlag = Key.create("Unity3dProjectUtil#ourInProgressFlag");
 
 	@Nullable
 	public static String loadVersionFromProject(@NotNull String path)
@@ -142,56 +142,71 @@ public class Unity3dProjectUtil
 		return null;
 	}
 
-	public static void syncProject(@NotNull final Project project, @Nullable final Sdk sdk, final boolean runValidator)
+	public static void syncProjectStep1(@NotNull final Project project, @Nullable final Sdk sdk, @Nullable UnityOpenFilePostHandlerRequest requestor, final boolean runValidator)
 	{
-		new Task.Modal(project, "Sync project", false)
+		// set flag
+		project.putUserData(ourInProgressFlag, Boolean.TRUE);
+
+		Task.Backgroundable.queue(project, "Fetching defines from UnityEditor", indicator ->
 		{
-			@Override
-			public void run(@NotNull final ProgressIndicator indicator)
+			UnityRequestDefines request = new UnityRequestDefines();
+
+			Ref<Boolean> received = Ref.create(Boolean.FALSE);
+
+			UnityPingPong.Token<UnitySetDefines> token = UnityPingPong.wantReply(request.uuid, o ->
 			{
-				DumbService.allowStartingDumbModeInside(DumbModePermission.MAY_START_BACKGROUND, new Runnable()
+				received.set(Boolean.TRUE);
+
+				syncProjectStep2(project, sdk, requestor, runValidator, o);
+			});
+
+			int i = 0;
+			while(!received.get())
+			{
+				if(i == 5)
 				{
-					@Override
-					public void run()
-					{
+					token.finish(null);
 
-						indicator.setText("Fetching defines from UnityEditor");
+					UIUtil.invokeLaterIfNeeded(() -> new Notification("unity", ApplicationNamesInfo.getInstance().getProductName(), "UnityEditor is not responding.<br>Defines is not resolved.",
+							NotificationType.WARNING).notify(project));
+					break;
+				}
 
-						UnityRequestDefines request = new UnityRequestDefines();
+				TimeoutUtil.sleep(500L);
 
-						Ref<Boolean> received = Ref.create(Boolean.FALSE);
-
-						UnityPingPong.Token<UnitySetDefines> token = UnityPingPong.wantReply(request.uuid, o -> {
-							received.set(Boolean.TRUE);
-
-							importAfterDefines(project, sdk, runValidator, indicator, o);
-						});
-
-						UnityEditorCommunication.request(project, request, true);
-
-						int i = 0;
-						while(!received.get())
-						{
-							if(i == 5)
-							{
-								token.finish(null);
-								break;
-							}
-
-							TimeoutUtil.sleep(500L);
-
-							i++;
-						}
-					}
-				});
+				i++;
 			}
-		}.queue();
+		});
+	}
+
+	/**
+	 * this method will called from webservice thread
+	 */
+	private static void syncProjectStep2(@NotNull final Project project,
+			@Nullable final Sdk sdk,
+			@Nullable UnityOpenFilePostHandlerRequest requestor,
+			final boolean runValidator,
+			UnitySetDefines unitySetDefines)
+	{
+		Task.Backgroundable.queue(project, "Sync Project", indicator ->
+		{
+			AccessToken accessToken = HeavyProcessLatch.INSTANCE.processStarted("unity sync project");
+			try
+			{
+				DumbService.allowStartingDumbModeInside(DumbModePermission.MAY_START_BACKGROUND, () -> importAfterDefines(project, sdk, runValidator, indicator, requestor, unitySetDefines));
+			}
+			finally
+			{
+				accessToken.finish();
+			}
+		});
 	}
 
 	private static void importAfterDefines(@NotNull final Project project,
 			@Nullable final Sdk sdk,
 			final boolean runValidator,
 			@NotNull ProgressIndicator indicator,
+			@Nullable UnityOpenFilePostHandlerRequest requestor,
 			@Nullable UnitySetDefines setDefines)
 	{
 		try
@@ -212,6 +227,7 @@ public class Unity3dProjectUtil
 		}
 		finally
 		{
+			project.putUserData(ourInProgressFlag, null);
 			project.putUserData(CSharpFilePropertyPusher.ourDisableAnyEvents, null);
 
 			PushedFilePropertiesUpdater.getInstance(project).pushAll(new CSharpFilePropertyPusher());
@@ -220,6 +236,11 @@ public class Unity3dProjectUtil
 		if(runValidator)
 		{
 			UnityPluginFileValidator.runValidation(project);
+		}
+
+		if(requestor != null)
+		{
+			UIUtil.invokeLaterIfNeeded(() -> UnityOpenFilePostHandler.openFile(project, requestor));
 		}
 	}
 
@@ -232,8 +253,7 @@ public class Unity3dProjectUtil
 	{
 		boolean fromProjectStructure = originalModel != null;
 
-		final ModifiableModuleModel newModel = fromProjectStructure ? originalModel : ApplicationManager.getApplication().runReadAction(new
-																																				Computable<ModifiableModuleModel>()
+		final ModifiableModuleModel newModel = fromProjectStructure ? originalModel : ApplicationManager.getApplication().runReadAction(new Computable<ModifiableModuleModel>()
 		{
 			@Override
 			public ModifiableModuleModel compute()
@@ -249,12 +269,10 @@ public class Unity3dProjectUtil
 
 		MultiMap<Module, VirtualFile> sourceFilesByModule = MultiMap.create();
 
-		ContainerUtil.addIfNotNull(modules, createAssemblyCSharpModuleFirstPass(project, newModel, unitySdk, sourceFilesByModule,
-				progressIndicator));
+		ContainerUtil.addIfNotNull(modules, createAssemblyCSharpModuleFirstPass(project, newModel, unitySdk, sourceFilesByModule, progressIndicator));
 		progressIndicator.setFraction(0.25);
 
-		ContainerUtil.addIfNotNull(modules, createAssemblyUnityScriptModuleFirstPass(project, newModel, unitySdk, sourceFilesByModule,
-				progressIndicator));
+		ContainerUtil.addIfNotNull(modules, createAssemblyUnityScriptModuleFirstPass(project, newModel, unitySdk, sourceFilesByModule, progressIndicator));
 		progressIndicator.setFraction(0.5);
 
 		ContainerUtil.addIfNotNull(modules, createAssemblyCSharpModuleEditor(project, newModel, unitySdk, sourceFilesByModule, progressIndicator));
@@ -304,8 +322,8 @@ public class Unity3dProjectUtil
 			ProgressIndicator progressIndicator)
 	{
 
-		return createAndSetupModule("Assembly-UnityScript-firstpass", project, newModel, FIRST_PASS_PATHS, unityBundle, null,
-				"unity3d-unityscript-child", JavaScriptFileType.INSTANCE, virtualFilesByModule, progressIndicator);
+		return createAndSetupModule("Assembly-UnityScript-firstpass", project, newModel, FIRST_PASS_PATHS, unityBundle, null, "unity3d-unityscript-child", JavaScriptFileType.INSTANCE,
+				virtualFilesByModule, progressIndicator);
 	}
 
 	private static Module createAssemblyCSharpModuleFirstPass(final Project project,
@@ -314,8 +332,8 @@ public class Unity3dProjectUtil
 			MultiMap<Module, VirtualFile> virtualFilesByModule,
 			ProgressIndicator progressIndicator)
 	{
-		return createAndSetupModule("Assembly-CSharp-firstpass", project, newModel, FIRST_PASS_PATHS, unityBundle, null, "unity3d-csharp-child",
-				CSharpFileType.INSTANCE, virtualFilesByModule, progressIndicator);
+		return createAndSetupModule("Assembly-CSharp-firstpass", project, newModel, FIRST_PASS_PATHS, unityBundle, null, "unity3d-csharp-child", CSharpFileType.INSTANCE, virtualFilesByModule,
+				progressIndicator);
 	}
 
 	private static Module createAssemblyCSharpModuleEditor(final Project project,
@@ -498,8 +516,7 @@ public class Unity3dProjectUtil
 		langExtension.setEnabled(true);
 		if(langExtension instanceof CSharpSimpleMutableModuleExtension)
 		{
-			CSharpLanguageVersion languageVersion = isVersionHigherOrEqual(unitySdk, "5.5.0") ? CSharpLanguageVersion._6_0 : CSharpLanguageVersion
-					._4_0;
+			CSharpLanguageVersion languageVersion = isVersionHigherOrEqual(unitySdk, "5.5.0") ? CSharpLanguageVersion._6_0 : CSharpLanguageVersion._4_0;
 			((CSharpSimpleMutableModuleExtension) langExtension).setLanguageVersion(languageVersion);
 		}
 
@@ -611,8 +628,7 @@ public class Unity3dProjectUtil
 			@Nullable Collection<String> defines)
 	{
 		final Module rootModule;
-		Unity3dRootModuleExtension rootModuleExtension = ApplicationManager.getApplication().runReadAction(new
-																												   Computable<Unity3dRootModuleExtension>()
+		Unity3dRootModuleExtension rootModuleExtension = ApplicationManager.getApplication().runReadAction(new Computable<Unity3dRootModuleExtension>()
 
 		{
 			@Override
@@ -663,9 +679,6 @@ public class Unity3dProjectUtil
 		// fallback
 		else
 		{
-			new Notification("unity", ApplicationNamesInfo.getInstance().getProductName(), "UnityEditor is not responding.<br>Defines is not " +
-					"resolved.", NotificationType.WARNING).notify(project);
-
 			variables.add(UNITY_EDITOR);
 			variables.add("DEBUG");
 			variables.add("TRACE");
