@@ -14,7 +14,6 @@
           <orderEntry type="module-extension-sdk" extension-id="consulo-plugin" />
           <orderEntry type="sourceFolder" />
           <orderEntry type="library" name="dd-plist" level="project" />
-          <orderEntry type="library" name="javasysmon" level="project" />
           <orderEntry type="module-library">
             <library name="snakeyaml">
               <binaries>
