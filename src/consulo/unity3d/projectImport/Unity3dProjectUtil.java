@@ -48,7 +48,6 @@ import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.LibraryOrderEntry;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.openapi.roots.impl.PushedFilePropertiesUpdater;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Key;
@@ -67,7 +66,6 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import com.intellij.util.io.storage.HeavyProcessLatch;
 import com.intellij.util.ui.UIUtil;
-import consulo.csharp.lang.CSharpFilePropertyPusher;
 import consulo.csharp.lang.CSharpFileType;
 import consulo.csharp.module.extension.CSharpLanguageVersion;
 import consulo.csharp.module.extension.CSharpSimpleMutableModuleExtension;
@@ -211,15 +209,13 @@ public class Unity3dProjectUtil
 	{
 		try
 		{
-			project.putUserData(CSharpFilePropertyPusher.ourDisableAnyEvents, Boolean.TRUE);
-
 			Collection<String> defines = null;
 			if(setDefines != null)
 			{
 				VirtualFile maybeProjectDir = LocalFileSystem.getInstance().findFileByPath(setDefines.projectPath);
 				if(maybeProjectDir != null && maybeProjectDir.equals(project.getBaseDir()))
 				{
-					defines = new TreeSet<>(Arrays.<String>asList(setDefines.defines));
+					defines = new TreeSet<>(Arrays.asList(setDefines.defines));
 				}
 			}
 
@@ -228,9 +224,6 @@ public class Unity3dProjectUtil
 		finally
 		{
 			project.putUserData(ourInProgressFlag, null);
-			project.putUserData(CSharpFilePropertyPusher.ourDisableAnyEvents, null);
-
-			PushedFilePropertiesUpdater.getInstance(project).pushAll(new CSharpFilePropertyPusher());
 		}
 
 		if(runValidator)
@@ -262,7 +255,7 @@ public class Unity3dProjectUtil
 			}
 		});
 
-		List<Module> modules = new ArrayList<Module>(5);
+		List<Module> modules = new ArrayList<>(5);
 
 		ContainerUtil.addIfNotNull(modules, createRootModule(project, newModel, unitySdk, progressIndicator, defines));
 		progressIndicator.setFraction(0.1);
