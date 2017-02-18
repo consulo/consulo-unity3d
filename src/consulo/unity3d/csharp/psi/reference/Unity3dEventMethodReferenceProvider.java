@@ -30,9 +30,15 @@ import com.intellij.util.ProcessingContext;
 import consulo.annotations.RequiredReadAction;
 import consulo.csharp.lang.psi.CSharpCallArgument;
 import consulo.csharp.lang.psi.CSharpReferenceExpression;
+import consulo.csharp.lang.psi.CSharpTypeDeclaration;
+import consulo.csharp.lang.psi.impl.CSharpTypeUtil;
 import consulo.csharp.lang.psi.impl.source.CSharpConstantExpressionImpl;
 import consulo.csharp.lang.psi.impl.source.CSharpMethodCallExpressionImpl;
+import consulo.csharp.lang.psi.impl.source.resolve.type.CSharpTypeRefByQName;
+import consulo.csharp.lang.psi.impl.source.resolve.type.CSharpTypeRefByTypeDeclaration;
 import consulo.dotnet.psi.DotNetExpression;
+import consulo.dotnet.resolve.DotNetTypeRef;
+import consulo.unity3d.Unity3dTypes;
 
 /**
  * @author VISTALL
@@ -84,6 +90,26 @@ public class Unity3dEventMethodReferenceProvider extends PsiReferenceContributor
 				}
 
 				if(!ArrayUtil.contains(referenceName, ourEventMethodNames))
+				{
+					return PsiReference.EMPTY_ARRAY;
+				}
+
+				DotNetTypeRef targetTypeRef = DotNetTypeRef.ERROR_TYPE;
+				DotNetExpression qualifier = ((CSharpReferenceExpression) callExpression).getQualifier();
+				if(qualifier != null)
+				{
+					targetTypeRef = qualifier.toTypeRef(true);
+				}
+				else
+				{
+					CSharpTypeDeclaration type = PsiTreeUtil.getParentOfType(methodCallExpression, CSharpTypeDeclaration.class);
+					if(type != null)
+					{
+						targetTypeRef = new CSharpTypeRefByTypeDeclaration(type);
+					}
+				}
+
+				if(!CSharpTypeUtil.isInheritable(new CSharpTypeRefByQName(methodCallExpression, Unity3dTypes.UnityEngine.MonoBehaviour), targetTypeRef, methodCallExpression))
 				{
 					return PsiReference.EMPTY_ARRAY;
 				}
