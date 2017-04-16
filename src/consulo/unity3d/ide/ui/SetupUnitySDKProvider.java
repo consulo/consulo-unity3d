@@ -19,7 +19,6 @@ package consulo.unity3d.ide.ui;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import com.intellij.ProjectTopics;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
@@ -33,11 +32,9 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.ui.EditorNotificationPanel;
 import com.intellij.ui.EditorNotifications;
-import consulo.annotations.RequiredDispatchThread;
 import consulo.annotations.RequiredReadAction;
 import consulo.editor.notifications.EditorNotificationProvider;
 import consulo.module.extension.ModuleExtension;
-import consulo.module.extension.ModuleExtensionChangeListener;
 import consulo.unity3d.Unity3dBundle;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import consulo.unity3d.module.Unity3dRootModuleExtension;
@@ -63,16 +60,10 @@ public class SetupUnitySDKProvider implements EditorNotificationProvider<EditorN
 				notifications.updateAllNotifications();
 			}
 		});
-		myProject.getMessageBus().connect().subscribe(ModuleExtension.CHANGE_TOPIC, new ModuleExtensionChangeListener()
-		{
-			@Override
-			public void beforeExtensionChanged(@NotNull ModuleExtension<?> oldExtension, @NotNull ModuleExtension<?> newExtension)
-			{
-				notifications.updateAllNotifications();
-			}
-		});
+		myProject.getMessageBus().connect().subscribe(ModuleExtension.CHANGE_TOPIC, (oldExtension, newExtension) -> notifications.updateAllNotifications());
 	}
 
+	@NotNull
 	@Override
 	public Key<EditorNotificationPanel> getKey()
 	{
@@ -81,7 +72,7 @@ public class SetupUnitySDKProvider implements EditorNotificationProvider<EditorN
 
 	@Override
 	@RequiredReadAction
-	public EditorNotificationPanel createNotificationPanel(VirtualFile file, FileEditor fileEditor)
+	public EditorNotificationPanel createNotificationPanel(@NotNull VirtualFile file, @NotNull FileEditor fileEditor)
 	{
 		final PsiFile psiFile = PsiManager.getInstance(myProject).findFile(file);
 		if(psiFile == null)
@@ -113,23 +104,7 @@ public class SetupUnitySDKProvider implements EditorNotificationProvider<EditorN
 		{
 			panel.setText(Unity3dBundle.message("unity.0.sdk.is.not.defined", name));
 		}
-		panel.createActionLabel("Open Settings", new Runnable()
-		{
-			@Override
-			@RequiredDispatchThread
-			public void run()
-			{
-
-				ApplicationManager.getApplication().runWriteAction(new Runnable()
-				{
-					@Override
-					public void run()
-					{
-						ProjectSettingsService.getInstance(rootModule.getProject()).openModuleSettings(rootModule);
-					}
-				});
-			}
-		});
+		panel.createActionLabel("Open Settings", () -> ProjectSettingsService.getInstance(rootModule.getProject()).openModuleSettings(rootModule));
 		return panel;
 	}
 }
