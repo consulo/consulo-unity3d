@@ -28,8 +28,8 @@ import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.util.ArrayUtil;
 import consulo.annotations.RequiredReadAction;
 import consulo.dotnet.module.DotNetNamespaceGeneratePolicy;
-import consulo.extension.impl.ModuleExtensionImpl;
 import consulo.module.extension.ModuleInheritableNamedPointer;
+import consulo.module.extension.impl.ModuleExtensionImpl;
 import consulo.roots.ModuleRootLayer;
 
 /**

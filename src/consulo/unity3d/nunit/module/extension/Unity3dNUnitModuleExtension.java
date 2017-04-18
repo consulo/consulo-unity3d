@@ -17,7 +17,7 @@
 package consulo.unity3d.nunit.module.extension;
 
 import org.jetbrains.annotations.NotNull;
-import consulo.extension.impl.ModuleExtensionImpl;
+import consulo.module.extension.impl.ModuleExtensionImpl;
 import consulo.nunit.module.extension.NUnitSimpleModuleExtension;
 import consulo.roots.ModuleRootLayer;
 
