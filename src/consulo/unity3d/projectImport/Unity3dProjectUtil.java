@@ -81,6 +81,7 @@ import consulo.unity3d.Unity3dMetaFileType;
 import consulo.unity3d.UnityPluginFileValidator;
 import consulo.unity3d.bundle.Unity3dBundleType;
 import consulo.unity3d.bundle.Unity3dDefineByVersion;
+import consulo.unity3d.editor.UnityEditorCommunication;
 import consulo.unity3d.editor.UnityRequestDefines;
 import consulo.unity3d.jsonApi.UnityOpenFilePostHandler;
 import consulo.unity3d.jsonApi.UnityOpenFilePostHandlerRequest;
@@ -157,6 +158,12 @@ public class Unity3dProjectUtil
 
 				syncProjectStep2(project, sdk, requestor, runValidator, o);
 			});
+
+			if(!UnityEditorCommunication.request(project, request, true))
+			{
+				token.finish(null);
+				return;
+			}
 
 			int i = 0;
 			while(!received.get())

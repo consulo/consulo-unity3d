@@ -18,9 +18,6 @@ package consulo.unity3d.editor;
 
 import java.io.IOException;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
@@ -95,14 +92,7 @@ public class UnityEditorCommunication
 			int timeOut = 5 * 1000;
 			RequestConfig requestConfig = RequestConfig.custom().setConnectionRequestTimeout(timeOut).setConnectTimeout(timeOut).setSocketTimeout(timeOut).build();
 			client = HttpClients.custom().setDefaultRequestConfig(requestConfig).build();
-			String data = client.execute(post, new ResponseHandler<String>()
-			{
-				@Override
-				public String handleResponse(HttpResponse httpResponse) throws ClientProtocolException, IOException
-				{
-					return EntityUtils.toString(httpResponse.getEntity(), CharsetToolkit.UTF8_CHARSET);
-				}
-			});
+			String data = client.execute(post, httpResponse -> EntityUtils.toString(httpResponse.getEntity(), CharsetToolkit.UTF8_CHARSET));
 
 			UnityEditorResponse unityEditorResponse = gson.fromJson(data, UnityEditorResponse.class);
 			if(!unityEditorResponse.success)
