@@ -342,7 +342,7 @@ public class Unity3dProjectUtil
 			MultiMap<Module, VirtualFile> virtualFilesByModule,
 			ProgressIndicator progressIndicator)
 	{
-		final List<String> paths = new ArrayList<String>();
+		final List<String> paths = new ArrayList<>();
 		paths.add("Assets/Standard Assets/Editor");
 		paths.add("Assets/Pro Standard Assets/Editor");
 		paths.add("Assets/Plugins/Editor");
@@ -390,6 +390,11 @@ public class Unity3dProjectUtil
 					// enable nunit
 					layer.getExtensionWithoutCheck(Unity3dNUnitMutableModuleExtension.class).setEnabled(true);
 				}
+
+				if(isVersionHigherOrEqual(unityBundle, "2017.1.0"))
+				{
+					layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEditor.Timeline"));
+				}
 			}
 		}, "unity3d-csharp-child", CSharpFileType.INSTANCE, virtualFilesByModule, progressIndicator);
 	}
@@ -434,8 +439,8 @@ public class Unity3dProjectUtil
 			}
 		});
 
-		final List<VirtualFile> toAdd = new ArrayList<VirtualFile>();
-		final List<VirtualFile> libraryFiles = new ArrayList<VirtualFile>();
+		final List<VirtualFile> toAdd = new ArrayList<>();
+		final List<VirtualFile> libraryFiles = new ArrayList<>();
 
 		final double fraction = progressIndicator.getFraction();
 		for(int i = 0; i < paths.length; i++)
@@ -477,14 +482,7 @@ public class Unity3dProjectUtil
 			}
 
 			final double newFraction = fraction + 0.25f * (i / (float) paths.length);
-			UIUtil.invokeLaterIfNeeded(new Runnable()
-			{
-				@Override
-				public void run()
-				{
-					progressIndicator.setFraction(newFraction);
-				}
-			});
+			UIUtil.invokeLaterIfNeeded(() -> progressIndicator.setFraction(newFraction));
 		}
 
 		modifiableModel.removeAllLayers(true);
@@ -499,14 +497,7 @@ public class Unity3dProjectUtil
 
 		if(setupConsumer != null)
 		{
-			ApplicationManager.getApplication().runReadAction(new Runnable()
-			{
-				@Override
-				public void run()
-				{
-					setupConsumer.consume(layer);
-				}
-			});
+			ApplicationManager.getApplication().runReadAction(() -> setupConsumer.consume(layer));
 		}
 
 		layer.getExtensionWithoutCheck(Unity3dChildMutableModuleExtension.class).setEnabled(true);
@@ -539,6 +530,10 @@ public class Unity3dProjectUtil
 		if(isVersionHigherOrEqual(unitySdk, "5.3.0"))
 		{
 			layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEngine.Purchasing"));
+		}
+		if(isVersionHigherOrEqual(unitySdk, "2017.1.0"))
+		{
+			layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEngine.Timeline"));
 		}
 		layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "System"));
 		layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "System.Core"));

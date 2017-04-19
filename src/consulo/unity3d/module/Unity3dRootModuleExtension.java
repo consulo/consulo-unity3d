@@ -193,6 +193,12 @@ public class Unity3dRootModuleExtension extends BaseDotNetSimpleModuleExtension<
 			{
 				list.add(editorDir.getPath());
 			}
+
+			editorDir = dir.findChild("Runtime");
+			if(editorDir != null)
+			{
+				list.add(editorDir.getPath());
+			}
 		}
 		else
 		{
