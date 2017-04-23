@@ -46,7 +46,7 @@
 		<group id="Unity3dAttachGroup">
 			<separator/>
 			<action id="Unity3Attach" class="consulo.unity3d.action.Unity3dAttachAction"/>
-			<add-to-group group-id="ToolbarRunGroup" anchor="after" relative-to-action="RunnerActions"/>
+			<add-to-group group-id="ToolbarRunGroup" anchor="after" relative-to-action="Stop"/>
 		</group>
 	</actions>
 
