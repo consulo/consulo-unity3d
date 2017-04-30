@@ -28,7 +28,6 @@ import com.intellij.openapi.actionSystem.ToggleAction;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.EmptyRunnable;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -64,6 +63,10 @@ public class UnityConsoleService
 		}
 
 		NewErrorTreeViewPanel viewPanel = consoleService.getOrInitPanel();
+		if(viewPanel == null)
+		{
+			return;
+		}
 		consumer.consume(consoleService.getProject(), viewPanel);
 	}
 
@@ -166,6 +169,7 @@ public class UnityConsoleService
 	}
 
 	@RequiredDispatchThread
+	@Nullable
 	private NewErrorTreeViewPanel getOrInitPanel()
 	{
 		if(myErrorPanel != null)
@@ -175,15 +179,13 @@ public class UnityConsoleService
 		ToolWindow toolWindow = MessageView.SERVICE.getInstance(myProject).getToolWindow();
 
 		final ContentManager contentManager = toolWindow.getContentManager();
-		Content[] contents = contentManager.getContents();
-		Content content = ContainerUtil.find(contents, new Condition<Content>()
+		if(contentManager == null)
 		{
-			@Override
-			public boolean value(Content content)
-			{
-				return content.getUserData(ourViewKey) != null;
-			}
-		});
+			// toolwindow is registred, but not showed to user
+			return null;
+		}
+		Content[] contents = contentManager.getContents();
+		Content content = ContainerUtil.find(contents, content1 -> content1.getUserData(ourViewKey) != null);
 
 		MyErrorPanel errorTreeViewPanel = null;
 		if(content == null)
