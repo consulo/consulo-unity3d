@@ -16,6 +16,8 @@
 
 package consulo.unity3d;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import com.intellij.icons.AllIcons;
@@ -138,6 +140,7 @@ public class UnityConsoleService
 
 	private MyErrorPanel myErrorPanel;
 	private final Project myProject;
+	private final AtomicBoolean myToolwindowInit = new AtomicBoolean();
 
 	public UnityConsoleService(Project project)
 	{
@@ -176,34 +179,38 @@ public class UnityConsoleService
 		{
 			return myErrorPanel;
 		}
-		ToolWindow toolWindow = MessageView.SERVICE.getInstance(myProject).getToolWindow();
 
-		if(toolWindow == null)
+		if(myToolwindowInit.compareAndSet(false, true))
 		{
-			return null;
+			MessageView messageView = MessageView.SERVICE.getInstance(myProject);
+			messageView.runWhenInitialized(() ->
+			{
+				final ContentManager contentManager = messageView.getContentManager();
+				Content[] contents = contentManager.getContents();
+				Content content = ContainerUtil.find(contents, content1 -> content1.getUserData(ourViewKey) != null);
+
+				MyErrorPanel errorTreeViewPanel = null;
+				if(content == null)
+				{
+					errorTreeViewPanel = new MyErrorPanel(myProject);
+
+					content = ContentFactory.SERVICE.getInstance().createContent(errorTreeViewPanel, "Editor", false);
+					content.putUserData(ourViewKey, Boolean.TRUE);
+
+					contentManager.addContent(content);
+				}
+				else
+				{
+					errorTreeViewPanel = (MyErrorPanel) content.getComponent();
+				}
+
+				contentManager.setSelectedContent(content, true);
+
+				messageView.getToolWindow().show(EmptyRunnable.getInstance());
+				myErrorPanel = errorTreeViewPanel;
+			});
 		}
-		final ContentManager contentManager = toolWindow.getContentManager();
-		Content[] contents = contentManager.getContents();
-		Content content = ContainerUtil.find(contents, content1 -> content1.getUserData(ourViewKey) != null);
 
-		MyErrorPanel errorTreeViewPanel = null;
-		if(content == null)
-		{
-			errorTreeViewPanel = new MyErrorPanel(myProject);
-
-			content = ContentFactory.SERVICE.getInstance().createContent(errorTreeViewPanel, "Editor", false);
-			content.putUserData(ourViewKey, Boolean.TRUE);
-
-			contentManager.addContent(content);
-		}
-		else
-		{
-			errorTreeViewPanel = (MyErrorPanel) content.getComponent();
-		}
-
-		contentManager.setSelectedContent(content, true);
-		toolWindow.show(EmptyRunnable.getInstance());
-		myErrorPanel = errorTreeViewPanel;
 		return myErrorPanel;
 	}
 }
