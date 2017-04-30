@@ -178,12 +178,11 @@ public class UnityConsoleService
 		}
 		ToolWindow toolWindow = MessageView.SERVICE.getInstance(myProject).getToolWindow();
 
-		final ContentManager contentManager = toolWindow.getContentManager();
-		if(contentManager == null)
+		if(toolWindow == null)
 		{
-			// toolwindow is registred, but not showed to user
 			return null;
 		}
+		final ContentManager contentManager = toolWindow.getContentManager();
 		Content[] contents = contentManager.getContents();
 		Content content = ContainerUtil.find(contents, content1 -> content1.getUserData(ourViewKey) != null);
 
