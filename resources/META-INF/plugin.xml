@@ -91,9 +91,11 @@
 											  order="before javascript"/>
 		<completion.contributor language="C#" implementationClass="consulo.unity3d.csharp.completion.UnitySpecificMethodCompletion"/>
 		<codeInsight.lineMarkerProvider language="C#"
-										implementationClass="consulo.unity3d.csharp.codeInsight.UnityCSharpLineMarkerProvider"/>
+										implementationClass="consulo.unity3d.csharp.codeInsight.UnityEventCSharpMethodLineMarkerProvider"/>
+		<codeInsight.lineMarkerProvider language="C#"
+										implementationClass="consulo.unity3d.csharp.codeInsight.UnitySceneCSharpTypeLineMarkerProvider"/>
 		<codeInsight.lineMarkerProvider language="JavaScript"
-										implementationClass="consulo.unity3d.unityscript.codeInsight.UnityScriptLineMarkerProvider"/>
+										implementationClass="consulo.unity3d.unityscript.codeInsight.UnityScriptEventFunctionLineMarkerProvider"/>
 		<localInspection
 				enabledByDefault="true"
 				level="WARNING"
