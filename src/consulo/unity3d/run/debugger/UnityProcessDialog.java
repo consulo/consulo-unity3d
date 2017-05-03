@@ -20,23 +20,25 @@ import java.awt.BorderLayout;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import com.intellij.ide.util.ChooseElementsDialog;
-import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.components.JBCheckBox;
+import com.intellij.util.concurrency.AppExecutorUtil;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.xdebugger.impl.settings.XDebuggerSettingManagerImpl;
 import com.jezhumble.javasysmon.JavaSysMon;
 import com.jezhumble.javasysmon.ProcessInfo;
+import consulo.annotations.DeprecationInfo;
 import consulo.unity3d.Unity3dBundle;
 import consulo.unity3d.Unity3dIcons;
 
@@ -46,70 +48,67 @@ import consulo.unity3d.Unity3dIcons;
  */
 public class UnityProcessDialog extends ChooseElementsDialog<UnityProcess>
 {
-	private boolean myClosed;
+	private static final Logger LOGGER = Logger.getInstance(UnityProcessDialog.class);
+
+	private Future<?> myTask;
+
+	@Deprecated
+	private boolean myShowConfigBox;
 
 	public UnityProcessDialog(@NotNull Project project)
 	{
-		super(project, new ArrayList<UnityProcess>(), "Select Unity Process", "", true);
+		super(project, new ArrayList<>(), "Select Unity Process", "", true);
+	}
 
-		ApplicationManager.getApplication().executeOnPooledThread(new Runnable()
+	@Deprecated
+	@DeprecationInfo("Deprecated constructor, will be dropped with old attach support")
+	public UnityProcessDialog(@NotNull Project project, boolean showConfigBox)
+	{
+		super(project, new ArrayList<>(), "Select Unity Process", "", true);
+		myShowConfigBox = true;
+	}
+
+	@Override
+	public void show()
+	{
+		myTask = AppExecutorUtil.getAppScheduledExecutorService().scheduleWithFixedDelay((Runnable) () -> UIUtil.invokeLaterIfNeeded(() ->
 		{
-			@Override
-			public void run()
-			{
-				while(!myClosed)
-				{
-					try
-					{
-						UIUtil.invokeLaterIfNeeded(new Runnable()
-						{
-							@Override
-							public void run()
-							{
-								List<UnityProcess> selectedElements = myChooser.getSelectedElements();
-								UnityProcessDialog.this.setElements(collectItems(), selectedElements);
-							}
-						});
-					}
-					finally
-					{
-						try
-						{
-							Thread.sleep(1000L);
-						}
-						catch(InterruptedException e)
-						{
-							//
-						}
-					}
-				}
-			}
-		});
+			List<UnityProcess> selectedElements = myChooser.getSelectedElements();
+			UnityProcessDialog.this.setElements(collectItems(), selectedElements);
+		}), 0, 1, TimeUnit.SECONDS);
+		super.show();
 	}
 
 	@NotNull
 	public static List<UnityProcess> collectItems()
 	{
 		Collection<UnityPlayer> players = UnityPlayerService.getInstance().getPlayers();
-		List<UnityProcess> items = new ArrayList<UnityProcess>(players.size() + 1);
-		for(UnityPlayer player : players)
+		List<UnityProcess> items = new ArrayList<>(players.size() + 1);
+		try
 		{
-			if(player.isSupportDebugging())
+			for(UnityPlayer player : players)
 			{
-				items.add(new UnityProcess((int) player.getGuid(), player.getId(), player.getIp(), player.getDebuggerPort()));
+				if(player.isSupportDebugging())
+				{
+					items.add(new UnityProcess((int) player.getGuid(), player.getId(), player.getIp(), player.getDebuggerPort()));
+				}
+			}
+			JavaSysMon javaSysMon = new JavaSysMon();
+			ProcessInfo[] processInfos = javaSysMon.processTable();
+			for(ProcessInfo processInfo : processInfos)
+			{
+				String name = processInfo.getName();
+				if((StringUtil.startsWithIgnoreCase(name, "unity") || StringUtil.containsIgnoreCase(name, "Unity.app")) && !(StringUtil.containsIgnoreCase(name, "Unity") && StringUtil
+						.containsIgnoreCase(name, "Helper")) //ignore 'UnityHelper' and 'Unity Helper'
+						&& !StringUtil.containsIgnoreCase(name, "UnityShader"))
+				{
+					items.add(new UnityProcess(processInfo.getPid(), name, "localhost", buildDebuggerPort(processInfo.getPid())));
+				}
 			}
 		}
-		JavaSysMon javaSysMon = new JavaSysMon();
-		ProcessInfo[] processInfos = javaSysMon.processTable();
-		for(ProcessInfo processInfo : processInfos)
+		catch(Exception e)
 		{
-			String name = processInfo.getName();
-			if((StringUtil.startsWithIgnoreCase(name, "unity") || StringUtil.containsIgnoreCase(name, "Unity.app")) && !(StringUtil.containsIgnoreCase(name,
-					"Unity") && StringUtil.containsIgnoreCase(name, "Helper")) //ignore 'UnityHelper' and 'Unity Helper'
-					&& !StringUtil.containsIgnoreCase(name, "UnityShader"))
-			{
-				items.add(new UnityProcess(processInfo.getPid(), name, "localhost", buildDebuggerPort(processInfo.getPid())));
-			}
+			LOGGER.error(e);
 		}
 		return items;
 	}
@@ -125,17 +124,13 @@ public class UnityProcessDialog extends ChooseElementsDialog<UnityProcess>
 		JComponent centerPanel = super.createCenterPanel();
 		assert centerPanel != null;
 
-		final Unity3dDebuggerSettings settings = XDebuggerSettingManagerImpl.getInstanceImpl().getSettings(Unity3dDebuggerSettings.class);
-		final JBCheckBox comp = new JBCheckBox(Unity3dBundle.message("attach.to.single.process.without.dialog.box"), settings.myAttachToSingleProcessWithoutDialog);
-		comp.addChangeListener(new ChangeListener()
+		if(myShowConfigBox)
 		{
-			@Override
-			public void stateChanged(ChangeEvent e)
-			{
-				settings.myAttachToSingleProcessWithoutDialog = comp.isSelected();
-			}
-		});
-		centerPanel.add(comp, BorderLayout.SOUTH);
+			final Unity3dDebuggerSettings settings = XDebuggerSettingManagerImpl.getInstanceImpl().getSettings(Unity3dDebuggerSettings.class);
+			final JBCheckBox comp = new JBCheckBox(Unity3dBundle.message("attach.to.single.process.without.dialog.box"), settings.myAttachToSingleProcessWithoutDialog);
+			comp.addChangeListener(e -> settings.myAttachToSingleProcessWithoutDialog = comp.isSelected());
+			centerPanel.add(comp, BorderLayout.SOUTH);
+		}
 		return centerPanel;
 	}
 
@@ -149,7 +144,10 @@ public class UnityProcessDialog extends ChooseElementsDialog<UnityProcess>
 	@Override
 	protected void dispose()
 	{
-		myClosed = true;
+		if(myTask != null)
+		{
+			myTask.cancel(false);
+		}
 		super.dispose();
 	}
 

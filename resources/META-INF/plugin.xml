@@ -151,8 +151,10 @@
 		<lang.defineVersion language="JavaScript" implementationClass="consulo.unity3d.unityscript.lang.UnityScriptLanguageVersion"/>
 
 		<configurationType implementation="consulo.unity3d.run.test.Unity3dTestConfigurationType"/>
+		<configurationType implementation="consulo.unity3d.run.Unity3dAttachApplicationType"/>
 		<stepsBeforeRunProvider implementation="consulo.unity3d.run.before.UnityRefreshBeforeRunTaskProvider"/>
 		<programRunner implementation="consulo.unity3d.run.test.Unity3dTestDebuggerRunner"/>
+		<programRunner implementation="consulo.unity3d.run.Unity3dAttachRunner"/>
 
 		<applicationService serviceImplementation="consulo.unity3d.run.test.Unity3dTestSessionManager"/>
 
@@ -178,6 +180,6 @@
 
 		<editorNotificationProvider implementation="consulo.unity3d.scene.prefab.Unity3dPrefabEditorNotificationProvider"/>
 
-		<psi.referenceContributor language="C#" implementation="consulo.unity3d.csharp.psi.reference.Unity3dEventMethodReferenceProvider" />
+		<psi.referenceContributor language="C#" implementation="consulo.unity3d.csharp.psi.reference.Unity3dEventMethodReferenceProvider"/>
 	</extensions>
 </idea-plugin>

@@ -33,25 +33,27 @@ import com.intellij.execution.impl.RunnerAndConfigurationSettingsImpl;
 import com.intellij.execution.runners.ExecutionEnvironmentBuilder;
 import com.intellij.execution.runners.ExecutionUtil;
 import com.intellij.execution.ui.RunContentDescriptor;
+import com.intellij.ide.BrowserUtil;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Condition;
 import com.intellij.util.IconUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.xdebugger.impl.settings.XDebuggerSettingManagerImpl;
+import consulo.annotations.DeprecationInfo;
 import consulo.annotations.RequiredDispatchThread;
 import consulo.unity3d.Unity3dIcons;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
-import consulo.unity3d.run.Unity3dAttachApplicationType;
-import consulo.unity3d.run.Unity3dAttachConfiguration;
-import consulo.unity3d.run.Unity3dAttachRunner;
+import consulo.unity3d.run.Unity3dAttachApplicationTypeOld;
+import consulo.unity3d.run.Unity3dAttachConfigurationOld;
+import consulo.unity3d.run.Unity3dAttachRunnerOld;
 import consulo.unity3d.run.debugger.Unity3dDebuggerSettings;
 import consulo.unity3d.run.debugger.UnityProcess;
 import consulo.unity3d.run.debugger.UnityProcessDialog;
@@ -60,10 +62,10 @@ import consulo.unity3d.run.debugger.UnityProcessDialog;
  * @author VISTALL
  * @since 17.04.2015
  */
+@Deprecated
+@DeprecationInfo("Action for old attach, will be dropped after some time")
 public class Unity3dAttachAction extends DumbAwareAction
 {
-	private static final Logger LOGGER = Logger.getInstance(Unity3dAttachAction.class);
-
 	private AtomicBoolean myBusyState = new AtomicBoolean();
 
 	public Unity3dAttachAction()
@@ -86,6 +88,15 @@ public class Unity3dAttachAction extends DumbAwareAction
 		if(project == null)
 		{
 			return;
+		}
+
+		int i = Messages.showDialog(project, "Unity attach action will be dropped in next iteration. Please read WIKI for more information", "Unity Attach Warning", new String[]{
+				"Read WIKI",
+				"OK"
+		}, 0, Messages.getWarningIcon());
+		if(i == 0)
+		{
+			BrowserUtil.browse("https://github.com/consulo/consulo-unity3d/wiki/New-Attach-Support");
 		}
 
 		myBusyState.set(true);
@@ -134,7 +145,7 @@ public class Unity3dAttachAction extends DumbAwareAction
 		{
 			if(firstItem == null)
 			{
-				UnityProcessDialog dialog = new UnityProcessDialog(project);
+				UnityProcessDialog dialog = new UnityProcessDialog(project, true);
 
 				List<UnityProcess> unityProcesses = dialog.showAndGetResult();
 
@@ -147,13 +158,13 @@ public class Unity3dAttachAction extends DumbAwareAction
 
 			ExecutionEnvironmentBuilder builder = new ExecutionEnvironmentBuilder(project, DefaultDebugExecutor.getDebugExecutorInstance());
 
-			Unity3dAttachConfiguration configuration = new Unity3dAttachConfiguration(project, Unity3dAttachApplicationType.ourDummyInstance.getConfigurationFactories()[0], firstItem);
+			Unity3dAttachConfigurationOld configuration = new Unity3dAttachConfigurationOld(project, Unity3dAttachApplicationTypeOld.ourDummyInstance.getConfigurationFactories()[0], firstItem);
 
 			RunManager runManager = RunManager.getInstance(project);
 			RunnerAndConfigurationSettingsImpl runnerAndConfigurationSettings = new RunnerAndConfigurationSettingsImpl((RunManagerImpl) runManager, configuration, false);
 			runnerAndConfigurationSettings.setSingleton(true);
 
-			builder.runnerAndSettings(Unity3dAttachRunner.ourDummyInstance, runnerAndConfigurationSettings);
+			builder.runnerAndSettings(Unity3dAttachRunnerOld.ourDummyInstance, runnerAndConfigurationSettings);
 
 			builder.runProfile(configuration);
 
@@ -211,7 +222,7 @@ public class Unity3dAttachAction extends DumbAwareAction
 			@Override
 			public boolean value(RunnerAndConfigurationSettings s)
 			{
-				return s.getConfiguration() instanceof Unity3dAttachConfiguration;
+				return s.getConfiguration() instanceof Unity3dAttachConfigurationOld;
 			}
 		});
 

@@ -28,6 +28,7 @@ import com.intellij.util.xmlb.annotations.Attribute;
 import com.intellij.xdebugger.impl.settings.XDebuggerSettingManagerImpl;
 import com.intellij.xdebugger.settings.DebuggerSettingsCategory;
 import com.intellij.xdebugger.settings.XDebuggerSettings;
+import consulo.annotations.DeprecationInfo;
 import consulo.options.SimpleConfigurableByProperties;
 import consulo.ui.CheckBox;
 import consulo.ui.Component;
@@ -41,6 +42,8 @@ import consulo.unity3d.Unity3dBundle;
  * @author VISTALL
  * @since 24.07.2015
  */
+@Deprecated
+@DeprecationInfo("Old attach settings, will be dropped with old attach")
 public class Unity3dDebuggerSettings extends XDebuggerSettings<Unity3dDebuggerSettings>
 {
 	private static class OurConfigurable extends SimpleConfigurableByProperties implements Configurable

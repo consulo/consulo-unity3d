@@ -22,16 +22,22 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.TreeSet;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import com.intellij.execution.RunManager;
+import com.intellij.execution.RunnerAndConfigurationSettings;
+import com.intellij.execution.configurations.ConfigurationFactory;
+import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.lang.javascript.JavaScriptFileType;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ApplicationNamesInfo;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.application.Result;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.fileTypes.FileType;
@@ -40,8 +46,6 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.Task;
-import com.intellij.openapi.project.DumbModePermission;
-import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ContentEntry;
@@ -49,7 +53,6 @@ import com.intellij.openapi.roots.LibraryOrderEntry;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.libraries.Library;
-import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.Version;
@@ -92,6 +95,8 @@ import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import consulo.unity3d.module.Unity3dRootModuleExtension;
 import consulo.unity3d.module.Unity3dRootMutableModuleExtension;
 import consulo.unity3d.nunit.module.extension.Unity3dNUnitMutableModuleExtension;
+import consulo.unity3d.run.Unity3dAttachApplicationType;
+import consulo.unity3d.run.Unity3dAttachConfiguration;
 import consulo.vfs.util.ArchiveVfsUtil;
 
 /**
@@ -109,6 +114,8 @@ public class Unity3dProjectUtil
 	};
 
 	private static final String UNITY_EDITOR = "UNITY_EDITOR";
+
+	private static final String UNITY_EDITOR_ATTACH = "Attach to Unity Editor";
 
 	public static final Key<Boolean> ourInProgressFlag = Key.create("Unity3dProjectUtil#ourInProgressFlag");
 
@@ -198,7 +205,7 @@ public class Unity3dProjectUtil
 			AccessToken accessToken = HeavyProcessLatch.INSTANCE.processStarted("unity sync project");
 			try
 			{
-				DumbService.allowStartingDumbModeInside(DumbModePermission.MAY_START_BACKGROUND, () -> importAfterDefines(project, sdk, runValidator, indicator, requestor, unitySetDefines));
+				importAfterDefines(project, sdk, runValidator, indicator, requestor, unitySetDefines);
 			}
 			finally
 			{
@@ -253,14 +260,7 @@ public class Unity3dProjectUtil
 	{
 		boolean fromProjectStructure = originalModel != null;
 
-		final ModifiableModuleModel newModel = fromProjectStructure ? originalModel : ApplicationManager.getApplication().runReadAction(new Computable<ModifiableModuleModel>()
-		{
-			@Override
-			public ModifiableModuleModel compute()
-			{
-				return ModuleManager.getInstance(project).getModifiableModel();
-			}
-		});
+		final ModifiableModuleModel newModel = fromProjectStructure ? originalModel : ReadAction.compute(() -> ModuleManager.getInstance(project).getModifiableModel());
 
 		List<Module> modules = new ArrayList<>(5);
 
@@ -304,14 +304,10 @@ public class Unity3dProjectUtil
 			ProgressIndicator progressIndicator)
 	{
 		String[] paths = {ASSETS_DIRECTORY};
-		return createAndSetupModule("Assembly-CSharp", project, newModel, paths, unityBundle, new Consumer<ModuleRootLayerImpl>()
+		return createAndSetupModule("Assembly-CSharp", project, newModel, paths, unityBundle, layer ->
 		{
-			@Override
-			public void consume(ModuleRootLayerImpl layer)
-			{
-				layer.addInvalidModuleEntry("Assembly-UnityScript-firstpass");
-				layer.addInvalidModuleEntry("Assembly-CSharp-firstpass");
-			}
+			layer.addInvalidModuleEntry("Assembly-UnityScript-firstpass");
+			layer.addInvalidModuleEntry("Assembly-CSharp-firstpass");
 		}, "unity3d-csharp-child", CSharpFileType.INSTANCE, virtualFilesByModule, progressIndicator);
 	}
 
@@ -430,14 +426,7 @@ public class Unity3dProjectUtil
 			module = temp;
 		}
 
-		final ModifiableRootModel modifiableModel = ApplicationManager.getApplication().runReadAction(new Computable<ModifiableRootModel>()
-		{
-			@Override
-			public ModifiableRootModel compute()
-			{
-				return ModuleRootManager.getInstance(module).getModifiableModel();
-			}
-		});
+		final ModifiableRootModel modifiableModel = ReadAction.compute(() -> ModuleRootManager.getInstance(module).getModifiableModel());
 
 		final List<VirtualFile> toAdd = new ArrayList<>();
 		final List<VirtualFile> libraryFiles = new ArrayList<>();
@@ -545,6 +534,25 @@ public class Unity3dProjectUtil
 			addAsLibrary(virtualFile, layer);
 		}
 
+		RunManager runManager = RunManager.getInstance(project);
+		List<RunConfiguration> allConfigurationsList = runManager.getAllConfigurationsList();
+
+		Optional<RunConfiguration> first = allConfigurationsList.stream().filter(runConfiguration -> UNITY_EDITOR_ATTACH.equals(runConfiguration.getName())).findFirst();
+		if(!first.isPresent())
+		{
+			ConfigurationFactory factory = Unity3dAttachApplicationType.getInstance().getConfigurationFactories()[0];
+
+			RunnerAndConfigurationSettings configurationSettings = runManager.createRunConfiguration(UNITY_EDITOR_ATTACH, factory);
+			Unity3dAttachConfiguration configuration = (Unity3dAttachConfiguration) configurationSettings.getConfiguration();
+			configuration.setAttachTarget(Unity3dAttachConfiguration.AttachTarget.UNITY_EDITOR);
+
+			configurationSettings.setSingleton(true);
+
+			runManager.addConfiguration(configurationSettings, false);
+
+			ReadAction.run(() -> runManager.setSelectedConfiguration(configurationSettings));
+		}
+
 		new WriteAction<Object>()
 		{
 			@Override
@@ -623,15 +631,7 @@ public class Unity3dProjectUtil
 			@Nullable Collection<String> defines)
 	{
 		final Module rootModule;
-		Unity3dRootModuleExtension rootModuleExtension = ApplicationManager.getApplication().runReadAction(new Computable<Unity3dRootModuleExtension>()
-
-		{
-			@Override
-			public Unity3dRootModuleExtension compute()
-			{
-				return Unity3dModuleExtensionUtil.getRootModuleExtension(project);
-			}
-		});
+		Unity3dRootModuleExtension rootModuleExtension = ReadAction.compute(() -> Unity3dModuleExtensionUtil.getRootModuleExtension(project));
 		if(rootModuleExtension != null)
 		{
 			rootModule = rootModuleExtension.getModule();
@@ -645,14 +645,7 @@ public class Unity3dProjectUtil
 
 		String projectUrl = project.getBaseDir().getUrl();
 
-		final ModifiableRootModel modifiableModel = ApplicationManager.getApplication().runReadAction(new Computable<ModifiableRootModel>()
-		{
-			@Override
-			public ModifiableRootModel compute()
-			{
-				return ModuleRootManager.getInstance(rootModule).getModifiableModel();
-			}
-		});
+		final ModifiableRootModel modifiableModel = ReadAction.compute(() -> ModuleRootManager.getInstance(rootModule).getModifiableModel());
 
 		modifiableModel.removeAllLayers(true);
 

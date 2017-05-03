@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2016 consulo.io
+ * Copyright 2013-2017 consulo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,36 +22,32 @@ import com.intellij.execution.configurations.ConfigurationTypeBase;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.openapi.project.Project;
 import consulo.unity3d.Unity3dIcons;
-import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 
 /**
  * @author VISTALL
  * @since 10.11.14
  */
-public class Unity3dAttachApplicationType extends ConfigurationTypeBase
+@Deprecated
+public class Unity3dAttachApplicationTypeOld extends ConfigurationTypeBase
 {
-	@NotNull
-	public static Unity3dAttachApplicationType getInstance()
-	{
-		return CONFIGURATION_TYPE_EP.findExtension(Unity3dAttachApplicationType.class);
-	}
+	public static final Unity3dAttachApplicationTypeOld ourDummyInstance = new Unity3dAttachApplicationTypeOld();
 
-	public Unity3dAttachApplicationType()
+	public Unity3dAttachApplicationTypeOld()
 	{
-		super("Unity3dAttachApplicationType", "Unity Debug Attach", "", Unity3dIcons.Unity3d);
+		super("#UnityAttachApplication", "Unity Attach", "", Unity3dIcons.Attach);
 
 		addFactory(new ConfigurationFactoryEx(this)
 		{
 			@Override
 			public RunConfiguration createTemplateConfiguration(Project project)
 			{
-				return new Unity3dAttachConfiguration(project, this);
+				return new Unity3dAttachConfigurationOld(project, this);
 			}
 
 			@Override
 			public boolean isApplicable(@NotNull Project project)
 			{
-				return Unity3dModuleExtensionUtil.getRootModule(project) != null;
+				throw new IllegalArgumentException();
 			}
 		});
 	}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2017 consulo.io
+ * Copyright 2013-2016 consulo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,13 @@
 
 package consulo.unity3d.run;
 
-import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import com.intellij.compiler.options.CompileStepBeforeRun;
-import com.intellij.execution.DefaultExecutionResult;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
+import com.intellij.execution.configuration.CompatibilityAwareRunProfile;
+import com.intellij.execution.configuration.EmptyRunProfileState;
 import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.LocatableConfigurationBase;
 import com.intellij.execution.configurations.ModuleRunProfile;
@@ -34,85 +34,48 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.WriteExternalException;
-import com.intellij.util.xmlb.XmlSerializer;
 import consulo.annotations.RequiredReadAction;
+import consulo.unity3d.run.debugger.UnityProcess;
 
 /**
  * @author VISTALL
  * @since 10.11.14
  */
-public class Unity3dAttachConfiguration extends LocatableConfigurationBase implements ModuleRunProfile, RunConfigurationWithSuppressedDefaultRunAction, CompileStepBeforeRun.Suppressor
+@Deprecated
+public class Unity3dAttachConfigurationOld extends LocatableConfigurationBase implements ModuleRunProfile, RunConfigurationWithSuppressedDefaultRunAction, CompileStepBeforeRun.Suppressor,
+		CompatibilityAwareRunProfile
 {
-	public enum AttachTarget
+	private UnityProcess myUnityProcess;
+
+	public Unity3dAttachConfigurationOld(Project project, ConfigurationFactory factory)
 	{
-		UNITY_EDITOR,
-		BY_NAME,
-		FROM_DIALOG
+		super(project, factory, "dummy");
+		myUnityProcess = new UnityProcess(-1, "", "", -1);
 	}
 
-	private AttachTarget myAttachTarget = AttachTarget.UNITY_EDITOR;
-	private String myProcessName;
-
-	public Unity3dAttachConfiguration(Project project, ConfigurationFactory factory)
+	public Unity3dAttachConfigurationOld(Project project, ConfigurationFactory factory, @NotNull UnityProcess unityProcess)
 	{
-		super(project, factory, "Unity Debug Attach");
+		super(project, factory, "Unity3D Attach to PID: " + unityProcess.hashCode());
+		myUnityProcess = unityProcess;
 	}
 
-	public Unity3dAttachConfiguration(Project project, String name, ConfigurationFactory factory)
+	public UnityProcess getUnityProcess()
 	{
-		super(project, factory, name);
-	}
-
-	public void setAttachTarget(AttachTarget attachTarget)
-	{
-		myAttachTarget = attachTarget;
-	}
-
-	public AttachTarget getAttachTarget()
-	{
-		return myAttachTarget;
-	}
-
-	public void setProcessName(String processName)
-	{
-		myProcessName = processName;
-	}
-
-	public String getProcessName()
-	{
-		return myProcessName;
-	}
-
-	@Override
-	public void readExternal(Element element) throws InvalidDataException
-	{
-		super.readExternal(element);
-
-		XmlSerializer.deserializeInto(this, element);
-	}
-
-	@Override
-	public void writeExternal(Element element) throws WriteExternalException
-	{
-		super.writeExternal(element);
-
-		XmlSerializer.serializeInto(this, element);
+		return myUnityProcess;
 	}
 
 	@NotNull
 	@Override
 	public SettingsEditor<? extends RunConfiguration> getConfigurationEditor()
 	{
-		return new Unity3dConfigurationEditor();
+		return new Unity3dConfigurationEditorOld();
 	}
 
 	@Nullable
 	@Override
 	public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment env) throws ExecutionException
 	{
-		return (executor1, runner) -> new DefaultExecutionResult(null, new Unity3dDebugProcessHander());
+		return EmptyRunProfileState.INSTANCE;
 	}
 
 	@NotNull
@@ -121,5 +84,12 @@ public class Unity3dAttachConfiguration extends LocatableConfigurationBase imple
 	public Module[] getModules()
 	{
 		return ModuleManager.getInstance(getProject()).getModules();
+	}
+
+	@Override
+	public boolean mustBeStoppedToRun(@NotNull RunConfiguration configuration)
+	{
+		return configuration != this && configuration instanceof Unity3dAttachConfigurationOld && myUnityProcess.hashCode() == ((Unity3dAttachConfigurationOld) configuration).getUnityProcess()
+				.hashCode();
 	}
 }
