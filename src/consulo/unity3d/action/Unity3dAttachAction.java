@@ -97,6 +97,7 @@ public class Unity3dAttachAction extends DumbAwareAction
 		if(i == 0)
 		{
 			BrowserUtil.browse("https://github.com/consulo/consulo-unity3d/wiki/New-Attach-Support");
+			return;
 		}
 
 		myBusyState.set(true);
