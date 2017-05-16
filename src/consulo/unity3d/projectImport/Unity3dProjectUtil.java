@@ -169,6 +169,7 @@ public class Unity3dProjectUtil
 			if(!UnityEditorCommunication.request(project, request, true))
 			{
 				token.finish(null);
+				notifyAboutUnityEditorProblem(project);
 				return;
 			}
 
@@ -179,8 +180,7 @@ public class Unity3dProjectUtil
 				{
 					token.finish(null);
 
-					UIUtil.invokeLaterIfNeeded(() -> new Notification("unity", ApplicationNamesInfo.getInstance().getProductName(), "UnityEditor is not responding.<br>Defines is not resolved.",
-							NotificationType.WARNING).notify(project));
+					notifyAboutUnityEditorProblem(project);
 					break;
 				}
 
@@ -189,6 +189,12 @@ public class Unity3dProjectUtil
 				i++;
 			}
 		});
+	}
+
+	private static void notifyAboutUnityEditorProblem(Project project)
+	{
+		UIUtil.invokeLaterIfNeeded(() -> new Notification("unity", ApplicationNamesInfo.getInstance().getProductName(), "UnityEditor is not responding.<br>Defines is not resolved.", NotificationType
+				.WARNING).notify(project));
 	}
 
 	/**
