@@ -184,8 +184,6 @@ public class UnityPluginFileValidator extends AbstractProjectComponent
 	{
 		Task.Backgroundable.queue(project, "Installing plugin", (progressIndicator) ->
 		{
-			final List<ModifiableRootModel> list = new ArrayList<>(2);
-
 			// drop old libraries
 			modifyModules(project, modifiableModel ->
 			{
