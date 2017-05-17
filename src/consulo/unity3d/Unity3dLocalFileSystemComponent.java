@@ -36,34 +36,20 @@ public class Unity3dLocalFileSystemComponent implements ApplicationComponent
 {
 	private static final Logger LOGGER = Logger.getInstance(Unity3dLocalFileSystemComponent.class);
 
-	private static final String META_SUFFIX = ".meta";
+	private static final String ourMetaSuffix = ".meta";
 
 	private LocalFileOperationsHandler myHandler = new LocalFileOperationsHandler()
 	{
 		@Override
 		public boolean delete(VirtualFile file) throws IOException
 		{
-			return handle(file, new ThrowableConsumer<VirtualFile, IOException>()
-			{
-				@Override
-				public void consume(VirtualFile virtualFile) throws IOException
-				{
-					virtualFile.delete(null);
-				}
-			});
+			return doActionOnMetaFile(file, virtualFile -> virtualFile.delete(null));
 		}
 
 		@Override
 		public boolean move(VirtualFile file, final VirtualFile toDir) throws IOException
 		{
-			return handle(file, new ThrowableConsumer<VirtualFile, IOException>()
-			{
-				@Override
-				public void consume(VirtualFile virtualFile) throws IOException
-				{
-					virtualFile.move(null, toDir);
-				}
-			});
+			return doActionOnMetaFile(file, virtualFile -> virtualFile.move(null, toDir));
 		}
 
 		@Nullable
@@ -76,14 +62,7 @@ public class Unity3dLocalFileSystemComponent implements ApplicationComponent
 		@Override
 		public boolean rename(VirtualFile file, final String newName) throws IOException
 		{
-			return handle(file, new ThrowableConsumer<VirtualFile, IOException>()
-			{
-				@Override
-				public void consume(VirtualFile virtualFile) throws IOException
-				{
-					virtualFile.rename(null, newName + META_SUFFIX);
-				}
-			});
+			return doActionOnMetaFile(file, virtualFile -> virtualFile.rename(null, newName + ourMetaSuffix));
 		}
 
 		@Override
@@ -101,35 +80,40 @@ public class Unity3dLocalFileSystemComponent implements ApplicationComponent
 		@Override
 		public void afterDone(ThrowableConsumer<LocalFileOperationsHandler, IOException> invoker)
 		{
-
-		}
-
-		private boolean handle(VirtualFile file, ThrowableConsumer<VirtualFile, IOException> consumer)
-		{
-			if(file.getFileType() == Unity3dMetaFileType.INSTANCE)
-			{
-				return false;
-			}
-			VirtualFile parent = file.getParent();
-			if(parent == null)
-			{
-				return false;
-			}
-			VirtualFile metaFile = parent.findChild(file.getName() + META_SUFFIX);
-			if(metaFile != null)
-			{
-				try
-				{
-					consumer.consume(metaFile);
-				}
-				catch(IOException e)
-				{
-					LOGGER.error(e);
-				}
-			}
-			return false;
 		}
 	};
+
+	private static boolean doActionOnMetaFile(VirtualFile parentFile, ThrowableConsumer<VirtualFile, IOException> consumer)
+	{
+		if(parentFile.getFileType() == Unity3dMetaFileType.INSTANCE)
+		{
+			return false;
+		}
+
+		return doActionOnSuffixFile(parentFile, consumer, ourMetaSuffix);
+	}
+
+	public static boolean doActionOnSuffixFile(VirtualFile parentFile, ThrowableConsumer<VirtualFile, IOException> consumer, String suffix)
+	{
+		VirtualFile parent = parentFile.getParent();
+		if(parent == null)
+		{
+			return false;
+		}
+		VirtualFile metaFile = parent.findChild(parentFile.getName() + suffix);
+		if(metaFile != null)
+		{
+			try
+			{
+				consumer.consume(metaFile);
+			}
+			catch(IOException e)
+			{
+				LOGGER.error(e);
+			}
+		}
+		return false;
+	}
 
 	@Override
 	public void initComponent()

@@ -17,27 +17,23 @@
 package consulo.unity3d;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-import javax.swing.event.HyperlinkEvent;
-
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.ide.BrowserUtil;
 import com.intellij.ide.plugins.PluginManager;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationDisplayType;
 import com.intellij.notification.NotificationGroup;
-import com.intellij.notification.NotificationListener;
 import com.intellij.notification.NotificationType;
-import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.components.AbstractProjectComponent;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
-import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
@@ -45,15 +41,16 @@ import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTable;
-import com.intellij.openapi.util.Ref;
+import com.intellij.openapi.util.ThrowableComputable;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.Consumer;
 import com.intellij.util.PathUtil;
+import com.intellij.util.SmartList;
 import consulo.annotations.RequiredReadAction;
-import consulo.annotations.RequiredWriteAction;
 import consulo.dotnet.dll.DotNetModuleFileType;
 import consulo.roots.ModifiableModuleRootLayer;
 import consulo.roots.ModuleRootLayer;
@@ -129,7 +126,7 @@ public class UnityPluginFileValidator extends AbstractProjectComponent
 			return;
 		}
 
-		VirtualFile targetFile = null;
+		List<VirtualFile> targetFiles = new SmartList<>();
 
 		VirtualFile fileByRelativePath = baseDir.findFileByRelativePath(ourPath);
 		if(fileByRelativePath != null)
@@ -140,171 +137,170 @@ public class UnityPluginFileValidator extends AbstractProjectComponent
 				CharSequence nameSequence = child.getNameSequence();
 				if(StringUtil.startsWith(nameSequence, "UnityEditorConsuloPlugin") && child.getFileType() == DotNetModuleFileType.INSTANCE)
 				{
-					targetFile = child;
-					break;
+					targetFiles.add(child);
 				}
 			}
 		}
 
-		if(targetFile == null)
+		if(targetFiles.isEmpty())
 		{
-			showNotify(project, pluginFileName, unityPluginFile, "Consulo plugin for UnityEditor is missing<br><a href=\"#\">Install</a>", null);
+			showNotify(project, pluginFileName, unityPluginFile, "Consulo plugin for UnityEditor is missing<br><a href=\"#\">Install</a>", Collections.emptyList());
 		}
 		else
 		{
-			final File file = VfsUtil.virtualToIoFile(targetFile);
-			if(!file.exists())
+			VirtualFile firstItem = targetFiles.size() == 1 ? targetFiles.get(0) : null;
+			if(firstItem != null && VfsUtilCore.virtualToIoFile(firstItem).lastModified() == unityPluginFile.lastModified())
 			{
 				return;
 			}
 
-			String title = null;
-			if(!pluginFileName.equals(targetFile.getName()))
-			{
-				title = "Outdated Consulo plugin for UnityEditor<br><a href=\"#\">Update</a>";
-			}
-			else if(file.lastModified() < unityPluginFile.lastModified())
-			{
-				title = "New version of Consulo plugin for UnityEditor is available<br><a href=\"#\">Update</a>";
-			}
+			String title = "Outdated Consulo plugin(s) for UnityEditor can create <a href=\"info\">issues</a>. <a href=\"update\">Update</a> are recommended";
 
-			if(title != null)
-			{
-				final VirtualFile finalTargetFile = targetFile;
-				showNotify(project, pluginFileName, unityPluginFile, title, new Runnable()
-				{
-					@Override
-					public void run()
-					{
-						try
-						{
-							finalTargetFile.delete(null);
-						}
-						catch(IOException e)
-						{
-							//
-						}
-					}
-				});
-			}
+			showNotify(project, pluginFileName, unityPluginFile, title, targetFiles);
 		}
 	}
 
-	private static void showNotify(final Project project, final String pluginFileName, final File unityPluginFile, @NotNull String title, @Nullable final Runnable beforeTask)
+	private static void showNotify(final Project project, final String pluginFileName, final File unityPluginFile, @NotNull String title, @NotNull List<VirtualFile> oldPluginFiles)
 	{
-		Notification notification = new Notification(ourGroup.getDisplayId(), "Unity3D Plugin", title, NotificationType.INFORMATION);
-		notification.setListener(new NotificationListener()
+		Notification notification = new Notification(ourGroup.getDisplayId(), "Unity3D Plugin", title, !oldPluginFiles.isEmpty() ? NotificationType.ERROR : NotificationType.INFORMATION);
+		notification.setListener((thisNotification, hyperlinkEvent) ->
 		{
-			@Override
-			public void hyperlinkUpdate(@NotNull Notification notification, @NotNull HyperlinkEvent hyperlinkEvent)
-			{
-				notification.hideBalloon();
+			thisNotification.hideBalloon();
 
-				runTask(project, pluginFileName, unityPluginFile, beforeTask);
+			switch(hyperlinkEvent.getDescription())
+			{
+				case "info":
+					BrowserUtil.browse("https://github.com/consulo/consulo/issues/250");
+					break;
+				case "update":
+					updatePlugin(project, pluginFileName, unityPluginFile, oldPluginFiles);
+					break;
 			}
 		});
 		notification.notify(project);
 	}
 
-	private static void runTask(@NotNull final Project project, @NotNull final String pluginFileName, @NotNull final File unityPluginFile, @Nullable final Runnable otherTask)
+	private static void updatePlugin(@NotNull final Project project, @NotNull final String pluginFileName, @NotNull final File unityPluginFile, @NotNull List<VirtualFile> oldPluginFiles)
 	{
-		new Task.Backgroundable(project, "Installing plugin", false)
+		Task.Backgroundable.queue(project, "Installing plugin", (progressIndicator) ->
 		{
-			@Override
-			public void run(@NotNull ProgressIndicator progressIndicator)
+			final List<ModifiableRootModel> list = new ArrayList<>(2);
+
+			// drop old libraries
+			modifyModules(project, modifiableModel ->
 			{
-				if(otherTask != null)
+				for(ModuleRootLayer layer : modifiableModel.getLayers().values())
 				{
-					WriteCommandAction.runWriteCommandAction(project, otherTask);
-				}
-
-				final Ref<VirtualFile> fileRef = Ref.create();
-				File targetFile = new File(project.getBasePath(), ourPath + "/" + pluginFileName);
-				try
-				{
-					FileUtil.copy(unityPluginFile, targetFile);
-
-					VirtualFile value = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(targetFile);
-					VirtualFile archiveRootForLocalFile = value == null ? null : ArchiveVfsUtil.getArchiveRootForLocalFile(value);
-					fileRef.set(archiveRootForLocalFile);
-				}
-				catch(IOException e)
-				{
-					LOGGER.error(e);
-				}
-
-				// if target file is not found, no need change module roots
-				final VirtualFile targetArchiveFile = fileRef.get();
-				if(targetArchiveFile == null)
-				{
-					return;
-				}
-
-				final List<ModifiableRootModel> list = new ArrayList<ModifiableRootModel>(2);
-				ApplicationManager.getApplication().runReadAction(new Runnable()
-				{
-					@Override
-					public void run()
+					LibraryTable moduleLibraryTable = ((ModifiableModuleRootLayer) layer).getModuleLibraryTable();
+					for(Library library : moduleLibraryTable.getLibraries())
 					{
-						Unity3dRootModuleExtension unity3dRootModuleExtension = Unity3dModuleExtensionUtil.getRootModuleExtension(project);
-
-						if(unity3dRootModuleExtension == null)
+						String[] files = library.getUrls(BinariesOrderRootType.getInstance());
+						for(String url : files)
 						{
-							return;
-						}
-
-						ModuleManager moduleManager = ModuleManager.getInstance(project);
-
-						Module[] modules = moduleManager.getModules();
-						for(Module module : modules)
-						{
-							String name = module.getName();
-							if(name.startsWith("Assembly") && name.endsWith("Editor"))
+							String localPath = PathUtil.getFileName(url);
+							if(StringUtil.startsWith(localPath, "UnityEditorConsuloPlugin"))
 							{
-								ModuleRootManager moduleRootManager = ModuleRootManager.getInstance(module);
-								ModifiableRootModel modifiableModel = moduleRootManager.getModifiableModel();
-								for(ModuleRootLayer layer : modifiableModel.getLayers().values())
-								{
-									LibraryTable moduleLibraryTable = ((ModifiableModuleRootLayer) layer).getModuleLibraryTable();
-									for(Library library : moduleLibraryTable.getLibraries())
-									{
-										String[] files = library.getUrls(BinariesOrderRootType.getInstance());
-										for(String url : files)
-										{
-											String localPath = PathUtil.getFileName(url);
-											if(StringUtil.startsWith(localPath, "UnityEditorConsuloPlugin"))
-											{
-												moduleLibraryTable.removeLibrary(library);
-												break;
-											}
-										}
-									}
-
-									Library library = moduleLibraryTable.createLibrary();
-									Library.ModifiableModel libraryModifiableModel = library.getModifiableModel();
-									libraryModifiableModel.addRoot(targetArchiveFile, BinariesOrderRootType.getInstance());
-									libraryModifiableModel.commit();
-								}
-
-								list.add(modifiableModel);
+								moduleLibraryTable.removeLibrary(library);
+								break;
 							}
 						}
 					}
-				});
+				}
+			});
 
-				WriteCommandAction.runWriteCommandAction(project, new Runnable()
+			// drop old plugins
+			for(VirtualFile oldPluginFile : oldPluginFiles)
+			{
+				try
 				{
-					@Override
-					@RequiredWriteAction
-					public void run()
+					WriteCommandAction.runWriteCommandAction(project, (ThrowableComputable<Object, Throwable>) () ->
 					{
-						for(ModifiableRootModel modifiableRootModel : list)
-						{
-							modifiableRootModel.commit();
-						}
-					}
-				});
+						oldPluginFile.delete(null);
+
+						Unity3dLocalFileSystemComponent.doActionOnSuffixFile(oldPluginFile, virtualFile -> virtualFile.delete(null), ".mdb");
+						return null;
+					});
+				}
+				catch(Throwable e)
+				{
+					LOGGER.error(e);
+					return;
+				}
 			}
-		}.queue();
+
+			VirtualFile targetArchiveFile;
+			File targetFile = new File(project.getBasePath(), ourPath + "/" + pluginFileName);
+			try
+			{
+				targetFile.setLastModified(unityPluginFile.lastModified());
+				FileUtil.copy(unityPluginFile, targetFile);
+
+				VirtualFile value = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(targetFile);
+				targetArchiveFile = value == null ? null : ArchiveVfsUtil.getArchiveRootForLocalFile(value);
+			}
+			catch(Throwable e)
+			{
+				LOGGER.error(e);
+				return;
+			}
+
+			// if target file is not found, no need change module roots
+			if(targetArchiveFile == null)
+			{
+				return;
+			}
+
+			modifyModules(project, modifiableRootModel ->
+			{
+				for(ModuleRootLayer layer : modifiableRootModel.getLayers().values())
+				{
+					LibraryTable moduleLibraryTable = ((ModifiableModuleRootLayer) layer).getModuleLibraryTable();
+
+					Library library = moduleLibraryTable.createLibrary();
+					Library.ModifiableModel libraryModifiableModel = library.getModifiableModel();
+					libraryModifiableModel.addRoot(targetArchiveFile, BinariesOrderRootType.getInstance());
+					libraryModifiableModel.commit();
+				}
+			});
+		});
+	}
+
+	private static void modifyModules(Project project, Consumer<ModifiableRootModel> action)
+	{
+		List<ModifiableRootModel> list = new ArrayList<>();
+		ReadAction.run(() ->
+		{
+			Unity3dRootModuleExtension unity3dRootModuleExtension = Unity3dModuleExtensionUtil.getRootModuleExtension(project);
+
+			if(unity3dRootModuleExtension == null)
+			{
+				return;
+			}
+
+			ModuleManager moduleManager = ModuleManager.getInstance(project);
+
+			Module[] modules = moduleManager.getModules();
+			for(Module module : modules)
+			{
+				String name = module.getName();
+				if(name.startsWith("Assembly") && name.endsWith("Editor"))
+				{
+					ModuleRootManager moduleRootManager = ModuleRootManager.getInstance(module);
+					ModifiableRootModel modifiableModel = moduleRootManager.getModifiableModel();
+
+					action.consume(modifiableModel);
+
+					list.add(modifiableModel);
+				}
+			}
+		});
+
+		WriteCommandAction.runWriteCommandAction(project, () ->
+		{
+			for(ModifiableRootModel modifiableRootModel : list)
+			{
+				modifiableRootModel.commit();
+			}
+		});
 	}
 }
