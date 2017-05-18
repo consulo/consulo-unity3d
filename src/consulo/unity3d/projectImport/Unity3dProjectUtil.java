@@ -532,6 +532,7 @@ public class Unity3dProjectUtil
 		}
 		layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "System"));
 		layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "System.Core"));
+		layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "System.Runtime.Serialization"));
 		layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "System.Xml"));
 		layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "System.Xml.Linq"));
 
