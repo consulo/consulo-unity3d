@@ -38,7 +38,7 @@ import consulo.unity3d.UnityConsoleService;
  */
 public class UnityLogPostHandler extends JsonPostRequestHandler<UnityLogPostHandlerRequest>
 {
-	private static Map<String, Integer> ourTypeMap = new HashMap<String, Integer>();
+	private static Map<String, Integer> ourTypeMap = new HashMap<>();
 
 	static
 	{
