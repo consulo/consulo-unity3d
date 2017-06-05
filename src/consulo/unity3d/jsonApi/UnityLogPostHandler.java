@@ -16,7 +16,7 @@
 
 package consulo.unity3d.jsonApi;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -72,7 +72,7 @@ public class UnityLogPostHandler extends JsonPostRequestHandler<UnityLogPostHand
 					Problem problem = WolfTheProblemSolver.getInstance(project).convertToProblem(fileByUrl, message.getLine(), message.getColumn(), new String[]{message.getMessage()});
 					if(problem != null)
 					{
-						WolfTheProblemSolver.getInstance(project).reportProblems(fileByUrl, Arrays.<Problem>asList(problem));
+						WolfTheProblemSolver.getInstance(project).reportProblems(fileByUrl, Collections.singletonList(problem));
 					}
 				}
 
