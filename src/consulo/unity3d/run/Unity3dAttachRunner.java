@@ -142,6 +142,9 @@ public class Unity3dAttachRunner extends DefaultProgramRunner
 				@Override
 				public void connectionStopped()
 				{
+					ProcessHandler processHandler = process.getProcessHandler();
+					processHandler.notifyTextAvailable(String.format("Disconnected from '%s' at %s:%d", selected.getName(), selected.getHost(), selected.getPort()), ProcessOutputTypes.STDERR);
+					StopProcessAction.stopProcess(processHandler);
 				}
 
 				@Override
