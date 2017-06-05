@@ -42,12 +42,6 @@
 			<action id="SyncUnity3dProject" class="consulo.unity3d.action.SyncUnity3dProjectAction"/>
 			<add-to-group anchor="last" group-id="ProjectViewPopupMenuSettingsGroup"/>
 		</group>
-
-		<group id="Unity3dAttachGroup">
-			<separator/>
-			<action id="Unity3Attach" class="consulo.unity3d.action.Unity3dAttachAction"/>
-			<add-to-group group-id="ToolbarRunGroup" anchor="after" relative-to-action="Stop"/>
-		</group>
 	</actions>
 
 	<application-components>
@@ -108,7 +102,6 @@
 		<iconDescriptorUpdater implementation="consulo.unity3d.unityscript.UnityScriptIconDescriptorUpdater"/>
 		<gotoClassContributor implementation="consulo.unity3d.unityscript.navigation.UnityScriptGotoClassContributor"/>
 		<sdkType implementation="consulo.unity3d.bundle.Unity3dBundleType"/>
-		<xdebugger.settings implementation="consulo.unity3d.run.debugger.Unity3dDebuggerSettings"/>
 
 		<moduleExtensionProvider
 				key="unity3d"

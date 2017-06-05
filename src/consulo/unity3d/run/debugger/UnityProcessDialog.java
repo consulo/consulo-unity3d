@@ -16,7 +16,6 @@
 
 package consulo.unity3d.run.debugger;
 
-import java.awt.BorderLayout;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -24,7 +23,6 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import javax.swing.Icon;
-import javax.swing.JComponent;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -32,14 +30,10 @@ import com.intellij.ide.util.ChooseElementsDialog;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.ui.components.JBCheckBox;
 import com.intellij.util.concurrency.AppExecutorUtil;
 import com.intellij.util.ui.UIUtil;
-import com.intellij.xdebugger.impl.settings.XDebuggerSettingManagerImpl;
 import com.jezhumble.javasysmon.JavaSysMon;
 import com.jezhumble.javasysmon.ProcessInfo;
-import consulo.annotations.DeprecationInfo;
-import consulo.unity3d.Unity3dBundle;
 import consulo.unity3d.Unity3dIcons;
 
 /**
@@ -52,20 +46,9 @@ public class UnityProcessDialog extends ChooseElementsDialog<UnityProcess>
 
 	private Future<?> myTask;
 
-	@Deprecated
-	private boolean myShowConfigBox;
-
 	public UnityProcessDialog(@NotNull Project project)
 	{
 		super(project, new ArrayList<>(), "Select Unity Process", "", true);
-	}
-
-	@Deprecated
-	@DeprecationInfo("Deprecated constructor, will be dropped with old attach support")
-	public UnityProcessDialog(@NotNull Project project, boolean showConfigBox)
-	{
-		super(project, new ArrayList<>(), "Select Unity Process", "", true);
-		myShowConfigBox = true;
 	}
 
 	@Override
@@ -116,22 +99,6 @@ public class UnityProcessDialog extends ChooseElementsDialog<UnityProcess>
 	public static int buildDebuggerPort(int pid)
 	{
 		return 56000 + pid % 1000;
-	}
-
-	@Override
-	protected JComponent createCenterPanel()
-	{
-		JComponent centerPanel = super.createCenterPanel();
-		assert centerPanel != null;
-
-		if(myShowConfigBox)
-		{
-			final Unity3dDebuggerSettings settings = XDebuggerSettingManagerImpl.getInstanceImpl().getSettings(Unity3dDebuggerSettings.class);
-			final JBCheckBox comp = new JBCheckBox(Unity3dBundle.message("attach.to.single.process.without.dialog.box"), settings.myAttachToSingleProcessWithoutDialog);
-			comp.addChangeListener(e -> settings.myAttachToSingleProcessWithoutDialog = comp.isSelected());
-			centerPanel.add(comp, BorderLayout.SOUTH);
-		}
-		return centerPanel;
 	}
 
 	@Nullable

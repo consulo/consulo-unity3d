@@ -37,8 +37,6 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.xdebugger.XDebugProcess;
-import com.intellij.xdebugger.XDebugProcessStarter;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebuggerManager;
 import consulo.annotations.RequiredDispatchThread;
@@ -126,41 +124,36 @@ public class Unity3dAttachRunner extends DefaultProgramRunner
 			@Nullable final ConsoleView consoleView) throws ExecutionException
 	{
 		FileDocumentManager.getInstance().saveAllDocuments();
-		final XDebugSession debugSession = XDebuggerManager.getInstance(environment.getProject()).startSession(environment, new XDebugProcessStarter()
+		final XDebugSession debugSession = XDebuggerManager.getInstance(environment.getProject()).startSession(environment, session ->
 		{
-			@NotNull
-			@Override
-			public XDebugProcess start(@NotNull final XDebugSession session) throws ExecutionException
+			DebugConnectionInfo debugConnectionInfo = new DebugConnectionInfo(selected.getHost(), selected.getPort(), true);
+			final UnityDebugProcess process = new UnityDebugProcess(session, environment.getRunProfile(), debugConnectionInfo, consoleView);
+			process.setExecutionResult(executionResult);
+
+			process.getDebugThread().addListener(new MonoVirtualMachineListener()
 			{
-				DebugConnectionInfo debugConnectionInfo = new DebugConnectionInfo(selected.getHost(), selected.getPort(), true);
-				final UnityDebugProcess process = new UnityDebugProcess(session, environment.getRunProfile(), debugConnectionInfo, consoleView);
-				process.setExecutionResult(executionResult);
-
-				process.getDebugThread().addListener(new MonoVirtualMachineListener()
+				@Override
+				public void connectionSuccess(@NotNull VirtualMachine machine)
 				{
-					@Override
-					public void connectionSuccess(@NotNull VirtualMachine machine)
-					{
-						ProcessHandler processHandler = process.getProcessHandler();
-						processHandler.notifyTextAvailable(String.format("Success attach to '%s' at %s:%d", selected.getName(), selected.getHost(), selected.getPort()), ProcessOutputTypes.STDOUT);
-					}
+					ProcessHandler processHandler = process.getProcessHandler();
+					processHandler.notifyTextAvailable(String.format("Success attach to '%s' at %s:%d", selected.getName(), selected.getHost(), selected.getPort()), ProcessOutputTypes.STDOUT);
+				}
 
-					@Override
-					public void connectionStopped()
-					{
-					}
+				@Override
+				public void connectionStopped()
+				{
+				}
 
-					@Override
-					public void connectionFailed()
-					{
-						ProcessHandler processHandler = process.getProcessHandler();
-						processHandler.notifyTextAvailable(String.format("Failed attach to '%s' at %s:%d", selected.getName(), selected.getHost(), selected.getPort()), ProcessOutputTypes.STDERR);
-						StopProcessAction.stopProcess(processHandler);
-					}
-				});
-				process.start();
-				return process;
-			}
+				@Override
+				public void connectionFailed()
+				{
+					ProcessHandler processHandler = process.getProcessHandler();
+					processHandler.notifyTextAvailable(String.format("Failed attach to '%s' at %s:%d", selected.getName(), selected.getHost(), selected.getPort()), ProcessOutputTypes.STDERR);
+					StopProcessAction.stopProcess(processHandler);
+				}
+			});
+			process.start();
+			return process;
 		});
 
 		return debugSession.getRunContentDescriptor();

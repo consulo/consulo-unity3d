@@ -17,15 +17,11 @@
 package consulo.unity3d.run.debugger;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import com.intellij.execution.ExecutionResult;
 import com.intellij.execution.configurations.RunProfile;
 import com.intellij.execution.filters.TextConsoleBuilderFactory;
-import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.ExecutionConsole;
 import com.intellij.xdebugger.XDebugSession;
-import consulo.annotations.DeprecationInfo;
 import consulo.dotnet.execution.DebugConnectionInfo;
 import consulo.dotnet.mono.debugger.MonoDebugProcess;
 
@@ -36,32 +32,11 @@ import consulo.dotnet.mono.debugger.MonoDebugProcess;
 public class UnityDebugProcess extends MonoDebugProcess
 {
 	private ConsoleView myConsoleView;
-	@Deprecated
-	@DeprecationInfo("just hack until old attach support exists, must be always true")
-	private boolean myExecutionResultSet;
 
 	public UnityDebugProcess(XDebugSession session, RunProfile runProfile, DebugConnectionInfo debugConnectionInfo, ConsoleView consoleView)
 	{
 		super(session, runProfile, debugConnectionInfo);
 		myConsoleView = consoleView;
-	}
-
-	@Override
-	public void setExecutionResult(ExecutionResult executionResult)
-	{
-		super.setExecutionResult(executionResult);
-		myExecutionResultSet = true;
-	}
-
-	@Nullable
-	@Override
-	protected ProcessHandler doGetProcessHandler()
-	{
-		if(myExecutionResultSet)
-		{
-			return super.doGetProcessHandler();
-		}
-		return null;
 	}
 
 	@NotNull
