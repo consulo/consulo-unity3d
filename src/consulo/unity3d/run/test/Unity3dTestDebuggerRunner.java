@@ -61,7 +61,7 @@ public class Unity3dTestDebuggerRunner extends DefaultProgramRunner
 		{
 			return null;
 		}
-		return Unity3dAttachRunner.runContentDescriptor(executionResult, env, editorProcess, (ConsoleView) executionResult.getExecutionConsole());
+		return Unity3dAttachRunner.runContentDescriptor(executionResult, env, editorProcess, (ConsoleView) executionResult.getExecutionConsole(), true);
 	}
 
 	@Override

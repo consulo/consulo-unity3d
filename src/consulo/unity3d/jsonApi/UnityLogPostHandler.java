@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.jetbrains.annotations.NotNull;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.problems.Problem;
@@ -58,10 +59,13 @@ public class UnityLogPostHandler extends JsonPostRequestHandler<UnityLogPostHand
 	@Override
 	public JsonResponse handle(@NotNull final UnityLogPostHandlerRequest request)
 	{
+		int value = ObjectUtil.notNull(ourTypeMap.get(request.type), MessageCategory.INFORMATION);
+
+		//noinspection MagicConstant
+		ApplicationManager.getApplication().getMessageBus().syncPublisher(UnityLogHandler.TOPIC).handle(value, request.condition, request.stackTrace);
+
 		UIUtil.invokeLaterIfNeeded(() -> UnityConsoleService.byPath(request.projectPath, (project, panel) ->
 		{
-			int value = ObjectUtil.notNull(ourTypeMap.get(request.type), MessageCategory.INFORMATION);
-
 			DotNetCompilerMessage message = UnityLogParser.extractFileInfo(project, request.condition);
 
 			if(message != null)

@@ -112,8 +112,10 @@ public class Unity3dAttachRunner extends DefaultProgramRunner
 		{
 			throw new ExecutionException("Process not find for attach");
 		}
+
+		boolean isEditor = Comparing.equal(UnityEditorCommunication.findEditorProcess(), process);
 		ExecutionResult executionResult = state.execute(environment.getExecutor(), this);
-		return runContentDescriptor(executionResult, environment, process, null);
+		return runContentDescriptor(executionResult, environment, process, null, isEditor);
 	}
 
 	@NotNull
@@ -121,29 +123,38 @@ public class Unity3dAttachRunner extends DefaultProgramRunner
 	public static RunContentDescriptor runContentDescriptor(ExecutionResult executionResult,
 			@NotNull final ExecutionEnvironment environment,
 			@NotNull UnityProcess selected,
-			@Nullable final ConsoleView consoleView) throws ExecutionException
+			@Nullable final ConsoleView consoleView,
+			boolean insideEditor) throws ExecutionException
 	{
 		FileDocumentManager.getInstance().saveAllDocuments();
 		final XDebugSession debugSession = XDebuggerManager.getInstance(environment.getProject()).startSession(environment, session ->
 		{
 			DebugConnectionInfo debugConnectionInfo = new DebugConnectionInfo(selected.getHost(), selected.getPort(), true);
-			final UnityDebugProcess process = new UnityDebugProcess(session, environment.getRunProfile(), debugConnectionInfo, consoleView);
+			final UnityDebugProcess process = new UnityDebugProcess(session, environment.getRunProfile(), debugConnectionInfo, consoleView, insideEditor);
 			process.setExecutionResult(executionResult);
 
 			process.getDebugThread().addListener(new MonoVirtualMachineListener()
 			{
+				private boolean myDisconnected = false;
+
 				@Override
 				public void connectionSuccess(@NotNull VirtualMachine machine)
 				{
 					ProcessHandler processHandler = process.getProcessHandler();
-					processHandler.notifyTextAvailable(String.format("Success attach to '%s' at %s:%d", selected.getName(), selected.getHost(), selected.getPort()), ProcessOutputTypes.STDOUT);
+					processHandler.notifyTextAvailable(String.format("Success attach to '%s' at %s:%d\n", selected.getName(), selected.getHost(), selected.getPort()), ProcessOutputTypes.STDOUT);
 				}
 
 				@Override
 				public void connectionStopped()
 				{
+					if(myDisconnected)
+					{
+						return;
+					}
+
+					myDisconnected = true;
 					ProcessHandler processHandler = process.getProcessHandler();
-					processHandler.notifyTextAvailable(String.format("Disconnected from '%s' at %s:%d", selected.getName(), selected.getHost(), selected.getPort()), ProcessOutputTypes.STDERR);
+					processHandler.notifyTextAvailable(String.format("Disconnected from '%s' at %s:%d\n", selected.getName(), selected.getHost(), selected.getPort()), ProcessOutputTypes.STDERR);
 					StopProcessAction.stopProcess(processHandler);
 				}
 
@@ -151,7 +162,7 @@ public class Unity3dAttachRunner extends DefaultProgramRunner
 				public void connectionFailed()
 				{
 					ProcessHandler processHandler = process.getProcessHandler();
-					processHandler.notifyTextAvailable(String.format("Failed attach to '%s' at %s:%d", selected.getName(), selected.getHost(), selected.getPort()), ProcessOutputTypes.STDERR);
+					processHandler.notifyTextAvailable(String.format("Failed attach to '%s' at %s:%d\n", selected.getName(), selected.getHost(), selected.getPort()), ProcessOutputTypes.STDERR);
 					StopProcessAction.stopProcess(processHandler);
 				}
 			});
