@@ -21,17 +21,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.jetbrains.annotations.NotNull;
-import com.intellij.ide.errorTreeView.NewErrorTreeViewPanel;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.problems.Problem;
 import com.intellij.problems.WolfTheProblemSolver;
 import com.intellij.util.ObjectUtil;
-import com.intellij.util.PairConsumer;
 import com.intellij.util.ui.MessageCategory;
 import com.intellij.util.ui.UIUtil;
-import consulo.annotations.RequiredDispatchThread;
 import consulo.buildInWebServer.api.JsonPostRequestHandler;
 import consulo.dotnet.compiler.DotNetCompilerMessage;
 import consulo.unity3d.UnityConsoleService;
@@ -62,46 +58,34 @@ public class UnityLogPostHandler extends JsonPostRequestHandler<UnityLogPostHand
 	@Override
 	public JsonResponse handle(@NotNull final UnityLogPostHandlerRequest request)
 	{
-		UIUtil.invokeLaterIfNeeded(new Runnable()
+		UIUtil.invokeLaterIfNeeded(() -> UnityConsoleService.byPath(request.projectPath, (project, panel) ->
 		{
-			@Override
-			public void run()
+			int value = ObjectUtil.notNull(ourTypeMap.get(request.type), MessageCategory.INFORMATION);
+
+			DotNetCompilerMessage message = UnityLogParser.extractFileInfo(project, request.condition);
+
+			if(message != null)
 			{
-				UnityConsoleService.byPath(request.projectPath, new PairConsumer<Project, NewErrorTreeViewPanel>()
+				VirtualFile fileByUrl = message.getFileUrl() == null ? null : VirtualFileManager.getInstance().findFileByUrl(message.getFileUrl());
+				if(fileByUrl != null && value == MessageCategory.ERROR)
 				{
-					@Override
-					@RequiredDispatchThread
-					public void consume(Project project, NewErrorTreeViewPanel panel)
+					Problem problem = WolfTheProblemSolver.getInstance(project).convertToProblem(fileByUrl, message.getLine(), message.getColumn(), new String[]{message.getMessage()});
+					if(problem != null)
 					{
-						int value = ObjectUtil.notNull(ourTypeMap.get(request.type), MessageCategory.INFORMATION);
-
-						DotNetCompilerMessage message = UnityLogParser.extractFileInfo(project, request.condition);
-
-						if(message != null)
-						{
-							VirtualFile fileByUrl = message.getFileUrl() == null ? null : VirtualFileManager.getInstance().findFileByUrl(message.getFileUrl());
-							if(fileByUrl != null && value == MessageCategory.ERROR)
-							{
-								Problem problem = WolfTheProblemSolver.getInstance(project).convertToProblem(fileByUrl, message.getLine(), message.getColumn(), new String[]{message.getMessage()});
-								if(problem != null)
-								{
-									WolfTheProblemSolver.getInstance(project).reportProblems(fileByUrl, Arrays.<Problem>asList(problem));
-								}
-							}
-
-							panel.addMessage(value, new String[]{message.getMessage()}, fileByUrl, message.getLine() - 1, message.getColumn(), null);
-						}
-						else
-						{
-							panel.addMessage(value, new String[]{
-									request.condition,
-									request.stackTrace
-							}, null, -1, -1, null);
-						}
+						WolfTheProblemSolver.getInstance(project).reportProblems(fileByUrl, Arrays.<Problem>asList(problem));
 					}
-				});
+				}
+
+				panel.addMessage(value, new String[]{message.getMessage()}, fileByUrl, message.getLine() - 1, message.getColumn(), null);
 			}
-		});
+			else
+			{
+				panel.addMessage(value, new String[]{
+						request.condition,
+						request.stackTrace
+				}, null, -1, -1, null);
+			}
+		}));
 
 		return JsonResponse.asSuccess(null);
 	}
