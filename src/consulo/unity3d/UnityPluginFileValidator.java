@@ -144,7 +144,7 @@ public class UnityPluginFileValidator extends AbstractProjectComponent
 
 		if(targetFiles.isEmpty())
 		{
-			showNotify(project, pluginFileName, unityPluginFile, "Consulo plugin for UnityEditor is missing<br><a href=\"#\">Install</a>", Collections.emptyList());
+			showNotify(project, pluginFileName, unityPluginFile, "Consulo plugin for UnityEditor is missing<br><a href=\"update\">Install</a>", Collections.emptyList());
 		}
 		else
 		{
