@@ -151,6 +151,8 @@
 
 		<applicationService serviceImplementation="consulo.unity3d.run.test.Unity3dTestSessionManager"/>
 
+		<projectService serviceImplementation="consulo.unity3d.Unity3dProjectService"/>
+
 		<moduleImportProvider implementation="consulo.unity3d.projectImport.Unity3dModuleImportProvider"/>
 		<editorNotificationProvider implementation="consulo.unity3d.ide.ui.SetupUnitySDKProvider"/>
 

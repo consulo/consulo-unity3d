@@ -19,11 +19,9 @@ package consulo.unity3d.module;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleManager;
-import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
 import consulo.annotations.RequiredReadAction;
+import consulo.unity3d.Unity3dProjectService;
 
 /**
  * @author VISTALL
@@ -35,32 +33,13 @@ public class Unity3dModuleExtensionUtil
 	@RequiredReadAction
 	public static Module getRootModule(@NotNull Project project)
 	{
-		ModuleManager moduleManager = ModuleManager.getInstance(project);
-		for(Module module : moduleManager.getModules())
-		{
-			VirtualFile baseDir = project.getBaseDir();
-			if(baseDir == null)
-			{
-				continue;
-			}
-
-			if(baseDir.equals(module.getModuleDir()))
-			{
-				return module;
-			}
-		}
-		return null;
+		return Unity3dProjectService.getInstance(project).getRootModule();
 	}
 
 	@Nullable
 	@RequiredReadAction
 	public static Unity3dRootModuleExtension getRootModuleExtension(@NotNull Project project)
 	{
-		Module rootModule = getRootModule(project);
-		if(rootModule == null)
-		{
-			return null;
-		}
-		return ModuleUtilCore.getExtension(rootModule, Unity3dRootModuleExtension.class);
+		return Unity3dProjectService.getInstance(project).getRootModuleExtension();
 	}
 }
