@@ -85,15 +85,7 @@ public class UnityPluginFileValidator extends AbstractProjectComponent
 
 	public static void runValidation(@NotNull final Project project)
 	{
-		DumbService.getInstance(project).runWhenSmart(new Runnable()
-		{
-			@Override
-			@RequiredReadAction
-			public void run()
-			{
-				notifyAboutPluginFile(project);
-			}
-		});
+		DumbService.getInstance(project).runWhenSmart(() -> notifyAboutPluginFile(project));
 	}
 
 	@RequiredReadAction

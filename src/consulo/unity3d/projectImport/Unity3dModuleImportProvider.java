@@ -95,7 +95,7 @@ public class Unity3dModuleImportProvider implements ModuleImportProvider<UnityMo
 			WriteAction.run(newModel::commit);
 		}
 
-		StartupManager.getInstance(project).registerPostStartupActivity(() -> Unity3dProjectUtil.syncProjectStep1(project, unitySdk, requestor, false));
+		StartupManager.getInstance(project).registerPostStartupActivity(() -> Unity3dProjectUtil.syncProjectStep1(project, unitySdk, requestor, true));
 		return Arrays.asList(rootModule);
 	}
 
