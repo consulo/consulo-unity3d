@@ -53,8 +53,8 @@ public enum Unity3dDefineByVersion
 	UNITY_5_3("5.3.\\d", "UnityEditorConsuloPlugin5.3.dll", UNITY_5_0),
 	UNITY_5_4("5.4.\\d", "UnityEditorConsuloPlugin5.3.dll", UNITY_5_0),
 	UNITY_5_5("5.5.\\d", "UnityEditorConsuloPlugin5.3.dll", UNITY_5_0),
-	UNITY_5_6("5.6.\\d", "UnityEditorConsuloPlugin5.3.dll", UNITY_5_0),
-	UNITY_2017_1("2017.1.\\d", "UnityEditorConsuloPlugin5.3.dll"),
+	UNITY_5_6("5.6.\\d", "UnityEditorConsuloPlugin5.6.dll", UNITY_5_0),
+	UNITY_2017_1("2017.1.\\d", "UnityEditorConsuloPlugin5.6.dll"),
 	UNKNOWN("\\d.\\d.\\d", null);
 
 	private final Pattern myVersionPattern;
