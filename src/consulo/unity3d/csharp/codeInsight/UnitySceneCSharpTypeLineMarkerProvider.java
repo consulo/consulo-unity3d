@@ -16,11 +16,6 @@
 
 package consulo.unity3d.csharp.codeInsight;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-
 import javax.swing.Icon;
 
 import org.jetbrains.annotations.NotNull;
@@ -28,24 +23,13 @@ import org.jetbrains.annotations.Nullable;
 import com.intellij.codeHighlighting.Pass;
 import com.intellij.codeInsight.daemon.LineMarkerInfo;
 import com.intellij.codeInsight.daemon.LineMarkerProviderDescriptor;
-import com.intellij.codeInsight.daemon.impl.PsiElementListNavigator;
-import com.intellij.ide.util.DefaultPsiElementCellRenderer;
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VfsUtil;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.NavigatablePsiElement;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiUtilCore;
-import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.MultiMap;
 import consulo.annotations.RequiredReadAction;
 import consulo.csharp.ide.lineMarkerProvider.CSharpLineMarkerUtil;
-import consulo.csharp.lang.psi.CSharpTypeDeclaration;
 import consulo.unity3d.Unity3dIcons;
-import consulo.unity3d.editor.UnitySceneFile;
 import consulo.unity3d.scene.Unity3dAssetUtil;
-import consulo.unity3d.scene.index.Unity3dYMLAsset;
 
 /**
  * @author VISTALL
@@ -71,91 +55,24 @@ public class UnitySceneCSharpTypeLineMarkerProvider extends LineMarkerProviderDe
 	@Override
 	public LineMarkerInfo getLineMarkerInfo(@NotNull PsiElement element)
 	{
-		CSharpTypeDeclaration typeDeclaration = CSharpLineMarkerUtil.getNameIdentifierAs(element, CSharpTypeDeclaration.class);
-		if(typeDeclaration != null)
+		for(Unity3dAssetCSharpLineMarker marker : Unity3dAssetCSharpLineMarker.values())
 		{
-			String uuid = Unity3dAssetUtil.getUUID(PsiUtilCore.getVirtualFile(typeDeclaration));
-			if(uuid == null || typeDeclaration.isNested())
+			Class<? extends PsiElement> clazz = marker.getElementClass();
+
+			PsiElement declaration = CSharpLineMarkerUtil.getNameIdentifierAs(element, clazz);
+			if(declaration != null)
 			{
-				return null;
-			}
-
-			MultiMap<VirtualFile, Unity3dYMLAsset> temp = Unity3dYMLAsset.findAssetAsAttach(PsiUtilCore.getVirtualFile(typeDeclaration), typeDeclaration.getProject(), true);
-
-			if(!temp.isEmpty())
-			{
-				return new LineMarkerInfo<>(element, element.getTextRange(), Unity3dIcons.Unity3dLineMarker, Pass.LINE_MARKERS, element12 ->
+				String uuid = Unity3dAssetUtil.getUUID(PsiUtilCore.getVirtualFile(declaration));
+				if(uuid == null || marker.needSkip(declaration))
 				{
-					final CSharpTypeDeclaration mirror = CSharpLineMarkerUtil.getNameIdentifierAs(element12, CSharpTypeDeclaration.class);
-					if(mirror != null)
-					{
-						MultiMap<VirtualFile, Unity3dYMLAsset> files = Unity3dYMLAsset.findAssetAsAttach(PsiUtilCore.getVirtualFile(typeDeclaration), typeDeclaration.getProject(), true);
+					return null;
+				}
 
-						if(files.isEmpty())
-						{
-							return "";
-						}
-
-						MultiMap<String, String> map = MultiMap.create();
-						for(VirtualFile file : files.keySet())
-						{
-							map.putValue(file.getExtension(), VfsUtil.getRelativePath(file, mirror.getProject().getBaseDir()));
-						}
-
-						StringBuilder builder = new StringBuilder();
-						boolean first = true;
-						for(Map.Entry<String, Collection<String>> entry : map.entrySet())
-						{
-							String text = "";
-							if(!first)
-							{
-								text = "<br>";
-							}
-							else
-							{
-								first = false;
-							}
-							text += "<b>Imported in *." + entry.getKey() + ":</b><br>";
-
-							List<String> items = new ArrayList<>(entry.getValue());
-							ContainerUtil.sort(items);
-
-							List<String> firstItems = ContainerUtil.getFirstItems(items, 10);
-							if(firstItems.size() != items.size())
-							{
-								firstItems.add("<b>... " + (items.size() - firstItems.size()) + " others.</b>");
-							}
-							text += StringUtil.join(firstItems, s -> " > " + s, "<br>");
-							builder.append(text);
-						}
-						return builder.toString();
-					}
-					return "";
-				}, (e, elt) ->
+				if(marker.isAvailable(declaration))
 				{
-					CSharpTypeDeclaration typeDeclaration1 = CSharpLineMarkerUtil.getNameIdentifierAs(elt, CSharpTypeDeclaration.class);
-					if(typeDeclaration1 != null)
-					{
-						MultiMap<VirtualFile, Unity3dYMLAsset> files = Unity3dYMLAsset.findAssetAsAttach(PsiUtilCore.getVirtualFile(typeDeclaration), typeDeclaration.getProject(), true);
-						if(files.isEmpty())
-						{
-							return;
-						}
-
-						VirtualFile[] assetFiles = Unity3dAssetUtil.sortAssetFiles(VfsUtil.toVirtualFileArray(temp.keySet()));
-
-						List<UnitySceneFile> map = ContainerUtil.map(assetFiles, virtualFile -> new UnitySceneFile(element.getProject(), virtualFile));
-
-						PsiElementListNavigator.openTargets(e, map.toArray(new NavigatablePsiElement[0]), "View Unity assets", "View Unity assets", new DefaultPsiElementCellRenderer()
-						{
-							@Override
-							protected Icon getIcon(PsiElement element1)
-							{
-								return ((NavigatablePsiElement) element1).getPresentation().getIcon(false);
-							}
-						});
-					}
-				}, GutterIconRenderer.Alignment.LEFT);
+					return new LineMarkerInfo<>(element, element.getTextRange(), marker.getIcon(), Pass.LINE_MARKERS, marker.createTooltipFunction(), marker.createNavigationHandler(),
+							GutterIconRenderer.Alignment.LEFT);
+				}
 			}
 		}
 		return null;
