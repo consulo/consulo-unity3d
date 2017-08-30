@@ -16,8 +16,6 @@
 
 package consulo.unity3d.scene.prefab;
 
-import java.util.Collections;
-
 import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.event.HyperlinkEvent;
@@ -34,14 +32,11 @@ import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.ui.EditorNotificationPanel;
 import com.intellij.ui.HyperlinkAdapter;
 import com.intellij.ui.HyperlinkLabel;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.CommonProcessors;
-import com.intellij.util.Function;
-import com.intellij.util.indexing.FileBasedIndex;
+import com.intellij.util.containers.MultiMap;
 import com.intellij.util.ui.PlatformColors;
 import consulo.annotations.RequiredReadAction;
 import consulo.editor.notifications.EditorNotificationProvider;
@@ -49,7 +44,7 @@ import consulo.unity3d.editor.UnityEditorCommunication;
 import consulo.unity3d.editor.UnityOpenScene;
 import consulo.unity3d.scene.Unity3dAssetUtil;
 import consulo.unity3d.scene.Unity3dYMLAssetFileType;
-import consulo.unity3d.scene.index.Unity3dYMLAssetIndexExtension;
+import consulo.unity3d.scene.index.Unity3dYMLAsset;
 
 /**
  * @author VISTALL
@@ -87,7 +82,7 @@ public class Unity3dPrefabEditorNotificationProvider implements EditorNotificati
 		{
 			return null;
 		}
-		final VirtualFile[] results = getVirtualFiles(uuid);
+		final VirtualFile[] results = getVirtualFiles(file);
 		if(results.length == 0)
 		{
 			return null;
@@ -101,7 +96,7 @@ public class Unity3dPrefabEditorNotificationProvider implements EditorNotificati
 					@Override
 					protected void hyperlinkActivated(HyperlinkEvent e)
 					{
-						VirtualFile[] virtualFiles = getVirtualFiles(uuid);
+						VirtualFile[] virtualFiles = getVirtualFiles(file);
 						int size = virtualFiles.length;
 						if(size == 1)
 						{
@@ -146,24 +141,14 @@ public class Unity3dPrefabEditorNotificationProvider implements EditorNotificati
 				myLinksPanel.add(label);
 			}
 		};
-		panel.setText("Used in scenes: " + StringUtil.join(results, new Function<VirtualFile, String>()
-		{
-			@Override
-			public String fun(VirtualFile virtualFile)
-			{
-				return VfsUtil.getRelativePath(virtualFile, myProject.getBaseDir());
-			}
-		}, ", "));
+		panel.setText("Used in scenes: " + StringUtil.join(results, virtualFile -> VfsUtil.getRelativePath(virtualFile, myProject.getBaseDir()), ", "));
 		return panel;
 	}
 
 	@NotNull
-	private VirtualFile[] getVirtualFiles(String uuid)
+	private VirtualFile[] getVirtualFiles(VirtualFile file)
 	{
-		GlobalSearchScope filter = GlobalSearchScope.projectScope(myProject);
-		CommonProcessors.CollectUniquesProcessor<VirtualFile> processor = new CommonProcessors.CollectUniquesProcessor<VirtualFile>();
-		FileBasedIndex.getInstance().processFilesContainingAllKeys(Unity3dYMLAssetIndexExtension.KEY, Collections.singleton(uuid), filter, null, processor);
-
-		return Unity3dAssetUtil.sortAssetFiles(processor.toArray(VirtualFile.EMPTY_ARRAY));
+		MultiMap<VirtualFile, Unity3dYMLAsset> map = Unity3dYMLAsset.findAssetAsAttach(file, myProject, false);
+		return VfsUtil.toVirtualFileArray(map.keySet());
 	}
 }

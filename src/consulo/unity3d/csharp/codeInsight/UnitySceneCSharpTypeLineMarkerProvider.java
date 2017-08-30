@@ -18,7 +18,6 @@ package consulo.unity3d.csharp.codeInsight;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -37,19 +36,16 @@ import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.NavigatablePsiElement;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiUtilCore;
-import com.intellij.util.CommonProcessors;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
-import com.intellij.util.indexing.FileBasedIndex;
 import consulo.annotations.RequiredReadAction;
 import consulo.csharp.ide.lineMarkerProvider.CSharpLineMarkerUtil;
 import consulo.csharp.lang.psi.CSharpTypeDeclaration;
 import consulo.unity3d.Unity3dIcons;
 import consulo.unity3d.editor.UnitySceneFile;
 import consulo.unity3d.scene.Unity3dAssetUtil;
-import consulo.unity3d.scene.index.Unity3dYMLAssetIndexExtension;
+import consulo.unity3d.scene.index.Unity3dYMLAsset;
 
 /**
  * @author VISTALL
@@ -83,30 +79,27 @@ public class UnitySceneCSharpTypeLineMarkerProvider extends LineMarkerProviderDe
 			{
 				return null;
 			}
-			GlobalSearchScope filter = GlobalSearchScope.projectScope(typeDeclaration.getProject());
-			CommonProcessors.FindFirstProcessor<VirtualFile> processor = new CommonProcessors.FindFirstProcessor<>();
-			FileBasedIndex.getInstance().processFilesContainingAllKeys(Unity3dYMLAssetIndexExtension.KEY, Collections.singleton(uuid), filter, null, processor);
 
-			if(processor.isFound())
+			MultiMap<VirtualFile, Unity3dYMLAsset> temp = Unity3dYMLAsset.findAssetAsAttach(PsiUtilCore.getVirtualFile(typeDeclaration), typeDeclaration.getProject(), true);
+
+			if(!temp.isEmpty())
 			{
 				return new LineMarkerInfo<>(element, element.getTextRange(), Unity3dIcons.Unity3dLineMarker, Pass.LINE_MARKERS, element12 ->
 				{
-					final CSharpTypeDeclaration typeDeclaration12 = CSharpLineMarkerUtil.getNameIdentifierAs(element12, CSharpTypeDeclaration.class);
-					if(typeDeclaration12 != null)
+					final CSharpTypeDeclaration mirror = CSharpLineMarkerUtil.getNameIdentifierAs(element12, CSharpTypeDeclaration.class);
+					if(mirror != null)
 					{
-						String uuid12 = Unity3dAssetUtil.getUUID(PsiUtilCore.getVirtualFile(typeDeclaration12));
-						if(uuid12 == null)
+						MultiMap<VirtualFile, Unity3dYMLAsset> files = Unity3dYMLAsset.findAssetAsAttach(PsiUtilCore.getVirtualFile(typeDeclaration), typeDeclaration.getProject(), true);
+
+						if(files.isEmpty())
 						{
 							return "";
 						}
 
-						Collection<VirtualFile> containingFiles = FileBasedIndex.getInstance().getContainingFiles(Unity3dYMLAssetIndexExtension.KEY, uuid12, GlobalSearchScope.projectScope
-								(typeDeclaration12.getProject()));
-
 						MultiMap<String, String> map = MultiMap.create();
-						for(VirtualFile file : containingFiles)
+						for(VirtualFile file : files.keySet())
 						{
-							map.putValue(file.getExtension(), VfsUtil.getRelativePath(file, typeDeclaration12.getProject().getBaseDir()));
+							map.putValue(file.getExtension(), VfsUtil.getRelativePath(file, mirror.getProject().getBaseDir()));
 						}
 
 						StringBuilder builder = new StringBuilder();
@@ -143,21 +136,17 @@ public class UnitySceneCSharpTypeLineMarkerProvider extends LineMarkerProviderDe
 					CSharpTypeDeclaration typeDeclaration1 = CSharpLineMarkerUtil.getNameIdentifierAs(elt, CSharpTypeDeclaration.class);
 					if(typeDeclaration1 != null)
 					{
-						String uuid1 = Unity3dAssetUtil.getUUID(PsiUtilCore.getVirtualFile(typeDeclaration1));
-						if(uuid1 == null)
+						MultiMap<VirtualFile, Unity3dYMLAsset> files = Unity3dYMLAsset.findAssetAsAttach(PsiUtilCore.getVirtualFile(typeDeclaration), typeDeclaration.getProject(), true);
+						if(files.isEmpty())
 						{
 							return;
 						}
 
-						Collection<VirtualFile> temp = FileBasedIndex.getInstance().getContainingFiles(Unity3dYMLAssetIndexExtension.KEY, uuid1, GlobalSearchScope.projectScope(typeDeclaration1
-								.getProject()));
-
-						VirtualFile[] assetFiles = temp.toArray(new VirtualFile[temp.size()]);
-						assetFiles = Unity3dAssetUtil.sortAssetFiles(assetFiles);
+						VirtualFile[] assetFiles = Unity3dAssetUtil.sortAssetFiles(VfsUtil.toVirtualFileArray(temp.keySet()));
 
 						List<UnitySceneFile> map = ContainerUtil.map(assetFiles, virtualFile -> new UnitySceneFile(element.getProject(), virtualFile));
 
-						PsiElementListNavigator.openTargets(e, map.toArray(new NavigatablePsiElement[0]), "View Unity assets", "View Unity " + "assets", new DefaultPsiElementCellRenderer()
+						PsiElementListNavigator.openTargets(e, map.toArray(new NavigatablePsiElement[0]), "View Unity assets", "View Unity assets", new DefaultPsiElementCellRenderer()
 						{
 							@Override
 							protected Icon getIcon(PsiElement element1)
