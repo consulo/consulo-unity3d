@@ -230,7 +230,7 @@ public enum Unity3dAssetCSharpLineMarker
 										first = false;
 									}
 
-									builder.append("&nbsp;").append(entry.getKey()).append("&nbsp;").append(UIUtil.rightArrow()).append("&nbsp;").append(value);
+									builder.append("&nbsp;").append(entry.getKey()).append("&nbsp;").append(UIUtil.rightArrow()).append("&nbsp;").append("<code>").append(value).append("</code>");
 								}
 							}
 							return builder.toString();
