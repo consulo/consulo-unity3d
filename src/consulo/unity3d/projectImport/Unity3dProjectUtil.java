@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.TreeSet;
 
 import org.jetbrains.annotations.NotNull;
@@ -49,6 +50,7 @@ import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ContentEntry;
+import com.intellij.openapi.roots.ContentFolder;
 import com.intellij.openapi.roots.LibraryOrderEntry;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
@@ -75,6 +77,7 @@ import consulo.csharp.module.extension.CSharpSimpleMutableModuleExtension;
 import consulo.dotnet.dll.DotNetModuleFileType;
 import consulo.dotnet.roots.orderEntry.DotNetLibraryOrderEntryImpl;
 import consulo.module.extension.MutableModuleExtension;
+import consulo.roots.ContentFolderScopes;
 import consulo.roots.impl.ExcludedContentFolderTypeProvider;
 import consulo.roots.impl.ModuleRootLayerImpl;
 import consulo.roots.types.BinariesOrderRootType;
@@ -637,11 +640,27 @@ public class Unity3dProjectUtil
 			@NotNull ProgressIndicator progressIndicator,
 			@Nullable Collection<String> defines)
 	{
+		Set<String> excludedUrls = new TreeSet<>();
+
+		String projectUrl = project.getBaseDir().getUrl();
+		excludedUrls.add(projectUrl + "/" + Project.DIRECTORY_STORE_FOLDER);
+		excludedUrls.add(projectUrl + "/Library");
+		excludedUrls.add(projectUrl + "/Temp");
+		excludedUrls.add(projectUrl + "/test_Data");
+
 		final Module rootModule;
 		Unity3dRootModuleExtension rootModuleExtension = ReadAction.compute(() -> Unity3dModuleExtensionUtil.getRootModuleExtension(project));
 		if(rootModuleExtension != null)
 		{
 			rootModule = rootModuleExtension.getModule();
+			ReadAction.run(() ->
+			{
+				ContentFolder[] contentFolders = ModuleRootManager.getInstance(rootModule).getContentFolders(ContentFolderScopes.excluded());
+				for(ContentFolder contentFolder : contentFolders)
+				{
+					excludedUrls.add(contentFolder.getUrl());
+				}
+			});
 		}
 		else
 		{
@@ -650,7 +669,6 @@ public class Unity3dProjectUtil
 
 		progressIndicator.setText(Unity3dBundle.message("syncing.0.module", rootModule.getName()));
 
-		String projectUrl = project.getBaseDir().getUrl();
 
 		final ModifiableRootModel modifiableModel = ReadAction.compute(() -> ModuleRootManager.getInstance(rootModule).getModifiableModel());
 
@@ -690,10 +708,10 @@ public class Unity3dProjectUtil
 		}
 
 		// exclude temp dirs
-		contentEntry.addFolder(projectUrl + "/" + Project.DIRECTORY_STORE_FOLDER, ExcludedContentFolderTypeProvider.getInstance());
-		contentEntry.addFolder(projectUrl + "/Library", ExcludedContentFolderTypeProvider.getInstance());
-		contentEntry.addFolder(projectUrl + "/Temp", ExcludedContentFolderTypeProvider.getInstance());
-		contentEntry.addFolder(projectUrl + "/test_Data", ExcludedContentFolderTypeProvider.getInstance());
+		for(String excludedUrl : excludedUrls)
+		{
+			contentEntry.addFolder(excludedUrl, ExcludedContentFolderTypeProvider.getInstance());
+		}
 
 		new WriteAction<Object>()
 		{
