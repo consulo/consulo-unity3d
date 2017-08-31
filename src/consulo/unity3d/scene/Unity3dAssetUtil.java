@@ -16,19 +16,12 @@
 
 package consulo.unity3d.scene;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Comparator;
-import java.util.Map;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.yaml.snakeyaml.Yaml;
-import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.containers.ContainerUtil;
-import consulo.unity3d.Unity3dMetaFileType;
 
 /**
  * @author VISTALL
@@ -36,87 +29,33 @@ import consulo.unity3d.Unity3dMetaFileType;
  */
 public class Unity3dAssetUtil
 {
-	private static final Logger LOGGER = Logger.getInstance(Unity3dAssetUtil.class);
-
 	@NotNull
 	public static VirtualFile[] sortAssetFiles(VirtualFile[] virtualFiles)
 	{
-		ContainerUtil.sort(virtualFiles, new Comparator<VirtualFile>()
-		{
-			@Override
-			public int compare(VirtualFile o1, VirtualFile o2)
-			{
-				return weight(o1) - weight(o2);
-			}
-
-			private int weight(VirtualFile virtualFile)
-			{
-				int i = ArrayUtil.indexOf(Unity3dAssetFileTypeDetector.ourAssetExtensions, virtualFile.getExtension());
-				if(i == -1)
-				{
-					return 1000;
-				}
-				else
-				{
-					return (i + 1) * 10;
-				}
-			}
-		});
+		ContainerUtil.sort(virtualFiles, (o1, o2) -> weight(o1) - weight(o2));
 		return virtualFiles;
 	}
 
-	@Nullable
-	public static String getUUID(VirtualFile virtualFile)
+	private static int weight(VirtualFile virtualFile)
 	{
-		if(virtualFile == null)
+		int i = ArrayUtil.indexOf(Unity3dAssetFileTypeDetector.ourAssetExtensions, virtualFile.getExtension());
+		if(i == -1)
+		{
+			return 1000;
+		}
+		else
+		{
+			return (i + 1) * 10;
+		}
+	}
+
+	@Nullable
+	public static String getGUID(@Nullable Project project, @Nullable VirtualFile virtualFile)
+	{
+		if(virtualFile == null || project == null)
 		{
 			return null;
 		}
-		String name = virtualFile.getName();
-
-		VirtualFile parent = virtualFile.getParent();
-		if(parent == null)
-		{
-			return null;
-		}
-
-		VirtualFile child = parent.findChild(name + "." + Unity3dMetaFileType.INSTANCE.getDefaultExtension());
-		if(child != null)
-		{
-			Yaml yaml = new Yaml();
-			InputStream inputStream = null;
-			try
-			{
-				inputStream = child.getInputStream();
-				Object load = yaml.load(inputStream);
-				if(load instanceof Map)
-				{
-					Object guid = ((Map) load).get("guid");
-					if(guid instanceof String)
-					{
-						return (String) guid;
-					}
-				}
-			}
-			catch(IOException e)
-			{
-				Unity3dAssetUtil.LOGGER.warn(e);
-			}
-			finally
-			{
-				if(inputStream != null)
-				{
-					try
-					{
-						inputStream.close();
-					}
-					catch(IOException e)
-					{
-						//
-					}
-				}
-			}
-		}
-		return null;
+		return Unity3dMetaManager.getInstance(project).getGUID(virtualFile);
 	}
 }
