@@ -77,7 +77,7 @@ public class Unity3dPrefabEditorNotificationProvider implements EditorNotificati
 		{
 			return null;
 		}
-		final String uuid = Unity3dAssetUtil.getUUID(file);
+		final String uuid = Unity3dAssetUtil.getGUID(myProject, file);
 		if(uuid == null)
 		{
 			return null;
@@ -148,7 +148,7 @@ public class Unity3dPrefabEditorNotificationProvider implements EditorNotificati
 	@NotNull
 	private VirtualFile[] getVirtualFiles(VirtualFile file)
 	{
-		MultiMap<VirtualFile, Unity3dYMLAsset> map = Unity3dYMLAsset.findAssetAsAttach(file, myProject, false);
+		MultiMap<VirtualFile, Unity3dYMLAsset> map = Unity3dYMLAsset.findAssetAsAttach(myProject, file, false);
 		return VfsUtil.toVirtualFileArray(map.keySet());
 	}
 }

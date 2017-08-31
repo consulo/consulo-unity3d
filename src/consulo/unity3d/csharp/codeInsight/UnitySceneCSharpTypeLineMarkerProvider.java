@@ -62,7 +62,7 @@ public class UnitySceneCSharpTypeLineMarkerProvider extends LineMarkerProviderDe
 			PsiElement declaration = CSharpLineMarkerUtil.getNameIdentifierAs(element, clazz);
 			if(declaration != null)
 			{
-				String uuid = Unity3dAssetUtil.getUUID(PsiUtilCore.getVirtualFile(declaration));
+				String uuid = Unity3dAssetUtil.getGUID(element.getProject(), PsiUtilCore.getVirtualFile(declaration));
 				if(uuid == null || marker.needSkip(declaration))
 				{
 					return null;

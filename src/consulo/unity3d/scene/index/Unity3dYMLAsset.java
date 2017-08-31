@@ -38,9 +38,9 @@ import consulo.unity3d.scene.Unity3dAssetUtil;
 public class Unity3dYMLAsset
 {
 	@NotNull
-	public static MultiMap<VirtualFile, Unity3dYMLAsset> findAssetAsAttach(@Nullable VirtualFile file, @NotNull Project project, boolean single)
+	public static MultiMap<VirtualFile, Unity3dYMLAsset> findAssetAsAttach(@NotNull Project project, @Nullable VirtualFile file, boolean single)
 	{
-		String uuid = Unity3dAssetUtil.getUUID(file);
+		String uuid = Unity3dAssetUtil.getGUID(project, file);
 		if(uuid == null)
 		{
 			return MultiMap.empty();

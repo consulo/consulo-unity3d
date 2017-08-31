@@ -70,7 +70,7 @@ public enum Unity3dAssetCSharpLineMarker
 						CSharpTypeDeclaration type = CSharpLineMarkerUtil.getNameIdentifierAs(element, CSharpTypeDeclaration.class);
 						if(type != null)
 						{
-							MultiMap<VirtualFile, Unity3dYMLAsset> files = Unity3dYMLAsset.findAssetAsAttach(PsiUtilCore.getVirtualFile(type), type.getProject(), true);
+							MultiMap<VirtualFile, Unity3dYMLAsset> files = Unity3dYMLAsset.findAssetAsAttach(type.getProject(), PsiUtilCore.getVirtualFile(type), true);
 							if(files.isEmpty())
 							{
 								return;
@@ -101,7 +101,7 @@ public enum Unity3dAssetCSharpLineMarker
 						final CSharpTypeDeclaration mirror = CSharpLineMarkerUtil.getNameIdentifierAs(element, CSharpTypeDeclaration.class);
 						if(mirror != null)
 						{
-							MultiMap<VirtualFile, Unity3dYMLAsset> files = Unity3dYMLAsset.findAssetAsAttach(PsiUtilCore.getVirtualFile(mirror), mirror.getProject(), true);
+							MultiMap<VirtualFile, Unity3dYMLAsset> files = Unity3dYMLAsset.findAssetAsAttach(mirror.getProject(), PsiUtilCore.getVirtualFile(mirror), true);
 
 							if(files.isEmpty())
 							{
@@ -149,7 +149,7 @@ public enum Unity3dAssetCSharpLineMarker
 				@Override
 				public boolean isAvailable(@NotNull PsiElement element)
 				{
-					MultiMap<VirtualFile, Unity3dYMLAsset> temp = Unity3dYMLAsset.findAssetAsAttach(PsiUtilCore.getVirtualFile(element), element.getProject(), true);
+					MultiMap<VirtualFile, Unity3dYMLAsset> temp = Unity3dYMLAsset.findAssetAsAttach(element.getProject(), PsiUtilCore.getVirtualFile(element), true);
 					return !temp.isEmpty();
 				}
 			},
@@ -179,7 +179,7 @@ public enum Unity3dAssetCSharpLineMarker
 						final CSharpFieldDeclaration field = CSharpLineMarkerUtil.getNameIdentifierAs(element, CSharpFieldDeclaration.class);
 						if(field != null)
 						{
-							MultiMap<VirtualFile, Unity3dYMLAsset> files = Unity3dYMLAsset.findAssetAsAttach(PsiUtilCore.getVirtualFile(field), field.getProject(), true);
+							MultiMap<VirtualFile, Unity3dYMLAsset> files = Unity3dYMLAsset.findAssetAsAttach(field.getProject(), PsiUtilCore.getVirtualFile(field), true);
 
 							if(files.isEmpty())
 							{
@@ -243,7 +243,7 @@ public enum Unity3dAssetCSharpLineMarker
 				public boolean isAvailable(@NotNull PsiElement element)
 				{
 					CSharpFieldDeclaration field = (CSharpFieldDeclaration) element;
-					MultiMap<VirtualFile, Unity3dYMLAsset> files = Unity3dYMLAsset.findAssetAsAttach(PsiUtilCore.getVirtualFile(field), field.getProject(), false);
+					MultiMap<VirtualFile, Unity3dYMLAsset> files = Unity3dYMLAsset.findAssetAsAttach(field.getProject(), PsiUtilCore.getVirtualFile(field), false);
 
 					if(files.isEmpty())
 					{

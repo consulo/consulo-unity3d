@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project version="4">
+<project>
   <component name="ModuleManager">
     <modules>
       <module name="consulo-unity3d" dirurl="file://$PROJECT_DIR$" current-layer="Default">
@@ -14,16 +14,6 @@
           <orderEntry type="module-extension-sdk" extension-id="consulo-plugin" />
           <orderEntry type="sourceFolder" />
           <orderEntry type="library" name="dd-plist" level="project" />
-          <orderEntry type="module-library">
-            <library name="snakeyaml">
-              <binaries>
-                <root url="jar://$MODULE_DIR$/lib/snakeyaml-1.16.jar!/" />
-              </binaries>
-              <sources>
-                <root url="jar://$MODULE_DIR$/libSrc/snakeyaml-1.16-sources.jar!/" />
-              </sources>
-            </library>
-          </orderEntry>
           <orderEntry type="library" name="consulo-plugin: consulo.dotnet" level="project" />
           <orderEntry type="library" name="consulo-plugin: consulo.csharp" level="project" />
           <orderEntry type="library" name="consulo-plugin: consulo.nunit" level="project" />
