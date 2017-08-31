@@ -34,6 +34,7 @@ import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkTable;
 import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil;
+import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.SystemInfo;
@@ -79,7 +80,8 @@ public class UnityOpenFilePostHandler extends JsonPostRequestHandler<UnityOpenFi
 			return JsonResponse.asError("unsupported-content-type");
 		}
 
-		UIUtil.invokeLaterIfNeeded(() -> {
+		UIUtil.invokeLaterIfNeeded(() ->
+		{
 			VirtualFile projectVirtualFile = LocalFileSystem.getInstance().findFileByPath(body.projectPath);
 			if(projectVirtualFile != null)
 			{
@@ -172,8 +174,12 @@ public class UnityOpenFilePostHandler extends JsonPostRequestHandler<UnityOpenFi
 				}
 				else
 				{
-					activateFrame(openedProject, body);
-					openFile(openedProject, body);
+					final Project project = openedProject;
+					StartupManager.getInstance(project).runWhenProjectIsInitialized(() ->
+					{
+						activateFrame(project, body);
+						openFile(project, body);
+					});
 				}
 			}
 		});
