@@ -49,7 +49,7 @@ public class Unity3dYMLAsset
 		CommonProcessors.CollectProcessor<Integer> fileIds = new CommonProcessors.CollectProcessor<>();
 
 		FileBasedIndex fileBasedIndex = FileBasedIndex.getInstance();
-		fileBasedIndex.processAllKeys(Unity3dYMLAssetNewIndexExtension.KEY, fileIds, project);
+		fileBasedIndex.processAllKeys(Unity3dYMLAssetIndexExtension.KEY, fileIds, project);
 
 		GlobalSearchScope scope = GlobalSearchScope.projectScope(project);
 		MultiMap<VirtualFile, Unity3dYMLAsset> map = MultiMap.create();
@@ -63,7 +63,7 @@ public class Unity3dYMLAsset
 				continue;
 			}
 
-			fileBasedIndex.processValues(Unity3dYMLAssetNewIndexExtension.KEY, fileId, assertFile, (virtualFile, list) ->
+			fileBasedIndex.processValues(Unity3dYMLAssetIndexExtension.KEY, fileId, assertFile, (virtualFile, list) ->
 			{
 				for(Unity3dYMLAsset asset : list)
 				{

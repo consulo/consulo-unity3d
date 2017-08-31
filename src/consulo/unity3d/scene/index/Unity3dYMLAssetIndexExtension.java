@@ -69,7 +69,7 @@ import consulo.unity3d.scene.Unity3dYMLAssetFileType;
  * m_EditorClassIdentifier:
  * speed: 30
  */
-public class Unity3dYMLAssetNewIndexExtension extends FileBasedIndexExtension<Integer, List<Unity3dYMLAsset>>
+public class Unity3dYMLAssetIndexExtension extends FileBasedIndexExtension<Integer, List<Unity3dYMLAsset>>
 {
 	public static final ID<Integer, List<Unity3dYMLAsset>> KEY = ID.create("unity3d.yml.asset.new.index");
 

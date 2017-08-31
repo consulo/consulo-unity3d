@@ -163,7 +163,7 @@
 		<projectViewNodeDecorator implementation="consulo.unity3d.ide.projectView.Unity3dProjectViewNodeDecorator"/>
 		<possibleModuleForFileResolver implementation="consulo.unity3d.projectImport.Unity3dPossibleModuleForFileResolver"/>
 		<fileTypeDetector implementation="consulo.unity3d.scene.Unity3dAssetFileTypeDetector"/>
-		<fileBasedIndex implementation="consulo.unity3d.scene.index.Unity3dYMLAssetNewIndexExtension"/>
+		<fileBasedIndex implementation="consulo.unity3d.scene.index.Unity3dYMLAssetIndexExtension"/>
 		<projectService serviceImplementation="consulo.unity3d.UnityConsoleService"/>
 
 		<httpRequestHandler implementation="consulo.unity3d.jsonApi.UnityOpenFilePostHandler"/>
