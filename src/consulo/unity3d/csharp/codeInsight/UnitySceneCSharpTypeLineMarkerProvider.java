@@ -63,7 +63,7 @@ public class UnitySceneCSharpTypeLineMarkerProvider extends LineMarkerProviderDe
 			if(declaration != null)
 			{
 				String uuid = Unity3dAssetUtil.getGUID(element.getProject(), PsiUtilCore.getVirtualFile(declaration));
-				if(uuid == null || marker.needSkip(declaration))
+				if(uuid == null )
 				{
 					return null;
 				}

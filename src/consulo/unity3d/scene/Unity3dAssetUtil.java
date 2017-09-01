@@ -19,9 +19,16 @@ package consulo.unity3d.scene;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiManager;
+import com.intellij.psi.PsiRecursiveElementWalkingVisitor;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.containers.ContainerUtil;
+import consulo.annotations.RequiredReadAction;
+import consulo.csharp.lang.psi.CSharpTypeDeclaration;
 
 /**
  * @author VISTALL
@@ -29,6 +36,45 @@ import com.intellij.util.containers.ContainerUtil;
  */
 public class Unity3dAssetUtil
 {
+	@RequiredReadAction
+	public static boolean isPrimaryType(@Nullable PsiElement element)
+	{
+		if(element == null)
+		{
+			return false;
+		}
+
+		PsiFile containingFile = element.getContainingFile();
+		if(containingFile == null)
+		{
+			return false;
+		}
+
+		CSharpTypeDeclaration primaryType = findPrimaryType(containingFile);
+		return primaryType != null && PsiManager.getInstance(containingFile.getProject()).areElementsEquivalent(primaryType, element);
+	}
+
+	@Nullable
+	@RequiredReadAction
+	public static CSharpTypeDeclaration findPrimaryType(@NotNull PsiFile file)
+	{
+		Ref<CSharpTypeDeclaration> typeRef = Ref.create();
+		file.accept(new PsiRecursiveElementWalkingVisitor()
+		{
+			@Override
+			public void visitElement(PsiElement element)
+			{
+				if(element instanceof CSharpTypeDeclaration)
+				{
+					typeRef.set((CSharpTypeDeclaration) element);
+					stopWalking();
+				}
+				super.visitElement(element);
+			}
+		});
+		return typeRef.get();
+	}
+
 	@NotNull
 	public static VirtualFile[] sortAssetFiles(VirtualFile[] virtualFiles)
 	{

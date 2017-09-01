@@ -167,6 +167,9 @@
 		<fileBasedIndex implementation="consulo.unity3d.scene.index.Unity3dMetaIndexExtension"/>
 		<projectService serviceImplementation="consulo.unity3d.UnityConsoleService"/>
 		<projectService serviceImplementation="consulo.unity3d.scene.Unity3dMetaManager" />
+		<psi.referenceContributor language="yaml" implementation="consulo.unity3d.scene.reference.Unity3dSceneFieldReferenceRegister" />
+
+		<referencesSearch implementation="consulo.unity3d.scene.reference.Unity3dSceneReferenceSearcher" />
 
 		<httpRequestHandler implementation="consulo.unity3d.jsonApi.UnityOpenFilePostHandler"/>
 		<httpRequestHandler implementation="consulo.unity3d.jsonApi.UnityLogPostHandler"/>

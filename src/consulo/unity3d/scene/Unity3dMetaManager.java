@@ -22,15 +22,19 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.yaml.psi.YAMLFile;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.LowMemoryWatcher;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiManager;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.util.ObjectUtil;
 import com.intellij.util.indexing.FileBasedIndex;
+import consulo.annotations.RequiredReadAction;
 import consulo.unity3d.Unity3dMetaFileType;
 import consulo.unity3d.scene.index.Unity3dMetaIndexExtension;
 
@@ -40,6 +44,8 @@ import consulo.unity3d.scene.index.Unity3dMetaIndexExtension;
  */
 public class Unity3dMetaManager implements Disposable
 {
+	public static final String GUID_KEY = "guid";
+
 	@NotNull
 	public static Unity3dMetaManager getInstance(@NotNull Project project)
 	{
@@ -58,6 +64,19 @@ public class Unity3dMetaManager implements Disposable
 	}
 
 	@Nullable
+	public VirtualFile findFileByGUID(@NotNull String guid)
+	{
+		List<Integer> values = FileBasedIndex.getInstance().getValues(Unity3dMetaIndexExtension.KEY, guid, GlobalSearchScope.allScope(myProject));
+		if(values.isEmpty())
+		{
+			return null;
+		}
+
+		return FileBasedIndex.getInstance().findFileById(myProject, values.get(0));
+	}
+
+	@Nullable
+	@RequiredReadAction
 	public String getGUID(@NotNull VirtualFile virtualFile)
 	{
 		String name = virtualFile.getName();
@@ -75,14 +94,13 @@ public class Unity3dMetaManager implements Disposable
 			VirtualFile child = parent.findChild(name + "." + Unity3dMetaFileType.INSTANCE.getDefaultExtension());
 			if(child != null)
 			{
-				int fileId = FileBasedIndex.getFileId(child);
-
-				List<String> values = FileBasedIndex.getInstance().getValues(Unity3dMetaIndexExtension.KEY, fileId, GlobalSearchScope.allScope(myProject));
-				if(values.isEmpty())
+				String guid = null;
+				PsiFile file = PsiManager.getInstance(myProject).findFile(child);
+				if(file instanceof YAMLFile)
 				{
-					return ObjectUtil.NULL;
+					guid = Unity3dMetaIndexExtension.findGUIDFromFile((YAMLFile) file);
 				}
-				return values.get(0);
+				return guid == null ? ObjectUtil.NULL : guid;
 			}
 			return ObjectUtil.NULL;
 		});

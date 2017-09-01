@@ -39,6 +39,7 @@ import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import com.intellij.util.ui.UIUtil;
+import consulo.annotations.RequiredReadAction;
 import consulo.csharp.ide.lineMarkerProvider.CSharpLineMarkerUtil;
 import consulo.csharp.lang.psi.CSharpFieldDeclaration;
 import consulo.csharp.lang.psi.CSharpTypeDeclaration;
@@ -55,12 +56,6 @@ public enum Unity3dAssetCSharpLineMarker
 {
 	Type(CSharpTypeDeclaration.class, Unity3dIcons.Unity3dLineMarker)
 			{
-				@Override
-				public boolean needSkip(@NotNull PsiElement element)
-				{
-					return ((CSharpTypeDeclaration) element).isNested();
-				}
-
 				@NotNull
 				@Override
 				public GutterIconNavigationHandler<PsiElement> createNavigationHandler()
@@ -146,9 +141,15 @@ public enum Unity3dAssetCSharpLineMarker
 					};
 				}
 
+				@RequiredReadAction
 				@Override
 				public boolean isAvailable(@NotNull PsiElement element)
 				{
+					if(!Unity3dAssetUtil.isPrimaryType(element))
+					{
+						return false;
+					}
+
 					MultiMap<VirtualFile, Unity3dYMLAsset> temp = Unity3dYMLAsset.findAssetAsAttach(element.getProject(), PsiUtilCore.getVirtualFile(element), true);
 					return !temp.isEmpty();
 				}
@@ -179,7 +180,7 @@ public enum Unity3dAssetCSharpLineMarker
 						final CSharpFieldDeclaration field = CSharpLineMarkerUtil.getNameIdentifierAs(element, CSharpFieldDeclaration.class);
 						if(field != null)
 						{
-							MultiMap<VirtualFile, Unity3dYMLAsset> files = Unity3dYMLAsset.findAssetAsAttach(field.getProject(), PsiUtilCore.getVirtualFile(field), true);
+							MultiMap<VirtualFile, Unity3dYMLAsset> files = Unity3dYMLAsset.findAssetAsAttach(field.getProject(), PsiUtilCore.getVirtualFile(field), false);
 
 							if(files.isEmpty())
 							{
@@ -188,7 +189,7 @@ public enum Unity3dAssetCSharpLineMarker
 
 							String name = field.getName();
 
-							MultiMap<String, String> valueMap = MultiMap.create();
+							MultiMap<String, String> valueMap = MultiMap.createOrderedSet();
 							for(Map.Entry<VirtualFile, Collection<Unity3dYMLAsset>> entry : files.entrySet())
 							{
 								VirtualFile key = entry.getKey();
@@ -239,10 +240,16 @@ public enum Unity3dAssetCSharpLineMarker
 					};
 				}
 
+				@RequiredReadAction
 				@Override
 				public boolean isAvailable(@NotNull PsiElement element)
 				{
 					CSharpFieldDeclaration field = (CSharpFieldDeclaration) element;
+					if(!Unity3dAssetUtil.isPrimaryType(field.getParent()))
+					{
+						return false;
+					}
+
 					MultiMap<VirtualFile, Unity3dYMLAsset> files = Unity3dYMLAsset.findAssetAsAttach(field.getProject(), PsiUtilCore.getVirtualFile(field), false);
 
 					if(files.isEmpty())
@@ -297,10 +304,6 @@ public enum Unity3dAssetCSharpLineMarker
 	@NotNull
 	public abstract Function<PsiElement, String> createTooltipFunction();
 
+	@RequiredReadAction
 	public abstract boolean isAvailable(@NotNull PsiElement element);
-
-	public boolean needSkip(@NotNull PsiElement element)
-	{
-		return false;
-	}
 }

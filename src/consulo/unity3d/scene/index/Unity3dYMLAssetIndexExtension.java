@@ -49,6 +49,7 @@ import com.intellij.util.io.DataExternalizer;
 import com.intellij.util.io.DataInputOutputUtil;
 import com.intellij.util.io.ExternalIntegerKeyDescriptor;
 import com.intellij.util.io.KeyDescriptor;
+import consulo.unity3d.scene.Unity3dMetaManager;
 import consulo.unity3d.scene.Unity3dYMLAssetFileType;
 
 /**
@@ -160,7 +161,7 @@ public class Unity3dYMLAssetIndexExtension extends FileBasedIndexExtension<Integ
 							{
 								if(fieldValue instanceof YAMLMapping)
 								{
-									YAMLKeyValue guidKeyValue = ((YAMLMapping) fieldValue).getKeyValueByKey("guid");
+									YAMLKeyValue guidKeyValue = ((YAMLMapping) fieldValue).getKeyValueByKey(Unity3dMetaManager.GUID_KEY);
 									if(guidKeyValue != null)
 									{
 										YAMLValue guidValue = guidKeyValue.getValue();
