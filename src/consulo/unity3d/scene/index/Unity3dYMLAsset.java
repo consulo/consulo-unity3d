@@ -89,20 +89,33 @@ public class Unity3dYMLAsset
 		return map;
 	}
 
+	@NotNull
 	private final String myGuild;
+	@Nullable
+	private final String myGameObjectName;
+	@NotNull
 	private final List<Couple<String>> myValues;
 
-	public Unity3dYMLAsset(@NotNull String guild, @NotNull List<Couple<String>> values)
+	public Unity3dYMLAsset(@NotNull String guild, @Nullable String gameObjectName, @NotNull List<Couple<String>> values)
 	{
 		myGuild = guild;
+		myGameObjectName = gameObjectName;
 		myValues = values;
 	}
 
+	@Nullable
+	public String getGameObjectName()
+	{
+		return myGameObjectName;
+	}
+
+	@NotNull
 	public String getGuild()
 	{
 		return myGuild;
 	}
 
+	@NotNull
 	public List<Couple<String>> getValues()
 	{
 		return myValues;
@@ -126,6 +139,10 @@ public class Unity3dYMLAsset
 		{
 			return false;
 		}
+		if(myGameObjectName != null ? !myGameObjectName.equals(that.myGameObjectName) : that.myGameObjectName != null)
+		{
+			return false;
+		}
 		if(!myValues.equals(that.myValues))
 		{
 			return false;
@@ -138,6 +155,7 @@ public class Unity3dYMLAsset
 	public int hashCode()
 	{
 		int result = myGuild.hashCode();
+		result = 31 * result + (myGameObjectName != null ? myGameObjectName.hashCode() : 0);
 		result = 31 * result + myValues.hashCode();
 		return result;
 	}

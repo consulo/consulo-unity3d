@@ -22,7 +22,6 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -75,9 +74,12 @@ public class Unity3dYMLAssetIndexExtension extends FileBasedIndexExtension<Integ
 {
 	public static final ID<Integer, List<Unity3dYMLAsset>> KEY = ID.create("unity3d.yml.asset.new.index");
 
-	private static final int ourVersion = 7;
-	private static final Set<String> ourAcceptKeys = ContainerUtil.newTroveSet("MonoBehaviour", "Prefab", "Transform", "GameObject", "TrailRenderer");
+	private static final int ourVersion = 8;
+	private static final String ourGameObject = "GameObject";
+	private static final Set<String> ourAcceptKeys = ContainerUtil.newTroveSet("MonoBehaviour", "Prefab", "Transform", ourGameObject, "TrailRenderer");
 	private static final Set<String> ourGuidKeys = ContainerUtil.newTroveSet("m_PrefabParentObject", "m_Script", "m_ParentPrefab");
+
+	private static final String ourGameObjectNameField = "m_Name";
 
 	private final DefaultFileTypeSpecificInputFilter myInputFilter = new DefaultFileTypeSpecificInputFilter(Unity3dYMLAssetFileType.INSTANCE);
 	private final ExternalIntegerKeyDescriptor myKeyDescriptor = new ExternalIntegerKeyDescriptor();
@@ -90,6 +92,12 @@ public class Unity3dYMLAssetIndexExtension extends FileBasedIndexExtension<Integ
 			DataInputOutputUtil.writeSeq(dataOutput, list, asset ->
 			{
 				dataOutput.writeUTF(asset.getGuild());
+				String gameObjectName = asset.getGameObjectName();
+				dataOutput.writeBoolean(gameObjectName != null);
+				if(gameObjectName != null)
+				{
+					dataOutput.writeUTF(gameObjectName);
+				}
 
 				DataInputOutputUtil.writeSeq(dataOutput, asset.getValues(), it ->
 				{
@@ -105,8 +113,14 @@ public class Unity3dYMLAssetIndexExtension extends FileBasedIndexExtension<Integ
 			return DataInputOutputUtil.readSeq(dataInput, () ->
 			{
 				String guid = dataInput.readUTF();
+				boolean gameObjectCheck = dataInput.readBoolean();
+				String gameObjectName = null;
+				if(gameObjectCheck)
+				{
+					gameObjectName = dataInput.readUTF();
+				}
 				List<Couple<String>> values = DataInputOutputUtil.readSeq(dataInput, () -> Couple.of(dataInput.readUTF(), dataInput.readUTF()));
-				return new Unity3dYMLAsset(guid, values);
+				return new Unity3dYMLAsset(guid, gameObjectName, values);
 			});
 		}
 	};
@@ -121,6 +135,8 @@ public class Unity3dYMLAssetIndexExtension extends FileBasedIndexExtension<Integ
 
 		Map<Integer, List<Unity3dYMLAsset>> map = new THashMap<>();
 
+		String currentGameObjectName = null;
+
 		// optimization - do not call psiFile.getDocuments()
 		for(PsiElement element = psiFile.getFirstChild(); element != null; element = element.getNextSibling())
 		{
@@ -134,11 +150,16 @@ public class Unity3dYMLAssetIndexExtension extends FileBasedIndexExtension<Integ
 			YAMLValue topLevelValue = document.getTopLevelValue();
 			if(topLevelValue instanceof YAMLMapping)
 			{
-				Collection<YAMLKeyValue> keyValues = ((YAMLMapping) topLevelValue).getKeyValues();
-				for(YAMLKeyValue keyValue : keyValues)
+				// optimization
+				for(PsiElement keyValue = topLevelValue.getFirstChild(); keyValue != null; keyValue = keyValue.getNextSibling())
 				{
-					String keyText = keyValue.getKeyText();
-					YAMLValue value = keyValue.getValue();
+					if(!(keyValue instanceof YAMLKeyValue))
+					{
+						continue;
+					}
+
+					String keyText = ((YAMLKeyValue) keyValue).getKeyText();
+					YAMLValue value = ((YAMLKeyValue) keyValue).getValue();
 					if(ourAcceptKeys.contains(keyText) && value instanceof YAMLMapping)
 					{
 						YAMLMapping mapping = (YAMLMapping) value;
@@ -155,14 +176,19 @@ public class Unity3dYMLAssetIndexExtension extends FileBasedIndexExtension<Integ
 							}
 
 							YAMLKeyValue temp = (YAMLKeyValue) keyValuePair;
-							String fieldNameText = temp.getKeyText();
+							String fieldName = temp.getKeyText();
 							YAMLValue fieldValue = temp.getValue();
 							if(fieldValue == null)
 							{
 								continue;
 							}
 
-							if(ourGuidKeys.contains(fieldNameText))
+							if(ourGameObject.equals(keyText) && ourGameObjectNameField.equals(fieldName))
+							{
+								currentGameObjectName = fieldValue instanceof YAMLScalar ? ((YAMLScalar) fieldValue).getTextValue() : null;
+							}
+
+							if(ourGuidKeys.contains(fieldName))
 							{
 								if(fieldValue instanceof YAMLMapping)
 								{
@@ -181,14 +207,14 @@ public class Unity3dYMLAssetIndexExtension extends FileBasedIndexExtension<Integ
 
 							if(values != null)
 							{
-								values.add(Couple.of(fieldNameText, StringUtil.first(fieldValue.getText(), 24, true)));
+								values.add(Couple.of(fieldName, StringUtil.first(fieldValue.getText(), 24, true)));
 							}
 						}
 
 						if(scriptGuid != null)
 						{
 							final int key = Math.abs(FileBasedIndex.getFileId(fileContent.getFile()));
-							Unity3dYMLAsset unity3DYMLAsset = new Unity3dYMLAsset(scriptGuid, values);
+							Unity3dYMLAsset unity3DYMLAsset = new Unity3dYMLAsset(scriptGuid, currentGameObjectName, values);
 
 							List<Unity3dYMLAsset> list = map.get(key);
 							if(list != null)

@@ -16,6 +16,7 @@
 
 package consulo.unity3d.csharp.codeInsight;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -28,6 +29,10 @@ import com.intellij.codeInsight.daemon.GutterIconNavigationHandler;
 import com.intellij.codeInsight.daemon.impl.PsiElementListNavigator;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.util.DefaultPsiElementCellRenderer;
+import com.intellij.openapi.editor.colors.EditorColorsManager;
+import com.intellij.openapi.editor.colors.EditorColorsScheme;
+import com.intellij.openapi.editor.colors.TextAttributesKey;
+import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.util.Couple;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
@@ -35,14 +40,19 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.NavigatablePsiElement;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiUtilCore;
+import com.intellij.ui.GuiUtils;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import com.intellij.util.ui.UIUtil;
 import consulo.annotations.RequiredReadAction;
+import consulo.csharp.ide.highlight.CSharpHighlightKey;
 import consulo.csharp.ide.lineMarkerProvider.CSharpLineMarkerUtil;
 import consulo.csharp.lang.psi.CSharpFieldDeclaration;
 import consulo.csharp.lang.psi.CSharpTypeDeclaration;
+import consulo.dotnet.DotNetTypes;
+import consulo.dotnet.resolve.DotNetTypeRef;
+import consulo.dotnet.resolve.DotNetTypeRefUtil;
 import consulo.unity3d.Unity3dIcons;
 import consulo.unity3d.editor.UnitySceneFile;
 import consulo.unity3d.scene.Unity3dAssetUtil;
@@ -203,7 +213,17 @@ public enum Unity3dAssetCSharpLineMarker
 									{
 										if(couple.getFirst().equals(name))
 										{
-											valueMap.putValue(relativePath, couple.getSecond());
+											String fieldValue = null;
+											String gameObjectName = unity3dYMLAsset.getGameObjectName();
+											if(gameObjectName == null)
+											{
+												fieldValue = formatValue(field, couple.getSecond());
+											}
+											else
+											{
+												fieldValue = "<b>[" + gameObjectName + "]</b>&nbsp;" + formatValue(field, couple.getSecond());
+											}
+											valueMap.putValue(relativePath, fieldValue);
 										}
 									}
 								}
@@ -219,7 +239,8 @@ public enum Unity3dAssetCSharpLineMarker
 
 							int i = 0;
 							boolean first = true;
-							loop:for(Map.Entry<String, Collection<String>> entry : valueMap.entrySet())
+							loop:
+							for(Map.Entry<String, Collection<String>> entry : valueMap.entrySet())
 							{
 								for(String value : entry.getValue())
 								{
@@ -238,7 +259,7 @@ public enum Unity3dAssetCSharpLineMarker
 										break loop;
 									}
 
-									builder.append("&nbsp;").append(entry.getKey()).append("&nbsp;").append(UIUtil.rightArrow()).append("&nbsp;").append("<code>").append(value).append("</code>");
+									builder.append("&nbsp;").append(entry.getKey()).append("&nbsp;").append(UIUtil.rightArrow()).append("&nbsp;").append(value);
 									i++;
 								}
 							}
@@ -246,6 +267,56 @@ public enum Unity3dAssetCSharpLineMarker
 						}
 						return "";
 					};
+				}
+
+				private String[] myNumberTypes = new String[]{
+						DotNetTypes.System.Byte,
+						DotNetTypes.System.SByte,
+						DotNetTypes.System.Int16,
+						DotNetTypes.System.UInt16,
+						DotNetTypes.System.Int32,
+						DotNetTypes.System.UInt32,
+						DotNetTypes.System.Int64,
+						DotNetTypes.System.UInt64,
+						DotNetTypes.System.Decimal,
+						DotNetTypes.System.Single,
+						DotNetTypes.System.Double,
+				};
+
+				@RequiredReadAction
+				private String formatValue(@NotNull CSharpFieldDeclaration field, @NotNull String value)
+				{
+
+					DotNetTypeRef typeRef = field.toTypeRef(true);
+					if(DotNetTypeRefUtil.isVmQNameEqual(typeRef, field, DotNetTypes.System.String))
+					{
+						return "<code>" + formatWithStyle(StringUtil.QUOTER.fun(value), CSharpHighlightKey.STRING) + "</code>";
+					}
+
+					if(DotNetTypeRefUtil.isVmQNameEqual(typeRef, field, DotNetTypes.System.Char))
+					{
+						return "<code>" + formatWithStyle(StringUtil.SINGLE_QUOTER.fun(value), CSharpHighlightKey.STRING) + "</code>";
+					}
+
+					for(String numberType : myNumberTypes)
+					{
+						if(DotNetTypeRefUtil.isVmQNameEqual(typeRef, field, numberType))
+						{
+							return "<code>" + formatWithStyle(value, CSharpHighlightKey.NUMBER) + "</code>";
+						}
+					}
+					return "<code>" + value + "</code>";
+				}
+
+				@NotNull
+				private String formatWithStyle(String value, TextAttributesKey key)
+				{
+					EditorColorsScheme globalScheme = EditorColorsManager.getInstance().getGlobalScheme();
+
+					TextAttributes attributes = globalScheme.getAttributes(key);
+					Color foregroundColor = attributes.getForegroundColor();
+
+					return "<font color=\"" + GuiUtils.colorToHex(foregroundColor) + "\">" + value + "</font>";
 				}
 
 				@RequiredReadAction
