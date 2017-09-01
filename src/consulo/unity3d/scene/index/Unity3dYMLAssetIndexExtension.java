@@ -36,6 +36,7 @@ import org.jetbrains.yaml.psi.YAMLMapping;
 import org.jetbrains.yaml.psi.YAMLScalar;
 import org.jetbrains.yaml.psi.YAMLValue;
 import com.intellij.openapi.util.Couple;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.containers.ContainerUtil;
@@ -74,7 +75,7 @@ public class Unity3dYMLAssetIndexExtension extends FileBasedIndexExtension<Integ
 {
 	public static final ID<Integer, List<Unity3dYMLAsset>> KEY = ID.create("unity3d.yml.asset.new.index");
 
-	private static final int ourVersion = 6;
+	private static final int ourVersion = 7;
 	private static final Set<String> ourAcceptKeys = ContainerUtil.newTroveSet("MonoBehaviour", "Prefab", "Transform", "GameObject", "TrailRenderer");
 	private static final Set<String> ourGuidKeys = ContainerUtil.newTroveSet("m_PrefabParentObject", "m_Script", "m_ParentPrefab");
 
@@ -156,6 +157,10 @@ public class Unity3dYMLAssetIndexExtension extends FileBasedIndexExtension<Integ
 							YAMLKeyValue temp = (YAMLKeyValue) keyValuePair;
 							String fieldNameText = temp.getKeyText();
 							YAMLValue fieldValue = temp.getValue();
+							if(fieldValue == null)
+							{
+								continue;
+							}
 
 							if(ourGuidKeys.contains(fieldNameText))
 							{
@@ -176,10 +181,7 @@ public class Unity3dYMLAssetIndexExtension extends FileBasedIndexExtension<Integ
 
 							if(values != null)
 							{
-								if(fieldValue instanceof YAMLScalar)
-								{
-									values.add(Couple.of(fieldNameText, ((YAMLScalar) fieldValue).getTextValue()));
-								}
+								values.add(Couple.of(fieldNameText, StringUtil.first(fieldValue.getText(), 24, true)));
 							}
 						}
 

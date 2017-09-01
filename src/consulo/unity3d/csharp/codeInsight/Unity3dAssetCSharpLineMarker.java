@@ -217,8 +217,9 @@ public enum Unity3dAssetCSharpLineMarker
 							StringBuilder builder = new StringBuilder();
 							builder.append("<b>Scene value initialize:</b><br>");
 
+							int i = 0;
 							boolean first = true;
-							for(Map.Entry<String, Collection<String>> entry : valueMap.entrySet())
+							loop:for(Map.Entry<String, Collection<String>> entry : valueMap.entrySet())
 							{
 								for(String value : entry.getValue())
 								{
@@ -231,7 +232,14 @@ public enum Unity3dAssetCSharpLineMarker
 										first = false;
 									}
 
+									if(i > 25)
+									{
+										builder.append("<b>...</b>");
+										break loop;
+									}
+
 									builder.append("&nbsp;").append(entry.getKey()).append("&nbsp;").append(UIUtil.rightArrow()).append("&nbsp;").append("<code>").append(value).append("</code>");
+									i++;
 								}
 							}
 							return builder.toString();
