@@ -61,7 +61,7 @@ public class Unity3dSceneCSharpFieldReference implements PsiReference
 	@Override
 	public PsiElement getElement()
 	{
-		return myKeyValue.getKey();
+		return myKeyValue;
 	}
 
 	@RequiredReadAction
@@ -75,7 +75,7 @@ public class Unity3dSceneCSharpFieldReference implements PsiReference
 			return new TextRange(0, myKeyValue.getTextLength());
 		}
 		// cut :
-		return new TextRange(key.getStartOffsetInParent(), key.getTextLength() - 1);
+		return new TextRange(0, key.getTextLength() - 1);
 	}
 
 	@RequiredReadAction
