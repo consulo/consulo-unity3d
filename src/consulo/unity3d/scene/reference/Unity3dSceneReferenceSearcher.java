@@ -17,6 +17,7 @@
 package consulo.unity3d.scene.reference;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.yaml.psi.YAMLFile;
 import com.intellij.openapi.application.QueryExecutorBase;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.progress.ProgressManager;
@@ -32,6 +33,7 @@ import com.intellij.util.Processor;
 import com.intellij.util.containers.MultiMap;
 import consulo.csharp.lang.psi.CSharpFieldDeclaration;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
+import consulo.unity3d.scene.Unity3dMetaManager;
 import consulo.unity3d.scene.index.Unity3dYMLAsset;
 
 /**
@@ -49,18 +51,30 @@ public class Unity3dSceneReferenceSearcher extends QueryExecutorBase<PsiReferenc
 			return;
 		}
 
+		Project project = searchParameters.getProject();
+
 		PsiElement element = searchParameters.getElementToSearch();
-		if(element instanceof CSharpFieldDeclaration && ReadAction.compute(() -> Unity3dModuleExtensionUtil.getRootModule(searchParameters.getProject()) != null))
+		if(ReadAction.compute(() -> Unity3dModuleExtensionUtil.getRootModule(searchParameters.getProject()) != null))
 		{
-			String name = ReadAction.compute(((CSharpFieldDeclaration) element)::getName);
-			Project project = element.getProject();
-			MultiMap<VirtualFile, Unity3dYMLAsset> map = ReadAction.compute(() -> Unity3dYMLAsset.findAssetAsAttach(project, PsiUtilCore.getVirtualFile(element), false));
-
-			for(VirtualFile virtualFile : map.keySet())
+			if(element instanceof CSharpFieldDeclaration)
 			{
-				ProgressManager.checkCanceled();
+				String name = ReadAction.compute(((CSharpFieldDeclaration) element)::getName);
+				MultiMap<VirtualFile, Unity3dYMLAsset> map = ReadAction.compute(() -> Unity3dYMLAsset.findAssetAsAttach(project, PsiUtilCore.getVirtualFile(element), false));
 
-				searchParameters.getOptimizer().searchWord(name + ":", GlobalSearchScope.fileScope(project, virtualFile), true, element);
+				for(VirtualFile virtualFile : map.keySet())
+				{
+					ProgressManager.checkCanceled();
+
+					searchParameters.getOptimizer().searchWord(name + ":", GlobalSearchScope.fileScope(project, virtualFile), true, element);
+				}
+			}
+			else if(element instanceof YAMLFile)
+			{
+				String guid = ReadAction.compute(() -> Unity3dMetaManager.getInstance(project).getGUID(PsiUtilCore.getVirtualFile(element)));
+				if(guid != null)
+				{
+					searchParameters.getOptimizer().searchWord(guid, GlobalSearchScope.allScope(project), true, element);
+				}
 			}
 		}
 	}

@@ -178,7 +178,7 @@
 		<httpRequestHandler implementation="consulo.unity3d.jsonApi.UnityRefreshResponseHandler"/>
 		<httpRequestHandler implementation="consulo.unity3d.jsonApi.UnitySetDefinesHandler"/>
 
-		<editorNotificationProvider implementation="consulo.unity3d.scene.prefab.Unity3dPrefabEditorNotificationProvider"/>
+		<editorNotificationProvider implementation="consulo.unity3d.scene.prefab.Unity3dAssetEditorNotificationProvider"/>
 
 		<psi.referenceContributor language="C#" implementation="consulo.unity3d.csharp.psi.reference.Unity3dEventMethodReferenceProvider"/>
 	</extensions>
