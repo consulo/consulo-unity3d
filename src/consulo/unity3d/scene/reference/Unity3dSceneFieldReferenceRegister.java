@@ -48,14 +48,14 @@ public class Unity3dSceneFieldReferenceRegister extends PsiReferenceContributor
 	@Override
 	public void registerReferenceProviders(PsiReferenceRegistrar psiReferenceRegistrar)
 	{
-		PsiElementPattern.Capture<YAMLKeyValue> pattern = StandardPatterns.psiElement(YAMLKeyValue.class);
-		pattern = pattern.withParent(StandardPatterns.psiElement(YAMLMapping.class));
-		pattern = pattern.withSuperParent(2, StandardPatterns.psiElement(YAMLKeyValue.class));
-		pattern = pattern.withSuperParent(3, StandardPatterns.psiElement(YAMLMapping.class));
-		pattern = pattern.withSuperParent(4, StandardPatterns.psiElement(YAMLDocument.class));
-		pattern = pattern.withSuperParent(5, StandardPatterns.psiElement(YAMLFile.class));
+		PsiElementPattern.Capture<YAMLKeyValue> fieldNamePattern = StandardPatterns.psiElement(YAMLKeyValue.class);
+		fieldNamePattern = fieldNamePattern.withParent(StandardPatterns.psiElement(YAMLMapping.class));
+		fieldNamePattern = fieldNamePattern.withSuperParent(2, StandardPatterns.psiElement(YAMLKeyValue.class));
+		fieldNamePattern = fieldNamePattern.withSuperParent(3, StandardPatterns.psiElement(YAMLMapping.class));
+		fieldNamePattern = fieldNamePattern.withSuperParent(4, StandardPatterns.psiElement(YAMLDocument.class));
+		fieldNamePattern = fieldNamePattern.withSuperParent(5, StandardPatterns.psiElement(YAMLFile.class));
 
-		psiReferenceRegistrar.registerReferenceProvider(pattern, new PsiReferenceProvider()
+		psiReferenceRegistrar.registerReferenceProvider(fieldNamePattern, new PsiReferenceProvider()
 		{
 			@NotNull
 			@Override
