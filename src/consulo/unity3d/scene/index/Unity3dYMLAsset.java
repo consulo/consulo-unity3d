@@ -93,14 +93,22 @@ public class Unity3dYMLAsset
 	private final String myGuild;
 	@Nullable
 	private final String myGameObjectName;
+
+	private final int myStartOffset;
 	@NotNull
 	private final List<Couple<String>> myValues;
 
-	public Unity3dYMLAsset(@NotNull String guild, @Nullable String gameObjectName, @NotNull List<Couple<String>> values)
+	public Unity3dYMLAsset(@NotNull String guild, @Nullable String gameObjectName, int startOffset, @NotNull List<Couple<String>> values)
 	{
 		myGuild = guild;
 		myGameObjectName = gameObjectName;
+		myStartOffset = startOffset;
 		myValues = values;
+	}
+
+	public int getStartOffset()
+	{
+		return myStartOffset;
 	}
 
 	@Nullable

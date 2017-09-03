@@ -74,7 +74,7 @@ public class Unity3dYMLAssetIndexExtension extends FileBasedIndexExtension<Integ
 {
 	public static final ID<Integer, List<Unity3dYMLAsset>> KEY = ID.create("unity3d.yml.asset.new.index");
 
-	private static final int ourVersion = 8;
+	private static final int ourVersion = 9;
 	private static final String ourGameObject = "GameObject";
 	private static final Set<String> ourAcceptKeys = ContainerUtil.newTroveSet("MonoBehaviour", "Prefab", "Transform", ourGameObject, "TrailRenderer");
 	private static final Set<String> ourGuidKeys = ContainerUtil.newTroveSet("m_PrefabParentObject", "m_Script", "m_ParentPrefab");
@@ -92,6 +92,7 @@ public class Unity3dYMLAssetIndexExtension extends FileBasedIndexExtension<Integ
 			DataInputOutputUtil.writeSeq(dataOutput, list, asset ->
 			{
 				dataOutput.writeUTF(asset.getGuild());
+				dataOutput.writeInt(asset.getStartOffset());
 				String gameObjectName = asset.getGameObjectName();
 				dataOutput.writeBoolean(gameObjectName != null);
 				if(gameObjectName != null)
@@ -113,6 +114,7 @@ public class Unity3dYMLAssetIndexExtension extends FileBasedIndexExtension<Integ
 			return DataInputOutputUtil.readSeq(dataInput, () ->
 			{
 				String guid = dataInput.readUTF();
+				int startOffset = dataInput.readInt();
 				boolean gameObjectCheck = dataInput.readBoolean();
 				String gameObjectName = null;
 				if(gameObjectCheck)
@@ -120,7 +122,7 @@ public class Unity3dYMLAssetIndexExtension extends FileBasedIndexExtension<Integ
 					gameObjectName = dataInput.readUTF();
 				}
 				List<Couple<String>> values = DataInputOutputUtil.readSeq(dataInput, () -> Couple.of(dataInput.readUTF(), dataInput.readUTF()));
-				return new Unity3dYMLAsset(guid, gameObjectName, values);
+				return new Unity3dYMLAsset(guid, gameObjectName, startOffset, values);
 			});
 		}
 	};
@@ -165,6 +167,7 @@ public class Unity3dYMLAssetIndexExtension extends FileBasedIndexExtension<Integ
 						YAMLMapping mapping = (YAMLMapping) value;
 
 						String scriptGuid = null;
+						int startOffset = 0;
 						List<Couple<String>> values = null;
 
 						// optimization
@@ -197,6 +200,7 @@ public class Unity3dYMLAssetIndexExtension extends FileBasedIndexExtension<Integ
 									{
 										YAMLValue guidValue = guidKeyValue.getValue();
 										scriptGuid = guidValue instanceof YAMLScalar ? ((YAMLScalar) guidValue).getTextValue() : null;
+										startOffset = guidValue == null ? 0 : guidValue.getTextOffset();
 										if(scriptGuid != null)
 										{
 											values = new ArrayList<>();
@@ -214,7 +218,7 @@ public class Unity3dYMLAssetIndexExtension extends FileBasedIndexExtension<Integ
 						if(scriptGuid != null)
 						{
 							final int key = Math.abs(FileBasedIndex.getFileId(fileContent.getFile()));
-							Unity3dYMLAsset unity3DYMLAsset = new Unity3dYMLAsset(scriptGuid, currentGameObjectName, values);
+							Unity3dYMLAsset unity3DYMLAsset = new Unity3dYMLAsset(scriptGuid, currentGameObjectName, startOffset, values);
 
 							List<Unity3dYMLAsset> list = map.get(key);
 							if(list != null)

@@ -26,23 +26,29 @@ import javax.swing.Icon;
 
 import org.jetbrains.annotations.NotNull;
 import com.intellij.codeInsight.daemon.GutterIconNavigationHandler;
-import com.intellij.codeInsight.daemon.impl.PsiElementListNavigator;
+import com.intellij.find.FindManager;
 import com.intellij.icons.AllIcons;
-import com.intellij.ide.util.DefaultPsiElementCellRenderer;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.editor.markup.TextAttributes;
+import com.intellij.openapi.fileEditor.FileEditorManager;
+import com.intellij.openapi.fileEditor.OpenFileDescriptor;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.popup.JBPopupFactory;
+import com.intellij.openapi.ui.popup.ListPopup;
+import com.intellij.openapi.ui.popup.PopupStep;
+import com.intellij.openapi.ui.popup.util.BaseListPopupStep;
 import com.intellij.openapi.util.Couple;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.NavigatablePsiElement;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.ui.GuiUtils;
+import com.intellij.ui.awt.RelativePoint;
 import com.intellij.util.Function;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import com.intellij.util.ui.UIUtil;
 import consulo.annotations.RequiredReadAction;
@@ -54,7 +60,6 @@ import consulo.dotnet.DotNetTypes;
 import consulo.dotnet.resolve.DotNetTypeRef;
 import consulo.dotnet.resolve.DotNetTypeRefUtil;
 import consulo.unity3d.Unity3dIcons;
-import consulo.unity3d.editor.UnitySceneFile;
 import consulo.unity3d.scene.Unity3dAssetUtil;
 import consulo.unity3d.scene.index.Unity3dYMLAsset;
 
@@ -81,18 +86,45 @@ public enum Unity3dAssetCSharpLineMarker
 								return;
 							}
 
-							VirtualFile[] assetFiles = Unity3dAssetUtil.sortAssetFiles(VfsUtil.toVirtualFileArray(files.keySet()));
+							List<Pair<VirtualFile, Unity3dYMLAsset>> list = new ArrayList<>();
+							for(Map.Entry<VirtualFile, Collection<Unity3dYMLAsset>> entry : files.entrySet())
+							{
+								for(Unity3dYMLAsset asset : entry.getValue())
+								{
+									list.add(Pair.create(entry.getKey(), asset));
+								}
+							}
 
-							List<UnitySceneFile> map = ContainerUtil.map(assetFiles, virtualFile -> new UnitySceneFile(type.getProject(), virtualFile));
-
-							PsiElementListNavigator.openTargets(mouseEvent, map.toArray(new NavigatablePsiElement[0]), "View Unity assets", "View Unity assets", new DefaultPsiElementCellRenderer()
+							BaseListPopupStep<Pair<VirtualFile, Unity3dYMLAsset>> step = new BaseListPopupStep<Pair<VirtualFile, Unity3dYMLAsset>>("Unity scenes", list)
 							{
 								@Override
-								protected Icon getIcon(PsiElement element1)
+								public Icon getIconFor(Pair<VirtualFile, Unity3dYMLAsset> value)
 								{
-									return ((NavigatablePsiElement) element1).getPresentation().getIcon(false);
+									return Unity3dIcons.Unity3d;
 								}
-							});
+
+								@NotNull
+								@Override
+								public String getTextFor(Pair<VirtualFile, Unity3dYMLAsset> value)
+								{
+									return "GameObject: " + value.getSecond().getGameObjectName() + " in " + VfsUtil.getRelativePath(value.getFirst(), type.getProject().getBaseDir());
+								}
+
+								@Override
+								public PopupStep onChosen(Pair<VirtualFile, Unity3dYMLAsset> selectedValue, boolean finalChoice)
+								{
+									return doFinalStep(() ->
+									{
+										Project project = element.getProject();
+										OpenFileDescriptor descriptor = new OpenFileDescriptor(project, selectedValue.getFirst(), selectedValue.getSecond().getStartOffset());
+										FileEditorManager.getInstance(project).openTextEditor(descriptor, true);
+									});
+								}
+							};
+
+							ListPopup popup = JBPopupFactory.getInstance().createListPopup(step);
+
+							popup.show(new RelativePoint(mouseEvent));
 						}
 					};
 				}
@@ -101,54 +133,7 @@ public enum Unity3dAssetCSharpLineMarker
 				@Override
 				public Function<PsiElement, String> createTooltipFunction()
 				{
-					return element ->
-					{
-						final CSharpTypeDeclaration mirror = CSharpLineMarkerUtil.getNameIdentifierAs(element, CSharpTypeDeclaration.class);
-						if(mirror != null)
-						{
-							MultiMap<VirtualFile, Unity3dYMLAsset> files = Unity3dYMLAsset.findAssetAsAttach(mirror.getProject(), PsiUtilCore.getVirtualFile(mirror), true);
-
-							if(files.isEmpty())
-							{
-								return "";
-							}
-
-							MultiMap<String, String> map = MultiMap.create();
-							for(VirtualFile file : files.keySet())
-							{
-								map.putValue(file.getExtension(), VfsUtil.getRelativePath(file, mirror.getProject().getBaseDir()));
-							}
-
-							StringBuilder builder = new StringBuilder();
-							boolean first = true;
-							for(Map.Entry<String, Collection<String>> entry : map.entrySet())
-							{
-								String text = "";
-								if(!first)
-								{
-									text = "<br>";
-								}
-								else
-								{
-									first = false;
-								}
-								text += "<b>Imported in *." + entry.getKey() + ":</b><br>";
-
-								List<String> items = new ArrayList<>(entry.getValue());
-								ContainerUtil.sort(items);
-
-								List<String> firstItems = ContainerUtil.getFirstItems(items, 10);
-								if(firstItems.size() != items.size())
-								{
-									firstItems.add("<b>... " + (items.size() - firstItems.size()) + " others.</b>");
-								}
-								text += StringUtil.join(firstItems, s -> " > " + s, "<br>");
-								builder.append(text);
-							}
-							return builder.toString();
-						}
-						return "";
-					};
+					return element -> "Attached to unity scene. Click for view";
 				}
 
 				@RequiredReadAction
@@ -172,11 +157,10 @@ public enum Unity3dAssetCSharpLineMarker
 				{
 					return (mouseEvent, element) ->
 					{
-						CSharpFieldDeclaration field = CSharpLineMarkerUtil.getNameIdentifierAs(element, CSharpFieldDeclaration.class);
+						final CSharpFieldDeclaration field = CSharpLineMarkerUtil.getNameIdentifierAs(element, CSharpFieldDeclaration.class);
 						if(field != null)
 						{
-							PsiElement nameIdentifier = ((CSharpTypeDeclaration) field.getParent()).getNameIdentifier();
-							Unity3dAssetCSharpLineMarker.Type.createNavigationHandler().navigate(mouseEvent, nameIdentifier.getFirstChild());
+							FindManager.getInstance(element.getProject()).findUsages(field);
 						}
 					};
 				}
