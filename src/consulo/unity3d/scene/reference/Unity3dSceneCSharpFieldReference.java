@@ -16,20 +16,15 @@
 
 package consulo.unity3d.scene.reference;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.yaml.psi.YAMLKeyValue;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
-import com.intellij.psi.PsiReference;
 import com.intellij.psi.ResolveState;
-import com.intellij.util.IncorrectOperationException;
 import consulo.annotations.RequiredReadAction;
-import consulo.annotations.RequiredWriteAction;
 import consulo.csharp.lang.psi.CSharpFieldDeclaration;
 import consulo.csharp.lang.psi.CSharpFile;
 import consulo.csharp.lang.psi.CSharpTypeDeclaration;
@@ -46,36 +41,14 @@ import consulo.unity3d.scene.Unity3dAssetUtil;
  * @author VISTALL
  * @since 01-Sep-17
  */
-public class Unity3dSceneCSharpFieldReference implements PsiReference
+public class Unity3dSceneCSharpFieldReference extends Unity3dKeyValueReferenceBase
 {
-	private YAMLKeyValue myKeyValue;
-	private VirtualFile myCharpFile;
+	private VirtualFile myCSharpFile;
 
-	public Unity3dSceneCSharpFieldReference(YAMLKeyValue keyValue, VirtualFile charpFile)
+	public Unity3dSceneCSharpFieldReference(YAMLKeyValue keyValue, VirtualFile file)
 	{
-		myKeyValue = keyValue;
-		myCharpFile = charpFile;
-	}
-
-	@RequiredReadAction
-	@Override
-	public PsiElement getElement()
-	{
-		return myKeyValue;
-	}
-
-	@RequiredReadAction
-	@NotNull
-	@Override
-	public TextRange getRangeInElement()
-	{
-		PsiElement key = myKeyValue.getKey();
-		if(key == null)
-		{
-			return new TextRange(0, myKeyValue.getTextLength());
-		}
-		// cut :
-		return new TextRange(0, key.getTextLength() - 1);
+		super(keyValue);
+		myCSharpFile = file;
 	}
 
 	@RequiredReadAction
@@ -84,7 +57,7 @@ public class Unity3dSceneCSharpFieldReference implements PsiReference
 	public PsiElement resolve()
 	{
 		Project project = myKeyValue.getProject();
-		PsiFile file = PsiManager.getInstance(project).findFile(myCharpFile);
+		PsiFile file = PsiManager.getInstance(project).findFile(myCSharpFile);
 		if(!(file instanceof CSharpFile))
 		{
 			return null;
@@ -118,42 +91,5 @@ public class Unity3dSceneCSharpFieldReference implements PsiReference
 			}
 		}
 		return null;
-	}
-
-	@RequiredReadAction
-	@NotNull
-	@Override
-	public String getCanonicalText()
-	{
-		return myKeyValue.getKeyText();
-	}
-
-	@RequiredWriteAction
-	@Override
-	public PsiElement handleElementRename(String name) throws IncorrectOperationException
-	{
-		myKeyValue.setName(name);
-		return null;
-	}
-
-	@RequiredWriteAction
-	@Override
-	public PsiElement bindToElement(@NotNull PsiElement psiElement) throws IncorrectOperationException
-	{
-		return null;
-	}
-
-	@RequiredReadAction
-	@Override
-	public boolean isReferenceTo(PsiElement psiElement)
-	{
-		return PsiManager.getInstance(myKeyValue.getProject()).areElementsEquivalent(psiElement, resolve());
-	}
-
-	@RequiredReadAction
-	@Override
-	public boolean isSoft()
-	{
-		return true;
 	}
 }

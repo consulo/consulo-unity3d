@@ -98,5 +98,24 @@ public class Unity3dSceneFieldReferenceRegister extends PsiReferenceContributor
 				return new PsiReference[]{new Unity3dSceneCSharpFieldReference((YAMLKeyValue) psiElement, fileByGUID)};
 			}
 		});
+
+		psiReferenceRegistrar.registerReferenceProvider(StandardPatterns.psiElement(YAMLKeyValue.class).withParent(YAMLMapping.class), new PsiReferenceProvider()
+		{
+			@NotNull
+			@Override
+			public PsiReference[] getReferencesByElement(@NotNull PsiElement psiElement, @NotNull ProcessingContext processingContext)
+			{
+				YAMLKeyValue keyValue = (YAMLKeyValue) psiElement;
+
+				YAMLMapping parentMapping = keyValue.getParentMapping();
+
+				YAMLKeyValue fileID = parentMapping.getKeyValueByKey("fileID");
+				if(fileID == null)
+				{
+					return PsiReference.EMPTY_ARRAY;
+				}
+				return new PsiReference[]{new Unity3dAssetGUIDReference(keyValue)};
+			}
+		});
 	}
 }
