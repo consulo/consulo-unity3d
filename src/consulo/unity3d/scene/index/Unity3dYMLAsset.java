@@ -23,7 +23,6 @@ import org.jetbrains.annotations.Nullable;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
-import com.intellij.openapi.util.Couple;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.CommonProcessors;
@@ -96,9 +95,9 @@ public class Unity3dYMLAsset
 
 	private final int myStartOffset;
 	@NotNull
-	private final List<Couple<String>> myValues;
+	private final List<Unity3dYAMLField> myValues;
 
-	public Unity3dYMLAsset(@NotNull String guild, @Nullable String gameObjectName, int startOffset, @NotNull List<Couple<String>> values)
+	public Unity3dYMLAsset(@NotNull String guild, @Nullable String gameObjectName, int startOffset, @NotNull List<Unity3dYAMLField> values)
 	{
 		myGuild = guild;
 		myGameObjectName = gameObjectName;
@@ -124,7 +123,7 @@ public class Unity3dYMLAsset
 	}
 
 	@NotNull
-	public List<Couple<String>> getValues()
+	public List<Unity3dYAMLField> getValues()
 	{
 		return myValues;
 	}

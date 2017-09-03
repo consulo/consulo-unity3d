@@ -34,7 +34,6 @@ import org.jetbrains.yaml.psi.YAMLKeyValue;
 import org.jetbrains.yaml.psi.YAMLMapping;
 import org.jetbrains.yaml.psi.YAMLScalar;
 import org.jetbrains.yaml.psi.YAMLValue;
-import com.intellij.openapi.util.Couple;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -74,7 +73,7 @@ public class Unity3dYMLAssetIndexExtension extends FileBasedIndexExtension<Integ
 {
 	public static final ID<Integer, List<Unity3dYMLAsset>> KEY = ID.create("unity3d.yml.asset.new.index");
 
-	private static final int ourVersion = 9;
+	private static final int ourVersion = 10;
 	private static final String ourGameObject = "GameObject";
 	private static final Set<String> ourAcceptKeys = ContainerUtil.newTroveSet("MonoBehaviour", "Prefab", "Transform", ourGameObject, "TrailRenderer");
 	private static final Set<String> ourGuidKeys = ContainerUtil.newTroveSet("m_PrefabParentObject", "m_Script", "m_ParentPrefab");
@@ -102,8 +101,9 @@ public class Unity3dYMLAssetIndexExtension extends FileBasedIndexExtension<Integ
 
 				DataInputOutputUtil.writeSeq(dataOutput, asset.getValues(), it ->
 				{
-					dataOutput.writeUTF(it.getFirst());
-					dataOutput.writeUTF(it.getSecond());
+					dataOutput.writeUTF(it.getName());
+					dataOutput.writeUTF(it.getValue());
+					dataOutput.writeInt(it.getOffset());
 				});
 			});
 		}
@@ -121,7 +121,13 @@ public class Unity3dYMLAssetIndexExtension extends FileBasedIndexExtension<Integ
 				{
 					gameObjectName = dataInput.readUTF();
 				}
-				List<Couple<String>> values = DataInputOutputUtil.readSeq(dataInput, () -> Couple.of(dataInput.readUTF(), dataInput.readUTF()));
+				List<Unity3dYAMLField> values = DataInputOutputUtil.readSeq(dataInput, () ->
+				{
+					String name = dataInput.readUTF();
+					String value = dataInput.readUTF();
+					int offset = dataInput.readInt();
+					return new Unity3dYAMLField(name, value, offset);
+				});
 				return new Unity3dYMLAsset(guid, gameObjectName, startOffset, values);
 			});
 		}
@@ -168,7 +174,7 @@ public class Unity3dYMLAssetIndexExtension extends FileBasedIndexExtension<Integ
 
 						String scriptGuid = null;
 						int startOffset = 0;
-						List<Couple<String>> values = null;
+						List<Unity3dYAMLField> values = null;
 
 						// optimization
 						for(PsiElement keyValuePair = mapping.getFirstChild(); keyValuePair != null; keyValuePair = keyValuePair.getNextSibling())
@@ -211,7 +217,7 @@ public class Unity3dYMLAssetIndexExtension extends FileBasedIndexExtension<Integ
 
 							if(values != null)
 							{
-								values.add(Couple.of(fieldName, StringUtil.first(fieldValue.getText(), 24, true)));
+								values.add(new Unity3dYAMLField(fieldName, StringUtil.first(fieldValue.getText(), 50, true), fieldValue.getTextOffset()));
 							}
 						}
 

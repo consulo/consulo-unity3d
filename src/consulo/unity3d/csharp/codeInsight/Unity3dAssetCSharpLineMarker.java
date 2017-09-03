@@ -16,7 +16,6 @@
 
 package consulo.unity3d.csharp.codeInsight;
 
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -26,12 +25,7 @@ import javax.swing.Icon;
 
 import org.jetbrains.annotations.NotNull;
 import com.intellij.codeInsight.daemon.GutterIconNavigationHandler;
-import com.intellij.find.FindManager;
 import com.intellij.icons.AllIcons;
-import com.intellij.openapi.editor.colors.EditorColorsManager;
-import com.intellij.openapi.editor.colors.EditorColorsScheme;
-import com.intellij.openapi.editor.colors.TextAttributesKey;
-import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
@@ -39,28 +33,23 @@ import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
 import com.intellij.openapi.ui.popup.PopupStep;
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep;
-import com.intellij.openapi.util.Couple;
+import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.util.Trinity;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiUtilCore;
-import com.intellij.ui.GuiUtils;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.util.Function;
 import com.intellij.util.containers.MultiMap;
-import com.intellij.util.ui.UIUtil;
 import consulo.annotations.RequiredReadAction;
-import consulo.csharp.ide.highlight.CSharpHighlightKey;
 import consulo.csharp.ide.lineMarkerProvider.CSharpLineMarkerUtil;
 import consulo.csharp.lang.psi.CSharpFieldDeclaration;
 import consulo.csharp.lang.psi.CSharpTypeDeclaration;
-import consulo.dotnet.DotNetTypes;
-import consulo.dotnet.resolve.DotNetTypeRef;
-import consulo.dotnet.resolve.DotNetTypeRefUtil;
 import consulo.unity3d.Unity3dIcons;
 import consulo.unity3d.scene.Unity3dAssetUtil;
+import consulo.unity3d.scene.index.Unity3dYAMLField;
 import consulo.unity3d.scene.index.Unity3dYMLAsset;
 
 /**
@@ -160,8 +149,64 @@ public enum Unity3dAssetCSharpLineMarker
 						final CSharpFieldDeclaration field = CSharpLineMarkerUtil.getNameIdentifierAs(element, CSharpFieldDeclaration.class);
 						if(field != null)
 						{
-							FindManager.getInstance(element.getProject()).findUsages(field);
+							MultiMap<VirtualFile, Unity3dYMLAsset> files = Unity3dYMLAsset.findAssetAsAttach(field.getProject(), PsiUtilCore.getVirtualFile(field), false);
+
+							if(files.isEmpty())
+							{
+								return;
+							}
+
+							String name = field.getName();
+
+							List<Trinity<VirtualFile, Unity3dYMLAsset, Unity3dYAMLField>> list = new ArrayList<>();
+							for(Map.Entry<VirtualFile, Collection<Unity3dYMLAsset>> entry : files.entrySet())
+							{
+								for(Unity3dYMLAsset asset : entry.getValue())
+								{
+									for(Unity3dYAMLField yamlField : asset.getValues())
+									{
+										if(Comparing.equal(yamlField.getName(), name))
+										{
+											list.add(Trinity.create(entry.getKey(), asset, yamlField));
+										}
+									}
+								}
+							}
+
+							BaseListPopupStep<Trinity<VirtualFile, Unity3dYMLAsset, Unity3dYAMLField>> step = new BaseListPopupStep<Trinity<VirtualFile, Unity3dYMLAsset, Unity3dYAMLField>>("Scene "
+									+ "field initializer", list)
+							{
+								@Override
+								public Icon getIconFor(Trinity<VirtualFile, Unity3dYMLAsset, Unity3dYAMLField> value)
+								{
+									return Unity3dIcons.Shader;
+								}
+
+								@NotNull
+								@Override
+								public String getTextFor(Trinity<VirtualFile, Unity3dYMLAsset, Unity3dYAMLField> value)
+								{
+									return "Value '" + value.getThird().getValue() + "' at " + value.getSecond().getGameObjectName() + " in " + VfsUtil.getRelativePath(value.getFirst(), field
+											.getProject().getBaseDir());
+								}
+
+								@Override
+								public PopupStep onChosen(Trinity<VirtualFile, Unity3dYMLAsset, Unity3dYAMLField> selectedValue, boolean finalChoice)
+								{
+									return doFinalStep(() ->
+									{
+										Project project = element.getProject();
+										OpenFileDescriptor descriptor = new OpenFileDescriptor(project, selectedValue.getFirst(), selectedValue.getThird().getOffset());
+										FileEditorManager.getInstance(project).openTextEditor(descriptor, true);
+									});
+								}
+							};
+
+							ListPopup popup = JBPopupFactory.getInstance().createListPopup(step);
+
+							popup.show(new RelativePoint(mouseEvent));
 						}
+
 					};
 				}
 
@@ -169,138 +214,7 @@ public enum Unity3dAssetCSharpLineMarker
 				@Override
 				public Function<PsiElement, String> createTooltipFunction()
 				{
-					return element ->
-					{
-						final CSharpFieldDeclaration field = CSharpLineMarkerUtil.getNameIdentifierAs(element, CSharpFieldDeclaration.class);
-						if(field != null)
-						{
-							MultiMap<VirtualFile, Unity3dYMLAsset> files = Unity3dYMLAsset.findAssetAsAttach(field.getProject(), PsiUtilCore.getVirtualFile(field), false);
-
-							if(files.isEmpty())
-							{
-								return "";
-							}
-
-							String name = field.getName();
-
-							MultiMap<String, String> valueMap = MultiMap.createOrderedSet();
-							for(Map.Entry<VirtualFile, Collection<Unity3dYMLAsset>> entry : files.entrySet())
-							{
-								VirtualFile key = entry.getKey();
-								Collection<Unity3dYMLAsset> value = entry.getValue();
-
-								String relativePath = VfsUtil.getRelativePath(key, field.getProject().getBaseDir());
-
-								for(Unity3dYMLAsset unity3dYMLAsset : value)
-								{
-									for(Couple<String> couple : unity3dYMLAsset.getValues())
-									{
-										if(couple.getFirst().equals(name))
-										{
-											String fieldValue = null;
-											String gameObjectName = unity3dYMLAsset.getGameObjectName();
-											if(gameObjectName == null)
-											{
-												fieldValue = formatValue(field, couple.getSecond());
-											}
-											else
-											{
-												fieldValue = "<b>[" + gameObjectName + "]</b>&nbsp;" + formatValue(field, couple.getSecond());
-											}
-											valueMap.putValue(relativePath, fieldValue);
-										}
-									}
-								}
-							}
-
-							if(valueMap.isEmpty())
-							{
-								return "";
-							}
-
-							StringBuilder builder = new StringBuilder();
-							builder.append("<b>Scene value initialize:</b><br>");
-
-							int i = 0;
-							boolean first = true;
-							loop:
-							for(Map.Entry<String, Collection<String>> entry : valueMap.entrySet())
-							{
-								for(String value : entry.getValue())
-								{
-									if(!first)
-									{
-										builder.append("<br>");
-									}
-									else
-									{
-										first = false;
-									}
-
-									if(i > 25)
-									{
-										builder.append("<b>...</b>");
-										break loop;
-									}
-
-									builder.append("&nbsp;").append(entry.getKey()).append("&nbsp;").append(UIUtil.rightArrow()).append("&nbsp;").append(value);
-									i++;
-								}
-							}
-							return builder.toString();
-						}
-						return "";
-					};
-				}
-
-				private String[] myNumberTypes = new String[]{
-						DotNetTypes.System.Byte,
-						DotNetTypes.System.SByte,
-						DotNetTypes.System.Int16,
-						DotNetTypes.System.UInt16,
-						DotNetTypes.System.Int32,
-						DotNetTypes.System.UInt32,
-						DotNetTypes.System.Int64,
-						DotNetTypes.System.UInt64,
-						DotNetTypes.System.Decimal,
-						DotNetTypes.System.Single,
-						DotNetTypes.System.Double,
-				};
-
-				@RequiredReadAction
-				private String formatValue(@NotNull CSharpFieldDeclaration field, @NotNull String value)
-				{
-
-					DotNetTypeRef typeRef = field.toTypeRef(true);
-					if(DotNetTypeRefUtil.isVmQNameEqual(typeRef, field, DotNetTypes.System.String))
-					{
-						return "<code>" + formatWithStyle(StringUtil.QUOTER.fun(value), CSharpHighlightKey.STRING) + "</code>";
-					}
-
-					if(DotNetTypeRefUtil.isVmQNameEqual(typeRef, field, DotNetTypes.System.Char))
-					{
-						return "<code>" + formatWithStyle(StringUtil.SINGLE_QUOTER.fun(value), CSharpHighlightKey.STRING) + "</code>";
-					}
-
-					for(String numberType : myNumberTypes)
-					{
-						if(DotNetTypeRefUtil.isVmQNameEqual(typeRef, field, numberType))
-						{
-							return "<code>" + formatWithStyle(value, CSharpHighlightKey.NUMBER) + "</code>";
-						}
-					}
-					return "<code>" + value + "</code>";
-				}
-
-				@NotNull
-				private String formatWithStyle(String value, TextAttributesKey key)
-				{
-					EditorColorsScheme globalScheme = EditorColorsManager.getInstance().getGlobalScheme();
-
-					TextAttributes attributes = globalScheme.getAttributes(key);
-					Color foregroundColor = attributes.getForegroundColor();
-
-					return "<font color=\"" + GuiUtils.colorToHex(foregroundColor) + "\">" + value + "</font>";
+					return element -> "Scene view initialize. Click for view";
 				}
 
 				@RequiredReadAction
@@ -326,9 +240,9 @@ public enum Unity3dAssetCSharpLineMarker
 					{
 						for(Unity3dYMLAsset unity3dYMLAsset : entry.getValue())
 						{
-							for(Couple<String> couple : unity3dYMLAsset.getValues())
+							for(Unity3dYAMLField yamlField : unity3dYMLAsset.getValues())
 							{
-								if(couple.getFirst().equals(name))
+								if(yamlField.getName().equals(name))
 								{
 									return true;
 								}
