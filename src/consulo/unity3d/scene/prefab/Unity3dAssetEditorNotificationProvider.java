@@ -85,10 +85,7 @@ public class Unity3dAssetEditorNotificationProvider implements EditorNotificatio
 
 		final EditorNotificationPanel panel = new EditorNotificationPanel();
 		panel.text("Used asset...");
-		panel.createActionLabel("Find usages...", () ->
-		{
-			FindManager.getInstance(myProject).findUsages(psiFile);
-		});
+		panel.createActionLabel("Find usages...", () -> FindManager.getInstance(myProject).findUsages(psiFile));
 		return panel;
 	}
 }
