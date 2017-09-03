@@ -95,9 +95,9 @@ public class Unity3dYMLAsset
 
 	private final int myStartOffset;
 	@NotNull
-	private final List<Unity3dYAMLField> myValues;
+	private final List<Unity3dYMLField> myValues;
 
-	public Unity3dYMLAsset(@NotNull String guild, @Nullable String gameObjectName, int startOffset, @NotNull List<Unity3dYAMLField> values)
+	public Unity3dYMLAsset(@NotNull String guild, @Nullable String gameObjectName, int startOffset, @NotNull List<Unity3dYMLField> values)
 	{
 		myGuild = guild;
 		myGameObjectName = gameObjectName;
@@ -123,7 +123,7 @@ public class Unity3dYMLAsset
 	}
 
 	@NotNull
-	public List<Unity3dYAMLField> getValues()
+	public List<Unity3dYMLField> getValues()
 	{
 		return myValues;
 	}

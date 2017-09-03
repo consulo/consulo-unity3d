@@ -20,13 +20,13 @@ package consulo.unity3d.scene.index;
  * @author VISTALL
  * @since 04-Sep-17
  */
-public class Unity3dYAMLField
+public class Unity3dYMLField
 {
 	private final String myName;
 	private final String myValue;
 	private final int myOffset;
 
-	public Unity3dYAMLField(String name, String value, int offset)
+	public Unity3dYMLField(String name, String value, int offset)
 	{
 		myName = name;
 		myValue = value;
@@ -60,7 +60,7 @@ public class Unity3dYAMLField
 			return false;
 		}
 
-		Unity3dYAMLField that = (Unity3dYAMLField) o;
+		Unity3dYMLField that = (Unity3dYMLField) o;
 
 		if(myOffset != that.myOffset)
 		{

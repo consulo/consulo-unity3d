@@ -22,10 +22,15 @@ import java.util.List;
 import java.util.Map;
 
 import javax.swing.Icon;
+import javax.swing.JList;
+import javax.swing.SwingConstants;
 
 import org.jetbrains.annotations.NotNull;
 import com.intellij.codeInsight.daemon.GutterIconNavigationHandler;
+import com.intellij.codeInsight.daemon.impl.PsiElementListNavigator;
 import com.intellij.icons.AllIcons;
+import com.intellij.openapi.editor.colors.EditorColorsManager;
+import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
@@ -35,22 +40,30 @@ import com.intellij.openapi.ui.popup.PopupStep;
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.Trinity;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.NavigatablePsiElement;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiUtilCore;
+import com.intellij.ui.ColoredListCellRenderer;
+import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.util.Function;
 import com.intellij.util.containers.MultiMap;
+import consulo.annotations.RequiredDispatchThread;
 import consulo.annotations.RequiredReadAction;
+import consulo.csharp.ide.highlight.CSharpHighlightKey;
 import consulo.csharp.ide.lineMarkerProvider.CSharpLineMarkerUtil;
 import consulo.csharp.lang.psi.CSharpFieldDeclaration;
 import consulo.csharp.lang.psi.CSharpTypeDeclaration;
+import consulo.dotnet.DotNetTypes;
+import consulo.dotnet.resolve.DotNetTypeRef;
+import consulo.dotnet.resolve.DotNetTypeRefUtil;
 import consulo.unity3d.Unity3dIcons;
 import consulo.unity3d.scene.Unity3dAssetUtil;
-import consulo.unity3d.scene.index.Unity3dYAMLField;
 import consulo.unity3d.scene.index.Unity3dYMLAsset;
+import consulo.unity3d.scene.index.Unity3dYMLField;
 
 /**
  * @author VISTALL
@@ -156,55 +169,103 @@ public enum Unity3dAssetCSharpLineMarker
 								return;
 							}
 
+							Project project = field.getProject();
 							String name = field.getName();
 
-							List<Trinity<VirtualFile, Unity3dYMLAsset, Unity3dYAMLField>> list = new ArrayList<>();
+							List<UnityAssetWrapper> list = new ArrayList<>();
 							for(Map.Entry<VirtualFile, Collection<Unity3dYMLAsset>> entry : files.entrySet())
 							{
 								for(Unity3dYMLAsset asset : entry.getValue())
 								{
-									for(Unity3dYAMLField yamlField : asset.getValues())
+									for(Unity3dYMLField yamlField : asset.getValues())
 									{
 										if(Comparing.equal(yamlField.getName(), name))
 										{
-											list.add(Trinity.create(entry.getKey(), asset, yamlField));
+											list.add(new UnityAssetWrapper(entry.getKey(), asset, yamlField, project));
 										}
 									}
 								}
 							}
 
-							BaseListPopupStep<Trinity<VirtualFile, Unity3dYMLAsset, Unity3dYAMLField>> step = new BaseListPopupStep<Trinity<VirtualFile, Unity3dYMLAsset, Unity3dYAMLField>>("Scene "
-									+ "field initializer", list)
+							list.sort((o1, o2) -> StringUtil.naturalCompare(o2.getField().getValue(), o1.getField().getValue()));
+
+							NavigatablePsiElement[] ts = list.toArray(new NavigatablePsiElement[list.size()]);
+							PsiElementListNavigator.openTargets(mouseEvent, ts, "Scene field initialize", null, new UnityListViewRender()
 							{
-								@Override
-								public Icon getIconFor(Trinity<VirtualFile, Unity3dYMLAsset, Unity3dYAMLField> value)
-								{
-									return Unity3dIcons.Shader;
-								}
+								private String[] myNumberTypes = new String[]{
+										DotNetTypes.System.Byte,
+										DotNetTypes.System.SByte,
+										DotNetTypes.System.Int16,
+										DotNetTypes.System.UInt16,
+										DotNetTypes.System.Int32,
+										DotNetTypes.System.UInt32,
+										DotNetTypes.System.Int64,
+										DotNetTypes.System.UInt64,
+										DotNetTypes.System.Decimal,
+										DotNetTypes.System.Single,
+										DotNetTypes.System.Double,
+								};
 
-								@NotNull
 								@Override
-								public String getTextFor(Trinity<VirtualFile, Unity3dYMLAsset, Unity3dYAMLField> value)
+								protected ColoredListCellRenderer<UnityAssetWrapper> createLeft()
 								{
-									return "Value '" + value.getThird().getValue() + "' at " + value.getSecond().getGameObjectName() + " in " + VfsUtil.getRelativePath(value.getFirst(), field
-											.getProject().getBaseDir());
-								}
-
-								@Override
-								public PopupStep onChosen(Trinity<VirtualFile, Unity3dYMLAsset, Unity3dYAMLField> selectedValue, boolean finalChoice)
-								{
-									return doFinalStep(() ->
+									return new ColoredListCellRenderer<UnityAssetWrapper>()
 									{
-										Project project = element.getProject();
-										OpenFileDescriptor descriptor = new OpenFileDescriptor(project, selectedValue.getFirst(), selectedValue.getThird().getOffset());
-										FileEditorManager.getInstance(project).openTextEditor(descriptor, true);
-									});
+										@Override
+										@RequiredDispatchThread
+										protected void customizeCellRenderer(@NotNull JList<? extends UnityAssetWrapper> jList, UnityAssetWrapper unityAssetWrapper, int i, boolean b, boolean b1)
+										{
+											setIcon(Unity3dIcons.Shader);
+
+											TextAttributesKey key = null;
+											DotNetTypeRef typeRef = field.toTypeRef(true);
+											if(DotNetTypeRefUtil.isVmQNameEqual(typeRef, field, DotNetTypes.System.String))
+											{
+												key = CSharpHighlightKey.STRING;
+											}
+
+											if(DotNetTypeRefUtil.isVmQNameEqual(typeRef, field, DotNetTypes.System.Char))
+											{
+												key = CSharpHighlightKey.STRING;
+											}
+
+											for(String numberType : myNumberTypes)
+											{
+												if(DotNetTypeRefUtil.isVmQNameEqual(typeRef, field, numberType))
+												{
+													key = CSharpHighlightKey.NUMBER;
+													break;
+												}
+											}
+
+											SimpleTextAttributes textAttributes = SimpleTextAttributes.REGULAR_ATTRIBUTES;
+											if(key != null)
+											{
+												textAttributes = SimpleTextAttributes.fromTextAttributes(EditorColorsManager.getInstance().getGlobalScheme().getAttributes(key));
+											}
+
+											append(unityAssetWrapper.getField().getValue(), textAttributes);
+
+											append(" " + unityAssetWrapper.getAsset().getGameObjectName(), SimpleTextAttributes.GRAY_ATTRIBUTES);
+										}
+									};
 								}
-							};
 
-							ListPopup popup = JBPopupFactory.getInstance().createListPopup(step);
+								@Override
+								protected ColoredListCellRenderer<UnityAssetWrapper> createRight()
+								{
+									return new ColoredListCellRenderer<UnityAssetWrapper>()
+									{
+										@Override
+										protected void customizeCellRenderer(@NotNull JList<? extends UnityAssetWrapper> jList, UnityAssetWrapper unityAssetWrapper, int i, boolean b, boolean b1)
+										{
+											String relativePath = VfsUtil.getRelativePath(unityAssetWrapper.getVirtualFile(), field.getProject().getBaseDir());
 
-							popup.show(new RelativePoint(mouseEvent));
+											append(relativePath, SimpleTextAttributes.GRAY_ATTRIBUTES, 100, SwingConstants.RIGHT);
+										}
+									};
+								}
+							});
 						}
 
 					};
@@ -240,7 +301,7 @@ public enum Unity3dAssetCSharpLineMarker
 					{
 						for(Unity3dYMLAsset unity3dYMLAsset : entry.getValue())
 						{
-							for(Unity3dYAMLField yamlField : unity3dYMLAsset.getValues())
+							for(Unity3dYMLField yamlField : unity3dYMLAsset.getValues())
 							{
 								if(yamlField.getName().equals(name))
 								{

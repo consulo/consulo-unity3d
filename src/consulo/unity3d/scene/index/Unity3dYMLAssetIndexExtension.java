@@ -121,12 +121,12 @@ public class Unity3dYMLAssetIndexExtension extends FileBasedIndexExtension<Integ
 				{
 					gameObjectName = dataInput.readUTF();
 				}
-				List<Unity3dYAMLField> values = DataInputOutputUtil.readSeq(dataInput, () ->
+				List<Unity3dYMLField> values = DataInputOutputUtil.readSeq(dataInput, () ->
 				{
 					String name = dataInput.readUTF();
 					String value = dataInput.readUTF();
 					int offset = dataInput.readInt();
-					return new Unity3dYAMLField(name, value, offset);
+					return new Unity3dYMLField(name, value, offset);
 				});
 				return new Unity3dYMLAsset(guid, gameObjectName, startOffset, values);
 			});
@@ -174,7 +174,7 @@ public class Unity3dYMLAssetIndexExtension extends FileBasedIndexExtension<Integ
 
 						String scriptGuid = null;
 						int startOffset = 0;
-						List<Unity3dYAMLField> values = null;
+						List<Unity3dYMLField> values = null;
 
 						// optimization
 						for(PsiElement keyValuePair = mapping.getFirstChild(); keyValuePair != null; keyValuePair = keyValuePair.getNextSibling())
@@ -217,7 +217,7 @@ public class Unity3dYMLAssetIndexExtension extends FileBasedIndexExtension<Integ
 
 							if(values != null)
 							{
-								values.add(new Unity3dYAMLField(fieldName, StringUtil.first(fieldValue.getText(), 50, true), fieldValue.getTextOffset()));
+								values.add(new Unity3dYMLField(fieldName, StringUtil.first(fieldValue.getText(), 50, true), fieldValue.getTextOffset()));
 							}
 						}
 
