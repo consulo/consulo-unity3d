@@ -26,20 +26,15 @@ import javax.swing.JList;
 import javax.swing.SwingConstants;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import com.intellij.codeInsight.daemon.GutterIconNavigationHandler;
 import com.intellij.codeInsight.daemon.impl.PsiElementListNavigator;
 import com.intellij.icons.AllIcons;
+import com.intellij.ide.util.PsiElementListCellRenderer;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
-import com.intellij.openapi.fileEditor.FileEditorManager;
-import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.popup.JBPopupFactory;
-import com.intellij.openapi.ui.popup.ListPopup;
-import com.intellij.openapi.ui.popup.PopupStep;
-import com.intellij.openapi.ui.popup.util.BaseListPopupStep;
 import com.intellij.openapi.util.Comparing;
-import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -48,7 +43,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.ui.ColoredListCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
-import com.intellij.ui.awt.RelativePoint;
 import com.intellij.util.Function;
 import com.intellij.util.containers.MultiMap;
 import consulo.annotations.RequiredDispatchThread;
@@ -88,45 +82,44 @@ public enum Unity3dAssetCSharpLineMarker
 								return;
 							}
 
-							List<Pair<VirtualFile, Unity3dYMLAsset>> list = new ArrayList<>();
+							List<UnityAssetWrapper> list = new ArrayList<>();
 							for(Map.Entry<VirtualFile, Collection<Unity3dYMLAsset>> entry : files.entrySet())
 							{
 								for(Unity3dYMLAsset asset : entry.getValue())
 								{
-									list.add(Pair.create(entry.getKey(), asset));
+									list.add(new UnityAssetWrapper(entry.getKey(), asset, asset.getStartOffset(), null, type.getProject()));
 								}
 							}
 
-							BaseListPopupStep<Pair<VirtualFile, Unity3dYMLAsset>> step = new BaseListPopupStep<Pair<VirtualFile, Unity3dYMLAsset>>("Unity scenes", list)
+							list.sort((o1, o2) -> StringUtil.naturalCompare(o1.getVirtualFile().getPath(), o2.getVirtualFile().getPath()));
+
+							PsiElementListNavigator.openTargets(mouseEvent, list.toArray(new NavigatablePsiElement[list.size()]), "Unity scenes", null, new PsiElementListCellRenderer<UnityAssetWrapper>()
 							{
 								@Override
-								public Icon getIconFor(Pair<VirtualFile, Unity3dYMLAsset> value)
+								public String getElementText(UnityAssetWrapper element)
+								{
+									return element.getAsset().getGameObjectName();
+								}
+
+								@Nullable
+								@Override
+								protected String getContainerText(UnityAssetWrapper element, String s)
+								{
+									return VfsUtil.getRelativePath(element.getVirtualFile(), element.getProject().getBaseDir());
+								}
+
+								@Override
+								protected Icon getIcon(PsiElement element)
 								{
 									return Unity3dIcons.Unity3d;
 								}
 
-								@NotNull
 								@Override
-								public String getTextFor(Pair<VirtualFile, Unity3dYMLAsset> value)
+								protected int getIconFlags()
 								{
-									return "GameObject: " + value.getSecond().getGameObjectName() + " in " + VfsUtil.getRelativePath(value.getFirst(), type.getProject().getBaseDir());
+									return 0;
 								}
-
-								@Override
-								public PopupStep onChosen(Pair<VirtualFile, Unity3dYMLAsset> selectedValue, boolean finalChoice)
-								{
-									return doFinalStep(() ->
-									{
-										Project project = element.getProject();
-										OpenFileDescriptor descriptor = new OpenFileDescriptor(project, selectedValue.getFirst(), selectedValue.getSecond().getStartOffset());
-										FileEditorManager.getInstance(project).openTextEditor(descriptor, true);
-									});
-								}
-							};
-
-							ListPopup popup = JBPopupFactory.getInstance().createListPopup(step);
-
-							popup.show(new RelativePoint(mouseEvent));
+							});
 						}
 					};
 				}

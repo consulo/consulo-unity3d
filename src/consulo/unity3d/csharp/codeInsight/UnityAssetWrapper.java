@@ -17,6 +17,7 @@
 package consulo.unity3d.csharp.codeInsight;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
@@ -34,15 +35,22 @@ import consulo.unity3d.scene.index.Unity3dYMLField;
  */
 class UnityAssetWrapper extends FakePsiElement implements Navigatable
 {
-	private VirtualFile myVirtualFile;
-	private Unity3dYMLAsset myAsset;
-	private Unity3dYMLField myField;
-	private Project myProject;
+	private final VirtualFile myVirtualFile;
+	private final Unity3dYMLAsset myAsset;
+	private final int myOffset;
+	private final Unity3dYMLField myField;
+	private final Project myProject;
 
-	UnityAssetWrapper(VirtualFile virtualFile, Unity3dYMLAsset asset, Unity3dYMLField field, Project project)
+	UnityAssetWrapper(VirtualFile virtualFile, Unity3dYMLAsset asset, @NotNull Unity3dYMLField field, Project project)
+	{
+		this(virtualFile, asset, field.getOffset(), field, project);
+	}
+
+	UnityAssetWrapper(VirtualFile virtualFile, Unity3dYMLAsset asset, int offset, @Nullable Unity3dYMLField field, Project project)
 	{
 		myVirtualFile = virtualFile;
 		myAsset = asset;
+		myOffset = offset;
 		myField = field;
 		myProject = project;
 	}
@@ -78,7 +86,7 @@ class UnityAssetWrapper extends FakePsiElement implements Navigatable
 	@Override
 	public void navigate(boolean b)
 	{
-		OpenFileDescriptor descriptor = new OpenFileDescriptor(myProject, myVirtualFile, myField.getOffset());
+		OpenFileDescriptor descriptor = new OpenFileDescriptor(myProject, myVirtualFile, myOffset);
 		FileEditorManager.getInstance(myProject).openTextEditor(descriptor, true);
 	}
 
