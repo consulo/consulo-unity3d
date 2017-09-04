@@ -214,6 +214,8 @@ public enum Unity3dAssetCSharpLineMarker
 										{
 											setIcon(Unity3dIcons.Shader);
 
+											String value = unityAssetWrapper.getField().getValue();
+
 											TextAttributesKey key = null;
 											DotNetTypeRef typeRef = field.toTypeRef(true);
 											if(DotNetTypeRefUtil.isVmQNameEqual(typeRef, field, DotNetTypes.System.String))
@@ -235,13 +237,18 @@ public enum Unity3dAssetCSharpLineMarker
 												}
 											}
 
+											if(DotNetTypeRefUtil.isVmQNameEqual(typeRef, field, DotNetTypes.System.Boolean))
+											{
+												key = CSharpHighlightKey.KEYWORD;
+												value = String.valueOf(StringUtil.parseInt(value, 0) == 1);
+											}
+
 											SimpleTextAttributes textAttributes = SimpleTextAttributes.REGULAR_ATTRIBUTES;
 											if(key != null)
 											{
 												textAttributes = SimpleTextAttributes.fromTextAttributes(EditorColorsManager.getInstance().getGlobalScheme().getAttributes(key));
 											}
 
-											String value = unityAssetWrapper.getField().getValue();
 											if(value.startsWith(Unity3dYMLAssetIndexExtension.ourCustomGUIDPrefix))
 											{
 												// {file: 1, guid: fasfsa }
