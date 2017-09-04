@@ -23,7 +23,6 @@ import java.util.Map;
 
 import javax.swing.Icon;
 import javax.swing.JList;
-import javax.swing.SwingConstants;
 
 import org.jetbrains.annotations.NotNull;
 import com.intellij.codeInsight.daemon.GutterIconNavigationHandler;
@@ -54,7 +53,9 @@ import consulo.dotnet.resolve.DotNetTypeRef;
 import consulo.dotnet.resolve.DotNetTypeRefUtil;
 import consulo.unity3d.Unity3dIcons;
 import consulo.unity3d.scene.Unity3dAssetUtil;
+import consulo.unity3d.scene.Unity3dMetaManager;
 import consulo.unity3d.scene.index.Unity3dYMLAsset;
+import consulo.unity3d.scene.index.Unity3dYMLAssetIndexExtension;
 import consulo.unity3d.scene.index.Unity3dYMLField;
 
 /**
@@ -118,7 +119,7 @@ public enum Unity3dAssetCSharpLineMarker
 										{
 											String relativePath = VfsUtil.getRelativePath(unityAssetWrapper.getVirtualFile(), type.getProject().getBaseDir());
 
-											append(relativePath, SimpleTextAttributes.GRAY_ATTRIBUTES, 100, SwingConstants.RIGHT);
+											append(relativePath, SimpleTextAttributes.GRAY_ATTRIBUTES);
 										}
 									};
 								}
@@ -240,7 +241,23 @@ public enum Unity3dAssetCSharpLineMarker
 												textAttributes = SimpleTextAttributes.fromTextAttributes(EditorColorsManager.getInstance().getGlobalScheme().getAttributes(key));
 											}
 
-											append(unityAssetWrapper.getField().getValue(), textAttributes);
+											String value = unityAssetWrapper.getField().getValue();
+											if(value.startsWith(Unity3dYMLAssetIndexExtension.ourCustomGUIDPrefix))
+											{
+												// {file: 1, guid: fasfsa }
+												String guid = value.substring(Unity3dYMLAssetIndexExtension.ourCustomGUIDPrefix.length(), value.length());
+
+												VirtualFile fileByGUID = Unity3dMetaManager.getInstance(project).findFileByGUID(guid);
+												if(fileByGUID != null)
+												{
+													value = VfsUtil.getRelativePath(fileByGUID, field.getProject().getBaseDir());
+												}
+												else
+												{
+													value = "guid: " + guid;
+												}
+											}
+											append(value, textAttributes);
 
 											append(" " + unityAssetWrapper.getAsset().getGameObjectName(), SimpleTextAttributes.GRAY_ATTRIBUTES);
 										}
@@ -257,7 +274,7 @@ public enum Unity3dAssetCSharpLineMarker
 										{
 											String relativePath = VfsUtil.getRelativePath(unityAssetWrapper.getVirtualFile(), field.getProject().getBaseDir());
 
-											append(relativePath, SimpleTextAttributes.GRAY_ATTRIBUTES, 100, SwingConstants.RIGHT);
+											append(relativePath, SimpleTextAttributes.GRAY_ATTRIBUTES);
 										}
 									};
 								}

@@ -72,8 +72,9 @@ import consulo.unity3d.scene.Unity3dYMLAssetFileType;
 public class Unity3dYMLAssetIndexExtension extends FileBasedIndexExtension<Integer, List<Unity3dYMLAsset>>
 {
 	public static final ID<Integer, List<Unity3dYMLAsset>> KEY = ID.create("unity3d.yml.asset.new.index");
+	public static final String ourCustomGUIDPrefix = "__guid:";
 
-	private static final int ourVersion = 10;
+	private static final int ourVersion = 12;
 	private static final String ourGameObject = "GameObject";
 	private static final Set<String> ourAcceptKeys = ContainerUtil.newTroveSet("MonoBehaviour", "Prefab", "Transform", ourGameObject, "TrailRenderer");
 	private static final Set<String> ourGuidKeys = ContainerUtil.newTroveSet("m_PrefabParentObject", "m_Script", "m_ParentPrefab");
@@ -217,7 +218,16 @@ public class Unity3dYMLAssetIndexExtension extends FileBasedIndexExtension<Integ
 
 							if(values != null)
 							{
-								values.add(new Unity3dYMLField(fieldName, StringUtil.first(fieldValue.getText(), 50, true), fieldValue.getTextOffset()));
+								String text = fieldValue.getText();
+								if(fieldValue instanceof YAMLMapping)
+								{
+									YAMLKeyValue keyValueByKey = ((YAMLMapping) fieldValue).getKeyValueByKey(Unity3dMetaManager.GUID_KEY);
+									if(keyValueByKey != null)
+									{
+										text = ourCustomGUIDPrefix + keyValueByKey.getValueText();
+									}
+								}
+								values.add(new Unity3dYMLField(fieldName, StringUtil.first(text, 50, true), fieldValue.getTextOffset()));
 							}
 						}
 
