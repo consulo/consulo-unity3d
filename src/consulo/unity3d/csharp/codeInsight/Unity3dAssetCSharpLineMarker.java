@@ -267,7 +267,7 @@ public enum Unity3dAssetCSharpLineMarker
 													}
 												}
 
-												if(typeDeclaration.isStruct())
+												if(key == null && typeDeclaration.isStruct())
 												{
 													prefix = "new ";
 													prefixKey = CSharpHighlightKey.KEYWORD;
