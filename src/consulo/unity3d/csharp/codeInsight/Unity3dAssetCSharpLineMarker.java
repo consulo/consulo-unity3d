@@ -32,25 +32,31 @@ import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.NavigatablePsiElement;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.ui.ColoredListCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
 import com.intellij.util.containers.MultiMap;
 import consulo.annotations.RequiredDispatchThread;
 import consulo.annotations.RequiredReadAction;
 import consulo.csharp.ide.highlight.CSharpHighlightKey;
 import consulo.csharp.ide.lineMarkerProvider.CSharpLineMarkerUtil;
+import consulo.csharp.lang.psi.CSharpEnumConstantDeclaration;
 import consulo.csharp.lang.psi.CSharpFieldDeclaration;
 import consulo.csharp.lang.psi.CSharpTypeDeclaration;
+import consulo.csharp.lang.psi.impl.CSharpTypeUtil;
 import consulo.dotnet.DotNetTypes;
+import consulo.dotnet.psi.DotNetTypeDeclaration;
 import consulo.dotnet.resolve.DotNetTypeRef;
-import consulo.dotnet.resolve.DotNetTypeRefUtil;
+import consulo.dotnet.util.ArrayUtil2;
 import consulo.unity3d.Unity3dIcons;
 import consulo.unity3d.scene.Unity3dAssetUtil;
 import consulo.unity3d.scene.Unity3dMetaManager;
@@ -214,33 +220,50 @@ public enum Unity3dAssetCSharpLineMarker
 										{
 											setIcon(Unity3dIcons.Shader);
 
+											String prefix = null;
 											String value = unityAssetWrapper.getField().getValue();
 
 											TextAttributesKey key = null;
 											DotNetTypeRef typeRef = field.toTypeRef(true);
-											if(DotNetTypeRefUtil.isVmQNameEqual(typeRef, field, DotNetTypes.System.String))
-											{
-												key = CSharpHighlightKey.STRING;
-											}
 
-											if(DotNetTypeRefUtil.isVmQNameEqual(typeRef, field, DotNetTypes.System.Char))
+											Pair<String, DotNetTypeDeclaration> typeElement = CSharpTypeUtil.resolveTypeElement(typeRef);
+											if(typeElement != null)
 											{
-												key = CSharpHighlightKey.STRING;
-											}
+												if(DotNetTypes.System.String.equals(typeElement.getFirst()))
+												{
+													key = CSharpHighlightKey.STRING;
+												}
 
-											for(String numberType : myNumberTypes)
-											{
-												if(DotNetTypeRefUtil.isVmQNameEqual(typeRef, field, numberType))
+												if(DotNetTypes.System.Char.equals(typeElement.getFirst()))
+												{
+													key = CSharpHighlightKey.STRING;
+												}
+
+												if(ArrayUtil.contains(typeElement.getFirst(), myNumberTypes))
 												{
 													key = CSharpHighlightKey.NUMBER;
-													break;
 												}
-											}
 
-											if(DotNetTypeRefUtil.isVmQNameEqual(typeRef, field, DotNetTypes.System.Boolean))
-											{
-												key = CSharpHighlightKey.KEYWORD;
-												value = String.valueOf(StringUtil.parseInt(value, 0) == 1);
+												if(DotNetTypes.System.Boolean.equals(typeElement.getFirst()))
+												{
+													key = CSharpHighlightKey.KEYWORD;
+													value = String.valueOf(StringUtil.parseInt(value, 0) == 1);
+												}
+
+												if(typeElement.getSecond().isEnum())
+												{
+													int index = StringUtil.parseInt(value, 0);
+
+													CSharpEnumConstantDeclaration[] constants = PsiTreeUtil.getChildrenOfType(typeElement.getSecond(), CSharpEnumConstantDeclaration.class);
+
+													CSharpEnumConstantDeclaration declaration = ArrayUtil2.safeGet(constants, index);
+													value = declaration == null ? value : declaration.getName();
+													if(declaration != null)
+													{
+														prefix = typeElement.getSecond().getPresentableQName() + ".";
+														key = CSharpHighlightKey.STATIC_FIELD_OR_PROPERTY;
+													}
+												}
 											}
 
 											SimpleTextAttributes textAttributes = SimpleTextAttributes.REGULAR_ATTRIBUTES;
@@ -264,6 +287,12 @@ public enum Unity3dAssetCSharpLineMarker
 													value = "guid: " + guid;
 												}
 											}
+
+											if(prefix != null)
+											{
+												append(prefix);
+											}
+
 											append(value, textAttributes);
 
 											append(" " + unityAssetWrapper.getAsset().getGameObjectName(), SimpleTextAttributes.GRAY_ATTRIBUTES);
