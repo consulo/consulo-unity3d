@@ -221,6 +221,7 @@ public enum Unity3dAssetCSharpLineMarker
 											setIcon(Unity3dIcons.Shader);
 
 											String prefix = null;
+											TextAttributesKey prefixKey = null;
 											String value = unityAssetWrapper.getField().getValue();
 
 											TextAttributesKey key = null;
@@ -250,31 +251,45 @@ public enum Unity3dAssetCSharpLineMarker
 													value = String.valueOf(StringUtil.parseInt(value, 0) == 1);
 												}
 
-												if(typeElement.getSecond().isEnum())
+												DotNetTypeDeclaration typeDeclaration = typeElement.getSecond();
+												if(typeDeclaration.isEnum())
 												{
 													int index = StringUtil.parseInt(value, 0);
 
-													CSharpEnumConstantDeclaration[] constants = PsiTreeUtil.getChildrenOfType(typeElement.getSecond(), CSharpEnumConstantDeclaration.class);
+													CSharpEnumConstantDeclaration[] constants = PsiTreeUtil.getChildrenOfType(typeDeclaration, CSharpEnumConstantDeclaration.class);
 
 													CSharpEnumConstantDeclaration declaration = ArrayUtil2.safeGet(constants, index);
 													value = declaration == null ? value : declaration.getName();
 													if(declaration != null)
 													{
-														prefix = typeElement.getSecond().getPresentableQName() + ".";
+														prefix = typeDeclaration.getPresentableQName() + ".";
 														key = CSharpHighlightKey.STATIC_FIELD_OR_PROPERTY;
 													}
+												}
+
+												if(typeDeclaration.isStruct())
+												{
+													prefix = "new ";
+													prefixKey = CSharpHighlightKey.KEYWORD;
+
+													value = typeDeclaration.getPresentableQName() + "()" + value;
 												}
 											}
 
 											SimpleTextAttributes textAttributes = SimpleTextAttributes.REGULAR_ATTRIBUTES;
+											SimpleTextAttributes prefixAttributes = SimpleTextAttributes.REGULAR_ATTRIBUTES;
 											if(key != null)
 											{
 												textAttributes = SimpleTextAttributes.fromTextAttributes(EditorColorsManager.getInstance().getGlobalScheme().getAttributes(key));
 											}
 
+											if(prefixKey != null)
+											{
+												prefixAttributes = SimpleTextAttributes.fromTextAttributes(EditorColorsManager.getInstance().getGlobalScheme().getAttributes(prefixKey));
+											}
+
 											if(value.startsWith(Unity3dYMLAssetIndexExtension.ourCustomGUIDPrefix))
 											{
-												// {file: 1, guid: fasfsa }
 												String guid = value.substring(Unity3dYMLAssetIndexExtension.ourCustomGUIDPrefix.length(), value.length());
 
 												VirtualFile fileByGUID = Unity3dMetaManager.getInstance(project).findFileByGUID(guid);
@@ -290,7 +305,7 @@ public enum Unity3dAssetCSharpLineMarker
 
 											if(prefix != null)
 											{
-												append(prefix);
+												append(prefix, prefixAttributes);
 											}
 
 											append(value, textAttributes);
