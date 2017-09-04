@@ -183,7 +183,7 @@ public enum Unity3dAssetCSharpLineMarker
 								}
 							}
 
-							list.sort((o1, o2) -> StringUtil.naturalCompare(o2.getField().getValue(), o1.getField().getValue()));
+							list.sort((o1, o2) -> StringUtil.naturalCompare(o1.getField().getValue(), o2.getField().getValue()));
 
 							NavigatablePsiElement[] ts = list.toArray(new NavigatablePsiElement[list.size()]);
 							PsiElementListNavigator.openTargets(mouseEvent, ts, "Scene field initialize", null, new UnityListViewRender()
