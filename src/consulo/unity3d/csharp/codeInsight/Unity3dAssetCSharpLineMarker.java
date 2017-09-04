@@ -147,7 +147,7 @@ public enum Unity3dAssetCSharpLineMarker
 					return !temp.isEmpty();
 				}
 			},
-	Field(CSharpFieldDeclaration.class, AllIcons.General.OverridingMethod)
+	Field(CSharpFieldDeclaration.class, AllIcons.Actions.New)
 			{
 				@NotNull
 				@Override
