@@ -26,11 +26,9 @@ import javax.swing.JList;
 import javax.swing.SwingConstants;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import com.intellij.codeInsight.daemon.GutterIconNavigationHandler;
 import com.intellij.codeInsight.daemon.impl.PsiElementListNavigator;
 import com.intellij.icons.AllIcons;
-import com.intellij.ide.util.PsiElementListCellRenderer;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.project.Project;
@@ -93,31 +91,36 @@ public enum Unity3dAssetCSharpLineMarker
 
 							list.sort((o1, o2) -> StringUtil.naturalCompare(o1.getVirtualFile().getPath(), o2.getVirtualFile().getPath()));
 
-							PsiElementListNavigator.openTargets(mouseEvent, list.toArray(new NavigatablePsiElement[list.size()]), "Unity scenes", null, new PsiElementListCellRenderer<UnityAssetWrapper>()
+							PsiElementListNavigator.openTargets(mouseEvent, list.toArray(new NavigatablePsiElement[list.size()]), "Unity scenes", null, new UnityListViewRender()
 							{
 								@Override
-								public String getElementText(UnityAssetWrapper element)
+								protected ColoredListCellRenderer<UnityAssetWrapper> createLeft()
 								{
-									return element.getAsset().getGameObjectName();
-								}
+									return new ColoredListCellRenderer<UnityAssetWrapper>()
+									{
+										@Override
+										protected void customizeCellRenderer(@NotNull JList<? extends UnityAssetWrapper> jList, UnityAssetWrapper unityAssetWrapper, int i, boolean b, boolean b1)
+										{
+											setIcon(Unity3dIcons.Shader);
 
-								@Nullable
-								@Override
-								protected String getContainerText(UnityAssetWrapper element, String s)
-								{
-									return VfsUtil.getRelativePath(element.getVirtualFile(), element.getProject().getBaseDir());
-								}
-
-								@Override
-								protected Icon getIcon(PsiElement element)
-								{
-									return Unity3dIcons.Unity3d;
+											append(unityAssetWrapper.getAsset().getGameObjectName());
+										}
+									};
 								}
 
 								@Override
-								protected int getIconFlags()
+								protected ColoredListCellRenderer<UnityAssetWrapper> createRight()
 								{
-									return 0;
+									return new ColoredListCellRenderer<UnityAssetWrapper>()
+									{
+										@Override
+										protected void customizeCellRenderer(@NotNull JList<? extends UnityAssetWrapper> jList, UnityAssetWrapper unityAssetWrapper, int i, boolean b, boolean b1)
+										{
+											String relativePath = VfsUtil.getRelativePath(unityAssetWrapper.getVirtualFile(), type.getProject().getBaseDir());
+
+											append(relativePath, SimpleTextAttributes.GRAY_ATTRIBUTES, 100, SwingConstants.RIGHT);
+										}
+									};
 								}
 							});
 						}
