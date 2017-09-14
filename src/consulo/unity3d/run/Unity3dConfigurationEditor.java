@@ -30,7 +30,7 @@ public class Unity3dConfigurationEditor extends SettingsEditor<Unity3dAttachConf
 	private RadioButton myUnityEditorButton;
 	private RadioButton myProcessWithNameButton;
 	private RadioButton mySelectFromDialogButton;
-	private TextField myNameTextField;
+	private TextBox myNameTextField;
 
 	@Override
 	@RequiredUIAccess
@@ -75,7 +75,7 @@ public class Unity3dConfigurationEditor extends SettingsEditor<Unity3dAttachConf
 		vertical.add(myProcessWithNameButton);
 		group.add(myProcessWithNameButton);
 
-		myNameTextField = Components.textField();
+		myNameTextField = Components.textBox();
 		myNameTextField.setEnabled(false);
 		vertical.add(LabeledComponents.leftFilled("Name", myNameTextField));
 		myProcessWithNameButton.addValueListener(valueEvent -> myNameTextField.setEnabled(valueEvent.getValue()));
