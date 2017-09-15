@@ -20,15 +20,10 @@ import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.util.CommonProcessors;
 import com.intellij.util.containers.MultiMap;
-import com.intellij.util.indexing.FileBasedIndex;
-import consulo.unity3d.scene.Unity3dAssetUtil;
+import consulo.unity3d.scene.Unity3dMetaManager;
 
 /**
  * @author VISTALL
@@ -37,55 +32,9 @@ import consulo.unity3d.scene.Unity3dAssetUtil;
 public class Unity3dYMLAsset
 {
 	@NotNull
-	public static MultiMap<VirtualFile, Unity3dYMLAsset> findAssetAsAttach(@NotNull Project project, @Nullable VirtualFile file, boolean single)
+	public static MultiMap<VirtualFile, Unity3dYMLAsset> findAssetAsAttach(@NotNull Project project, @Nullable VirtualFile file)
 	{
-		String uuid = Unity3dAssetUtil.getGUID(project, file);
-		if(uuid == null)
-		{
-			return MultiMap.empty();
-		}
-
-		CommonProcessors.CollectProcessor<Integer> fileIds = new CommonProcessors.CollectProcessor<>();
-
-		FileBasedIndex fileBasedIndex = FileBasedIndex.getInstance();
-		fileBasedIndex.processAllKeys(Unity3dYMLAssetIndexExtension.KEY, fileIds, project);
-
-		GlobalSearchScope scope = GlobalSearchScope.projectScope(project);
-		MultiMap<VirtualFile, Unity3dYMLAsset> map = MultiMap.create();
-		for(int fileId : fileIds.getResults())
-		{
-			ProgressManager.checkCanceled();
-
-			VirtualFile assertFile = fileBasedIndex.findFileById(project, fileId);
-			if(assertFile == null)
-			{
-				continue;
-			}
-
-			fileBasedIndex.processValues(Unity3dYMLAssetIndexExtension.KEY, fileId, assertFile, (virtualFile, list) ->
-			{
-				for(Unity3dYMLAsset asset : list)
-				{
-					if(Comparing.equal(uuid, asset.getGuild()))
-					{
-						map.putValue(assertFile, asset);
-
-						if(single)
-						{
-							return false;
-						}
-					}
-				}
-
-				return true;
-			}, scope);
-
-			if(single && !map.isEmpty())
-			{
-				break;
-			}
-		}
-		return map;
+		return file == null ? MultiMap.empty() : Unity3dMetaManager.getInstance(project).findAssetAsAttach(file);
 	}
 
 	@NotNull

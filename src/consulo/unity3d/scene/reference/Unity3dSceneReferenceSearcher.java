@@ -59,7 +59,7 @@ public class Unity3dSceneReferenceSearcher extends QueryExecutorBase<PsiReferenc
 			if(element instanceof CSharpFieldDeclaration)
 			{
 				String name = ReadAction.compute(((CSharpFieldDeclaration) element)::getName);
-				MultiMap<VirtualFile, Unity3dYMLAsset> map = ReadAction.compute(() -> Unity3dYMLAsset.findAssetAsAttach(project, PsiUtilCore.getVirtualFile(element), false));
+				MultiMap<VirtualFile, Unity3dYMLAsset> map = ReadAction.compute(() -> Unity3dYMLAsset.findAssetAsAttach(project, PsiUtilCore.getVirtualFile(element)));
 
 				for(VirtualFile virtualFile : map.keySet())
 				{

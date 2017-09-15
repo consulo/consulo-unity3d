@@ -71,7 +71,7 @@ public class Unity3dAssetEditorNotificationProvider implements EditorNotificatio
 		{
 			return null;
 		}
-		MultiMap<VirtualFile, Unity3dYMLAsset> map = Unity3dYMLAsset.findAssetAsAttach(myProject, file, true);
+		MultiMap<VirtualFile, Unity3dYMLAsset> map = Unity3dYMLAsset.findAssetAsAttach(myProject, file);
 		if(map.isEmpty())
 		{
 			return null;
