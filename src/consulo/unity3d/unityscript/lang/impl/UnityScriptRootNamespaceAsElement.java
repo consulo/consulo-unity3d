@@ -24,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import com.intellij.lang.Language;
 import com.intellij.lang.javascript.psi.JSFile;
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -50,10 +51,11 @@ public class UnityScriptRootNamespaceAsElement extends BaseDotNetNamespaceAsElem
 				@NotNull final String thisQName,
 				@NotNull final GlobalSearchScope scope)
 		{
-			Set<PsiElement> elements = new LinkedHashSet<PsiElement>();
+			Set<PsiElement> elements = new LinkedHashSet<>();
 			Collection<String> keys = UnityScriptFileByNameIndex.getInstance().getAllKeys(project);
 			for(String key : keys)
 			{
+				ProgressManager.checkCanceled();
 				Collection<JSFile> jsFiles = UnityScriptFileByNameIndex.getInstance().get(key, project, scope);
 				for(JSFile jsFile : jsFiles)
 				{
