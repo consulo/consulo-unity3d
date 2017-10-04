@@ -28,7 +28,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
@@ -36,8 +35,6 @@ import org.jetbrains.annotations.NotNull;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.ui.Messages;
-import com.intellij.util.ExceptionUtil;
 import com.intellij.util.concurrency.AppExecutorUtil;
 
 /**
@@ -63,14 +60,32 @@ public class UnityPlayerService implements ApplicationComponent
 
 	private static final String ourUdpGroupIp = "225.0.0.222";
 
-	private List<UnityUdpThread> myThreads = new ArrayList<>();
+	private final List<UnityUdpThread> myThreads = new ArrayList<>();
 
-	private ConcurrentMap<UnityPlayer, UnityPlayer> myPlayers = new ConcurrentHashMap<>();
+	private final Map<UnityPlayer, UnityPlayer> myPlayers = new ConcurrentHashMap<>();
 
 	private Future<?> myUpdateFuture;
 
 	@Override
 	public void initComponent()
+	{
+		myUpdateFuture = AppExecutorUtil.getAppScheduledExecutorService().scheduleWithFixedDelay((Runnable) () ->
+		{
+			for(Iterator<Map.Entry<UnityPlayer, UnityPlayer>> iterator = myPlayers.entrySet().iterator(); iterator.hasNext(); )
+			{
+				Map.Entry<UnityPlayer, UnityPlayer> next = iterator.next();
+
+				if(!next.getKey().isAvailable())
+				{
+					iterator.remove();
+				}
+			}
+		}, 5, 5, TimeUnit.SECONDS);
+
+		AppExecutorUtil.getAppExecutorService().execute(this::bind);
+	}
+
+	private void bind()
 	{
 		try
 		{
@@ -86,7 +101,6 @@ public class UnityPlayerService implements ApplicationComponent
 				{
 					continue;
 				}
-
 
 				for(int playerMulticastPort : ourPorts)
 				{
@@ -104,33 +118,20 @@ public class UnityPlayerService implements ApplicationComponent
 						myThreads.add(udpThread);
 
 						succBinds++;
-						UnityPlayerService.LOGGER.info("Successfully binding network interface " + networkInterface + ", port: " + playerMulticastPort);
+						LOGGER.info("Successfully binding network interface " + networkInterface + ", port: " + playerMulticastPort);
 					}
 					catch(Exception e)
 					{
 						failBinds++;
-						UnityPlayerService.LOGGER.warn(e);
+						LOGGER.warn(e);
 					}
 				}
 			}
 			LOGGER.info("Port status: " + succBinds + " vs " + failBinds);
-
-			myUpdateFuture = AppExecutorUtil.getAppScheduledExecutorService().scheduleWithFixedDelay((Runnable) () ->
-			{
-				for(Iterator<Map.Entry<UnityPlayer, UnityPlayer>> iterator = myPlayers.entrySet().iterator(); iterator.hasNext(); )
-				{
-					Map.Entry<UnityPlayer, UnityPlayer> next = iterator.next();
-
-					if(!next.getKey().isAvailable())
-					{
-						iterator.remove();
-					}
-				}
-			}, 5, 5, TimeUnit.SECONDS);
 		}
 		catch(Exception e)
 		{
-			Messages.showErrorDialog("Some problem with Unity debugger. Exception: " + ExceptionUtil.getThrowableText(e), "Consulo");
+			LOGGER.error(e);
 		}
 	}
 
@@ -157,13 +158,6 @@ public class UnityPlayerService implements ApplicationComponent
 		{
 			thread.dispose();
 		}
-	}
-
-	@NotNull
-	@Override
-	public String getComponentName()
-	{
-		return "PlayerListenerService";
 	}
 
 	@NotNull

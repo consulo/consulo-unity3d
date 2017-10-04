@@ -7,6 +7,7 @@
     <java-sdk name="1.8" />
     <consulo-sdk name="Consulo SNAPSHOT" />
     <artifact name="plugin" />
+    <log_file path="$PROJECT_DIR$/.consulo/sandbox/system/log/consulo.log" checked="true" skipped="true" show_all="false" alias="CONSULO.LOG" />
     <predefined_log_file id="IDEA_LOG" enabled="true" />
     <RunnerSettings RunnerId="ConsuloDebuggerRunner">
       <option name="DEBUG_PORT" value="" />
