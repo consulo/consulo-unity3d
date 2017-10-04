@@ -24,7 +24,6 @@ import java.net.NetworkInterface;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
-import java.util.EventListener;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -39,7 +38,6 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.ui.Messages;
-import com.intellij.util.EventDispatcher;
 import com.intellij.util.ExceptionUtil;
 
 /**
@@ -49,11 +47,6 @@ import com.intellij.util.ExceptionUtil;
 public class UnityPlayerService implements ApplicationComponent
 {
 	private static final Logger LOGGER = Logger.getInstance(UnityPlayerService.class);
-
-	public interface UpdateListener extends EventListener
-	{
-		void update(@NotNull List<UnityPlayer> unityPlayers);
-	}
 
 	@NotNull
 	public static UnityPlayerService getInstance()
@@ -73,8 +66,6 @@ public class UnityPlayerService implements ApplicationComponent
 	private List<UnityUdpThread> myThreads = new ArrayList<UnityUdpThread>();
 
 	private ConcurrentMap<UnityPlayer, UnityPlayer> myPlayers = new ConcurrentHashMap<UnityPlayer, UnityPlayer>();
-
-	private EventDispatcher<UpdateListener> myUpdateListenerEventDispatcher = EventDispatcher.create(UpdateListener.class);
 
 	private ScheduledExecutorService myExecutorService = Executors.newScheduledThreadPool(1);
 
@@ -129,7 +120,6 @@ public class UnityPlayerService implements ApplicationComponent
 				@Override
 				public void run()
 				{
-					int size = myPlayers.size();
 					for(Iterator<Map.Entry<UnityPlayer, UnityPlayer>> iterator = myPlayers.entrySet().iterator(); iterator.hasNext(); )
 					{
 						Map.Entry<UnityPlayer, UnityPlayer> next = iterator.next();
@@ -138,12 +128,6 @@ public class UnityPlayerService implements ApplicationComponent
 						{
 							iterator.remove();
 						}
-					}
-
-					List<UnityPlayer> values = new ArrayList<UnityPlayer>(myPlayers.values());
-					if(size != values.size())
-					{
-						myUpdateListenerEventDispatcher.getMulticaster().update(values);
 					}
 				}
 			}, 2, 2, TimeUnit.SECONDS);
@@ -166,16 +150,6 @@ public class UnityPlayerService implements ApplicationComponent
 			}
 		}
 		return false;
-	}
-
-	public void addUpdateListener(@NotNull UpdateListener updateListener)
-	{
-		myUpdateListenerEventDispatcher.addListener(updateListener);
-	}
-
-	public void removeUpdateListener(@NotNull UpdateListener updateListener)
-	{
-		myUpdateListenerEventDispatcher.removeListener(updateListener);
 	}
 
 	@Override
@@ -212,8 +186,6 @@ public class UnityPlayerService implements ApplicationComponent
 		else
 		{
 			myPlayers.put(player, player);
-
-			myUpdateListenerEventDispatcher.getMulticaster().update(new ArrayList<UnityPlayer>(myPlayers.values()));
 		}
 	}
 }
