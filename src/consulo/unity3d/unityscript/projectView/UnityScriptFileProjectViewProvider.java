@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.jetbrains.annotations.Nullable;
 import com.intellij.ide.projectView.TreeStructureProvider;
 import com.intellij.ide.projectView.ViewSettings;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
@@ -78,12 +77,5 @@ public class UnityScriptFileProjectViewProvider implements TreeStructureProvider
 			nodes.add(child);
 		}
 		return nodes;
-	}
-
-	@Nullable
-	@Override
-	public Object getData(Collection<AbstractTreeNode> selected, String dataName)
-	{
-		return null;
 	}
 }

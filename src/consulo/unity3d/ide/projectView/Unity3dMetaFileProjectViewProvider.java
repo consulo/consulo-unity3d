@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.jetbrains.annotations.Nullable;
 import com.intellij.ide.projectView.ProjectViewNode;
 import com.intellij.ide.projectView.TreeStructureProvider;
 import com.intellij.ide.projectView.ViewSettings;
@@ -66,7 +65,7 @@ public class Unity3dMetaFileProjectViewProvider implements TreeStructureProvider
 			return children;
 		}
 
-		List<AbstractTreeNode> nodes = new ArrayList<AbstractTreeNode>(children.size());
+		List<AbstractTreeNode> nodes = new ArrayList<>(children.size());
 		for(AbstractTreeNode child : children)
 		{
 			if(child instanceof ProjectViewNode)
@@ -88,12 +87,5 @@ public class Unity3dMetaFileProjectViewProvider implements TreeStructureProvider
 		String nameWithoutExtension = virtualFile.getNameWithoutExtension();
 		VirtualFile parent = virtualFile.getParent();
 		return parent.findChild(nameWithoutExtension) != null;
-	}
-
-	@Nullable
-	@Override
-	public Object getData(Collection<AbstractTreeNode> selected, String dataName)
-	{
-		return null;
 	}
 }
