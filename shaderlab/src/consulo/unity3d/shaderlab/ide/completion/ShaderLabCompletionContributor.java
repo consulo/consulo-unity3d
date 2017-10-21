@@ -34,7 +34,6 @@ import com.intellij.patterns.StandardPatterns;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ProcessingContext;
-import com.intellij.util.Processor;
 import consulo.annotations.RequiredReadAction;
 import consulo.codeInsight.completion.CompletionProvider;
 import consulo.csharp.ide.completion.util.SpaceInsertHandler;
@@ -147,21 +146,17 @@ public class ShaderLabCompletionContributor extends CompletionContributor
 					return;
 				}
 				final Project project = parameters.getPosition().getProject();
-				ShaderDefIndex.getInstance().processAllKeys(project, new Processor<String>()
+				ShaderDefIndex.getInstance().processAllKeys(project, s ->
 				{
-					@Override
-					public boolean process(String s)
+					Collection<ShaderDef> shaderDefs = ShaderDefIndex.getInstance().get(s, project, GlobalSearchScope.projectScope(project));
+					if(shaderDefs.isEmpty())
 					{
-						Collection<ShaderDef> shaderDefs = ShaderDefIndex.getInstance().get(s, project, GlobalSearchScope.projectScope(project));
-						if(shaderDefs.isEmpty())
-						{
-							return true;
-						}
-						LookupElementBuilder builder = LookupElementBuilder.create(s);
-						builder = builder.withIcon(ShaderLabFileType.INSTANCE.getIcon());
-						result.addElement(builder);
 						return true;
 					}
+					LookupElementBuilder builder = LookupElementBuilder.create(s);
+					builder = builder.withIcon(ShaderLabFileType.INSTANCE.getIcon());
+					result.addElement(builder);
+					return true;
 				});
 				String defaultInsertValue = role.getDefaultInsertValue();
 				if(defaultInsertValue != null)

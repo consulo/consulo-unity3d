@@ -27,9 +27,11 @@ import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.stubs.StubInputStream;
 import com.intellij.psi.stubs.StubOutputStream;
 import com.intellij.util.io.StringRef;
+import consulo.annotations.RequiredReadAction;
 import consulo.psi.tree.IElementTypeAsPsiFactory;
 import consulo.unity3d.shaderlab.lang.ShaderLabLanguage;
 import consulo.unity3d.shaderlab.lang.psi.ShaderDef;
+import consulo.unity3d.shaderlab.lang.psi.impl.ShaderDefImpl;
 import consulo.unity3d.shaderlab.lang.psi.stub.ShaderDefStub;
 import consulo.unity3d.shaderlab.lang.psi.stub.index.ShaderDefIndex;
 
@@ -48,15 +50,16 @@ public class ShaderDefStubElementType extends IStubElementType<ShaderDefStub, Sh
 	@Override
 	public PsiElement createElement(@NotNull ASTNode astNode)
 	{
-		return new ShaderDef(astNode);
+		return new ShaderDefImpl(astNode);
 	}
 
 	@Override
 	public ShaderDef createPsi(@NotNull ShaderDefStub stub)
 	{
-		return new ShaderDef(stub, this);
+		return new ShaderDefImpl(stub, this);
 	}
 
+	@RequiredReadAction
 	@Override
 	public ShaderDefStub createStub(@NotNull ShaderDef psi, StubElement parentStub)
 	{
