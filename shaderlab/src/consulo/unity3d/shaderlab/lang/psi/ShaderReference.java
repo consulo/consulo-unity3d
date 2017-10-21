@@ -18,6 +18,7 @@ package consulo.unity3d.shaderlab.lang.psi;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -37,12 +38,14 @@ import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import consulo.annotations.RequiredReadAction;
+import consulo.annotations.RequiredWriteAction;
 import consulo.csharp.lang.psi.impl.msil.CSharpTransform;
 import consulo.dotnet.psi.DotNetTypeDeclaration;
 import consulo.dotnet.resolve.DotNetPsiSearcher;
 import consulo.unity3d.shaderlab.ide.refactoring.ShaderRefactorUtil;
 import consulo.unity3d.shaderlab.lang.ShaderMaterialAttribute;
 import consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabRole;
+import consulo.unity3d.shaderlab.lang.psi.light.LightShaderDef;
 import consulo.unity3d.shaderlab.lang.psi.stub.index.ShaderDefIndex;
 
 /**
@@ -94,6 +97,7 @@ public class ShaderReference extends ShaderLabElement implements PsiQualifiedRef
 		return this;
 	}
 
+	@RequiredReadAction
 	@Override
 	public PsiElement getElement()
 	{
@@ -101,11 +105,14 @@ public class ShaderReference extends ShaderLabElement implements PsiQualifiedRef
 	}
 
 	@NotNull
+	@RequiredReadAction
 	public PsiElement getReferenceElement()
 	{
 		return findNotNullChildByType(ourTokens);
 	}
 
+	@NotNull
+	@RequiredReadAction
 	@Override
 	public TextRange getRangeInElement()
 	{
@@ -139,6 +146,11 @@ public class ShaderReference extends ShaderLabElement implements PsiQualifiedRef
 				}
 				break;
 			case ANOTHER_SHADER:
+				ShaderDef shaderDef = LightShaderDef.getDefaultShaders(getProject()).get(referenceName);
+				if(shaderDef != null)
+				{
+					return shaderDef;
+				}
 				Collection<ShaderDef> shaderDefs = ShaderDefIndex.getInstance().get(referenceName, getProject(), scope);
 				return ContainerUtil.getFirstItem(shaderDefs);
 			case PROPERTY:
@@ -149,7 +161,7 @@ public class ShaderReference extends ShaderLabElement implements PsiQualifiedRef
 				}
 				for(ShaderProperty shaderProperty : ((ShaderLabFile) containingFile).getProperties())
 				{
-					if(referenceName.equals(shaderProperty.getName()))
+					if(Objects.equals(referenceName, shaderProperty.getName()))
 					{
 						return shaderProperty;
 					}
@@ -159,6 +171,7 @@ public class ShaderReference extends ShaderLabElement implements PsiQualifiedRef
 		return null;
 	}
 
+	@RequiredReadAction
 	@NotNull
 	@Override
 	public String getCanonicalText()
@@ -166,6 +179,7 @@ public class ShaderReference extends ShaderLabElement implements PsiQualifiedRef
 		return getText();
 	}
 
+	@RequiredWriteAction
 	@Override
 	public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException
 	{
@@ -173,6 +187,7 @@ public class ShaderReference extends ShaderLabElement implements PsiQualifiedRef
 		return this;
 	}
 
+	@RequiredWriteAction
 	@Override
 	public PsiElement bindToElement(@NotNull PsiElement element) throws IncorrectOperationException
 	{
@@ -186,12 +201,13 @@ public class ShaderReference extends ShaderLabElement implements PsiQualifiedRef
 		return element.isEquivalentTo(resolve());
 	}
 
+	@RequiredReadAction
 	@NotNull
 	@Override
 	public Object[] getVariants()
 	{
 		ResolveKind kind = kind();
-		final List<LookupElement> values = new SmartList<LookupElement>();
+		final List<LookupElement> values = new SmartList<>();
 		switch(kind)
 		{
 			case ATTRIBUTE:
@@ -206,20 +222,14 @@ public class ShaderReference extends ShaderLabElement implements PsiQualifiedRef
 				PsiFile containingFile = getContainingFile();
 				if(containingFile instanceof ShaderLabFile)
 				{
-					consumeProperties((ShaderLabFile) containingFile, new Consumer<LookupElement>()
-					{
-						@Override
-						public void consume(LookupElement lookupElement)
-						{
-							values.add(lookupElement);
-						}
-					});
+					consumeProperties((ShaderLabFile) containingFile, values::add);
 				}
 				break;
 		}
 		return values.toArray();
 	}
 
+	@RequiredReadAction
 	public static void consumeProperties(@NotNull ShaderLabFile file, @NotNull Consumer<LookupElement> consumer)
 	{
 		for(ShaderProperty shaderProperty : file.getProperties())
@@ -240,6 +250,7 @@ public class ShaderReference extends ShaderLabElement implements PsiQualifiedRef
 		}
 	}
 
+	@RequiredReadAction
 	@Override
 	public boolean isSoft()
 	{
@@ -261,6 +272,7 @@ public class ShaderReference extends ShaderLabElement implements PsiQualifiedRef
 
 	@Nullable
 	@Override
+	@RequiredReadAction
 	public String getReferenceName()
 	{
 		PsiElement referenceElement = getReferenceElement();

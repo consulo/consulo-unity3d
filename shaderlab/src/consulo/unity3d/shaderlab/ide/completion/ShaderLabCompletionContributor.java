@@ -28,11 +28,14 @@ import com.intellij.codeInsight.completion.InsertHandler;
 import com.intellij.codeInsight.completion.InsertionContext;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
+import com.intellij.icons.AllIcons;
 import com.intellij.openapi.editor.Caret;
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.patterns.StandardPatterns;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.ui.LayeredIcon;
 import com.intellij.util.ProcessingContext;
 import consulo.annotations.RequiredReadAction;
 import consulo.codeInsight.completion.CompletionProvider;
@@ -48,6 +51,7 @@ import consulo.unity3d.shaderlab.lang.psi.ShaderLabKeyTokens;
 import consulo.unity3d.shaderlab.lang.psi.ShaderLabTokens;
 import consulo.unity3d.shaderlab.lang.psi.ShaderPropertyTypeElement;
 import consulo.unity3d.shaderlab.lang.psi.ShaderSimpleValue;
+import consulo.unity3d.shaderlab.lang.psi.light.LightShaderDef;
 import consulo.unity3d.shaderlab.lang.psi.stub.index.ShaderDefIndex;
 
 /**
@@ -145,19 +149,32 @@ public class ShaderLabCompletionContributor extends CompletionContributor
 				{
 					return;
 				}
-				final Project project = parameters.getPosition().getProject();
-				ShaderDefIndex.getInstance().processAllKeys(project, s ->
+
+				Project project = parameters.getPosition().getProject();
+				Collection<String> allKeys = ShaderDefIndex.getInstance().getAllKeys(project);
+				for(String key : allKeys)
 				{
-					Collection<ShaderDef> shaderDefs = ShaderDefIndex.getInstance().get(s, project, GlobalSearchScope.projectScope(project));
+					ProgressManager.checkCanceled();
+
+					Collection<ShaderDef> shaderDefs = ShaderDefIndex.getInstance().get(key, project, GlobalSearchScope.projectScope(project));
 					if(shaderDefs.isEmpty())
 					{
-						return true;
+						continue;
 					}
-					LookupElementBuilder builder = LookupElementBuilder.create(s);
+					LookupElementBuilder builder = LookupElementBuilder.create(key);
 					builder = builder.withIcon(ShaderLabFileType.INSTANCE.getIcon());
 					result.addElement(builder);
-					return true;
-				});
+				}
+
+				for(ShaderDef shaderDef : LightShaderDef.getDefaultShaders(project).values())
+				{
+					ProgressManager.checkCanceled();
+
+					LookupElementBuilder builder = LookupElementBuilder.create(shaderDef.getName());
+					builder = builder.withIcon(new LayeredIcon(ShaderLabFileType.INSTANCE.getIcon(), AllIcons.Nodes.FinalMark));
+					result.addElement(builder);
+				}
+
 				String defaultInsertValue = role.getDefaultInsertValue();
 				if(defaultInsertValue != null)
 				{
