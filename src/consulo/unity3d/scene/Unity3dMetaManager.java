@@ -29,6 +29,7 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.LowMemoryWatcher;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileCopyEvent;
 import com.intellij.openapi.vfs.VirtualFileEvent;
@@ -143,6 +144,11 @@ public class Unity3dMetaManager implements Disposable
 			return MultiMap.empty();
 		}
 
+		VirtualFile baseDir = myProject.getBaseDir();
+		if(baseDir == null)
+		{
+			return MultiMap.empty();
+		}
 		return myAttaches.computeIfAbsent(uuid, it ->
 		{
 			CommonProcessors.CollectProcessor<Integer> fileIds = new CommonProcessors.CollectProcessor<>();
@@ -158,6 +164,11 @@ public class Unity3dMetaManager implements Disposable
 
 				VirtualFile assertFile = fileBasedIndex.findFileById(myProject, fileId);
 				if(assertFile == null)
+				{
+					continue;
+				}
+
+				if(!VfsUtilCore.isAncestor(baseDir, assertFile, false))
 				{
 					continue;
 				}
