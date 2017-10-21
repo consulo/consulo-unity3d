@@ -33,11 +33,10 @@ import com.sun.jna.win32.W32APIOptions;
  * @author VISTALL
  * @since 24.01.15
  */
-public class WindowsVersionHelper
+class WindowsVersionHelper
 {
 	public interface Version extends Library
 	{
-
 		Version INSTANCE = (Version) Native.loadLibrary("Version", Version.class, W32APIOptions.UNICODE_OPTIONS);
 
 		public int GetFileVersionInfoSizeW(String lptstrFilename, int dwDummy);
@@ -45,13 +44,13 @@ public class WindowsVersionHelper
 		public boolean GetFileVersionInfoW(String lptstrFilename, int dwHandle, int dwLen, Pointer lpData);
 
 		public int VerQueryValueW(Pointer pBlock, String lpSubBlock, PointerByReference lplpBuffer, IntByReference puLen);
-
 	}
 
+	@SuppressWarnings("unused")
 	public static class VS_FIXEDFILEINFO extends com.sun.jna.Structure
 	{
-		private static final List __FIELDS = Arrays.asList("dwSignature", "dwStrucVersion", "dwFileVersionMS", "dwFileVersionLS", "dwProductVersionMS", "dwProductVersionLS", "dwFileFlagsMask",
-				"dwFileFlags", "dwFileOS", "dwFileType", "dwFileSubtype", "dwFileDateMS", "dwFileDateLS");
+		private static final List<String> __FIELDS = Arrays.asList("dwSignature", "dwStrucVersion", "dwFileVersionMS", "dwFileVersionLS", "dwProductVersionMS", "dwProductVersionLS",
+				"dwFileFlagsMask", "dwFileFlags", "dwFileOS", "dwFileType", "dwFileSubtype", "dwFileDateMS", "dwFileDateLS");
 
 		public int dwSignature;
 		public int dwStrucVersion;
@@ -73,7 +72,7 @@ public class WindowsVersionHelper
 		}
 
 		@Override
-		protected List getFieldOrder()
+		protected List<String> getFieldOrder()
 		{
 			return __FIELDS;
 		}

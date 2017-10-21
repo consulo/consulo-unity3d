@@ -51,6 +51,9 @@
 		<component>
 			<implementation-class>consulo.unity3d.Unity3dLocalFileSystemComponent</implementation-class>
 		</component>
+		<component>
+			<implementation-class>consulo.unity3d.packages.Unity3dPackageWatcher</implementation-class>
+		</component>
 	</application-components>
 
 	<project-components>

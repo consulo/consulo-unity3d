@@ -88,7 +88,7 @@ public class Unity3dBundleType extends SdkType
 	@Override
 	public Collection<String> suggestHomePaths()
 	{
-		List<String> paths = new SmartList<String>();
+		List<String> paths = new SmartList<>();
 		if(SystemInfo.isMac)
 		{
 			paths.add("/Applications/Unity/Unity.app");

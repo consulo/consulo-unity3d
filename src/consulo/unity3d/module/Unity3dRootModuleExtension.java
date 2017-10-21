@@ -35,6 +35,9 @@ import consulo.dotnet.module.DotNetNamespaceGeneratePolicy;
 import consulo.dotnet.module.extension.BaseDotNetSimpleModuleExtension;
 import consulo.roots.ModuleRootLayer;
 import consulo.unity3d.bundle.Unity3dBundleType;
+import consulo.unity3d.packages.Unity3dPackage;
+import consulo.unity3d.packages.Unity3dPackageIndex;
+import consulo.unity3d.packages.Unity3dPackageWatcher;
 import consulo.unity3d.projectImport.Unity3dProjectUtil;
 
 /**
@@ -43,8 +46,6 @@ import consulo.unity3d.projectImport.Unity3dProjectUtil;
  */
 public class Unity3dRootModuleExtension extends BaseDotNetSimpleModuleExtension<Unity3dRootModuleExtension>
 {
-	public static final String FILE_NAME = "$ModuleName$";
-
 	protected String myNamespacePrefix = null;
 
 	public Unity3dRootModuleExtension(@NotNull String id, @NotNull ModuleRootLayer rootModel)
@@ -59,6 +60,7 @@ public class Unity3dRootModuleExtension extends BaseDotNetSimpleModuleExtension<
 		return UnityNamespaceGeneratePolicy.createOrGet(this);
 	}
 
+	@RequiredReadAction
 	@Override
 	public void commit(@NotNull Unity3dRootModuleExtension mutableModuleExtension)
 	{
@@ -135,7 +137,7 @@ public class Unity3dRootModuleExtension extends BaseDotNetSimpleModuleExtension<
 	{
 		Version version = Unity3dProjectUtil.parseVersion(sdk.getVersionString());
 
-		List<String> list = new SmartList<String>();
+		List<String> list = new SmartList<>();
 		if(SystemInfo.isMac)
 		{
 			list.add(homePath + "/Contents/Frameworks/Managed");
@@ -156,6 +158,15 @@ public class Unity3dRootModuleExtension extends BaseDotNetSimpleModuleExtension<
 			list.add(homePath + "/Editor/Data/Mono/lib/mono/2.0");
 
 			addUnityExtensions(list, version, homePath + "/Editor/Data/UnityExtensions/Unity");
+		}
+
+		if(version.is(2017, 2))
+		{
+			Unity3dPackageIndex index = Unity3dPackageWatcher.getInstance().getIndex();
+			for(Unity3dPackage unity3dPackage : index.getTopPackages())
+			{
+				list.add(unity3dPackage.getPath());
+			}
 		}
 		return list;
 	}
