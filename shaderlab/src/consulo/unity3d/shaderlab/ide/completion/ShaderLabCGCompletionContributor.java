@@ -21,12 +21,10 @@ import com.intellij.codeInsight.completion.CompletionContributor;
 import com.intellij.codeInsight.completion.CompletionParameters;
 import com.intellij.codeInsight.completion.CompletionResultSet;
 import com.intellij.codeInsight.completion.CompletionType;
-import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.patterns.StandardPatterns;
 import com.intellij.psi.PsiLanguageInjectionHost;
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.psi.impl.source.tree.injected.Place;
-import com.intellij.util.Consumer;
 import com.intellij.util.ProcessingContext;
 import consulo.annotations.RequiredReadAction;
 import consulo.cgshader.CGLanguage;
@@ -57,14 +55,7 @@ public class ShaderLabCGCompletionContributor extends CompletionContributor
 					if(host instanceof ShaderCGScript)
 					{
 						ShaderLabFile containingFile = (ShaderLabFile) host.getContainingFile();
-						ShaderReference.consumeProperties(containingFile, new Consumer<LookupElement>()
-						{
-							@Override
-							public void consume(LookupElement lookupElement)
-							{
-								result.addElement(lookupElement);
-							}
-						});
+						ShaderReference.consumeProperties(containingFile, result::addElement);
 					}
 				}
 			}

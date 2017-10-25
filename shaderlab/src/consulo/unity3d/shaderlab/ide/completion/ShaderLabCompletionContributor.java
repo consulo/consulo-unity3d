@@ -32,6 +32,7 @@ import com.intellij.icons.AllIcons;
 import com.intellij.openapi.editor.Caret;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.patterns.StandardPatterns;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -40,6 +41,8 @@ import com.intellij.util.ProcessingContext;
 import consulo.annotations.RequiredReadAction;
 import consulo.codeInsight.completion.CompletionProvider;
 import consulo.csharp.ide.completion.util.SpaceInsertHandler;
+import consulo.dotnet.psi.search.searches.DirectTypeInheritorsSearch;
+import consulo.ide.IconDescriptorUpdaters;
 import consulo.unity3d.shaderlab.lang.ShaderLabFileType;
 import consulo.unity3d.shaderlab.lang.ShaderLabPropertyType;
 import consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabCompositeRole;
@@ -206,6 +209,35 @@ public class ShaderLabCompletionContributor extends CompletionContributor
 					builder = builder.bold();
 					result.addElement(builder);
 				}
+			}
+		});
+
+		extend(CompletionType.BASIC, StandardPatterns.psiElement().afterLeaf(StandardPatterns.psiElement().withElementType(ShaderLabKeyTokens.START_KEYWORD)), new CompletionProvider()
+		{
+			@RequiredReadAction
+			@Override
+			public void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext context, @NotNull final CompletionResultSet result)
+			{
+				ShaderSimpleValue simpleValue = PsiTreeUtil.getParentOfType(parameters.getPosition(), ShaderSimpleValue.class);
+				if(simpleValue == null)
+				{
+					return;
+				}
+				ShaderLabRole role = simpleValue.getRole();
+				if(role == null || role != ShaderLabRoles.CustomEditor)
+				{
+					return;
+				}
+
+				DirectTypeInheritorsSearch.search(parameters.getPosition().getProject(), "UnityEditor.ShaderGUI").forEach(typeDeclaration ->
+				{
+					String vmQName = typeDeclaration.getVmQName();
+
+					LookupElementBuilder builder = LookupElementBuilder.create(StringUtil.QUOTER.fun(vmQName));
+					builder = builder.withIcon(IconDescriptorUpdaters.getIcon(typeDeclaration, 0));
+					builder = builder.withPresentableText(vmQName);
+					result.addElement(builder);
+				});
 			}
 		});
 	}

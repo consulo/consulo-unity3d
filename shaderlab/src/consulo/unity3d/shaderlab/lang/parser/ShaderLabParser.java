@@ -67,9 +67,9 @@ public class ShaderLabParser implements PsiParser
 		assert builder.getTokenType() == ShaderLabTokens.IDENTIFIER;
 		String tokenText = builder.getTokenText();
 		boolean found = false;
-		for(String s : values)
+		for(String value : values)
 		{
-			if(s.equalsIgnoreCase(tokenText))
+			if(value.equalsIgnoreCase(tokenText))
 			{
 				found = true;
 				break;

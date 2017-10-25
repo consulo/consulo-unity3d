@@ -27,6 +27,7 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.icons.AllIcons;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiQualifiedReferenceElement;
@@ -59,7 +60,8 @@ public class ShaderReference extends ShaderLabElement implements PsiQualifiedRef
 	{
 		ATTRIBUTE,
 		ANOTHER_SHADER,
-		PROPERTY
+		SHADER_GUI,
+		PROPERTY,
 	}
 
 	private static final TokenSet ourTokens = TokenSet.create(ShaderLabTokens.IDENTIFIER, ShaderLabTokens.STRING_LITERAL);
@@ -84,6 +86,11 @@ public class ShaderReference extends ShaderLabElement implements PsiQualifiedRef
 		else if(parent instanceof ShaderSimpleValue)
 		{
 			ShaderLabRole role = ((ShaderSimpleValue) parent).getRole();
+			if(role == ShaderLabRoles.CustomEditor)
+			{
+				return ResolveKind.SHADER_GUI;
+			}
+
 			if(role == ShaderLabRoles.Fallback || role == ShaderLabRoles.UsePass)
 			{
 				return ResolveKind.ANOTHER_SHADER;
@@ -144,6 +151,13 @@ public class ShaderReference extends ShaderLabElement implements PsiQualifiedRef
 				catch(IllegalArgumentException ignored)
 				{
 					//
+				}
+				break;
+			case SHADER_GUI:
+				DotNetTypeDeclaration type = DotNetPsiSearcher.getInstance(getProject()).findType(StringUtil.unquoteString(referenceName), scope, CSharpTransform.INSTANCE);
+				if(type != null)
+				{
+					return type;
 				}
 				break;
 			case ANOTHER_SHADER:
@@ -219,6 +233,7 @@ public class ShaderReference extends ShaderLabElement implements PsiQualifiedRef
 					builder = builder.withTypeText(attribute.getType(), true);
 					values.add(builder);
 				}
+				break;
 			case PROPERTY:
 				PsiFile containingFile = getContainingFile();
 				if(containingFile instanceof ShaderLabFile)

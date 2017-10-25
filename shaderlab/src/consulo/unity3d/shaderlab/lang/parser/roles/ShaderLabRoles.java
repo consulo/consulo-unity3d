@@ -280,25 +280,7 @@ public interface ShaderLabRoles
 		}
 	};
 
-	ShaderLabRole Name = new ShaderLabRole()
-	{
-		@Override
-		public PsiBuilder.Marker parseAndDone(ShaderLabParserBuilder builder, @NotNull PsiBuilder.Marker mark)
-		{
-			IElementType valueTokenType = builder.getTokenType();
-			if(valueTokenType == ShaderLabTokens.STRING_LITERAL)
-			{
-				builder.advanceLexer();
-			}
-			else
-			{
-				doneWithErrorSafe(builder, "Expected Name");
-			}
-
-			mark.done(ShaderLabElements.SIMPLE_VALUE);
-			return mark;
-		}
-	};
+	ShaderLabRole Name = new ShaderLabTokenRole(ShaderLabTokens.STRING_LITERAL);
 
 	ShaderLabRole UsePass = new ShaderLabRole()
 	{
@@ -370,6 +352,28 @@ public interface ShaderLabRoles
 
 	ShaderLabRole Offset = new ShaderLabCommaPairRole(new ShaderLabTokenRole(ShaderLabTokens.INTEGER_LITERAL), new ShaderLabTokenRole(ShaderLabTokens.INTEGER_LITERAL));
 
+	ShaderLabRole CustomEditor = new ShaderLabRole()
+	{
+		@Override
+		public PsiBuilder.Marker parseAndDone(ShaderLabParserBuilder builder, PsiBuilder.Marker mark)
+		{
+
+			if(builder.getTokenType() == ShaderLabTokens.STRING_LITERAL)
+			{
+				PsiBuilder.Marker refMarker = builder.mark();
+				expectWithError(builder, ShaderLabTokens.STRING_LITERAL, "Editor type expected");
+				refMarker.done(ShaderLabElements.REFERENCE);
+			}
+			else
+			{
+				doneWithErrorSafe(builder, "Editor type expected");
+			}
+
+			mark.done(ShaderLabElements.SIMPLE_VALUE);
+			return mark;
+		}
+	};
+
 	ShaderLabRole AlphaTest = new ShaderLabOrRole(new ShaderLabSimpleRole("Off"), new ShaderLabPairRole(new ShaderLabSimpleRole("Always", "Less", "Greater", "LEqual", "GEqual", "Equal", "NotEqual",
 			"Never"), new ShaderLabOrRole(new ShaderLabTokenRole(ShaderLabTokens.INTEGER_LITERAL), ShaderLabReferenceRole.INSTANCE)))
 	{
@@ -385,9 +389,9 @@ public interface ShaderLabRoles
 
 	ShaderLabRole Pass = new ShaderLabCompositeRole(ShaderLabElements.PASS, Name, Tags, Color, SetTexture, Lighting, ZWrite, Cull, Fog, ZTest, SeparateSpecular, Material, AlphaTest, Offset);
 
-	ShaderLabRole SubShader = new ShaderLabCompositeRole(ShaderLabElements.SUB_SHADER, Pass, Tags, Lighting, ZWrite, Cull, Fog, UsePass, Material, LOD);
+	ShaderLabRole SubShader = new ShaderLabCompositeRole(ShaderLabElements.SUB_SHADER, Pass, Tags, Lighting, Offset, ZWrite, Cull, Fog, UsePass, Material, LOD);
 
-	ShaderLabRole Shader = new ShaderLabCompositeRole(ShaderLabElements.SHADER_DEF, Properties, Fallback, SubShader)
+	ShaderLabRole Shader = new ShaderLabCompositeRole(ShaderLabElements.SHADER_DEF, Properties, Fallback, CustomEditor, SubShader)
 	{
 		@Override
 		public void parseBefore(ShaderLabParserBuilder builder)
