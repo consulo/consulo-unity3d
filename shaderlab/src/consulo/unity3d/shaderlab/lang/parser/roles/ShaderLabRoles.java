@@ -5,12 +5,6 @@ import static consulo.unity3d.shaderlab.lang.parser.ShaderLabParser.expectWithEr
 import static consulo.unity3d.shaderlab.lang.parser.ShaderLabParser.parseBracketReference;
 import static consulo.unity3d.shaderlab.lang.parser.ShaderLabParser.parseElementsInBraces;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import com.intellij.lang.PsiBuilder;
@@ -286,6 +280,26 @@ public interface ShaderLabRoles
 		}
 	};
 
+	ShaderLabRole Name = new ShaderLabRole()
+	{
+		@Override
+		public PsiBuilder.Marker parseAndDone(ShaderLabParserBuilder builder, @NotNull PsiBuilder.Marker mark)
+		{
+			IElementType valueTokenType = builder.getTokenType();
+			if(valueTokenType == ShaderLabTokens.STRING_LITERAL)
+			{
+				builder.advanceLexer();
+			}
+			else
+			{
+				doneWithErrorSafe(builder, "Expected Name");
+			}
+
+			mark.done(ShaderLabElements.SIMPLE_VALUE);
+			return mark;
+		}
+	};
+
 	ShaderLabRole UsePass = new ShaderLabRole()
 	{
 		@Override
@@ -356,8 +370,8 @@ public interface ShaderLabRoles
 
 	ShaderLabRole Offset = new ShaderLabCommaPairRole(new ShaderLabTokenRole(ShaderLabTokens.INTEGER_LITERAL), new ShaderLabTokenRole(ShaderLabTokens.INTEGER_LITERAL));
 
-	ShaderLabRole AlphaTest = new ShaderLabOrRole(new ShaderLabSimpleRole("Off"), new ShaderLabPairRole(new ShaderLabSimpleRole("Always", "Less", "Greater", "LEqual", "GEqual",
-			"Equal", "NotEqual", "Never"), new ShaderLabOrRole(new ShaderLabTokenRole(ShaderLabTokens.INTEGER_LITERAL), ShaderLabReferenceRole.INSTANCE)))
+	ShaderLabRole AlphaTest = new ShaderLabOrRole(new ShaderLabSimpleRole("Off"), new ShaderLabPairRole(new ShaderLabSimpleRole("Always", "Less", "Greater", "LEqual", "GEqual", "Equal", "NotEqual",
+			"Never"), new ShaderLabOrRole(new ShaderLabTokenRole(ShaderLabTokens.INTEGER_LITERAL), ShaderLabReferenceRole.INSTANCE)))
 	{
 		@Nullable
 		@Override
@@ -369,8 +383,7 @@ public interface ShaderLabRoles
 
 	ShaderLabRole Fog = new ShaderLabCompositeRole(ShaderLabElements.FOG, Color, Mode);
 
-	ShaderLabRole Pass = new ShaderLabCompositeRole(ShaderLabElements.PASS, Tags, Color, SetTexture, Lighting, ZWrite, Cull, Fog, ZTest, SeparateSpecular, Material, AlphaTest,
-			Offset);
+	ShaderLabRole Pass = new ShaderLabCompositeRole(ShaderLabElements.PASS, Name, Tags, Color, SetTexture, Lighting, ZWrite, Cull, Fog, ZTest, SeparateSpecular, Material, AlphaTest, Offset);
 
 	ShaderLabRole SubShader = new ShaderLabCompositeRole(ShaderLabElements.SUB_SHADER, Pass, Tags, Lighting, ZWrite, Cull, Fog, UsePass, Material, LOD);
 
@@ -385,36 +398,4 @@ public interface ShaderLabRoles
 			}
 		}
 	};
-
-	static Map<String, ShaderLabRole> ourRoles = new HashMap<>();
-
-	@Nullable
-	public static ShaderLabRole findRole(String name)
-	{
-		build();
-
-		name = name.toLowerCase(Locale.US);
-		return ourRoles.get(name);
-	}
-
-	static void build()
-	{
-		Field[] declaredFields = ShaderLabRole.class.getFields();
-		for(Field declaredField : declaredFields)
-		{
-			if(Modifier.isStatic(declaredField.getModifiers()))
-			{
-				try
-				{
-					ShaderLabRole value = (ShaderLabRole) declaredField.get(null);
-					value.setName(declaredField.getName());
-					ourRoles.put(declaredField.getName().toLowerCase(), value);
-				}
-				catch(IllegalAccessException e)
-				{
-					throw new Error(e);
-				}
-			}
-		}
-	}
 }

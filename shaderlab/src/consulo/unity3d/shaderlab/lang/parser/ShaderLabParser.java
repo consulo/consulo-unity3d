@@ -23,6 +23,7 @@ import com.intellij.lang.PsiBuilderUtil;
 import com.intellij.lang.PsiParser;
 import com.intellij.psi.tree.IElementType;
 import consulo.lang.LanguageVersion;
+import consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabRoleHolder;
 import consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabRoles;
 import consulo.unity3d.shaderlab.lang.psi.ShaderLabElements;
 import consulo.unity3d.shaderlab.lang.psi.ShaderLabKeyTokens;
@@ -34,6 +35,11 @@ import consulo.unity3d.shaderlab.lang.psi.ShaderLabTokens;
  */
 public class ShaderLabParser implements PsiParser
 {
+	static
+	{
+		ShaderLabRoleHolder.build();
+	}
+
 	@NotNull
 	@Override
 	public ASTNode parse(@NotNull IElementType root, @NotNull PsiBuilder b, @NotNull LanguageVersion languageVersion)

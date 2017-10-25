@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabRole;
-import consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabRoles;
+import consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabRoleHolder;
 
 /**
  * @author VISTALL
@@ -43,7 +43,7 @@ public class ShaderSimpleValue extends ShaderLabElement implements ShaderRoleOwn
 		{
 			return null;
 		}
-		return ShaderLabRoles.findRole(element.getText());
+		return ShaderLabRoleHolder.findRole(element.getText());
 	}
 
 	@Override
