@@ -27,7 +27,8 @@ public enum ShaderMaterialAttribute
 	PowerSlider("UnityEditor.MaterialPowerSliderDrawer"),
 	Toggle("UnityEditor.MaterialToggleDrawer"),
 	Space("UnityEditor.MaterialSpaceDecorator"),
-	Header("UnityEditor.MaterialHeaderDecorator");
+	Header("UnityEditor.MaterialHeaderDecorator"),
+	HideInInspector("UnityEngine.HideInInspector");
 
 	private String myType;
 
