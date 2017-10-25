@@ -44,6 +44,7 @@ import consulo.unity3d.shaderlab.lang.ShaderLabFileType;
 import consulo.unity3d.shaderlab.lang.ShaderLabPropertyType;
 import consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabCompositeRole;
 import consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabRole;
+import consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabRoles;
 import consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabSimpleRole;
 import consulo.unity3d.shaderlab.lang.psi.ShaderBraceOwner;
 import consulo.unity3d.shaderlab.lang.psi.ShaderDef;
@@ -145,7 +146,7 @@ public class ShaderLabCompletionContributor extends CompletionContributor
 					return;
 				}
 				ShaderLabRole role = simpleValue.getRole();
-				if(role == null || role != ShaderLabRole.Fallback && role != ShaderLabRole.UsePass)
+				if(role == null || role != ShaderLabRoles.Fallback && role != ShaderLabRoles.UsePass)
 				{
 					return;
 				}

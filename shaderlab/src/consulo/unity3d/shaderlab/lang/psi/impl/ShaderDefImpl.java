@@ -33,6 +33,7 @@ import com.intellij.util.IncorrectOperationException;
 import consulo.annotations.RequiredReadAction;
 import consulo.annotations.RequiredWriteAction;
 import consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabRole;
+import consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabRoles;
 import consulo.unity3d.shaderlab.lang.psi.ShaderDef;
 import consulo.unity3d.shaderlab.lang.psi.ShaderLabTokens;
 import consulo.unity3d.shaderlab.lang.psi.ShaderProperty;
@@ -139,6 +140,6 @@ public class ShaderDefImpl extends StubBasedPsiElementBase<ShaderDefStub> implem
 	@Override
 	public ShaderLabRole getRole()
 	{
-		return ShaderLabRole.Shader;
+		return ShaderLabRoles.Shader;
 	}
 }

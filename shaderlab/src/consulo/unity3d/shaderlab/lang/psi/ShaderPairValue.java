@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabRole;
+import consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabRoles;
 
 /**
  * @author VISTALL
@@ -38,7 +39,7 @@ public class ShaderPairValue extends ShaderLabElement implements ShaderRoleOwner
 	public ShaderLabRole getRole()
 	{
 		PsiElement element = findNotNullChildByType(ShaderLabKeyTokens.START_KEYWORD);
-		return ShaderLabRole.findRole(element.getText());
+		return ShaderLabRoles.findRole(element.getText());
 	}
 
 	@Override

@@ -45,6 +45,7 @@ import consulo.dotnet.resolve.DotNetPsiSearcher;
 import consulo.unity3d.shaderlab.ide.refactoring.ShaderRefactorUtil;
 import consulo.unity3d.shaderlab.lang.ShaderMaterialAttribute;
 import consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabRole;
+import consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabRoles;
 import consulo.unity3d.shaderlab.lang.psi.light.LightShaderDef;
 import consulo.unity3d.shaderlab.lang.psi.stub.index.ShaderDefIndex;
 
@@ -83,7 +84,7 @@ public class ShaderReference extends ShaderLabElement implements PsiQualifiedRef
 		else if(parent instanceof ShaderSimpleValue)
 		{
 			ShaderLabRole role = ((ShaderSimpleValue) parent).getRole();
-			if(role == ShaderLabRole.Fallback || role == ShaderLabRole.UsePass)
+			if(role == ShaderLabRoles.Fallback || role == ShaderLabRoles.UsePass)
 			{
 				return ResolveKind.ANOTHER_SHADER;
 			}
