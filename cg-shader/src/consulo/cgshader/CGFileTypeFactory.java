@@ -30,5 +30,6 @@ public class CGFileTypeFactory extends FileTypeFactory
 	public void createFileTypes(@NotNull FileTypeConsumer consumer)
 	{
 		consumer.consume(CGFileType.INSTANCE);
+		consumer.consume(CGFileType.INSTANCE, "cginc");
 	}
 }

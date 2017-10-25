@@ -38,7 +38,7 @@ public class CGFileType extends LanguageFileType
 
 	@NotNull
 	@Override
-	public String getName()
+	public String getId()
 	{
 		return "CG";
 	}
