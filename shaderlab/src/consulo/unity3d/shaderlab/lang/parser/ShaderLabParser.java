@@ -16,6 +16,8 @@
 
 package consulo.unity3d.shaderlab.lang.parser;
 
+import java.util.Objects;
+
 import org.jetbrains.annotations.NotNull;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.PsiBuilder;
@@ -61,6 +63,12 @@ public class ShaderLabParser implements PsiParser
 		return builder.getTreeBuilt();
 	}
 
+	public static boolean isTokenTextEqualTo(@NotNull PsiBuilder builder, String value)
+	{
+		assert builder.getTokenType() == ShaderLabTokens.IDENTIFIER;
+		String tokenText = builder.getTokenText();
+		return Objects.equals(tokenText, value);
+	}
 
 	public static boolean validateIdentifier(@NotNull PsiBuilder builder, String... values)
 	{

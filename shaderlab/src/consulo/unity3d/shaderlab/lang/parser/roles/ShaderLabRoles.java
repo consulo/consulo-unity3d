@@ -247,6 +247,8 @@ public interface ShaderLabRoles
 
 	ShaderLabRole Mode = new ShaderLabSimpleRole("Off", "Global", "Linear", "Exp", "Exp2");
 
+	ShaderLabRole Blend = new ShaderLabBlendRole();
+
 	ShaderLabRole ZTest = new ShaderLabSimpleRole("Off", "Always", "Less", "Greater", "LEqual", "GEqual", "Equal", "NotEqual");
 
 	ShaderLabRole Color = new ShaderLabColorRole();
@@ -387,9 +389,9 @@ public interface ShaderLabRoles
 
 	ShaderLabRole Fog = new ShaderLabCompositeRole(ShaderLabElements.FOG, Color, Mode);
 
-	ShaderLabRole Pass = new ShaderLabCompositeRole(ShaderLabElements.PASS, Name, Tags, Color, SetTexture, Lighting, ZWrite, Cull, Fog, ZTest, SeparateSpecular, Material, AlphaTest, Offset);
+	ShaderLabRole Pass = new ShaderLabCompositeRole(ShaderLabElements.PASS, Name, Tags, Color, SetTexture, Lighting, ZWrite, Cull, Fog, ZTest, SeparateSpecular, Material, Blend, AlphaTest, Offset);
 
-	ShaderLabRole SubShader = new ShaderLabCompositeRole(ShaderLabElements.SUB_SHADER, Pass, Tags, Lighting, Offset, ZWrite, Cull, Fog, ZTest, UsePass, Material, LOD);
+	ShaderLabRole SubShader = new ShaderLabCompositeRole(ShaderLabElements.SUB_SHADER, Pass, Tags, Lighting, Offset, ZWrite, Cull, Fog, ZTest, UsePass, Material, LOD, Blend);
 
 	ShaderLabRole Shader = new ShaderLabCompositeRole(ShaderLabElements.SHADER_DEF, Properties, Fallback, CustomEditor, SubShader)
 	{
