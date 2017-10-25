@@ -29,8 +29,6 @@ import consulo.unity3d.shaderlab.lang.psi.ShaderLabTokens;
  */
 public class ShaderLabReferenceRole extends ShaderLabValueRole
 {
-	public static final ShaderLabReferenceRole INSTANCE = new ShaderLabReferenceRole();
-
 	@Override
 	public boolean isMyValue(@NotNull ShaderLabParserBuilder builder)
 	{

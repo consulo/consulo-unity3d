@@ -40,9 +40,11 @@ public abstract class ShaderLabRole
 
 	public abstract PsiBuilder.Marker parseAndDone(ShaderLabParserBuilder builder, PsiBuilder.Marker mark);
 
-	public void setName(String name)
+	@NotNull
+	public ShaderLabRole setName(String name)
 	{
 		myName = name;
+		return this;
 	}
 
 	@NotNull

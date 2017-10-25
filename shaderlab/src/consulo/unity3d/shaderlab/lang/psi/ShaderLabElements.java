@@ -54,6 +54,8 @@ public interface ShaderLabElements
 
 	IElementType PASS = new ElementTypeAsPsiFactory("PASS", ShaderLabLanguage.INSTANCE, ShaderCompositeCommand.class);
 
+	IElementType STENCIL = new ElementTypeAsPsiFactory("STENCIL", ShaderLabLanguage.INSTANCE, ShaderCompositeCommand.class);
+
 	IElementType SUB_SHADER = new ElementTypeAsPsiFactory("SUB_SHADER", ShaderLabLanguage.INSTANCE, ShaderCompositeCommand.class);
 
 	IElementType SIMPLE_VALUE = new ElementTypeAsPsiFactory("SIMPLE_VALUE", ShaderLabLanguage.INSTANCE, ShaderSimpleValue.class);
