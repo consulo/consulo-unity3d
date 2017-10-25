@@ -24,6 +24,7 @@ import static consulo.unity3d.shaderlab.lang.parser.ShaderLabParser.parseElement
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import org.jetbrains.annotations.NotNull;
@@ -458,12 +459,12 @@ public abstract class ShaderLabRole
 
 	public abstract PsiBuilder.Marker parseAndDone(ShaderLabParserBuilder builder, PsiBuilder.Marker mark);
 
-	private static Map<String, ShaderLabRole> ourRoles = new HashMap<String, ShaderLabRole>();
+	private static Map<String, ShaderLabRole> ourRoles = new HashMap<>();
 
 	@Nullable
 	public static ShaderLabRole findRole(String name)
 	{
-		name = name.toLowerCase();
+		name = name.toLowerCase(Locale.US);
 		return ourRoles.get(name);
 	}
 
