@@ -38,7 +38,7 @@ public class ShaderLabFileType extends LanguageFileType
 
 	@NotNull
 	@Override
-	public String getName()
+	public String getId()
 	{
 		return "SHADERLAB";
 	}

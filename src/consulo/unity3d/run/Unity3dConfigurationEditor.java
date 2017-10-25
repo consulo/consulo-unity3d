@@ -61,26 +61,26 @@ public class Unity3dConfigurationEditor extends SettingsEditor<Unity3dAttachConf
 	@RequiredUIAccess
 	protected Component createUIComponent()
 	{
-		LabeledLayout layout = Layouts.labeled("Attach to");
+		LabeledLayout layout = LabeledLayout.create("Attach to");
 
 		ValueGroup<Boolean> group = ValueGroups.boolGroup();
-		VerticalLayout vertical = Layouts.vertical();
+		VerticalLayout vertical = VerticalLayout.create();
 		layout.set(vertical);
 
-		myUnityEditorButton = Components.radioButton("Unity Editor");
+		myUnityEditorButton = RadioButton.create("Unity Editor");
 		vertical.add(myUnityEditorButton);
 		group.add(myUnityEditorButton);
 
-		myProcessWithNameButton = Components.radioButton("Process");
+		myProcessWithNameButton = RadioButton.create("Process");
 		vertical.add(myProcessWithNameButton);
 		group.add(myProcessWithNameButton);
 
-		myNameTextField = Components.textBox();
+		myNameTextField = TextBox.create();
 		myNameTextField.setEnabled(false);
 		vertical.add(LabeledComponents.leftFilled("Name", myNameTextField));
 		myProcessWithNameButton.addValueListener(valueEvent -> myNameTextField.setEnabled(valueEvent.getValue()));
 
-		mySelectFromDialogButton = Components.radioButton("Selected process in dialog");
+		mySelectFromDialogButton = RadioButton.create("Selected process in dialog");
 		vertical.add(mySelectFromDialogButton);
 		group.add(mySelectFromDialogButton);
 

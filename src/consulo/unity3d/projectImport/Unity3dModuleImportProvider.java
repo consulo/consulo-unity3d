@@ -16,6 +16,7 @@
 
 package consulo.unity3d.projectImport;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
@@ -33,7 +34,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ui.configuration.ModulesProvider;
 import com.intellij.openapi.startup.StartupManager;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.packaging.artifacts.ModifiableArtifactModel;
 import consulo.moduleImport.ModuleImportProvider;
 import consulo.unity3d.Unity3dIcons;
@@ -68,9 +68,9 @@ public class Unity3dModuleImportProvider implements ModuleImportProvider<UnityMo
 	}
 
 	@Override
-	public boolean canImport(@NotNull VirtualFile fileOrDirectory)
+	public boolean canImport(@NotNull File fileOrDirectory)
 	{
-		return fileOrDirectory.isDirectory() && fileOrDirectory.findFileByRelativePath("ProjectSettings/ProjectSettings.asset") != null;
+		return fileOrDirectory.isDirectory() && new File(fileOrDirectory, "ProjectSettings/ProjectSettings.asset").exists();
 	}
 
 	@NotNull

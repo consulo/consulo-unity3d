@@ -194,7 +194,7 @@ public class UnityConsoleService
 				{
 					errorTreeViewPanel = new MyErrorPanel(myProject);
 
-					content = ContentFactory.SERVICE.getInstance().createContent(errorTreeViewPanel, "Editor", false);
+					content = ContentFactory.getInstance().createContent(errorTreeViewPanel, "Editor", false);
 					content.putUserData(ourViewKey, Boolean.TRUE);
 
 					contentManager.addContent(content);

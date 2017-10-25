@@ -19,9 +19,12 @@ package consulo.unity3d.run.test;
 import javax.swing.JComponent;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.util.ui.JBUI;
+import consulo.ui.Component;
+import consulo.ui.VerticalLayout;
 import consulo.util.ui.components.VerticalLayoutPanel;
 
 /**
@@ -40,11 +43,10 @@ public class Unity3dTestConfigurationEditor extends SettingsEditor<Unity3dTestCo
 	{
 	}
 
-	@NotNull
+	@Nullable
 	@Override
-	protected JComponent createEditor()
+	protected Component createUIComponent()
 	{
-		VerticalLayoutPanel verticalLayoutPanel = JBUI.Panels.verticalPanel();
-		return verticalLayoutPanel;
+		return VerticalLayout.create();
 	}
 }
