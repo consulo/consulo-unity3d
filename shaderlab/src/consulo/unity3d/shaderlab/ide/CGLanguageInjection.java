@@ -43,9 +43,7 @@ public class CGLanguageInjection implements MultiHostInjector
 			return;
 		}
 
-		int startElement = cgScript.getTextOffset();
-		int startBlock = scriptBlock.getTextOffset();
-
-		registrar.startInjecting(CGLanguage.INSTANCE).addPlace(null, null, cgScript, new TextRange(startBlock - startElement, scriptBlock.getTextLength())).doneInjecting();
+		int startOffsetInParent = scriptBlock.getStartOffsetInParent();
+		registrar.startInjecting(CGLanguage.INSTANCE).addPlace(null, null, cgScript, new TextRange(startOffsetInParent, scriptBlock.getTextLength() + startOffsetInParent)).doneInjecting();
 	}
 }
