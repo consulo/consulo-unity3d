@@ -258,7 +258,7 @@ public abstract class ShaderLabRole
 
 	public static final ShaderLabRole Cull = new ShaderLabSimpleRole("Off", "Back", "Front");
 
-	public static final ShaderLabRole ZWrite = new ShaderLabSimpleRole("Off", "On");
+	public static final ShaderLabRole ZWrite = new ShaderLabOrRole(ShaderLabReferenceRole.INSTANCE, new ShaderLabSimpleRole("On", "Off"));
 
 	public static final ShaderLabRole Lighting = new ShaderLabSimpleRole("Off", "On");
 
