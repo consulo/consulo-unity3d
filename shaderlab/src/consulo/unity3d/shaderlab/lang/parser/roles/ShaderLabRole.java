@@ -385,7 +385,8 @@ public abstract class ShaderLabRole
 
 	public static final ShaderLabRole Fog = new ShaderLabCompositeRole(ShaderLabElements.FOG, Color, Mode);
 
-	public static final ShaderLabRole Pass = new ShaderLabCompositeRole(ShaderLabElements.PASS, Color, SetTexture, Lighting, ZWrite, Cull, Fog, ZTest, SeparateSpecular, Material, AlphaTest, Offset);
+	public static final ShaderLabRole Pass = new ShaderLabCompositeRole(ShaderLabElements.PASS, Tags, Color, SetTexture, Lighting, ZWrite, Cull, Fog, ZTest, SeparateSpecular, Material, AlphaTest,
+			Offset);
 
 	public static final ShaderLabRole SubShader = new ShaderLabCompositeRole(ShaderLabElements.SUB_SHADER, Pass, Tags, Lighting, ZWrite, Cull, Fog, UsePass, Material, LOD);
 
