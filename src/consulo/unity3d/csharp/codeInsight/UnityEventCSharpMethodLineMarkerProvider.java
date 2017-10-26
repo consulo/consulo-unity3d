@@ -84,33 +84,44 @@ public class UnityEventCSharpMethodLineMarkerProvider extends LineMarkerProvider
 				return null;
 			}
 
-			PsiElement maybeTypeDeclaration = methodDeclaration.getParent();
-			if(maybeTypeDeclaration instanceof CSharpTypeDeclaration)
+			UnityFunctionManager.FunctionInfo magicMethod = findMagicMethod(methodDeclaration);
+			if(magicMethod != null)
 			{
-				UnityFunctionManager functionManager = UnityFunctionManager.getInstance();
-				for(Map.Entry<String, Map<String, UnityFunctionManager.FunctionInfo>> entry : functionManager.getFunctionsByType().entrySet())
-				{
-					UnityFunctionManager.FunctionInfo functionInfo = entry.getValue().get(element.getText());
-					if(functionInfo == null)
-					{
-						continue;
-					}
-
-					String typeName = entry.getKey();
-					if(DotNetInheritUtil.isParent(typeName, (DotNetTypeDeclaration) maybeTypeDeclaration, true))
-					{
-						if(!isEqualParameters(functionInfo.getParameters(), methodDeclaration))
-						{
-							return null;
-						}
-
-						return new LineMarkerInfo<>(element, element.getTextRange(), Unity3dIcons.EventMethod, Pass.LINE_MARKERS, new ConstantFunction<>(functionInfo.getDescription()), null,
-								GutterIconRenderer.Alignment.LEFT);
-					}
-				}
+				return new LineMarkerInfo<>(element, element.getTextRange(), Unity3dIcons.EventMethod, Pass.LINE_MARKERS, new ConstantFunction<>(magicMethod.getDescription()), null,
+						GutterIconRenderer.Alignment.LEFT);
 			}
 		}
 
+		return null;
+	}
+
+	@RequiredReadAction
+	public static UnityFunctionManager.FunctionInfo findMagicMethod(@NotNull CSharpMethodDeclaration methodDeclaration)
+	{
+		PsiElement maybeTypeDeclaration = methodDeclaration.getParent();
+		if(maybeTypeDeclaration instanceof CSharpTypeDeclaration)
+		{
+			UnityFunctionManager functionManager = UnityFunctionManager.getInstance();
+			for(Map.Entry<String, Map<String, UnityFunctionManager.FunctionInfo>> entry : functionManager.getFunctionsByType().entrySet())
+			{
+				UnityFunctionManager.FunctionInfo functionInfo = entry.getValue().get(methodDeclaration.getName());
+				if(functionInfo == null)
+				{
+					continue;
+				}
+
+				String typeName = entry.getKey();
+				if(DotNetInheritUtil.isParent(typeName, (DotNetTypeDeclaration) maybeTypeDeclaration, true))
+				{
+					if(!isEqualParameters(functionInfo.getParameters(), methodDeclaration))
+					{
+						return null;
+					}
+
+					return functionInfo;
+				}
+			}
+		}
 		return null;
 	}
 

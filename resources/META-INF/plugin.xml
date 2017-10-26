@@ -97,9 +97,20 @@
 				enabledByDefault="true"
 				level="WARNING"
 				language="C#"
+				groupPath="C#"
 				groupName="Unity"
 				displayName="Creation MonoBehaviour object via new expression"
 				implementationClass="consulo.unity3d.csharp.codeInsight.inspection.UnityNewMonoBehaviourInspection"/>
+
+		<localInspection
+				enabledByDefault="true"
+				level="WARNING"
+				language="C#"
+				groupPath="C#"
+				groupName="Unity"
+				displayName="Empty magic methods"
+				implementationClass="consulo.unity3d.csharp.codeInsight.inspection.UnityEmptyMagicMethodInspection"/>
+
 		<colorProvider implementation="consulo.unity3d.csharp.codeInsight.UnityCSharpStaticElementColorProvider"/>
 		<colorProvider implementation="consulo.unity3d.csharp.codeInsight.UnityCSharpStaticElementColor32Provider"/>
 		<iconDescriptorUpdater implementation="consulo.unity3d.unityscript.UnityScriptIconDescriptorUpdater"/>
@@ -169,10 +180,10 @@
 		<fileBasedIndex implementation="consulo.unity3d.scene.index.Unity3dYMLAssetIndexExtension"/>
 		<fileBasedIndex implementation="consulo.unity3d.scene.index.Unity3dMetaIndexExtension"/>
 		<projectService serviceImplementation="consulo.unity3d.UnityConsoleService"/>
-		<projectService serviceImplementation="consulo.unity3d.scene.Unity3dMetaManager" />
-		<psi.referenceContributor language="yaml" implementation="consulo.unity3d.scene.reference.Unity3dSceneFieldReferenceRegister" />
+		<projectService serviceImplementation="consulo.unity3d.scene.Unity3dMetaManager"/>
+		<psi.referenceContributor language="yaml" implementation="consulo.unity3d.scene.reference.Unity3dSceneFieldReferenceRegister"/>
 
-		<referencesSearch implementation="consulo.unity3d.scene.reference.Unity3dSceneReferenceSearcher" />
+		<referencesSearch implementation="consulo.unity3d.scene.reference.Unity3dSceneReferenceSearcher"/>
 
 		<httpRequestHandler implementation="consulo.unity3d.jsonApi.UnityOpenFilePostHandler"/>
 		<httpRequestHandler implementation="consulo.unity3d.jsonApi.UnityLogPostHandler"/>
