@@ -110,6 +110,14 @@
 				groupName="Unity"
 				displayName="Empty magic methods"
 				implementationClass="consulo.unity3d.csharp.codeInsight.inspection.UnityEmptyMagicMethodInspection"/>
+		<localInspection
+				enabledByDefault="true"
+				level="WARNING"
+				language="C#"
+				groupPath="C#"
+				groupName="Unity"
+				displayName="OnGUI magic method"
+				implementationClass="consulo.unity3d.csharp.codeInsight.inspection.UnityOnGUIMethodInspection"/>
 
 		<colorProvider implementation="consulo.unity3d.csharp.codeInsight.UnityCSharpStaticElementColorProvider"/>
 		<colorProvider implementation="consulo.unity3d.csharp.codeInsight.UnityCSharpStaticElementColor32Provider"/>

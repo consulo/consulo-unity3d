@@ -16,20 +16,14 @@
 
 package consulo.unity3d.csharp.codeInsight.inspection;
 
-import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import com.intellij.codeInspection.LocalInspectionTool;
-import com.intellij.codeInspection.LocalQuickFixOnPsiElement;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.application.WriteAction;
-import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.PsiFile;
 import consulo.annotations.RequiredReadAction;
 import consulo.csharp.lang.psi.CSharpElementVisitor;
 import consulo.csharp.lang.psi.CSharpMethodDeclaration;
-import consulo.csharp.lang.psi.impl.source.CSharpBlockStatementImpl;
 import consulo.unity3d.Unity3dBundle;
 import consulo.unity3d.csharp.UnityFunctionManager;
 import consulo.unity3d.csharp.codeInsight.UnityEventCSharpMethodLineMarkerProvider;
@@ -38,37 +32,8 @@ import consulo.unity3d.csharp.codeInsight.UnityEventCSharpMethodLineMarkerProvid
  * @author VISTALL
  * @since 27-Oct-17
  */
-public class UnityEmptyMagicMethodInspection extends LocalInspectionTool
+public class UnityOnGUIMethodInspection extends LocalInspectionTool
 {
-	public static class RemoveMethodFix extends LocalQuickFixOnPsiElement
-	{
-		public RemoveMethodFix(@NotNull CSharpMethodDeclaration declaration)
-		{
-			super(declaration);
-		}
-
-		@NotNull
-		@Override
-		public String getText()
-		{
-			return "Remove method";
-		}
-
-		@Nls
-		@NotNull
-		@Override
-		public String getFamilyName()
-		{
-			return "C#\\Unity";
-		}
-
-		@Override
-		public void invoke(@NotNull Project project, @NotNull PsiFile psiFile, @NotNull PsiElement psiElement, @NotNull PsiElement psiElement1)
-		{
-			WriteAction.run(psiElement::delete);
-		}
-	}
-
 	@NotNull
 	@Override
 	public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly)
@@ -79,15 +44,15 @@ public class UnityEmptyMagicMethodInspection extends LocalInspectionTool
 			@RequiredReadAction
 			public void visitMethodDeclaration(CSharpMethodDeclaration declaration)
 			{
-				UnityFunctionManager.FunctionInfo magicMethod = UnityEventCSharpMethodLineMarkerProvider.findMagicMethod(declaration);
-				if(magicMethod != null)
+				String name = declaration.getName();
+				if("OnGUI".equals(name))
 				{
-					PsiElement codeBlock = declaration.getCodeBlock();
-					if(codeBlock == null || codeBlock instanceof CSharpBlockStatementImpl && ((CSharpBlockStatementImpl) codeBlock).getStatements().length == 0)
+					UnityFunctionManager.FunctionInfo magicMethod = UnityEventCSharpMethodLineMarkerProvider.findMagicMethod(declaration);
+					if(magicMethod != null)
 					{
 						PsiElement nameIdentifier = declaration.getNameIdentifier();
 						assert nameIdentifier != null;
-						holder.registerProblem(nameIdentifier, Unity3dBundle.message("empty.magic.method.inspection.message"), new RemoveMethodFix(declaration));
+						holder.registerProblem(nameIdentifier, Unity3dBundle.message("ongui.method.inspection.message"), new UnityEmptyMagicMethodInspection.RemoveMethodFix(declaration));
 					}
 				}
 			}
