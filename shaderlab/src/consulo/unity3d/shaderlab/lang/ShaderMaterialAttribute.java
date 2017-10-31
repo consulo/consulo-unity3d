@@ -28,6 +28,7 @@ public enum ShaderMaterialAttribute
 	Toggle("UnityEditor.MaterialToggleDrawer"),
 	Space("UnityEditor.MaterialSpaceDecorator"),
 	Header("UnityEditor.MaterialHeaderDecorator"),
+	HDR("UnityEngine.ColorUsageAttribute"),
 	HideInInspector("UnityEngine.HideInInspector");
 
 	private String myType;
