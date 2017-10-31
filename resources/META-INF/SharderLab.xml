@@ -27,8 +27,6 @@
 		<stubElementTypeHolder class="consulo.unity3d.shaderlab.lang.psi.ShaderLabStubElements"/>
 		<stubIndex implementation="consulo.unity3d.shaderlab.lang.psi.stub.index.ShaderDefIndex"/>
 
-		<codeInsight.lineMarkerProvider language="SHADERLAB" implementationClass="com.intellij.ui.ColorLineMarkerProvider"/>
-
 		<colorProvider implementation="consulo.unity3d.shaderlab.ide.editor.ShaderLabElementColorProvider"/>
 
 		<highlightVisitor implementation="consulo.unity3d.shaderlab.ide.highlight.SharpLabHighlightVisitor"/>
