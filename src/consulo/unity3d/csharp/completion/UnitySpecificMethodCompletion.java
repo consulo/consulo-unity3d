@@ -52,7 +52,7 @@ import consulo.unity3d.module.Unity3dModuleExtension;
  * @author VISTALL
  * @since 19.12.14
  */
-public class UnitySpecificMethodCompletion extends CSharpMemberAddByCompletionContributor
+public class UnitySpecificMethodCompletion implements CSharpMemberAddByCompletionContributor
 {
 	@RequiredReadAction
 	@Override

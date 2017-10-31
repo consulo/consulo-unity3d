@@ -69,6 +69,7 @@
 
 	<extensions defaultExtensionNs="consulo.csharp">
 		<toNativeElementTransformer implementation="consulo.unity3d.unityscript.lang.impl.csharp.UnityScriptToNativeElementTransformer"/>
+		<memberAddByCompletionContributor implementation="consulo.unity3d.csharp.completion.UnitySpecificMethodCompletion"/>
 	</extensions>
 
 	<extensions defaultExtensionNs="consulo.dotnet">
@@ -86,7 +87,6 @@
 		<xdebugger.lineBreakpointTypeResolver filetype="JavaScript"
 											  implementationClass="consulo.unity3d.unityscript.debugger.UnityScriptLineBreakpointTypeResolver"
 											  order="before javascript"/>
-		<completion.contributor language="C#" implementationClass="consulo.unity3d.csharp.completion.UnitySpecificMethodCompletion"/>
 		<codeInsight.lineMarkerProvider language="C#"
 										implementationClass="consulo.unity3d.csharp.codeInsight.UnityEventCSharpMethodLineMarkerProvider"/>
 		<codeInsight.lineMarkerProvider language="C#"
