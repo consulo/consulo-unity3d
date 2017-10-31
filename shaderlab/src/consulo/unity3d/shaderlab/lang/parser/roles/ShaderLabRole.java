@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.util.ArrayUtilRt;
 import consulo.unity3d.shaderlab.lang.parser.ShaderLabParserBuilder;
 import consulo.unity3d.shaderlab.lang.psi.ShaderLabElements;
 import consulo.unity3d.shaderlab.lang.psi.ShaderLabTokens;
@@ -51,6 +52,12 @@ public abstract class ShaderLabRole
 	public String getName()
 	{
 		return myName;
+	}
+
+	@NotNull
+	public String[] getValues()
+	{
+		return ArrayUtilRt.EMPTY_STRING_ARRAY;
 	}
 
 	@Nullable

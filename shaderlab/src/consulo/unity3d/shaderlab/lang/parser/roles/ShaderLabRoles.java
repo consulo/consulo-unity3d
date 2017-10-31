@@ -235,9 +235,9 @@ public interface ShaderLabRoles
 		}
 	};
 
-	ShaderLabRole Cull = new ShaderLabSimpleRole("Off", "Back", "Front");
+	ShaderLabRole Cull = new ShaderLabOrRole("Off", new ShaderLabReferenceRole(), new ShaderLabSimpleRole("Off", "Back", "Front"));
 
-	ShaderLabRole ZWrite = new ShaderLabOrRole(new ShaderLabReferenceRole(), new ShaderLabSimpleRole("On", "Off"));
+	ShaderLabRole ZWrite = new ShaderLabOrRole("Off", new ShaderLabReferenceRole(), new ShaderLabSimpleRole("On", "Off"));
 
 	ShaderLabRole Lighting = new ShaderLabSimpleRole("Off", "On");
 
@@ -376,16 +376,8 @@ public interface ShaderLabRoles
 		}
 	};
 
-	ShaderLabRole AlphaTest = new ShaderLabOrRole(new ShaderLabSimpleRole("Off"), new ShaderLabPairRole(new ShaderLabSimpleRole("Always", "Less", "Greater", "LEqual", "GEqual", "Equal", "NotEqual",
-			"Never"), new ShaderLabOrRole(new ShaderLabTokenRole(ShaderLabTokens.INTEGER_LITERAL), new ShaderLabReferenceRole())))
-	{
-		@Nullable
-		@Override
-		public String getDefaultInsertValue()
-		{
-			return "Off";
-		}
-	};
+	ShaderLabRole AlphaTest = new ShaderLabOrRole("Off", new ShaderLabSimpleRole("Off"), new ShaderLabPairRole(new ShaderLabSimpleRole("Always", "Less", "Greater", "LEqual", "GEqual", "Equal",
+			"NotEqual", "Never"), new ShaderLabOrRole(new ShaderLabTokenRole(ShaderLabTokens.INTEGER_LITERAL), new ShaderLabReferenceRole())));
 
 	ShaderLabRole Fog = new ShaderLabCompositeRole(ShaderLabElements.FOG, Color, Mode);
 

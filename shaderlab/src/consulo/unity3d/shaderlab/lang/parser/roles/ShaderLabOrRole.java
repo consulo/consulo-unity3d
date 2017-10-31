@@ -16,8 +16,14 @@
 
 package consulo.unity3d.shaderlab.lang.parser.roles;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import com.intellij.lang.PsiBuilder;
+import com.intellij.util.ArrayUtilRt;
 import consulo.unity3d.shaderlab.lang.parser.ShaderLabParserBuilder;
 import consulo.unity3d.shaderlab.lang.psi.ShaderLabElements;
 
@@ -27,11 +33,37 @@ import consulo.unity3d.shaderlab.lang.psi.ShaderLabElements;
  */
 public class ShaderLabOrRole extends ShaderLabValueRole
 {
+	private String myDefaultInsertValue;
 	private ShaderLabRole[] myRoles;
 
 	public ShaderLabOrRole(ShaderLabRole... roles)
 	{
+		this(null, roles);
+	}
+
+	public ShaderLabOrRole(String defaultInsertValue, ShaderLabRole... roles)
+	{
+		myDefaultInsertValue = defaultInsertValue;
 		myRoles = roles;
+	}
+
+	@NotNull
+	@Override
+	public String[] getValues()
+	{
+		List<String> result = new ArrayList<>();
+		for(ShaderLabRole role : myRoles)
+		{
+			Collections.addAll(result, role.getValues());
+		}
+		return ArrayUtilRt.toStringArray(result);
+	}
+
+	@Nullable
+	@Override
+	public String getDefaultInsertValue()
+	{
+		return myDefaultInsertValue;
 	}
 
 	@Override

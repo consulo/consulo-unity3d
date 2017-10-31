@@ -48,7 +48,6 @@ import consulo.unity3d.shaderlab.lang.ShaderLabPropertyType;
 import consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabCompositeRole;
 import consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabRole;
 import consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabRoles;
-import consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabSimpleRole;
 import consulo.unity3d.shaderlab.lang.psi.ShaderBraceOwner;
 import consulo.unity3d.shaderlab.lang.psi.ShaderDef;
 import consulo.unity3d.shaderlab.lang.psi.ShaderLabKeyTokens;
@@ -199,11 +198,8 @@ public class ShaderLabCompletionContributor extends CompletionContributor
 					return;
 				}
 				ShaderLabRole role = simpleValue.getRole();
-				if(!(role instanceof ShaderLabSimpleRole))
-				{
-					return;
-				}
-				for(String value : ((ShaderLabSimpleRole) role).getValues())
+
+				for(String value : role.getValues())
 				{
 					LookupElementBuilder builder = LookupElementBuilder.create(value);
 					builder = builder.bold();

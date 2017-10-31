@@ -37,6 +37,7 @@ public class ShaderLabSimpleRole extends ShaderLabValueRole
 		myValues = values;
 	}
 
+	@NotNull
 	public String[] getValues()
 	{
 		return myValues;
