@@ -33,6 +33,7 @@ import consulo.csharp.lang.psi.impl.source.CSharpBlockStatementImpl;
 import consulo.unity3d.Unity3dBundle;
 import consulo.unity3d.csharp.UnityFunctionManager;
 import consulo.unity3d.csharp.codeInsight.UnityEventCSharpMethodLineMarkerProvider;
+import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 
 /**
  * @author VISTALL
@@ -73,6 +74,11 @@ public class UnityEmptyMagicMethodInspection extends LocalInspectionTool
 	@Override
 	public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly)
 	{
+		if(Unity3dModuleExtensionUtil.getRootModule(holder.getProject()) == null)
+		{
+			return PsiElementVisitor.EMPTY_VISITOR;
+		}
+
 		return new CSharpElementVisitor()
 		{
 			@Override

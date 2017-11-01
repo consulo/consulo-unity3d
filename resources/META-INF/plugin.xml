@@ -118,6 +118,14 @@
 				groupName="Unity"
 				displayName="OnGUI magic method"
 				implementationClass="consulo.unity3d.csharp.codeInsight.inspection.UnityOnGUIMethodInspection"/>
+		<localInspection
+				enabledByDefault="true"
+				level="WARNING"
+				language="C#"
+				groupPath="C#"
+				groupName="Unity"
+				displayName="GameObject.tag equality warning"
+				implementationClass="consulo.unity3d.csharp.codeInsight.inspection.UnityCompareTagInspection"/>
 
 		<colorProvider implementation="consulo.unity3d.csharp.codeInsight.UnityCSharpStaticElementColorProvider"/>
 		<colorProvider implementation="consulo.unity3d.csharp.codeInsight.UnityCSharpStaticElementColor32Provider"/>

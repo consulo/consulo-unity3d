@@ -29,6 +29,7 @@ import consulo.dotnet.psi.DotNetType;
 import consulo.dotnet.resolve.DotNetTypeRef;
 import consulo.unity3d.Unity3dBundle;
 import consulo.unity3d.Unity3dTypes;
+import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 
 /**
  * @author VISTALL
@@ -40,6 +41,11 @@ public class UnityNewMonoBehaviourInspection extends LocalInspectionTool
 	@Override
 	public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly)
 	{
+		if(Unity3dModuleExtensionUtil.getRootModule(holder.getProject()) == null)
+		{
+			return PsiElementVisitor.EMPTY_VISITOR;
+		}
+
 		return new CSharpElementVisitor()
 		{
 			@Override
