@@ -381,9 +381,9 @@ public interface ShaderLabRoles
 
 	ShaderLabRole Fog = new ShaderLabCompositeRole(ShaderLabElements.FOG, Color, Mode);
 
-	ShaderLabRole Ref = new ShaderLabReferenceRole();
+	ShaderLabRole Ref = new ShaderLabCompositeRole(null, new ShaderLabReferenceRole(), new ShaderLabSimpleRole("Always"));
 
-	ShaderLabRole Comp = new ShaderLabReferenceRole();
+	ShaderLabRole Comp = new ShaderLabCompositeRole(null, new ShaderLabReferenceRole(), new ShaderLabSimpleRole("Replace"));
 
 	ShaderLabRole Stencil = new ShaderLabCompositeRole(ShaderLabElements.STENCIL, Ref, Comp, new ShaderLabReferenceRole().setName("Pass"));
 
