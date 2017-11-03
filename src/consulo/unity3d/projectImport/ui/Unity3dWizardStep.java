@@ -24,7 +24,7 @@ import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.util.ui.JBUI;
 import consulo.unity3d.Unity3dBundle;
-import consulo.unity3d.projectImport.Unity3dProjectUtil;
+import consulo.unity3d.projectImport.Unity3dProjectImportUtil;
 import consulo.unity3d.projectImport.UnityModuleImportContext;
 
 /**
@@ -41,7 +41,7 @@ public class Unity3dWizardStep extends ProjectNameStep
 		super(wizardContext);
 		myContext = context;
 
-		String version = Unity3dProjectUtil.loadVersionFromProject(wizardContext.getProjectFileDirectory());
+		String version = Unity3dProjectImportUtil.loadVersionFromProject(wizardContext.getProjectFileDirectory());
 		mySdkPanel = new Unity3dSdkPanel(version);
 		myAdditionalContentPanel.add(mySdkPanel, new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 1, 1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, JBUI.emptyInsets(), 0,
 				0));

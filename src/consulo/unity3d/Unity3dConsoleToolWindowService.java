@@ -16,10 +16,11 @@
 
 package consulo.unity3d;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.errorTreeView.NewErrorTreeViewPanel;
 import com.intellij.ide.util.PropertiesComponent;
@@ -27,75 +28,33 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.actionSystem.ToggleAction;
-import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.application.AccessToken;
+import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ProjectManager;
-import com.intellij.openapi.util.EmptyRunnable;
 import com.intellij.openapi.util.Key;
-import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.wm.ToolWindow;
+import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.problems.Problem;
+import com.intellij.problems.WolfTheProblemSolver;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
 import com.intellij.ui.content.ContentManager;
 import com.intellij.ui.content.MessageView;
-import com.intellij.util.PairConsumer;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.ui.MessageCategory;
+import com.intellij.util.ui.UIUtil;
 import consulo.annotations.RequiredDispatchThread;
+import consulo.dotnet.compiler.DotNetCompilerMessage;
+import consulo.unity3d.console.Unity3dConsoleManager;
+import consulo.unity3d.jsonApi.UnityLogParser;
+import consulo.unity3d.jsonApi.UnityLogPostHandlerRequest;
 
 /**
  * @author VISTALL
  * @since 09-Jun-16
  */
-public class UnityConsoleService
+public class Unity3dConsoleToolWindowService implements ProjectComponent
 {
-	@NotNull
-	public static UnityConsoleService getInstance(@NotNull Project project)
-	{
-		return ServiceManager.getService(project, UnityConsoleService.class);
-	}
-
-	@RequiredDispatchThread
-	public static void byPath(@NotNull String projectPath, @NotNull PairConsumer<Project, NewErrorTreeViewPanel> consumer)
-	{
-		UnityConsoleService consoleService = findByProjectPath(projectPath);
-		if(consoleService == null)
-		{
-			return;
-		}
-
-		NewErrorTreeViewPanel viewPanel = consoleService.getOrInitPanel();
-		if(viewPanel == null)
-		{
-			return;
-		}
-		consumer.consume(consoleService.getProject(), viewPanel);
-	}
-
-	@Nullable
-	public static UnityConsoleService findByProjectPath(@NotNull String projectPath)
-	{
-		Project project = null;
-		VirtualFile fileByPath = LocalFileSystem.getInstance().findFileByPath(projectPath);
-		if(fileByPath != null)
-		{
-			Project[] openProjects = ProjectManager.getInstance().getOpenProjects();
-			for(Project openProject : openProjects)
-			{
-				if(fileByPath.equals(openProject.getBaseDir()))
-				{
-					project = openProject;
-					break;
-				}
-			}
-		}
-		if(project == null)
-		{
-			return null;
-		}
-		return UnityConsoleService.getInstance(project);
-	}
-
 	private static class MyErrorPanel extends NewErrorTreeViewPanel
 	{
 		public MyErrorPanel(Project project)
@@ -134,6 +93,12 @@ public class UnityConsoleService
 		}
 	}
 
+	@NotNull
+	public static Unity3dConsoleToolWindowService getInstance(@NotNull Project project)
+	{
+		return project.getComponent(Unity3dConsoleToolWindowService.class);
+	}
+
 	private static final Key<Boolean> ourViewKey = Key.create("UnityLog");
 	private static final String ourClearOnPlayUnityLog = "ClearOnPlayUnityLog";
 	private static final boolean ourDefaultClearOnPlayValue = false;
@@ -142,9 +107,62 @@ public class UnityConsoleService
 	private final Project myProject;
 	private final AtomicBoolean myToolwindowInit = new AtomicBoolean();
 
-	public UnityConsoleService(Project project)
+	private AccessToken myUnregister;
+
+	public Unity3dConsoleToolWindowService(Project project)
 	{
 		myProject = project;
+	}
+
+	@Override
+	public void projectOpened()
+	{
+		myUnregister = Unity3dConsoleManager.getInstance().registerProcessor(myProject, this::process);
+	}
+
+	private void process(Collection<UnityLogPostHandlerRequest> list)
+	{
+		UIUtil.invokeLaterIfNeeded(() ->
+		{
+			NewErrorTreeViewPanel panel = getOrInitPanel();
+			WolfTheProblemSolver solver = WolfTheProblemSolver.getInstance(myProject);
+			VirtualFileManager virtualFileManager = VirtualFileManager.getInstance();
+
+			for(UnityLogPostHandlerRequest request : list)
+			{
+				DotNetCompilerMessage message = UnityLogParser.extractFileInfo(myProject, request.condition);
+
+				int value = request.getMessageCategory();
+
+				if(message != null)
+				{
+					VirtualFile fileByUrl = message.getFileUrl() == null ? null : virtualFileManager.findFileByUrl(message.getFileUrl());
+					if(fileByUrl != null && value == MessageCategory.ERROR)
+					{
+						Problem problem = solver.convertToProblem(fileByUrl, message.getLine(), message.getColumn(), new String[]{message.getMessage()});
+						if(problem != null)
+						{
+							solver.reportProblems(fileByUrl, Collections.singletonList(problem));
+						}
+					}
+
+					panel.addMessage(value, new String[]{message.getMessage()}, fileByUrl, message.getLine() - 1, message.getColumn(), null);
+				}
+				else
+				{
+					panel.addMessage(value, new String[]{
+							request.condition,
+							request.stackTrace
+					}, null, -1, -1, null);
+				}
+			}
+		});
+	}
+
+	@Override
+	public void projectClosed()
+	{
+		myUnregister.finish();
 	}
 
 	private boolean isClearOnPlay()
@@ -164,15 +182,11 @@ public class UnityConsoleService
 		if(myErrorPanel != null && isClearOnPlay())
 		{
 			myErrorPanel.clearMessages();
-
-			ToolWindow toolWindow = MessageView.SERVICE.getInstance(myProject).getToolWindow();
-
-			toolWindow.hide(EmptyRunnable.getInstance());
 		}
 	}
 
 	@RequiredDispatchThread
-	@Nullable
+	@NotNull
 	private NewErrorTreeViewPanel getOrInitPanel()
 	{
 		if(myErrorPanel != null)

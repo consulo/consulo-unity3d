@@ -54,12 +54,18 @@
 		<component>
 			<implementation-class>consulo.unity3d.packages.Unity3dPackageWatcher</implementation-class>
 		</component>
+		<component>
+			<implementation-class>consulo.unity3d.console.Unity3dConsoleManager</implementation-class>
+		</component>
 	</application-components>
 
 	<project-components>
 		<component>
 			<implementation-class>consulo.unity3d.UnityPluginFileValidator</implementation-class>
 			<skipForDefaultProject/>
+		</component>
+		<component>
+			<implementation-class>consulo.unity3d.Unity3dConsoleToolWindowService</implementation-class>
 		</component>
 	</project-components>
 
@@ -195,7 +201,6 @@
 		<fileTypeDetector implementation="consulo.unity3d.scene.Unity3dAssetFileTypeDetector"/>
 		<fileBasedIndex implementation="consulo.unity3d.scene.index.Unity3dYMLAssetIndexExtension"/>
 		<fileBasedIndex implementation="consulo.unity3d.scene.index.Unity3dMetaIndexExtension"/>
-		<projectService serviceImplementation="consulo.unity3d.UnityConsoleService"/>
 		<projectService serviceImplementation="consulo.unity3d.scene.Unity3dMetaManager"/>
 		<psi.referenceContributor language="yaml" implementation="consulo.unity3d.scene.reference.Unity3dSceneFieldReferenceRegister"/>
 

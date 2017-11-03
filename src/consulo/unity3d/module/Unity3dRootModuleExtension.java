@@ -38,7 +38,7 @@ import consulo.unity3d.bundle.Unity3dBundleType;
 import consulo.unity3d.packages.Unity3dPackage;
 import consulo.unity3d.packages.Unity3dPackageIndex;
 import consulo.unity3d.packages.Unity3dPackageWatcher;
-import consulo.unity3d.projectImport.Unity3dProjectUtil;
+import consulo.unity3d.projectImport.Unity3dProjectImportUtil;
 
 /**
  * @author VISTALL
@@ -135,7 +135,7 @@ public class Unity3dRootModuleExtension extends BaseDotNetSimpleModuleExtension<
 	@NotNull
 	private List<String> getPathsForLibraries(String homePath, @NotNull Sdk sdk)
 	{
-		Version version = Unity3dProjectUtil.parseVersion(sdk.getVersionString());
+		Version version = Unity3dProjectImportUtil.parseVersion(sdk.getVersionString());
 
 		List<String> list = new SmartList<>();
 		if(SystemInfo.isMac)

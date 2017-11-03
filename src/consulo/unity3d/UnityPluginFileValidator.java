@@ -58,7 +58,7 @@ import consulo.roots.types.BinariesOrderRootType;
 import consulo.unity3d.bundle.Unity3dDefineByVersion;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import consulo.unity3d.module.Unity3dRootModuleExtension;
-import consulo.unity3d.projectImport.Unity3dProjectUtil;
+import consulo.unity3d.projectImport.Unity3dProjectImportUtil;
 import consulo.vfs.util.ArchiveVfsUtil;
 
 /**
@@ -97,7 +97,7 @@ public class UnityPluginFileValidator extends AbstractProjectComponent
 			return;
 		}
 
-		Unity3dDefineByVersion unity3dDefineByVersion = Unity3dProjectUtil.getUnity3dDefineByVersion(moduleExtension.getSdk());
+		Unity3dDefineByVersion unity3dDefineByVersion = Unity3dProjectImportUtil.getUnity3dDefineByVersion(moduleExtension.getSdk());
 		final String pluginFileName = unity3dDefineByVersion.getPluginFileName();
 		if(pluginFileName == null)
 		{

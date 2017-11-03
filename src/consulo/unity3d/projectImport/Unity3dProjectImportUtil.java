@@ -106,7 +106,7 @@ import consulo.vfs.util.ArchiveVfsUtil;
  * @author VISTALL
  * @since 03.04.2015
  */
-public class Unity3dProjectUtil
+public class Unity3dProjectImportUtil
 {
 	public static final String ASSETS_DIRECTORY = "Assets";
 
@@ -242,7 +242,7 @@ public class Unity3dProjectUtil
 				}
 			}
 
-			Unity3dProjectUtil.importOrUpdate(project, sdk, null, indicator, defines);
+			Unity3dProjectImportUtil.importOrUpdate(project, sdk, null, indicator, defines);
 		}
 		finally
 		{

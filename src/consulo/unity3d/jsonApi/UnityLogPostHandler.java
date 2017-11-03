@@ -16,22 +16,13 @@
 
 package consulo.unity3d.jsonApi;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.jetbrains.annotations.NotNull;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileManager;
-import com.intellij.problems.Problem;
-import com.intellij.problems.WolfTheProblemSolver;
-import com.intellij.util.ObjectUtil;
 import com.intellij.util.ui.MessageCategory;
-import com.intellij.util.ui.UIUtil;
 import consulo.buildInWebServer.api.JsonPostRequestHandler;
-import consulo.dotnet.compiler.DotNetCompilerMessage;
-import consulo.unity3d.UnityConsoleService;
 
 /**
  * @author VISTALL
@@ -59,37 +50,7 @@ public class UnityLogPostHandler extends JsonPostRequestHandler<UnityLogPostHand
 	@Override
 	public JsonResponse handle(@NotNull final UnityLogPostHandlerRequest request)
 	{
-		int value = ObjectUtil.notNull(ourTypeMap.get(request.type), MessageCategory.INFORMATION);
-
-		//noinspection MagicConstant
-		ApplicationManager.getApplication().getMessageBus().syncPublisher(UnityLogHandler.TOPIC).handle(value, request.condition, request.stackTrace);
-
-		UIUtil.invokeLaterIfNeeded(() -> UnityConsoleService.byPath(request.projectPath, (project, panel) ->
-		{
-			DotNetCompilerMessage message = UnityLogParser.extractFileInfo(project, request.condition);
-
-			if(message != null)
-			{
-				VirtualFile fileByUrl = message.getFileUrl() == null ? null : VirtualFileManager.getInstance().findFileByUrl(message.getFileUrl());
-				if(fileByUrl != null && value == MessageCategory.ERROR)
-				{
-					Problem problem = WolfTheProblemSolver.getInstance(project).convertToProblem(fileByUrl, message.getLine(), message.getColumn(), new String[]{message.getMessage()});
-					if(problem != null)
-					{
-						WolfTheProblemSolver.getInstance(project).reportProblems(fileByUrl, Collections.singletonList(problem));
-					}
-				}
-
-				panel.addMessage(value, new String[]{message.getMessage()}, fileByUrl, message.getLine() - 1, message.getColumn(), null);
-			}
-			else
-			{
-				panel.addMessage(value, new String[]{
-						request.condition,
-						request.stackTrace
-				}, null, -1, -1, null);
-			}
-		}));
+		ApplicationManager.getApplication().getMessageBus().syncPublisher(UnityLogHandler.TOPIC).handle(request);
 
 		return JsonResponse.asSuccess(null);
 	}

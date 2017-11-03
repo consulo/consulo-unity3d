@@ -25,7 +25,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import consulo.annotations.RequiredReadAction;
 import consulo.dotnet.module.DotNetNamespaceGeneratePolicy;
-import consulo.unity3d.projectImport.Unity3dProjectUtil;
+import consulo.unity3d.projectImport.Unity3dProjectImportUtil;
 
 /**
  * @author VISTALL
@@ -67,7 +67,7 @@ public class UnityNamespaceGeneratePolicy extends DotNetNamespaceGeneratePolicy
 
 		VirtualFile currentDirectory = psiDirectory.getVirtualFile();
 
-		VirtualFile assetsDirectory = baseDir.findChild(Unity3dProjectUtil.ASSETS_DIRECTORY);
+		VirtualFile assetsDirectory = baseDir.findChild(Unity3dProjectImportUtil.ASSETS_DIRECTORY);
 		if(assetsDirectory != null)
 		{
 			VirtualFile targetDirectory = assetsDirectory;
@@ -99,7 +99,7 @@ public class UnityNamespaceGeneratePolicy extends DotNetNamespaceGeneratePolicy
 			// if path is not changed
 			if(targetDirectory.equals(assetsDirectory))
 			{
-				for(String path : Unity3dProjectUtil.FIRST_PASS_PATHS)
+				for(String path : Unity3dProjectImportUtil.FIRST_PASS_PATHS)
 				{
 					VirtualFile child = baseDir.findFileByRelativePath(path);
 					if(child != null && VfsUtil.isAncestor(child, currentDirectory, false))

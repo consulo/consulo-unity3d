@@ -23,14 +23,14 @@ import com.intellij.execution.filters.TextConsoleBuilderFactory;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.execution.ui.ExecutionConsole;
-import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.ui.MessageCategory;
 import com.intellij.xdebugger.XDebugSession;
 import consulo.dotnet.execution.DebugConnectionInfo;
 import consulo.dotnet.mono.debugger.MonoDebugProcess;
-import consulo.unity3d.jsonApi.UnityLogHandler;
+import consulo.unity3d.console.Unity3dConsoleManager;
+import consulo.unity3d.jsonApi.UnityLogPostHandlerRequest;
 
 /**
  * @author VISTALL
@@ -40,7 +40,7 @@ public class UnityDebugProcess extends MonoDebugProcess
 {
 	private ConsoleView myConsoleView;
 	@Nullable
-	private MessageBusConnection myMessageBusConnection;
+	private AccessToken myMessageBusConnection;
 
 	public UnityDebugProcess(XDebugSession session, RunProfile runProfile, DebugConnectionInfo debugConnectionInfo, ConsoleView consoleView, boolean insideEditor)
 	{
@@ -49,8 +49,7 @@ public class UnityDebugProcess extends MonoDebugProcess
 
 		if(insideEditor)
 		{
-			myMessageBusConnection = ApplicationManager.getApplication().getMessageBus().connect();
-			myMessageBusConnection.subscribe(UnityLogHandler.TOPIC, (messageCategory, text, stacktrace) ->
+			myMessageBusConnection = Unity3dConsoleManager.getInstance().registerProcessor(session.getProject(), list ->
 			{
 				ConsoleView view = session.getConsoleView();
 				if(view == null)
@@ -58,14 +57,17 @@ public class UnityDebugProcess extends MonoDebugProcess
 					return;
 				}
 
-				switch(messageCategory)
+				for(UnityLogPostHandlerRequest request : list)
 				{
-					case MessageCategory.ERROR:
-						print(text, stacktrace, view, ConsoleViewContentType.ERROR_OUTPUT);
-						break;
-					default:
-						print(text, stacktrace, view, ConsoleViewContentType.NORMAL_OUTPUT);
-						break;
+					switch(request.getMessageCategory())
+					{
+						case MessageCategory.ERROR:
+							print(request.condition, request.stackTrace, view, ConsoleViewContentType.ERROR_OUTPUT);
+							break;
+						default:
+							print(request.condition, request.stackTrace, view, ConsoleViewContentType.NORMAL_OUTPUT);
+							break;
+					}
 				}
 			});
 		}
@@ -92,7 +94,7 @@ public class UnityDebugProcess extends MonoDebugProcess
 	{
 		if(myMessageBusConnection != null)
 		{
-			myMessageBusConnection.disconnect();
+			myMessageBusConnection.finish();
 			myMessageBusConnection = null;
 		}
 

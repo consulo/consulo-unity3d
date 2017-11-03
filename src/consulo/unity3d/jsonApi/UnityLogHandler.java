@@ -16,9 +16,7 @@
 
 package consulo.unity3d.jsonApi;
 
-import org.intellij.lang.annotations.MagicConstant;
 import com.intellij.util.messages.Topic;
-import com.intellij.util.ui.MessageCategory;
 
 /**
  * @author VISTALL
@@ -28,5 +26,5 @@ public interface UnityLogHandler
 {
 	Topic<UnityLogHandler> TOPIC = Topic.create("unityLogHandler", UnityLogHandler.class);
 
-	void handle(@MagicConstant(valuesFromClass = MessageCategory.class) int messageCategory, String text, String stacktrace);
+	void handle(UnityLogPostHandlerRequest request);
 }

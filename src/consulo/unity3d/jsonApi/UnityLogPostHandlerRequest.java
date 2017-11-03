@@ -16,14 +16,38 @@
 
 package consulo.unity3d.jsonApi;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.intellij.lang.annotations.MagicConstant;
+import com.intellij.util.ObjectUtil;
+import com.intellij.util.ui.MessageCategory;
+
 /**
  * @author VISTALL
  * @since 07-Jun-16
  */
 public class UnityLogPostHandlerRequest
 {
+	private static Map<String, Integer> ourTypeMap = new HashMap<>();
+
+	static
+	{
+		ourTypeMap.put("Error", MessageCategory.ERROR);
+		ourTypeMap.put("Assert", MessageCategory.ERROR);
+		ourTypeMap.put("Warning", MessageCategory.WARNING);
+		ourTypeMap.put("Log", MessageCategory.INFORMATION);
+		ourTypeMap.put("Exception", MessageCategory.ERROR);
+	}
+
 	public String condition;
 	public String stackTrace;
 	public String projectPath;
 	public String type;
+
+	@MagicConstant(valuesFromClass = MessageCategory.class)
+	public int getMessageCategory()
+	{
+		return ObjectUtil.notNull(ourTypeMap.get(type), MessageCategory.INFORMATION);
+	}
 }
