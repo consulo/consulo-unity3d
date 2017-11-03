@@ -31,10 +31,11 @@ import consulo.unity3d.shaderlab.lang.psi.ShaderLabTokens;
  */
 public class ShaderLabCompositeRole extends ShaderLabRole
 {
+	@NotNull
 	private IElementType myDoneElement;
 	private ShaderLabRole[] myRoles;
 
-	public ShaderLabCompositeRole(IElementType doneElement, ShaderLabRole... roles)
+	public ShaderLabCompositeRole(@NotNull IElementType doneElement, ShaderLabRole... roles)
 	{
 		myDoneElement = doneElement;
 		myRoles = roles;
