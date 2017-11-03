@@ -206,7 +206,6 @@ public class UnityConsoleService
 
 				contentManager.setSelectedContent(content, true);
 
-				messageView.getToolWindow().show(EmptyRunnable.getInstance());
 				myErrorPanel = errorTreeViewPanel;
 			});
 		}
