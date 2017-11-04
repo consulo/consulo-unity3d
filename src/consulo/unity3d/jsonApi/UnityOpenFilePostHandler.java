@@ -22,6 +22,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import javax.swing.JFrame;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import com.intellij.ide.actions.ImportModuleAction;
@@ -194,7 +196,7 @@ public class UnityOpenFilePostHandler extends JsonPostRequestHandler<UnityOpenFi
 		}
 
 		IdeFrame ideFrame = WindowManager.getInstance().getIdeFrame(openedProject);
-		if(!ideFrame.getWindow().isVisible())
+		if(!((JFrame)ideFrame).isVisible())
 		{
 			return;
 		}
