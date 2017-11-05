@@ -115,6 +115,10 @@ public class UnityNamespaceGeneratePolicy extends DotNetNamespaceGeneratePolicy
 			{
 				if(!StringUtil.isEmpty(myNamespacePrefix))
 				{
+					if(StringUtil.isEmpty(relativePath))
+					{
+						return myNamespacePrefix;
+					}
 					return myNamespacePrefix + "." + relativePath;
 				}
 				return relativePath;
