@@ -640,6 +640,7 @@ public class Unity3dProjectImportUtil
 			@NotNull ProgressIndicator progressIndicator,
 			@Nullable Collection<String> defines)
 	{
+		Ref<String> namespacePrefix = Ref.create();
 		Set<String> excludedUrls = new TreeSet<>();
 
 		String projectUrl = project.getBaseDir().getUrl();
@@ -652,6 +653,8 @@ public class Unity3dProjectImportUtil
 		Unity3dRootModuleExtension rootModuleExtension = ReadAction.compute(() -> Unity3dModuleExtensionUtil.getRootModuleExtension(project));
 		if(rootModuleExtension != null)
 		{
+			namespacePrefix.set(rootModuleExtension.getNamespacePrefix());
+
 			rootModule = rootModuleExtension.getModule();
 			ReadAction.run(() ->
 			{
@@ -682,6 +685,7 @@ public class Unity3dProjectImportUtil
 		Unity3dRootMutableModuleExtension extension = layer.getExtensionWithoutCheck(Unity3dRootMutableModuleExtension.class);
 		assert extension != null;
 		extension.setEnabled(true);
+		extension.setNamespacePrefix(namespacePrefix.get());
 		extension.getInheritableSdk().set(null, unityBundle);
 
 		List<String> variables = extension.getVariables();
