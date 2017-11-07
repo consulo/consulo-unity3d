@@ -81,7 +81,7 @@ public class UnityScriptRootNamespaceAsElement extends BaseDotNetNamespaceAsElem
 	@NotNull
 	@Override
 	@RequiredReadAction
-	protected Collection<? extends PsiElement> getOnlyElements(@NotNull GlobalSearchScope globalSearchScope)
+	protected Set<? extends PsiElement> getOnlyElements(@NotNull GlobalSearchScope globalSearchScope)
 	{
 		return DotNetNamespaceCacheManager.getInstance(myProject).computeElements(null, this, myQName, myQName, globalSearchScope, ourElementsCalculator);
 	}
