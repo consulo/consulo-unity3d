@@ -63,6 +63,11 @@ public class ShaderLabOrRole extends ShaderLabValueRole
 	@Override
 	public String getDefaultInsertValue()
 	{
+		String[] values = getValues();
+		if(values.length > 0)
+		{
+			return values[0];
+		}
 		return myDefaultInsertValue;
 	}
 

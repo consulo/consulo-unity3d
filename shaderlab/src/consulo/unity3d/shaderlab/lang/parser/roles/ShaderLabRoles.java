@@ -237,7 +237,7 @@ public interface ShaderLabRoles
 
 	ShaderLabRole Cull = new ShaderLabOrRole("Off", new ShaderLabReferenceRole(), new ShaderLabSimpleRole("Off", "Back", "Front"));
 
-	ShaderLabRole ZWrite = new ShaderLabOrRole("Off", new ShaderLabReferenceRole(), new ShaderLabSimpleRole("On", "Off"));
+	ShaderLabRole ZWrite = new ShaderLabOrRole("Off", new ShaderLabReferenceRole(), new ShaderLabSimpleRole("Off", "On"));
 
 	ShaderLabRole Lighting = new ShaderLabSimpleRole("Off", "On");
 
@@ -381,11 +381,13 @@ public interface ShaderLabRoles
 
 	ShaderLabRole Fog = new ShaderLabCompositeRole(ShaderLabElements.FOG, Color, Mode);
 
-	ShaderLabRole Ref = new ShaderLabCompositeRole(ShaderLabElements.SIMPLE_VALUE, new ShaderLabReferenceRole(), new ShaderLabSimpleRole("Always"));
+	ShaderLabRole Ref = new ShaderLabOrRole((String) null, new ShaderLabReferenceRole(), new ShaderLabSimpleRole("Always"), new ShaderLabTokenRole(ShaderLabTokens.INTEGER_LITERAL));
 
-	ShaderLabRole Comp = new ShaderLabCompositeRole(ShaderLabElements.SIMPLE_VALUE, new ShaderLabReferenceRole(), new ShaderLabSimpleRole("Replace"));
+	ShaderLabRole Comp = new ShaderLabOrRole((String) null, new ShaderLabReferenceRole(), new ShaderLabSimpleRole("Always", "Replace", "Equal"));
 
-	ShaderLabRole Stencil = new ShaderLabCompositeRole(ShaderLabElements.STENCIL, Ref, Comp, new ShaderLabReferenceRole().setName("Pass"));
+	ShaderLabRole Stencil_Pass = new ShaderLabOrRole(new ShaderLabReferenceRole(), new ShaderLabSimpleRole("Always", "IncrSat", "Replace")).setName("Pass");
+
+	ShaderLabRole Stencil = new ShaderLabCompositeRole(ShaderLabElements.STENCIL, Ref, Comp, Stencil_Pass);
 
 	ShaderLabRole Pass = new ShaderLabCompositeRole(ShaderLabElements.PASS, Name, Tags, Color, SetTexture, Lighting, ZWrite, Cull, Fog, Stencil, ZTest, SeparateSpecular, Material, Blend, AlphaTest,
 			Offset);

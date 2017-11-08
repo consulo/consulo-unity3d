@@ -44,6 +44,10 @@ public abstract class ShaderLabRole
 	@NotNull
 	public ShaderLabRole setName(String name)
 	{
+		if(myName != null)
+		{
+			return this;
+		}
 		myName = name;
 		return this;
 	}
