@@ -23,7 +23,6 @@ import com.intellij.openapi.util.IconLoader;
 // Generated Consulo DevKit plugin 
 public interface Unity3dIcons
 {
-	Icon Attach = IconLoader.getIcon("/icons/attach.png");  // 16x16
 	Icon EventMethod = IconLoader.getIcon("/icons/eventMethod.png");  // 12x12
 	Icon Js = IconLoader.getIcon("/icons/js.PNG");  // 16x16
 	Icon Shader = IconLoader.getIcon("/icons/shader.png");  // 16x16
