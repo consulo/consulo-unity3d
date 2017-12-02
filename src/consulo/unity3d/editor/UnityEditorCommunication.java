@@ -86,12 +86,10 @@ public class UnityEditorCommunication
 		post.setEntity(new StringEntity(gson.toJson(postObject), CharsetToolkit.UTF8_CHARSET));
 		post.setHeader("Content-Type", "application/json");
 
-		CloseableHttpClient client = null;
-		try
+		int timeOut = 5 * 1000;
+		RequestConfig requestConfig = RequestConfig.custom().setConnectionRequestTimeout(timeOut).setConnectTimeout(timeOut).setSocketTimeout(timeOut).build();
+		try(CloseableHttpClient client = HttpClients.custom().setDefaultRequestConfig(requestConfig).build())
 		{
-			int timeOut = 5 * 1000;
-			RequestConfig requestConfig = RequestConfig.custom().setConnectionRequestTimeout(timeOut).setConnectTimeout(timeOut).setSocketTimeout(timeOut).build();
-			client = HttpClients.custom().setDefaultRequestConfig(requestConfig).build();
 			String data = client.execute(post, httpResponse -> EntityUtils.toString(httpResponse.getEntity(), CharsetToolkit.UTF8_CHARSET));
 
 			UnityEditorResponse unityEditorResponse = gson.fromJson(data, UnityEditorResponse.class);
@@ -111,20 +109,6 @@ public class UnityEditorCommunication
 			if(!silent)
 			{
 				Messages.showErrorDialog(project, "UnityEditor is not opened", "Consulo");
-			}
-		}
-		finally
-		{
-			if(client != null)
-			{
-				try
-				{
-					client.close();
-				}
-				catch(IOException e)
-				{
-					//
-				}
 			}
 		}
 		return false;
