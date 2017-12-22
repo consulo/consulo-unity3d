@@ -400,6 +400,11 @@ public class Unity3dProjectImportUtil
 				{
 					layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEditor.Timeline"));
 				}
+
+				if(isVuforiaEnabled(unityBundle, project))
+				{
+					layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "Vuforia.UnityExtensions.Editor"));
+				}
 			}
 		}, "unity3d-csharp-child", CSharpFileType.INSTANCE, virtualFilesByModule, progressIndicator);
 	}
@@ -410,7 +415,7 @@ public class Unity3dProjectImportUtil
 			@NotNull Project project,
 			@NotNull ModifiableModuleModel modifiableModuleModels,
 			@NotNull String[] paths,
-			@Nullable Sdk unitySdk,
+			@Nullable Sdk unityBundle,
 			@Nullable final Consumer<ModuleRootLayerImpl> setupConsumer,
 			@NotNull String moduleExtensionId,
 			@NotNull final FileType fileType,
@@ -505,34 +510,41 @@ public class Unity3dProjectImportUtil
 		langExtension.setEnabled(true);
 		if(langExtension instanceof CSharpSimpleMutableModuleExtension)
 		{
-			CSharpLanguageVersion languageVersion = isVersionHigherOrEqual(unitySdk, "5.5.0") ? CSharpLanguageVersion._6_0 : CSharpLanguageVersion._4_0;
+			CSharpLanguageVersion languageVersion = isVersionHigherOrEqual(unityBundle, "5.5.0") ? CSharpLanguageVersion._6_0 : CSharpLanguageVersion._4_0;
 			((CSharpSimpleMutableModuleExtension) langExtension).setLanguageVersion(languageVersion);
 		}
 
 		layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "mscorlib"));
 		layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEditor"));
 		layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEngine"));
-		if(isVersionHigherOrEqual(unitySdk, "4.6.0"))
+		if(isVersionHigherOrEqual(unityBundle, "4.6.0"))
 		{
 			layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEngine.UI"));
 		}
-		if(isVersionHigherOrEqual(unitySdk, "5.1.0"))
+		if(isVersionHigherOrEqual(unityBundle, "5.1.0"))
 		{
 			layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEngine.Networking"));
 			layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEngine.Analytics"));
 		}
-		if(isVersionHigherOrEqual(unitySdk, "5.2.0"))
+		if(isVersionHigherOrEqual(unityBundle, "5.2.0"))
 		{
 			layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEngine.Advertisements"));
 		}
-		if(isVersionHigherOrEqual(unitySdk, "5.3.0"))
+		if(isVersionHigherOrEqual(unityBundle, "5.3.0"))
 		{
 			layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEngine.Purchasing"));
 		}
-		if(isVersionHigherOrEqual(unitySdk, "2017.1.0"))
+		if(isVersionHigherOrEqual(unityBundle, "2017.1.0"))
 		{
 			layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEngine.Timeline"));
 		}
+
+		if(isVuforiaEnabled(unityBundle, project))
+		{
+			layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "Vuforia.UnityExtensions"));
+			layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "Vuforia.UnityExtensions.Editor"));
+		}
+
 		layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "System"));
 		layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "System.Core"));
 		layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "System.Runtime.Serialization"));
@@ -572,6 +584,17 @@ public class Unity3dProjectImportUtil
 			}
 		}.execute();
 		return module;
+	}
+
+	private static boolean isVuforiaEnabled(Sdk unityBundle, Project project)
+	{
+		boolean versionHigherOrEqual = isVersionHigherOrEqual(unityBundle, "2017.2.0");
+
+		VirtualFile baseDir = project.getBaseDir();
+		assert baseDir != null;
+		VirtualFile assetsDir = baseDir.findChild("Assets");
+		VirtualFile vuforia = assetsDir == null ? null : assetsDir.findChild("Vuforia");
+		return versionHigherOrEqual && vuforia != null;
 	}
 
 	@NotNull
