@@ -542,7 +542,6 @@ public class Unity3dProjectImportUtil
 		if(isVuforiaEnabled(unityBundle, project))
 		{
 			layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "Vuforia.UnityExtensions"));
-			layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "Vuforia.UnityExtensions.Editor"));
 		}
 
 		layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "System"));
