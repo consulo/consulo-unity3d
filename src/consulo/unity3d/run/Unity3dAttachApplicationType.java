@@ -51,7 +51,7 @@ public class Unity3dAttachApplicationType extends ConfigurationTypeBase
 			@Override
 			public boolean isApplicable(@NotNull Project project)
 			{
-				return Unity3dModuleExtensionUtil.getRootModule(project) != null;
+				return Unity3dModuleExtensionUtil.getRootModuleExtension(project) != null;
 			}
 		});
 	}
