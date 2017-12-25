@@ -151,6 +151,23 @@ public class Unity3dRootModuleExtension extends BaseDotNetSimpleModuleExtension<
 			addUnityExtensions(list, version, homePath + "/Contents/Frameworks/UnityExtensions/Unity");
 			// actual mac path
 			addUnityExtensions(list, version, homePath + "/Contents/UnityExtensions/Unity");
+
+			// try to resolve external PlaybackEngines
+			File homeFile = new File(homePath);
+			if(homeFile.exists())
+			{
+				File parentFile = homeFile.getParentFile();
+
+				if(parentFile != null)
+				{
+					File playbackEngines = new File(parentFile, "PlaybackEngines/VuforiaSupport/Managed");
+					if(playbackEngines.exists())
+					{
+						list.add(playbackEngines.getPath() + "/Runtime");
+						list.add(playbackEngines.getPath() + "/Editor");
+					}
+				}
+			}
 		}
 		else if(SystemInfo.isWindows || SystemInfo.isLinux)
 		{
