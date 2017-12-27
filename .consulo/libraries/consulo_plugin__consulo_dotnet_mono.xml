@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="consulo-plugin: consulo.dotnet.mono">
-    <binaries>
-      <root url="jar://$PROJECT_DIR$/dep/consulo.dotnet.mono/lib/consulo.dotnet.mono-2-SNAPSHOT.jar!/" />
-      <root url="jar://$PROJECT_DIR$/dep/consulo.dotnet.mono/lib/mono-soft-debugging-2-SNAPSHOT.jar!/" />
-      <root url="jar://$PROJECT_DIR$/dep/consulo.dotnet.mono/lib/consulo.dotnet.mono-debugger-impl-2-SNAPSHOT.jar!/" />
-    </binaries>
-  </library>
-</component>

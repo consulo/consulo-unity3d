@@ -31,7 +31,7 @@
 
 		<highlightVisitor implementation="consulo.unity3d.shaderlab.ide.highlight.SharpLabHighlightVisitor"/>
 		<lang.parserDefinition language="SHADERLAB" implementationClass="consulo.unity3d.shaderlab.lang.ShaderLabParserDefinition"/>
-		<lang.syntaxHighlighterFactory key="SHADERLAB"
+		<lang.syntaxHighlighterFactory language="SHADERLAB"
 									   implementationClass="consulo.unity3d.shaderlab.ide.highlight.ShaderLabHighlighterFactory"/>
 		<lang.foldingBuilder language="SHADERLAB" implementationClass="consulo.unity3d.shaderlab.lang.ShaderLabFoldingBuilder"/>
 		<lang.braceMatcher language="SHADERLAB" implementationClass="consulo.unity3d.shaderlab.lang.ShaderLabPairedBraceMatcher"/>
