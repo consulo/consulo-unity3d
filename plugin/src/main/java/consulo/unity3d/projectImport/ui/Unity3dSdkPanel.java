@@ -88,7 +88,7 @@ public class Unity3dSdkPanel extends JPanel
 			}
 		}
 		JPanel panel = new JPanel(new HorizontalLayout(0, SwingConstants.CENTER));
-		panel.add(LabeledComponent.left(myComboBox, "Unity SDK"), HorizontalLayout.LEFT);
+		panel.add(LabeledComponent.create(myComboBox, "Unity SDK"), HorizontalLayout.LEFT);
 		panel.add(button, HorizontalLayout.RIGHT);
 		add(panel);
 	}

@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.yaml.YAMLLanguage;
 import com.intellij.openapi.fileTypes.LanguageFileType;
-import consulo.unity3d.Unity3dIcons;
+import consulo.unity3d.shaderlab.UnityShaderIcons;
 
 /**
  * @author VISTALL
@@ -62,6 +62,6 @@ public class Unity3dYMLAssetFileType extends LanguageFileType
 	@Override
 	public Icon getIcon()
 	{
-		return Unity3dIcons.Shader;
+		return UnityShaderIcons.Shader;
 	}
 }

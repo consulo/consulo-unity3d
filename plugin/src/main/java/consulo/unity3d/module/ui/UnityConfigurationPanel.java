@@ -102,7 +102,7 @@ public class UnityConfigurationPanel extends JPanel
 			}
 		});
 
-		add(LabeledComponent.left(namespacePrefixField, "Namespace Prefix:"));
+		add(LabeledComponent.create(namespacePrefixField, "Namespace Prefix:"));
 
 		final JBList variableList = new JBList(dataModel);
 		ToolbarDecorator variableDecorator = ToolbarDecorator.createDecorator(variableList);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2016 consulo.io
+ * Copyright 2013-2017 consulo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package consulo.unity3d;
+package consulo.unity3d.shaderlab;
 
 import javax.swing.Icon;
 
 import com.intellij.openapi.util.IconLoader;
 
-// Generated Consulo DevKit plugin 
-public interface Unity3dIcons
+/**
+ * @author VISTALL
+ * @since 27-Dec-17
+ */
+public interface UnityShaderIcons
 {
-	Icon EventMethod = IconLoader.getIcon("/icons/eventMethod.png");  // 12x12
-	Icon Js = IconLoader.getIcon("/icons/js.PNG");  // 16x16
-	Icon Unity3d = IconLoader.getIcon("/icons/unity3d.png");  // 16x16
-	Icon Unity3dLineMarker = IconLoader.getIcon("/icons/unity3dLineMarker.png");  // 12x12
+	Icon Shader = IconLoader.getIcon("/icons/shader.png");  // 16x16
 }
