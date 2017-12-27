@@ -40,10 +40,6 @@
 				<updatePolicy>interval:60</updatePolicy>
 			</snapshots>
 		</repository>
-		<repository>
-			<id>freehap</id>
-			<url>http://java.freehep.org/maven2/</url>
-		</repository>
 	</repositories>
 
 	<build>
