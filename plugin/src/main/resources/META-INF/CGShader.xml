@@ -24,7 +24,7 @@
 
 		<lang.parserDefinition language="CG" implementationClass="consulo.cgshader.CGParserDefinition" />
 
-		<lang.syntaxHighlighterFactory key="CG" implementationClass="consulo.cgshader.highlighter.CGSingleLazyInstanceSyntaxHighlighterFactory" />
+		<lang.syntaxHighlighterFactory language="CG" implementationClass="consulo.cgshader.highlighter.CGSingleLazyInstanceSyntaxHighlighterFactory" />
 
 		<lang.braceMatcher language="CG" implementationClass="consulo.cgshader.CGBraceMatcher" />
 	</extensions>

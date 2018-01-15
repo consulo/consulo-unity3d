@@ -18,51 +18,56 @@ package consulo.unity3d.projectImport;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import com.intellij.ide.actions.CreateFileFromTemplateAction;
 import com.intellij.lang.javascript.JavaScriptFileType;
+import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiDirectory;
 import consulo.annotations.RequiredReadAction;
 import consulo.csharp.lang.CSharpFileType;
-import consulo.roots.ContentEntryFileListener;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 
 /**
  * @author VISTALL
  * @since 06.04.2015
  */
-public class Unity3dPossibleModuleForFileResolver implements ContentEntryFileListener.PossibleModuleForFileResolver
+public class Unity3dModuleResolver implements CreateFileFromTemplateAction.ModuleResolver
 {
 	@Nullable
 	@Override
 	@RequiredReadAction
-	public Module resolve(@NotNull Project project, @NotNull VirtualFile virtualFile)
+	public Module resolveModule(@NotNull PsiDirectory psiDirectory, @NotNull FileType fileType)
 	{
-		Module module = resolveImpl(project, virtualFile);
+		Module module = resolveModuleImpl(psiDirectory, fileType);
 		return module != null && module.getModuleDirUrl() != null ? null : module;
 	}
 
-	@RequiredReadAction
 	@Nullable
-	private Module resolveImpl(Project project, VirtualFile virtualFile)
+	@RequiredReadAction
+	public Module resolveModuleImpl(@NotNull PsiDirectory psiDirectory, @NotNull FileType fileType)
 	{
-		if(virtualFile.getFileType() == CSharpFileType.INSTANCE)
+		if(fileType == CSharpFileType.INSTANCE)
 		{
-			return findModule(project, virtualFile, "CSharp");
+			return findModule(psiDirectory, "CSharp");
 		}
-		else if(virtualFile.getFileType() == JavaScriptFileType.INSTANCE)
+		else if(fileType == JavaScriptFileType.INSTANCE)
 		{
-			return findModule(project, virtualFile, "UnityScript");
+			return findModule(psiDirectory, "UnityScript");
 		}
 		return null;
 	}
 
 	@Nullable
 	@RequiredReadAction
-	private Module findModule(Project project, VirtualFile virtualFile, String modulePrefix)
+	private Module findModule(PsiDirectory directory, String modulePrefix)
 	{
+		Project project = directory.getProject();
+		VirtualFile parent = directory.getVirtualFile();
+
 		Module module = Unity3dModuleExtensionUtil.getRootModule(project);
 		if(module == null)
 		{
@@ -77,12 +82,11 @@ public class Unity3dPossibleModuleForFileResolver implements ContentEntryFileLis
 			return null;
 		}
 
-		if(!VfsUtil.isAncestor(assetsDir, virtualFile, true))
+		if(!VfsUtil.isAncestor(assetsDir, parent, true))
 		{
 			return null;
 		}
 
-		VirtualFile parent = virtualFile.getParent();
 		while(!assetsDir.equals(parent))
 		{
 			if(parent.getName().equals("Editor"))
@@ -92,16 +96,10 @@ public class Unity3dPossibleModuleForFileResolver implements ContentEntryFileLis
 			parent = parent.getParent();
 		}
 
-		String[] paths = new String[]{
-				"Assets/Standard Assets",
-				"Assets/Pro Standard Assets",
-				"Assets/Plugins"
-		};
-
-		for(String path : paths)
+		for(String path : Unity3dProjectImportUtil.FIRST_PASS_PATHS)
 		{
 			VirtualFile pathFile = baseDir.findFileByRelativePath(path);
-			if(pathFile != null && VfsUtil.isAncestor(pathFile, virtualFile, true))
+			if(pathFile != null && VfsUtil.isAncestor(pathFile, parent, true))
 			{
 				return ModuleManager.getInstance(project).findModuleByName("Assembly-" + modulePrefix + "-firstpass");
 			}

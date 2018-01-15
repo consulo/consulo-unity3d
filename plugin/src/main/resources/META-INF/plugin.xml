@@ -67,6 +67,10 @@
 		<component>
 			<implementation-class>consulo.unity3d.Unity3dConsoleToolWindowService</implementation-class>
 		</component>
+		<component>
+			<implementation-class>consulo.unity3d.projectImport.change.Unity3dProjectChangeListener</implementation-class>
+			<skipForDefaultProject/>
+		</component>
 	</project-components>
 
 	<extensions defaultExtensionNs="consulo.javascript">
@@ -80,8 +84,15 @@
 
 	<extensions defaultExtensionNs="consulo.dotnet">
 		<debuggerProvider implementation="consulo.unity3d.unityscript.debugger.UnityScriptDebuggerProvider"/>
-		<debuggerSourceLineResolver language="JavaScript"
-									implementationClass="consulo.unity3d.unityscript.debugger.UnityScriptSourceLineResolver"/>
+		<debuggerSourceLineResolver language="JavaScript" implementationClass="consulo.unity3d.unityscript.debugger.UnityScriptSourceLineResolver"/>
+	</extensions>
+
+	<extensionPoints>
+		<extensionPoint name="projectSourceFileTypeFactory" interface="consulo.unity3d.projectImport.change.Unity3dProjectSourceFileTypeFactory" />
+	</extensionPoints>
+
+	<extensions defaultExtensionNs="consulo.unity3d">
+		<projectSourceFileTypeFactory implementation="consulo.unity3d.projectImport.change.DefaultUnity3dProjectSourceFileTypeFactory" />
 	</extensions>
 
 	<extensions defaultExtensionNs="consulo.dotnet">
@@ -197,7 +208,7 @@
 		<treeStructureProvider implementation="consulo.unity3d.unityscript.projectView.UnityScriptFileProjectViewProvider"/>
 		<projectViewOptionProvider implementation="consulo.unity3d.ide.projectView.Unity3dShowMetaFileProjectViewPaneOptionProvider"/>
 		<projectViewNodeDecorator implementation="consulo.unity3d.ide.projectView.Unity3dProjectViewNodeDecorator"/>
-		<possibleModuleForFileResolver implementation="consulo.unity3d.projectImport.Unity3dPossibleModuleForFileResolver"/>
+		<createFromTemplateActionModuleResolver implementation="consulo.unity3d.projectImport.Unity3dModuleResolver"/>
 		<fileTypeDetector implementation="consulo.unity3d.scene.Unity3dAssetFileTypeDetector"/>
 		<fileBasedIndex implementation="consulo.unity3d.scene.index.Unity3dYMLAssetIndexExtension"/>
 		<fileBasedIndex implementation="consulo.unity3d.scene.index.Unity3dMetaIndexExtension"/>
