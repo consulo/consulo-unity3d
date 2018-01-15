@@ -137,7 +137,6 @@ public class Unity3dProjectChangeListener implements ProjectComponent, VirtualFi
 			return;
 		}
 
-
 		UIUtil.invokeLaterIfNeeded(() ->
 		{
 			boolean needNotification = false;
