@@ -43,7 +43,7 @@ import consulo.csharp.lang.psi.CSharpTokens;
 import consulo.csharp.lang.psi.CSharpTypeDeclaration;
 import consulo.csharp.lang.psi.CSharpUserType;
 import consulo.csharp.lang.psi.impl.source.resolve.MethodResolveResult;
-import consulo.csharp.lang.psi.impl.source.resolve.methodResolving.MethodCalcResult;
+import consulo.csharp.lang.psi.impl.source.resolve.methodResolving.MethodResolvePriorityInfo;
 import consulo.csharp.lang.psi.impl.source.resolve.methodResolving.arguments.NCallArgument;
 import consulo.csharp.lang.psi.impl.source.resolve.util.CSharpResolveUtil;
 import consulo.dotnet.psi.DotNetExpression;
@@ -129,7 +129,7 @@ public class UnityCSharpStaticElementColorProvider implements ElementColorProvid
 					return null;
 				}
 
-				MethodCalcResult calcResult = ((MethodResolveResult) validResult).getCalcResult();
+				MethodResolvePriorityInfo calcResult = ((MethodResolveResult) validResult).getCalcResult();
 				Map<String, Float> map = new HashMap<String, Float>(4);
 				for(NCallArgument nCallArgument : calcResult.getArguments())
 				{
