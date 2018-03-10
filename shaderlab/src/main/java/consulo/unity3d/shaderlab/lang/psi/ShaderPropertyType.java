@@ -16,8 +16,8 @@
 
 package consulo.unity3d.shaderlab.lang.psi;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.psi.PsiElement;
 
 /**
@@ -29,6 +29,6 @@ public interface ShaderPropertyType extends PsiElement
 	@Nullable
 	PsiElement getTargetElement();
 
-	@NotNull
+	@Nonnull
 	String getTargetText();
 }

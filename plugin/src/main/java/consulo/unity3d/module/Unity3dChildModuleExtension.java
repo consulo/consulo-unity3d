@@ -20,8 +20,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkType;
 import com.intellij.openapi.roots.OrderRootType;
@@ -38,12 +39,12 @@ import consulo.roots.ModuleRootLayer;
  */
 public class Unity3dChildModuleExtension extends ModuleExtensionImpl<Unity3dChildModuleExtension> implements Unity3dModuleExtension<Unity3dChildModuleExtension>
 {
-	public Unity3dChildModuleExtension(@NotNull String id, @NotNull ModuleRootLayer moduleRootLayer)
+	public Unity3dChildModuleExtension(@Nonnull String id, @Nonnull ModuleRootLayer moduleRootLayer)
 	{
 		super(id, moduleRootLayer);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	@RequiredReadAction
 	public DotNetNamespaceGeneratePolicy getNamespaceGeneratePolicy()
@@ -56,7 +57,7 @@ public class Unity3dChildModuleExtension extends ModuleExtensionImpl<Unity3dChil
 		return UnityNamespaceGeneratePolicy.INSTANCE;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public ModuleInheritableNamedPointer<Sdk> getInheritableSdk()
 	{
@@ -77,7 +78,7 @@ public class Unity3dChildModuleExtension extends ModuleExtensionImpl<Unity3dChil
 		return null;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public Class<? extends SdkType> getSdkTypeClass()
 	{
@@ -86,7 +87,7 @@ public class Unity3dChildModuleExtension extends ModuleExtensionImpl<Unity3dChil
 
 	@Override
 	@RequiredReadAction
-	@NotNull
+	@Nonnull
 	public List<String> getVariables()
 	{
 		Unity3dRootModuleExtension rootModuleExtension = Unity3dModuleExtensionUtil.getRootModuleExtension(getProject());
@@ -103,7 +104,7 @@ public class Unity3dChildModuleExtension extends ModuleExtensionImpl<Unity3dChil
 		return false;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	@RequiredReadAction
 	public Map<String, String> getAvailableSystemLibraries()
@@ -116,10 +117,10 @@ public class Unity3dChildModuleExtension extends ModuleExtensionImpl<Unity3dChil
 		return Collections.emptyMap();
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	@RequiredReadAction
-	public String[] getSystemLibraryUrls(@NotNull String name, @NotNull OrderRootType orderRootType)
+	public String[] getSystemLibraryUrls(@Nonnull String name, @Nonnull OrderRootType orderRootType)
 	{
 		Unity3dRootModuleExtension rootModuleExtension = Unity3dModuleExtensionUtil.getRootModuleExtension(getProject());
 		if(rootModuleExtension != null)

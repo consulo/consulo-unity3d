@@ -18,7 +18,7 @@ package consulo.unity3d.shaderlab.lang.psi;
 
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.intellij.psi.PsiNameIdentifierOwner;
 
 /**
@@ -27,6 +27,6 @@ import com.intellij.psi.PsiNameIdentifierOwner;
  */
 public interface ShaderDef extends PsiNameIdentifierOwner, ShaderBraceOwner, ShaderRoleOwner
 {
-	@NotNull
+	@Nonnull
 	List<ShaderProperty> getProperties();
 }

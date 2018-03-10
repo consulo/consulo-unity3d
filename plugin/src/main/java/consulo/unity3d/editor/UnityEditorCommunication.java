@@ -18,14 +18,16 @@ package consulo.unity3d.editor;
 
 import java.io.IOException;
 
+import javax.annotation.Nonnull;
+
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nullable;
 import com.google.gson.Gson;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
@@ -65,7 +67,7 @@ public class UnityEditorCommunication
 		return unityProcess;
 	}
 
-	public static boolean request(@NotNull Project project, @NotNull Object postObject, boolean silent)
+	public static boolean request(@Nonnull Project project, @Nonnull Object postObject, boolean silent)
 	{
 		UnityProcess editorProcess = findEditorProcess();
 

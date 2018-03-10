@@ -16,9 +16,11 @@
 
 package consulo.unity3d.shaderlab.lang.psi.light;
 
+import javax.annotation.Nonnull;
+
 import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nullable;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiManager;
@@ -38,7 +40,7 @@ public class LightShaderProperty extends LightElement implements ShaderProperty
 	private String myName;
 	private LightShaderPropertyType myType;
 
-	public LightShaderProperty(@NotNull Project project, @NotNull String name, @NotNull String type)
+	public LightShaderProperty(@Nonnull Project project, @Nonnull String name, @Nonnull String type)
 	{
 		super(PsiManager.getInstance(project), ShaderLabLanguage.INSTANCE);
 		myName = name;
@@ -65,7 +67,7 @@ public class LightShaderProperty extends LightElement implements ShaderProperty
 	}
 
 	@Override
-	public PsiElement setName(@NonNls @NotNull String name) throws IncorrectOperationException
+	public PsiElement setName(@NonNls @Nonnull String name) throws IncorrectOperationException
 	{
 		return null;
 	}

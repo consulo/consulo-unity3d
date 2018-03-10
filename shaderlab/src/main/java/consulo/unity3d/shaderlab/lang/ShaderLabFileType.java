@@ -16,10 +16,11 @@
 
 package consulo.unity3d.shaderlab.lang;
 
+import javax.annotation.Nullable;
 import javax.swing.Icon;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import consulo.unity3d.shaderlab.UnityShaderIcons;
 
@@ -36,21 +37,21 @@ public class ShaderLabFileType extends LanguageFileType
 		super(ShaderLabLanguage.INSTANCE);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getId()
 	{
 		return "SHADERLAB";
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getDescription()
 	{
 		return ".shader files";
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getDefaultExtension()
 	{

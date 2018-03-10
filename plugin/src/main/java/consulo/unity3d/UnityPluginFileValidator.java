@@ -21,7 +21,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.ide.BrowserUtil;
 import com.intellij.ide.plugins.PluginManager;
 import com.intellij.notification.Notification;
@@ -83,13 +84,13 @@ public class UnityPluginFileValidator extends AbstractProjectComponent
 		runValidation(myProject);
 	}
 
-	public static void runValidation(@NotNull final Project project)
+	public static void runValidation(@Nonnull final Project project)
 	{
 		DumbService.getInstance(project).runWhenSmart(() -> notifyAboutPluginFile(project));
 	}
 
 	@RequiredReadAction
-	private static void notifyAboutPluginFile(@NotNull final Project project)
+	private static void notifyAboutPluginFile(@Nonnull final Project project)
 	{
 		Unity3dRootModuleExtension moduleExtension = Unity3dModuleExtensionUtil.getRootModuleExtension(project);
 		if(moduleExtension == null)
@@ -152,7 +153,7 @@ public class UnityPluginFileValidator extends AbstractProjectComponent
 		}
 	}
 
-	private static void showNotify(final Project project, final String pluginFileName, final File unityPluginFile, @NotNull String title, @NotNull List<VirtualFile> oldPluginFiles)
+	private static void showNotify(final Project project, final String pluginFileName, final File unityPluginFile, @Nonnull String title, @Nonnull List<VirtualFile> oldPluginFiles)
 	{
 		Notification notification = new Notification(ourGroup.getDisplayId(), "Unity3D Plugin", title, !oldPluginFiles.isEmpty() ? NotificationType.ERROR : NotificationType.INFORMATION);
 		notification.setListener((thisNotification, hyperlinkEvent) ->
@@ -172,7 +173,7 @@ public class UnityPluginFileValidator extends AbstractProjectComponent
 		notification.notify(project);
 	}
 
-	private static void updatePlugin(@NotNull final Project project, @NotNull final String pluginFileName, @NotNull final File unityPluginFile, @NotNull List<VirtualFile> oldPluginFiles)
+	private static void updatePlugin(@Nonnull final Project project, @Nonnull final String pluginFileName, @Nonnull final File unityPluginFile, @Nonnull List<VirtualFile> oldPluginFiles)
 	{
 		Task.Backgroundable.queue(project, "Installing plugin", (progressIndicator) ->
 		{

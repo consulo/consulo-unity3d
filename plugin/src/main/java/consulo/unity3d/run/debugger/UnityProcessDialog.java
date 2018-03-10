@@ -24,8 +24,8 @@ import java.util.concurrent.TimeUnit;
 
 import javax.swing.Icon;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.ide.util.ChooseElementsDialog;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
@@ -46,7 +46,7 @@ public class UnityProcessDialog extends ChooseElementsDialog<UnityProcess>
 
 	private Future<?> myTask;
 
-	public UnityProcessDialog(@NotNull Project project)
+	public UnityProcessDialog(@Nonnull Project project)
 	{
 		super(project, new ArrayList<>(), "Select Unity Process", "", true);
 	}
@@ -62,7 +62,7 @@ public class UnityProcessDialog extends ChooseElementsDialog<UnityProcess>
 		super.show();
 	}
 
-	@NotNull
+	@Nonnull
 	public static List<UnityProcess> collectItems()
 	{
 		Collection<UnityPlayer> players = UnityPlayerService.getInstance().getPlayers();

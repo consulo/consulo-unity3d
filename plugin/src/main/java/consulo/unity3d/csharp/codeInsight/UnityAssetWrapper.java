@@ -16,8 +16,8 @@
 
 package consulo.unity3d.csharp.codeInsight;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
@@ -41,7 +41,7 @@ class UnityAssetWrapper extends FakePsiElement implements Navigatable
 	private final Unity3dYMLField myField;
 	private final Project myProject;
 
-	UnityAssetWrapper(VirtualFile virtualFile, Unity3dYMLAsset asset, @NotNull Unity3dYMLField field, Project project)
+	UnityAssetWrapper(VirtualFile virtualFile, Unity3dYMLAsset asset, @Nonnull Unity3dYMLField field, Project project)
 	{
 		this(virtualFile, asset, field.getOffset(), field, project);
 	}
@@ -61,7 +61,7 @@ class UnityAssetWrapper extends FakePsiElement implements Navigatable
 		return null;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public Project getProject()
 	{

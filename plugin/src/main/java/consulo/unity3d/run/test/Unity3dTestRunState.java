@@ -18,8 +18,8 @@ package consulo.unity3d.run.test;
 
 import java.util.UUID;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.execution.DefaultExecutionResult;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionResult;
@@ -69,7 +69,7 @@ public class Unity3dTestRunState implements RunProfileState
 	@Nullable
 	@Override
 	@RequiredDispatchThread
-	public ExecutionResult execute(Executor executor, @NotNull ProgramRunner runner) throws ExecutionException
+	public ExecutionResult execute(Executor executor, @Nonnull ProgramRunner runner) throws ExecutionException
 	{
 		Unity3dTestConfiguration profile = (Unity3dTestConfiguration) myEnvironment.getRunProfile();
 
@@ -86,7 +86,7 @@ public class Unity3dTestRunState implements RunProfileState
 		consoleView.addAttachToProcessListener(new AttachToProcessListener()
 		{
 			@Override
-			public void onAttachToProcess(@NotNull ProcessHandler processHandler)
+			public void onAttachToProcess(@Nonnull ProcessHandler processHandler)
 			{
 				SMTestRunnerResultsForm resultsForm = consoleView.getResultsViewer();
 
@@ -120,11 +120,11 @@ public class Unity3dTestRunState implements RunProfileState
 		return new DefaultExecutionResult(consoleView, osProcessHandler);
 	}
 
-	private static UUID attachEventsProcessors(@NotNull final TestConsoleProperties consoleProperties,
+	private static UUID attachEventsProcessors(@Nonnull final TestConsoleProperties consoleProperties,
 			final SMTestRunnerResultsForm resultsViewer,
 			final StatisticsPanel statisticsPane,
 			final ProcessHandler processHandler,
-			@NotNull final String testFrameworkName)
+			@Nonnull final String testFrameworkName)
 	{
 		//build messages consumer
 		final OutputToGeneralTestEventsConverter outputConsumer;

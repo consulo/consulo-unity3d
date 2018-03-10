@@ -16,8 +16,8 @@
 
 package consulo.unity3d.shaderlab.lang;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * @author VISTALL
@@ -35,7 +35,7 @@ public enum ShaderLabPropertyType
 	_2D,
 	_3D;
 
-	@NotNull
+	@Nonnull
 	public String getPresentableName()
 	{
 		String name = name();
@@ -47,7 +47,7 @@ public enum ShaderLabPropertyType
 	}
 
 	@Nullable
-	public static ShaderLabPropertyType find(@NotNull String value)
+	public static ShaderLabPropertyType find(@Nonnull String value)
 	{
 		for(ShaderLabPropertyType shaderLabPropertyType : values())
 		{

@@ -16,10 +16,10 @@
 
 package consulo.unity3d.scene;
 
+import javax.annotation.Nonnull;
 import javax.swing.Icon;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.vfs.VirtualFile;
 import consulo.unity3d.Unity3dIcons;
@@ -36,21 +36,21 @@ public class Unity3dBinaryAssetFileType implements FileType
 	{
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getId()
 	{
 		return "UNITY_BINARY_ASSET";
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getDescription()
 	{
 		return "Unity binary asset file";
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getDefaultExtension()
 	{
@@ -78,7 +78,7 @@ public class Unity3dBinaryAssetFileType implements FileType
 
 	@Nullable
 	@Override
-	public String getCharset(@NotNull VirtualFile file, byte[] content)
+	public String getCharset(@Nonnull VirtualFile file, byte[] content)
 	{
 		return null;
 	}

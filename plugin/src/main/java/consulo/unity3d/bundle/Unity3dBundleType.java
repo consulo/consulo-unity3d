@@ -20,10 +20,10 @@ import java.io.File;
 import java.util.Collection;
 import java.util.List;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.swing.Icon;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import com.dd.plist.NSDictionary;
 import com.dd.plist.NSObject;
 import com.dd.plist.NSString;
@@ -66,7 +66,7 @@ public class Unity3dBundleType extends SdkType
 		return null;
 	}
 
-	@NotNull
+	@Nonnull
 	public static Unity3dBundleType getInstance()
 	{
 		return EP_NAME.findExtension(Unity3dBundleType.class);
@@ -84,7 +84,7 @@ public class Unity3dBundleType extends SdkType
 		return Unity3dIcons.Unity3d;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public Collection<String> suggestHomePaths()
 	{
@@ -192,7 +192,7 @@ public class Unity3dBundleType extends SdkType
 		return getPresentableName() + " " + getVersionString(sdkHome);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getPresentableName()
 	{

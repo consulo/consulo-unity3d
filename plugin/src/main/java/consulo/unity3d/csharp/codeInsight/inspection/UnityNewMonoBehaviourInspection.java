@@ -16,7 +16,8 @@
 
 package consulo.unity3d.csharp.codeInsight.inspection;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElementVisitor;
@@ -37,9 +38,9 @@ import consulo.unity3d.module.Unity3dModuleExtensionUtil;
  */
 public class UnityNewMonoBehaviourInspection extends LocalInspectionTool
 {
-	@NotNull
+	@Nonnull
 	@Override
-	public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly)
+	public PsiElementVisitor buildVisitor(@Nonnull final ProblemsHolder holder, boolean isOnTheFly)
 	{
 		if(Unity3dModuleExtensionUtil.getRootModule(holder.getProject()) == null)
 		{

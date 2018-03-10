@@ -18,8 +18,8 @@ package consulo.unity3d.scene.index;
 
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.MultiMap;
@@ -31,22 +31,22 @@ import consulo.unity3d.scene.Unity3dMetaManager;
  */
 public class Unity3dYMLAsset
 {
-	@NotNull
-	public static MultiMap<VirtualFile, Unity3dYMLAsset> findAssetAsAttach(@NotNull Project project, @Nullable VirtualFile file)
+	@Nonnull
+	public static MultiMap<VirtualFile, Unity3dYMLAsset> findAssetAsAttach(@Nonnull Project project, @Nullable VirtualFile file)
 	{
 		return file == null ? MultiMap.empty() : Unity3dMetaManager.getInstance(project).findAssetAsAttach(file);
 	}
 
-	@NotNull
+	@Nonnull
 	private final String myGuild;
 	@Nullable
 	private final String myGameObjectName;
 
 	private final int myStartOffset;
-	@NotNull
+	@Nonnull
 	private final List<Unity3dYMLField> myValues;
 
-	public Unity3dYMLAsset(@NotNull String guild, @Nullable String gameObjectName, int startOffset, @NotNull List<Unity3dYMLField> values)
+	public Unity3dYMLAsset(@Nonnull String guild, @Nullable String gameObjectName, int startOffset, @Nonnull List<Unity3dYMLField> values)
 	{
 		myGuild = guild;
 		myGameObjectName = gameObjectName;
@@ -65,13 +65,13 @@ public class Unity3dYMLAsset
 		return myGameObjectName;
 	}
 
-	@NotNull
+	@Nonnull
 	public String getGuild()
 	{
 		return myGuild;
 	}
 
-	@NotNull
+	@Nonnull
 	public List<Unity3dYMLField> getValues()
 	{
 		return myValues;

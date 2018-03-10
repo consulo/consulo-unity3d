@@ -20,9 +20,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
 import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nullable;
 import com.intellij.extapi.psi.StubBasedPsiElementBase;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
@@ -48,12 +50,12 @@ import consulo.unity3d.shaderlab.lang.psi.stub.ShaderDefStub;
  */
 public class ShaderDefImpl extends StubBasedPsiElementBase<ShaderDefStub> implements StubBasedPsiElement<ShaderDefStub>, ShaderDef
 {
-	public ShaderDefImpl(@NotNull ASTNode node)
+	public ShaderDefImpl(@Nonnull ASTNode node)
 	{
 		super(node);
 	}
 
-	public ShaderDefImpl(@NotNull ShaderDefStub stub, @NotNull IStubElementType nodeType)
+	public ShaderDefImpl(@Nonnull ShaderDefStub stub, @Nonnull IStubElementType nodeType)
 	{
 		super(stub, nodeType);
 	}
@@ -79,7 +81,7 @@ public class ShaderDefImpl extends StubBasedPsiElementBase<ShaderDefStub> implem
 		return nameIdentifier == null ? null : nameIdentifier.getText();
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public List<ShaderProperty> getProperties()
 	{
@@ -96,13 +98,13 @@ public class ShaderDefImpl extends StubBasedPsiElementBase<ShaderDefStub> implem
 
 	@RequiredWriteAction
 	@Override
-	public PsiElement setName(@NonNls @NotNull String name) throws IncorrectOperationException
+	public PsiElement setName(@NonNls @Nonnull String name) throws IncorrectOperationException
 	{
 		return null;
 	}
 
 	@Override
-	public void accept(@NotNull PsiElementVisitor visitor)
+	public void accept(@Nonnull PsiElementVisitor visitor)
 	{
 		if(visitor instanceof SharpLabElementVisitor)
 		{

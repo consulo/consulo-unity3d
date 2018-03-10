@@ -16,10 +16,10 @@
 
 package consulo.unity3d.nunit.module.extension;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.swing.JComponent;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import consulo.annotations.RequiredDispatchThread;
 import consulo.module.extension.MutableModuleExtension;
 import consulo.roots.ModuleRootLayer;
@@ -30,7 +30,7 @@ import consulo.roots.ModuleRootLayer;
  */
 public class Unity3dNUnitMutableModuleExtension extends Unity3dNUnitModuleExtension implements MutableModuleExtension<Unity3dNUnitModuleExtension>
 {
-	public Unity3dNUnitMutableModuleExtension(@NotNull String id, @NotNull ModuleRootLayer moduleRootLayer)
+	public Unity3dNUnitMutableModuleExtension(@Nonnull String id, @Nonnull ModuleRootLayer moduleRootLayer)
 	{
 		super(id, moduleRootLayer);
 	}
@@ -38,7 +38,7 @@ public class Unity3dNUnitMutableModuleExtension extends Unity3dNUnitModuleExtens
 	@RequiredDispatchThread
 	@Nullable
 	@Override
-	public JComponent createConfigurablePanel(@NotNull Runnable updateOnCheck)
+	public JComponent createConfigurablePanel(@Nonnull Runnable updateOnCheck)
 	{
 		return null;
 	}
@@ -50,7 +50,7 @@ public class Unity3dNUnitMutableModuleExtension extends Unity3dNUnitModuleExtens
 	}
 
 	@Override
-	public boolean isModified(@NotNull Unity3dNUnitModuleExtension originalExtension)
+	public boolean isModified(@Nonnull Unity3dNUnitModuleExtension originalExtension)
 	{
 		return myIsEnabled != originalExtension.isEnabled();
 	}

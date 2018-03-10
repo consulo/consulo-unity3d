@@ -19,7 +19,8 @@ package consulo.unity3d.jsonApi;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.util.ui.MessageCategory;
 import consulo.buildInWebServer.api.JsonPostRequestHandler;
@@ -46,9 +47,9 @@ public class UnityLogPostHandler extends JsonPostRequestHandler<UnityLogPostHand
 		super("unityLog", UnityLogPostHandlerRequest.class);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public JsonResponse handle(@NotNull final UnityLogPostHandlerRequest request)
+	public JsonResponse handle(@Nonnull final UnityLogPostHandlerRequest request)
 	{
 		ApplicationManager.getApplication().getMessageBus().syncPublisher(UnityLogHandler.TOPIC).handle(request);
 

@@ -16,10 +16,10 @@
 
 package consulo.unity3d.module;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.swing.JComponent;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.Comparing;
 import consulo.annotations.RequiredDispatchThread;
@@ -34,7 +34,7 @@ import consulo.unity3d.module.ui.UnityConfigurationPanel;
  */
 public class Unity3dRootMutableModuleExtension extends Unity3dRootModuleExtension implements DotNetSimpleMutableModuleExtension<Unity3dRootModuleExtension>
 {
-	public Unity3dRootMutableModuleExtension(@NotNull String id, @NotNull ModuleRootLayer rootModel)
+	public Unity3dRootMutableModuleExtension(@Nonnull String id, @Nonnull ModuleRootLayer rootModel)
 	{
 		super(id, rootModel);
 	}
@@ -44,7 +44,7 @@ public class Unity3dRootMutableModuleExtension extends Unity3dRootModuleExtensio
 		myNamespacePrefix = prefix;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public MutableModuleInheritableNamedPointer<Sdk> getInheritableSdk()
 	{
@@ -54,7 +54,7 @@ public class Unity3dRootMutableModuleExtension extends Unity3dRootModuleExtensio
 	@Nullable
 	@Override
 	@RequiredDispatchThread
-	public JComponent createConfigurablePanel(@NotNull Runnable runnable)
+	public JComponent createConfigurablePanel(@Nonnull Runnable runnable)
 	{
 		return new UnityConfigurationPanel(this, getVariables(), runnable);
 	}
@@ -66,7 +66,7 @@ public class Unity3dRootMutableModuleExtension extends Unity3dRootModuleExtensio
 	}
 
 	@Override
-	public boolean isModified(@NotNull Unity3dRootModuleExtension ex)
+	public boolean isModified(@Nonnull Unity3dRootModuleExtension ex)
 	{
 		return isModifiedImpl(ex) || !Comparing.equal(getNamespacePrefix(), ex.getNamespacePrefix());
 	}

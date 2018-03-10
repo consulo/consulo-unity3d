@@ -16,7 +16,8 @@
 
 package consulo.unity3d.jsonApi;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.openapi.project.Project;
 import com.intellij.util.ui.UIUtil;
 import consulo.buildInWebServer.api.JsonPostRequestHandler;
@@ -34,9 +35,9 @@ public class UnityPlayStateHandler extends JsonPostRequestHandler<UnityPlayState
 		super("unityPlayState", UnityPlayStateHandlerRequest.class);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public JsonResponse handle(@NotNull final UnityPlayStateHandlerRequest request)
+	public JsonResponse handle(@Nonnull final UnityPlayStateHandlerRequest request)
 	{
 		if(request.isPlaying)
 		{

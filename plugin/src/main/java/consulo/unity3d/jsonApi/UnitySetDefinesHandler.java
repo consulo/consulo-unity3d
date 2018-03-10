@@ -19,7 +19,8 @@ package consulo.unity3d.jsonApi;
 import java.util.Arrays;
 import java.util.TreeSet;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.application.ApplicationManager;
@@ -48,9 +49,9 @@ public class UnitySetDefinesHandler extends JsonPostRequestHandler<UnitySetDefin
 		super("unitySetDefines", UnitySetDefines.class);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public JsonResponse handle(@NotNull UnitySetDefines unitySetDefines)
+	public JsonResponse handle(@Nonnull UnitySetDefines unitySetDefines)
 	{
 		if(unitySetDefines.uuid != null)
 		{
@@ -63,7 +64,7 @@ public class UnitySetDefinesHandler extends JsonPostRequestHandler<UnitySetDefin
 		return JsonResponse.asSuccess(null);
 	}
 
-	private static void updateDefines(@NotNull UnitySetDefines unitySetDefines)
+	private static void updateDefines(@Nonnull UnitySetDefines unitySetDefines)
 	{
 		ModifiableRootModel modifiableRootModel = ApplicationManager.getApplication().runReadAction(new Computable<ModifiableRootModel>()
 		{

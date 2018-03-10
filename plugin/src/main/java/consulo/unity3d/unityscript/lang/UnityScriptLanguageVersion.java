@@ -16,7 +16,8 @@
 
 package consulo.unity3d.unityscript.lang;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.lang.PsiParser;
 import com.intellij.lang.javascript.DialectOptionHolder;
 import com.intellij.lang.javascript.JavaScriptParsingFlexLexer;
@@ -32,7 +33,7 @@ import consulo.javascript.lang.parsing.EcmaScript4Parser;
  */
 public class UnityScriptLanguageVersion extends BaseJavaScriptLanguageVersion
 {
-	@NotNull
+	@Nonnull
 	public static UnityScriptLanguageVersion getInstance()
 	{
 		return JavaScriptLanguage.INSTANCE.findVersionByClass(UnityScriptLanguageVersion.class);
@@ -45,21 +46,21 @@ public class UnityScriptLanguageVersion extends BaseJavaScriptLanguageVersion
 		super("UNITY_SCRIPT");
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public PsiParser createParser()
 	{
 		return new EcmaScript4Parser();
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public JSHighlighter getSyntaxHighlighter()
 	{
 		return new JSHighlighter(myDialectOptionHolder);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public Lexer createLexer()
 	{

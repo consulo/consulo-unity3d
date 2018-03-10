@@ -16,9 +16,11 @@
 
 package consulo.unity3d.run;
 
+import javax.annotation.Nonnull;
+
 import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nullable;
 import com.intellij.compiler.options.CompileStepBeforeRun;
 import com.intellij.execution.DefaultExecutionResult;
 import com.intellij.execution.ExecutionException;
@@ -101,7 +103,7 @@ public class Unity3dAttachConfiguration extends LocatableConfigurationBase imple
 		XmlSerializer.serializeInto(this, element);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public SettingsEditor<? extends RunConfiguration> getConfigurationEditor()
 	{
@@ -110,12 +112,12 @@ public class Unity3dAttachConfiguration extends LocatableConfigurationBase imple
 
 	@Nullable
 	@Override
-	public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment env) throws ExecutionException
+	public RunProfileState getState(@Nonnull Executor executor, @Nonnull ExecutionEnvironment env) throws ExecutionException
 	{
 		return (executor1, runner) -> new DefaultExecutionResult(null, new Unity3dDebugProcessHander());
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	@RequiredReadAction
 	public Module[] getModules()

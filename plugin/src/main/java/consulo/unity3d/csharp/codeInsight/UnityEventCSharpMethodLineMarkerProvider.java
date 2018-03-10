@@ -18,10 +18,10 @@ package consulo.unity3d.csharp.codeInsight;
 
 import java.util.Map;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.swing.Icon;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import com.intellij.codeHighlighting.Pass;
 import com.intellij.codeInsight.daemon.LineMarkerInfo;
 import com.intellij.codeInsight.daemon.LineMarkerProviderDescriptor;
@@ -66,7 +66,7 @@ public class UnityEventCSharpMethodLineMarkerProvider extends LineMarkerProvider
 	@RequiredReadAction
 	@Nullable
 	@Override
-	public LineMarkerInfo getLineMarkerInfo(@NotNull PsiElement element)
+	public LineMarkerInfo getLineMarkerInfo(@Nonnull PsiElement element)
 	{
 		return createMarker(element);
 	}
@@ -96,7 +96,7 @@ public class UnityEventCSharpMethodLineMarkerProvider extends LineMarkerProvider
 	}
 
 	@RequiredReadAction
-	public static UnityFunctionManager.FunctionInfo findMagicMethod(@NotNull CSharpMethodDeclaration methodDeclaration)
+	public static UnityFunctionManager.FunctionInfo findMagicMethod(@Nonnull CSharpMethodDeclaration methodDeclaration)
 	{
 		PsiElement maybeTypeDeclaration = methodDeclaration.getParent();
 		if(maybeTypeDeclaration instanceof CSharpTypeDeclaration)

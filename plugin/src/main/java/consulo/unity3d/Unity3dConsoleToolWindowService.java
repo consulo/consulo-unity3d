@@ -20,7 +20,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.errorTreeView.NewErrorTreeViewPanel;
 import com.intellij.ide.util.PropertiesComponent;
@@ -84,7 +85,7 @@ public class Unity3dConsoleToolWindowService implements ProjectComponent
 			{
 				@RequiredDispatchThread
 				@Override
-				public void actionPerformed(@NotNull AnActionEvent anActionEvent)
+				public void actionPerformed(@Nonnull AnActionEvent anActionEvent)
 				{
 					clearMessages();
 				}
@@ -93,8 +94,8 @@ public class Unity3dConsoleToolWindowService implements ProjectComponent
 		}
 	}
 
-	@NotNull
-	public static Unity3dConsoleToolWindowService getInstance(@NotNull Project project)
+	@Nonnull
+	public static Unity3dConsoleToolWindowService getInstance(@Nonnull Project project)
 	{
 		return project.getComponent(Unity3dConsoleToolWindowService.class);
 	}
@@ -170,7 +171,7 @@ public class Unity3dConsoleToolWindowService implements ProjectComponent
 		return PropertiesComponent.getInstance(myProject).getBoolean(ourClearOnPlayUnityLog, ourDefaultClearOnPlayValue);
 	}
 
-	@NotNull
+	@Nonnull
 	public Project getProject()
 	{
 		return myProject;
@@ -186,7 +187,7 @@ public class Unity3dConsoleToolWindowService implements ProjectComponent
 	}
 
 	@RequiredDispatchThread
-	@NotNull
+	@Nonnull
 	private NewErrorTreeViewPanel getOrInitPanel()
 	{
 		if(myErrorPanel != null)

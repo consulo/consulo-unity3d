@@ -16,8 +16,8 @@
 
 package consulo.unity3d.shaderlab.lang.psi;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.lang.ASTNode;
 
 /**
@@ -26,7 +26,7 @@ import com.intellij.lang.ASTNode;
  */
 public class ShaderPropertyAttribute extends ShaderLabElement
 {
-	public ShaderPropertyAttribute(@NotNull ASTNode node)
+	public ShaderPropertyAttribute(@Nonnull ASTNode node)
 	{
 		super(node);
 	}

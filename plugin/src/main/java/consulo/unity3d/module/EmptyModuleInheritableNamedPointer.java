@@ -16,8 +16,8 @@
 
 package consulo.unity3d.module;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.openapi.module.Module;
 import consulo.module.extension.ModuleInheritableNamedPointer;
 import consulo.module.extension.MutableModuleInheritableNamedPointer;
@@ -31,7 +31,7 @@ public class EmptyModuleInheritableNamedPointer<T extends Named> implements Muta
 {
 	private static final EmptyModuleInheritableNamedPointer ourInstance = new EmptyModuleInheritableNamedPointer();
 
-	@NotNull
+	@Nonnull
 	@SuppressWarnings("unchecked")
 	public static <T extends Named> EmptyModuleInheritableNamedPointer<T> empty()
 	{

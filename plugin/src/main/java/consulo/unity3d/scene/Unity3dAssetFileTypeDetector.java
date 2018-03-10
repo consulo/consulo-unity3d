@@ -16,8 +16,8 @@
 
 package consulo.unity3d.scene;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.FileTypeRegistry;
 import com.intellij.openapi.util.io.ByteSequence;
@@ -40,7 +40,7 @@ public class Unity3dAssetFileTypeDetector implements FileTypeRegistry.FileTypeDe
 
 	@Nullable
 	@Override
-	public FileType detect(@NotNull VirtualFile file, @NotNull ByteSequence firstBytes, @Nullable CharSequence firstCharsIfText)
+	public FileType detect(@Nonnull VirtualFile file, @Nonnull ByteSequence firstBytes, @Nullable CharSequence firstCharsIfText)
 	{
 		if(ArrayUtil.contains(file.getExtension(), ourAssetExtensions))
 		{

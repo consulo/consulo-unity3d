@@ -16,7 +16,8 @@
 
 package consulo.unity3d.run.before;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.execution.BeforeRunTask;
 import com.intellij.openapi.util.Key;
 
@@ -26,7 +27,7 @@ import com.intellij.openapi.util.Key;
  */
 public class UnityRefreshBeforeRunTask extends BeforeRunTask<UnityRefreshBeforeRunTask>
 {
-	public UnityRefreshBeforeRunTask(@NotNull Key<UnityRefreshBeforeRunTask> providerId)
+	public UnityRefreshBeforeRunTask(@Nonnull Key<UnityRefreshBeforeRunTask> providerId)
 	{
 		super(providerId);
 	}

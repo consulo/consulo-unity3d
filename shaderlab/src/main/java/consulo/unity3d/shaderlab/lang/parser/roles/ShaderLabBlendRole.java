@@ -16,7 +16,7 @@
 
 package consulo.unity3d.shaderlab.lang.parser.roles;
 
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 import com.intellij.lang.PsiBuilder;
 import consulo.unity3d.shaderlab.lang.parser.ShaderLabParser;
 import consulo.unity3d.shaderlab.lang.parser.ShaderLabParserBuilder;

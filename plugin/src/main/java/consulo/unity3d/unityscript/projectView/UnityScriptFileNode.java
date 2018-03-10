@@ -16,7 +16,7 @@
 
 package consulo.unity3d.unityscript.projectView;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.intellij.ide.projectView.PresentationData;
 import com.intellij.ide.projectView.ViewSettings;
 import com.intellij.ide.projectView.impl.nodes.PsiFileNode;
@@ -36,7 +36,7 @@ public class UnityScriptFileNode extends PsiFileNode
 {
 	private static final Logger LOGGER = Logger.getInstance(UnityScriptFileNode.class);
 
-	public UnityScriptFileNode(Project project, @NotNull PsiFile value, ViewSettings viewSettings)
+	public UnityScriptFileNode(Project project, @Nonnull PsiFile value, ViewSettings viewSettings)
 	{
 		super(project, value, viewSettings);
 	}

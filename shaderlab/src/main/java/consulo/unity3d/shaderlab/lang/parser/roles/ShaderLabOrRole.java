@@ -20,8 +20,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.intellij.lang.PsiBuilder;
 import com.intellij.util.ArrayUtilRt;
 import consulo.unity3d.shaderlab.lang.parser.ShaderLabParserBuilder;
@@ -47,7 +48,7 @@ public class ShaderLabOrRole extends ShaderLabValueRole
 		myRoles = roles;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String[] getValues()
 	{
@@ -72,7 +73,7 @@ public class ShaderLabOrRole extends ShaderLabValueRole
 	}
 
 	@Override
-	public PsiBuilder.Marker parseAndDone(ShaderLabParserBuilder builder, @NotNull PsiBuilder.Marker mark)
+	public PsiBuilder.Marker parseAndDone(ShaderLabParserBuilder builder, @Nonnull PsiBuilder.Marker mark)
 	{
 		for(ShaderLabRole role : myRoles)
 		{
@@ -89,7 +90,7 @@ public class ShaderLabOrRole extends ShaderLabValueRole
 	}
 
 	@Override
-	public boolean isMyValue(@NotNull ShaderLabParserBuilder builder)
+	public boolean isMyValue(@Nonnull ShaderLabParserBuilder builder)
 	{
 		for(ShaderLabRole role : myRoles)
 		{

@@ -16,7 +16,8 @@
 
 package consulo.unity3d.run.test;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionResult;
 import com.intellij.execution.configurations.RunProfile;
@@ -38,7 +39,7 @@ import consulo.unity3d.run.debugger.UnityProcess;
  */
 public class Unity3dTestDebuggerRunner extends DefaultProgramRunner
 {
-	@NotNull
+	@Nonnull
 	@Override
 	public String getRunnerId()
 	{
@@ -47,7 +48,7 @@ public class Unity3dTestDebuggerRunner extends DefaultProgramRunner
 
 	@Override
 	@RequiredDispatchThread
-	protected RunContentDescriptor doExecute(@NotNull RunProfileState state, @NotNull ExecutionEnvironment env) throws ExecutionException
+	protected RunContentDescriptor doExecute(@Nonnull RunProfileState state, @Nonnull ExecutionEnvironment env) throws ExecutionException
 	{
 		UnityProcess editorProcess = UnityEditorCommunication.findEditorProcess();
 		if(editorProcess == null)
@@ -65,7 +66,7 @@ public class Unity3dTestDebuggerRunner extends DefaultProgramRunner
 	}
 
 	@Override
-	public boolean canRun(@NotNull String executorId, @NotNull RunProfile profile)
+	public boolean canRun(@Nonnull String executorId, @Nonnull RunProfile profile)
 	{
 		if(!DefaultDebugExecutor.EXECUTOR_ID.equals(executorId))
 		{

@@ -21,10 +21,10 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Nonnull;
 import javax.swing.Icon;
 import javax.swing.JList;
 
-import org.jetbrains.annotations.NotNull;
 import com.intellij.codeInsight.daemon.GutterIconNavigationHandler;
 import com.intellij.codeInsight.daemon.impl.PsiElementListNavigator;
 import com.intellij.icons.AllIcons;
@@ -73,7 +73,7 @@ public enum Unity3dAssetCSharpLineMarker
 {
 	Type(CSharpTypeDeclaration.class, Unity3dIcons.Unity3dLineMarker)
 			{
-				@NotNull
+				@Nonnull
 				@Override
 				public GutterIconNavigationHandler<PsiElement> createNavigationHandler()
 				{
@@ -107,7 +107,7 @@ public enum Unity3dAssetCSharpLineMarker
 									return new ColoredListCellRenderer<UnityAssetWrapper>()
 									{
 										@Override
-										protected void customizeCellRenderer(@NotNull JList<? extends UnityAssetWrapper> jList, UnityAssetWrapper unityAssetWrapper, int i, boolean b, boolean b1)
+										protected void customizeCellRenderer(@Nonnull JList<? extends UnityAssetWrapper> jList, UnityAssetWrapper unityAssetWrapper, int i, boolean b, boolean b1)
 										{
 											setIcon(UnityShaderIcons.Shader);
 
@@ -122,7 +122,7 @@ public enum Unity3dAssetCSharpLineMarker
 									return new ColoredListCellRenderer<UnityAssetWrapper>()
 									{
 										@Override
-										protected void customizeCellRenderer(@NotNull JList<? extends UnityAssetWrapper> jList, UnityAssetWrapper unityAssetWrapper, int i, boolean b, boolean b1)
+										protected void customizeCellRenderer(@Nonnull JList<? extends UnityAssetWrapper> jList, UnityAssetWrapper unityAssetWrapper, int i, boolean b, boolean b1)
 										{
 											String relativePath = VfsUtil.getRelativePath(unityAssetWrapper.getVirtualFile(), type.getProject().getBaseDir());
 
@@ -135,7 +135,7 @@ public enum Unity3dAssetCSharpLineMarker
 					};
 				}
 
-				@NotNull
+				@Nonnull
 				@Override
 				public Function<PsiElement, String> createTooltipFunction()
 				{
@@ -144,7 +144,7 @@ public enum Unity3dAssetCSharpLineMarker
 
 				@RequiredReadAction
 				@Override
-				public boolean isAvailable(@NotNull PsiElement element)
+				public boolean isAvailable(@Nonnull PsiElement element)
 				{
 					if(!Unity3dAssetUtil.isPrimaryType(element))
 					{
@@ -157,7 +157,7 @@ public enum Unity3dAssetCSharpLineMarker
 			},
 	Field(CSharpFieldDeclaration.class, AllIcons.Actions.New)
 			{
-				@NotNull
+				@Nonnull
 				@Override
 				public GutterIconNavigationHandler<PsiElement> createNavigationHandler()
 				{
@@ -217,7 +217,7 @@ public enum Unity3dAssetCSharpLineMarker
 									{
 										@Override
 										@RequiredDispatchThread
-										protected void customizeCellRenderer(@NotNull JList<? extends UnityAssetWrapper> jList, UnityAssetWrapper unityAssetWrapper, int i, boolean b, boolean b1)
+										protected void customizeCellRenderer(@Nonnull JList<? extends UnityAssetWrapper> jList, UnityAssetWrapper unityAssetWrapper, int i, boolean b, boolean b1)
 										{
 											setIcon(UnityShaderIcons.Shader);
 
@@ -322,7 +322,7 @@ public enum Unity3dAssetCSharpLineMarker
 									return new ColoredListCellRenderer<UnityAssetWrapper>()
 									{
 										@Override
-										protected void customizeCellRenderer(@NotNull JList<? extends UnityAssetWrapper> jList, UnityAssetWrapper unityAssetWrapper, int i, boolean b, boolean b1)
+										protected void customizeCellRenderer(@Nonnull JList<? extends UnityAssetWrapper> jList, UnityAssetWrapper unityAssetWrapper, int i, boolean b, boolean b1)
 										{
 											String relativePath = VfsUtil.getRelativePath(unityAssetWrapper.getVirtualFile(), field.getProject().getBaseDir());
 
@@ -336,7 +336,7 @@ public enum Unity3dAssetCSharpLineMarker
 					};
 				}
 
-				@NotNull
+				@Nonnull
 				@Override
 				public Function<PsiElement, String> createTooltipFunction()
 				{
@@ -345,7 +345,7 @@ public enum Unity3dAssetCSharpLineMarker
 
 				@RequiredReadAction
 				@Override
-				public boolean isAvailable(@NotNull PsiElement element)
+				public boolean isAvailable(@Nonnull PsiElement element)
 				{
 					CSharpFieldDeclaration field = (CSharpFieldDeclaration) element;
 					if(!Unity3dAssetUtil.isPrimaryType(field.getParent()))
@@ -389,24 +389,24 @@ public enum Unity3dAssetCSharpLineMarker
 		myIcon = icon;
 	}
 
-	@NotNull
+	@Nonnull
 	public Icon getIcon()
 	{
 		return myIcon;
 	}
 
-	@NotNull
+	@Nonnull
 	public Class<? extends PsiElement> getElementClass()
 	{
 		return myElementClass;
 	}
 
-	@NotNull
+	@Nonnull
 	public abstract GutterIconNavigationHandler<PsiElement> createNavigationHandler();
 
-	@NotNull
+	@Nonnull
 	public abstract Function<PsiElement, String> createTooltipFunction();
 
 	@RequiredReadAction
-	public abstract boolean isAvailable(@NotNull PsiElement element);
+	public abstract boolean isAvailable(@Nonnull PsiElement element);
 }

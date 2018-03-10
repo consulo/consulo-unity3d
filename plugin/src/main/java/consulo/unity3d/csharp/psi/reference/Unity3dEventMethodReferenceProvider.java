@@ -16,7 +16,7 @@
 
 package consulo.unity3d.csharp.psi.reference;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.intellij.patterns.PsiElementPattern;
 import com.intellij.patterns.StandardPatterns;
 import com.intellij.psi.PsiElement;
@@ -64,10 +64,10 @@ public class Unity3dEventMethodReferenceProvider extends PsiReferenceContributor
 
 		registrar.registerReferenceProvider(pattern, new PsiReferenceProvider()
 		{
-			@NotNull
+			@Nonnull
 			@Override
 			@RequiredReadAction
-			public PsiReference[] getReferencesByElement(@NotNull PsiElement psiElement, @NotNull ProcessingContext processingContext)
+			public PsiReference[] getReferencesByElement(@Nonnull PsiElement psiElement, @Nonnull ProcessingContext processingContext)
 			{
 				CSharpConstantExpressionImpl constantExpression = (CSharpConstantExpressionImpl) psiElement;
 				// accept only strings

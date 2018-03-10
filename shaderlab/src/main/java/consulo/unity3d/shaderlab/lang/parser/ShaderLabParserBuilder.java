@@ -16,7 +16,7 @@
 
 package consulo.unity3d.shaderlab.lang.parser;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.impl.PsiBuilderAdapter;
 import com.intellij.psi.tree.IElementType;
@@ -35,7 +35,7 @@ public class ShaderLabParserBuilder extends PsiBuilderAdapter
 		super(delegate);
 	}
 
-	public boolean is(@NotNull ShaderLabRole role)
+	public boolean is(@Nonnull ShaderLabRole role)
 	{
 		IElementType tokenType = getTokenType();
 		String tokenText = getTokenText();

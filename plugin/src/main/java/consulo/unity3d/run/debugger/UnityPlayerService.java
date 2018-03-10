@@ -31,7 +31,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.diagnostic.Logger;
@@ -45,7 +45,7 @@ public class UnityPlayerService implements ApplicationComponent
 {
 	private static final Logger LOGGER = Logger.getInstance(UnityPlayerService.class);
 
-	@NotNull
+	@Nonnull
 	public static UnityPlayerService getInstance()
 	{
 		return ApplicationManager.getApplication().getComponent(UnityPlayerService.class);
@@ -160,13 +160,13 @@ public class UnityPlayerService implements ApplicationComponent
 		}
 	}
 
-	@NotNull
+	@Nonnull
 	public Collection<UnityPlayer> getPlayers()
 	{
 		return myPlayers.values();
 	}
 
-	public void addPlayer(@NotNull UnityPlayer player)
+	public void addPlayer(@Nonnull UnityPlayer player)
 	{
 		UnityPlayer otherPlayer = myPlayers.get(player);
 		if(otherPlayer != null)

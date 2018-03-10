@@ -16,8 +16,8 @@
 
 package consulo.unity3d.module;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import consulo.annotations.RequiredReadAction;
@@ -31,14 +31,14 @@ public class Unity3dModuleExtensionUtil
 {
 	@Nullable
 	@RequiredReadAction
-	public static Module getRootModule(@NotNull Project project)
+	public static Module getRootModule(@Nonnull Project project)
 	{
 		return Unity3dProjectService.getInstance(project).getRootModule();
 	}
 
 	@Nullable
 	@RequiredReadAction
-	public static Unity3dRootModuleExtension getRootModuleExtension(@NotNull Project project)
+	public static Unity3dRootModuleExtension getRootModuleExtension(@Nonnull Project project)
 	{
 		return Unity3dProjectService.getInstance(project).getRootModuleExtension();
 	}

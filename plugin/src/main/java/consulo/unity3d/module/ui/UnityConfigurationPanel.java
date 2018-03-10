@@ -21,7 +21,7 @@ import java.util.List;
 import javax.swing.JPanel;
 import javax.swing.event.DocumentEvent;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.intellij.openapi.ui.InputValidator;
 import com.intellij.openapi.ui.LabeledComponent;
 import com.intellij.openapi.ui.Messages;
@@ -77,7 +77,7 @@ public class UnityConfigurationPanel extends JPanel
 			}
 
 			@Override
-			public void remove(@NotNull final String element)
+			public void remove(@Nonnull final String element)
 			{
 				int i = variables.indexOf(element);
 				variables.remove(element);

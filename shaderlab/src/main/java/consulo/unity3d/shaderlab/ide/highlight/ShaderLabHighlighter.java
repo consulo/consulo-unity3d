@@ -19,7 +19,8 @@ package consulo.unity3d.shaderlab.ide.highlight;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
@@ -47,14 +48,14 @@ public class ShaderLabHighlighter extends SyntaxHighlighterBase
 		safeMap(ourMap, ShaderLabTokenSets.KEYWORDS, DefaultLanguageHighlighterColors.KEYWORD);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public Lexer getHighlightingLexer()
 	{
 		return new ShaderLabLexer();
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public TextAttributesKey[] getTokenHighlights(IElementType tokenType)
 	{

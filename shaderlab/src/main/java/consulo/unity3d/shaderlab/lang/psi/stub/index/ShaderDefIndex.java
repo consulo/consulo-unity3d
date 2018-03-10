@@ -16,7 +16,8 @@
 
 package consulo.unity3d.shaderlab.lang.psi.stub.index;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.psi.stubs.StringStubIndexExtension;
 import com.intellij.psi.stubs.StubIndexKey;
 import consulo.unity3d.shaderlab.lang.psi.ShaderDef;
@@ -27,7 +28,7 @@ import consulo.unity3d.shaderlab.lang.psi.ShaderDef;
  */
 public class ShaderDefIndex extends StringStubIndexExtension<ShaderDef>
 {
-	@NotNull
+	@Nonnull
 	public static ShaderDefIndex getInstance()
 	{
 		return EP_NAME.findExtension(ShaderDefIndex.class);
@@ -35,7 +36,7 @@ public class ShaderDefIndex extends StringStubIndexExtension<ShaderDef>
 
 	public static final StubIndexKey<String, ShaderDef> KEY = StubIndexKey.createIndexKey("shader.def.key");
 
-	@NotNull
+	@Nonnull
 	@Override
 	public StubIndexKey<String, ShaderDef> getKey()
 	{

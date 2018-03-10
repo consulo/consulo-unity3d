@@ -18,7 +18,8 @@ package consulo.unity3d.jsonApi;
 
 import java.util.UUID;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.testframework.sm.runner.GeneralTestEventsProcessor;
 import com.intellij.execution.testframework.sm.runner.events.TestFailedEvent;
@@ -44,9 +45,9 @@ public class UnityTestStatePostHandler extends JsonPostRequestHandler<UnityTestS
 		super("unityTestState", UnityTestStatePostRequest.class);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public JsonResponse handle(@NotNull UnityTestStatePostRequest request)
+	public JsonResponse handle(@Nonnull UnityTestStatePostRequest request)
 	{
 		UUID uuid = UUID.fromString(request.uuid);
 		Unity3dTestSession session = Unity3dTestSessionManager.getInstance().findSession(uuid);

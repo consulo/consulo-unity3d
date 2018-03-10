@@ -18,7 +18,7 @@ package consulo.unity3d.run.debugger;
 
 import java.util.regex.Matcher;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.intellij.openapi.util.text.StringUtil;
 
 /**
@@ -37,7 +37,7 @@ public class UnityPlayer
 
 	private long myLastUpdateTime;
 
-	public UnityPlayer(@NotNull Matcher matcher)
+	public UnityPlayer(@Nonnull Matcher matcher)
 	{
 		myIp = matcher.group("ip");
 		myId = matcher.group("id");

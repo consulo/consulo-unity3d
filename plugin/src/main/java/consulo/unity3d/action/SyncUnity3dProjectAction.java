@@ -16,7 +16,8 @@
 
 package consulo.unity3d.action;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
@@ -42,7 +43,7 @@ public class SyncUnity3dProjectAction extends AnAction
 
 	@Override
 	@RequiredDispatchThread
-	public void actionPerformed(@NotNull AnActionEvent anActionEvent)
+	public void actionPerformed(@Nonnull AnActionEvent anActionEvent)
 	{
 		final Project project = anActionEvent.getProject();
 		if(project == null)
@@ -60,7 +61,7 @@ public class SyncUnity3dProjectAction extends AnAction
 
 	@RequiredDispatchThread
 	@Override
-	public void update(@NotNull AnActionEvent e)
+	public void update(@Nonnull AnActionEvent e)
 	{
 		Presentation presentation = e.getPresentation();
 		Project project = e.getProject();

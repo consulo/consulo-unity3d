@@ -16,7 +16,7 @@
 
 package consulo.unity3d.csharp.module.extension;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import consulo.csharp.module.extension.CSharpSimpleMutableModuleExtension;
 import consulo.roots.ModuleRootLayer;
 
@@ -27,7 +27,7 @@ import consulo.roots.ModuleRootLayer;
 public class Unity3dCSharpMutableModuleExtension extends Unity3dCSharpModuleExtension implements
 		CSharpSimpleMutableModuleExtension<Unity3dCSharpModuleExtension>
 {
-	public Unity3dCSharpMutableModuleExtension(@NotNull String id, @NotNull ModuleRootLayer module)
+	public Unity3dCSharpMutableModuleExtension(@Nonnull String id, @Nonnull ModuleRootLayer module)
 	{
 		super(id, module);
 	}
@@ -39,7 +39,7 @@ public class Unity3dCSharpMutableModuleExtension extends Unity3dCSharpModuleExte
 	}
 
 	@Override
-	public boolean isModified(@NotNull Unity3dCSharpModuleExtension mutableModuleExtension)
+	public boolean isModified(@Nonnull Unity3dCSharpModuleExtension mutableModuleExtension)
 	{
 		return isEnabled() != mutableModuleExtension.isEnabled() ||
 				!myLanguageVersionPointer.equals(mutableModuleExtension.getLanguageVersionPointer());

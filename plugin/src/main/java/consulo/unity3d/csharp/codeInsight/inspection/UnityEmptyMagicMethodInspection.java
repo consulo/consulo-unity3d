@@ -16,8 +16,9 @@
 
 package consulo.unity3d.csharp.codeInsight.inspection;
 
+import javax.annotation.Nonnull;
+
 import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NotNull;
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.codeInspection.LocalQuickFixOnPsiElement;
 import com.intellij.codeInspection.ProblemsHolder;
@@ -43,12 +44,12 @@ public class UnityEmptyMagicMethodInspection extends LocalInspectionTool
 {
 	public static class RemoveMethodFix extends LocalQuickFixOnPsiElement
 	{
-		public RemoveMethodFix(@NotNull CSharpMethodDeclaration declaration)
+		public RemoveMethodFix(@Nonnull CSharpMethodDeclaration declaration)
 		{
 			super(declaration);
 		}
 
-		@NotNull
+		@Nonnull
 		@Override
 		public String getText()
 		{
@@ -56,7 +57,7 @@ public class UnityEmptyMagicMethodInspection extends LocalInspectionTool
 		}
 
 		@Nls
-		@NotNull
+		@Nonnull
 		@Override
 		public String getFamilyName()
 		{
@@ -64,15 +65,15 @@ public class UnityEmptyMagicMethodInspection extends LocalInspectionTool
 		}
 
 		@Override
-		public void invoke(@NotNull Project project, @NotNull PsiFile psiFile, @NotNull PsiElement psiElement, @NotNull PsiElement psiElement1)
+		public void invoke(@Nonnull Project project, @Nonnull PsiFile psiFile, @Nonnull PsiElement psiElement, @Nonnull PsiElement psiElement1)
 		{
 			WriteAction.run(psiElement::delete);
 		}
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly)
+	public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder, boolean isOnTheFly)
 	{
 		if(Unity3dModuleExtensionUtil.getRootModule(holder.getProject()) == null)
 		{

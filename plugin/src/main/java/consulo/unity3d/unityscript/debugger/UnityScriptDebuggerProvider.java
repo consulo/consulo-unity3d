@@ -18,8 +18,9 @@ package consulo.unity3d.unityscript.debugger;
 
 import java.util.Set;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.intellij.lang.Language;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.project.Project;
@@ -42,35 +43,35 @@ import consulo.unity3d.unityscript.lang.UnityScriptLanguageVersion;
  */
 public class UnityScriptDebuggerProvider extends DotNetDebuggerProvider
 {
-	@NotNull
+	@Nonnull
 	@Override
-	public PsiFile createExpressionCodeFragment(@NotNull Project project, @NotNull PsiElement element, @NotNull String s, boolean b)
+	public PsiFile createExpressionCodeFragment(@Nonnull Project project, @Nonnull PsiElement element, @Nonnull String s, boolean b)
 	{
 		throw new IllegalArgumentException();
 	}
 
 	@Override
-	public void evaluate(@NotNull DotNetStackFrameProxy stackFrameMirror,
-			@NotNull DotNetDebugContext context,
-			@NotNull String s,
+	public void evaluate(@Nonnull DotNetStackFrameProxy stackFrameMirror,
+			@Nonnull DotNetDebugContext context,
+			@Nonnull String s,
 			@Nullable PsiElement element,
-			@NotNull XDebuggerEvaluator.XEvaluationCallback callback,
+			@Nonnull XDebuggerEvaluator.XEvaluationCallback callback,
 			@Nullable XSourcePosition sourcePosition)
 	{
 		callback.errorOccurred("UnityScript evaluation is not supported");
 	}
 
 	@Override
-	public void evaluate(@NotNull DotNetStackFrameProxy stackFrameMirror,
-			@NotNull DotNetDebugContext dotNetDebugContext,
-			@NotNull DotNetReferenceExpression dotNetReferenceExpression,
-			@NotNull Set<Object> set,
-			@NotNull Consumer<XNamedValue> consumer)
+	public void evaluate(@Nonnull DotNetStackFrameProxy stackFrameMirror,
+			@Nonnull DotNetDebugContext dotNetDebugContext,
+			@Nonnull DotNetReferenceExpression dotNetReferenceExpression,
+			@Nonnull Set<Object> set,
+			@Nonnull Consumer<XNamedValue> consumer)
 	{
 	}
 
 	@Override
-	public boolean isSupported(@NotNull PsiFile psiFile)
+	public boolean isSupported(@Nonnull PsiFile psiFile)
 	{
 		return psiFile instanceof JSFile && psiFile.getLanguageVersion() instanceof UnityScriptLanguageVersion;
 	}

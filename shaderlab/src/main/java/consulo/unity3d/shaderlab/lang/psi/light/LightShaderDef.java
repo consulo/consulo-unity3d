@@ -21,9 +21,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Nonnull;
+
 import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nullable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.text.StringUtil;
@@ -47,8 +49,8 @@ public class LightShaderDef extends LightElement implements ShaderDef
 {
 	private static final Key<Map<String, ShaderDef>> ourKey = Key.create("getDefaultShaders");
 
-	@NotNull
-	public static Map<String, ShaderDef> getDefaultShaders(@NotNull Project project)
+	@Nonnull
+	public static Map<String, ShaderDef> getDefaultShaders(@Nonnull Project project)
 	{
 		Map<String, ShaderDef> data = project.getUserData(ourKey);
 		if(data != null)
@@ -112,7 +114,7 @@ public class LightShaderDef extends LightElement implements ShaderDef
 
 	private final String myName;
 
-	public LightShaderDef(@NotNull Project project, @NotNull String name)
+	public LightShaderDef(@Nonnull Project project, @Nonnull String name)
 	{
 		super(PsiManager.getInstance(project), ShaderLabLanguage.INSTANCE);
 		myName = name;
@@ -131,7 +133,7 @@ public class LightShaderDef extends LightElement implements ShaderDef
 		return myName;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public List<ShaderProperty> getProperties()
 	{
@@ -148,7 +150,7 @@ public class LightShaderDef extends LightElement implements ShaderDef
 
 	@RequiredWriteAction
 	@Override
-	public PsiElement setName(@NonNls @NotNull String s) throws IncorrectOperationException
+	public PsiElement setName(@NonNls @Nonnull String s) throws IncorrectOperationException
 	{
 		return null;
 	}

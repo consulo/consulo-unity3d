@@ -19,9 +19,10 @@ package consulo.unity3d.module;
 import java.io.File;
 import java.util.List;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkType;
 import com.intellij.openapi.util.SystemInfo;
@@ -48,12 +49,12 @@ public class Unity3dRootModuleExtension extends BaseDotNetSimpleModuleExtension<
 {
 	protected String myNamespacePrefix = null;
 
-	public Unity3dRootModuleExtension(@NotNull String id, @NotNull ModuleRootLayer rootModel)
+	public Unity3dRootModuleExtension(@Nonnull String id, @Nonnull ModuleRootLayer rootModel)
 	{
 		super(id, rootModel);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public DotNetNamespaceGeneratePolicy getNamespaceGeneratePolicy()
 	{
@@ -62,14 +63,14 @@ public class Unity3dRootModuleExtension extends BaseDotNetSimpleModuleExtension<
 
 	@RequiredReadAction
 	@Override
-	public void commit(@NotNull Unity3dRootModuleExtension mutableModuleExtension)
+	public void commit(@Nonnull Unity3dRootModuleExtension mutableModuleExtension)
 	{
 		super.commit(mutableModuleExtension);
 		myNamespacePrefix = mutableModuleExtension.myNamespacePrefix;
 	}
 
 	@Override
-	protected void getStateImpl(@NotNull Element element)
+	protected void getStateImpl(@Nonnull Element element)
 	{
 		super.getStateImpl(element);
 		if(myNamespacePrefix != null)
@@ -80,7 +81,7 @@ public class Unity3dRootModuleExtension extends BaseDotNetSimpleModuleExtension<
 
 	@RequiredReadAction
 	@Override
-	protected void loadStateImpl(@NotNull Element element)
+	protected void loadStateImpl(@Nonnull Element element)
 	{
 		super.loadStateImpl(element);
 		myNamespacePrefix = element.getAttributeValue("namespace-prefix");
@@ -98,7 +99,7 @@ public class Unity3dRootModuleExtension extends BaseDotNetSimpleModuleExtension<
 		return false;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public File[] getFilesForLibraries()
 	{
@@ -132,8 +133,8 @@ public class Unity3dRootModuleExtension extends BaseDotNetSimpleModuleExtension<
 		return array;
 	}
 
-	@NotNull
-	private List<String> getPathsForLibraries(String homePath, @NotNull Sdk sdk)
+	@Nonnull
+	private List<String> getPathsForLibraries(String homePath, @Nonnull Sdk sdk)
 	{
 		Version version = Unity3dProjectImportUtil.parseVersion(sdk.getVersionString());
 
@@ -195,7 +196,7 @@ public class Unity3dRootModuleExtension extends BaseDotNetSimpleModuleExtension<
 		return list;
 	}
 
-	private static void addUnityExtensions(List<String> list, @NotNull Version version, String baseDir)
+	private static void addUnityExtensions(List<String> list, @Nonnull Version version, String baseDir)
 	{
 		VirtualFile dir = LocalFileSystem.getInstance().findFileByPath(baseDir);
 		if(dir == null)
@@ -212,7 +213,7 @@ public class Unity3dRootModuleExtension extends BaseDotNetSimpleModuleExtension<
 		}
 	}
 
-	private static void addUnityExtension(List<String> list, @NotNull VirtualFile dir, @NotNull Version version)
+	private static void addUnityExtension(List<String> list, @Nonnull VirtualFile dir, @Nonnull Version version)
 	{
 		// UnityUI 4.6.X specific
 		// {EXTENSION_NAME}/{VERSION}/{LIBRARY}
@@ -252,7 +253,7 @@ public class Unity3dRootModuleExtension extends BaseDotNetSimpleModuleExtension<
 		}
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public Class<? extends SdkType> getSdkTypeClass()
 	{

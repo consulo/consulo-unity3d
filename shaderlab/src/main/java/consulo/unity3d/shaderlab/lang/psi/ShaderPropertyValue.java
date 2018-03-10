@@ -18,7 +18,8 @@ package consulo.unity3d.shaderlab.lang.psi;
 
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
@@ -29,12 +30,12 @@ import com.intellij.psi.tree.IElementType;
  */
 public class ShaderPropertyValue extends ShaderLabElement
 {
-	public ShaderPropertyValue(@NotNull ASTNode node)
+	public ShaderPropertyValue(@Nonnull ASTNode node)
 	{
 		super(node);
 	}
 
-	@NotNull
+	@Nonnull
 	public List<PsiElement> getElements(IElementType elementType)
 	{
 		return findChildrenByType(elementType);

@@ -20,8 +20,9 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.intellij.lang.Language;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.progress.ProgressManager;
@@ -42,14 +43,14 @@ public class UnityScriptRootNamespaceAsElement extends BaseDotNetNamespaceAsElem
 {
 	private static final DotNetNamespaceCacheManager.ItemCalculator ourElementsCalculator = new DotNetNamespaceCacheManager.ItemCalculator()
 	{
-		@NotNull
+		@Nonnull
 		@Override
 		@RequiredReadAction
-		public Set<PsiElement> compute(@NotNull final Project project,
+		public Set<PsiElement> compute(@Nonnull final Project project,
 				@Nullable final IndexBasedDotNetPsiSearcher searcher,
-				@NotNull final String indexKey,
-				@NotNull final String thisQName,
-				@NotNull final GlobalSearchScope scope)
+				@Nonnull final String indexKey,
+				@Nonnull final String thisQName,
+				@Nonnull final GlobalSearchScope scope)
 		{
 			Set<PsiElement> elements = new LinkedHashSet<>();
 			Collection<String> keys = UnityScriptFileByNameIndex.getInstance().getAllKeys(project);
@@ -65,7 +66,7 @@ public class UnityScriptRootNamespaceAsElement extends BaseDotNetNamespaceAsElem
 			return elements;
 		}
 
-		@NotNull
+		@Nonnull
 		@Override
 		public ChildrenFilter getFilter()
 		{
@@ -73,15 +74,15 @@ public class UnityScriptRootNamespaceAsElement extends BaseDotNetNamespaceAsElem
 		}
 	};
 
-	public UnityScriptRootNamespaceAsElement(@NotNull Project project, @NotNull Language language, @NotNull String qName)
+	public UnityScriptRootNamespaceAsElement(@Nonnull Project project, @Nonnull Language language, @Nonnull String qName)
 	{
 		super(project, language, qName);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	@RequiredReadAction
-	protected Set<? extends PsiElement> getOnlyElements(@NotNull GlobalSearchScope globalSearchScope)
+	protected Set<? extends PsiElement> getOnlyElements(@Nonnull GlobalSearchScope globalSearchScope)
 	{
 		return DotNetNamespaceCacheManager.getInstance(myProject).computeElements(null, this, myQName, myQName, globalSearchScope, ourElementsCalculator);
 	}

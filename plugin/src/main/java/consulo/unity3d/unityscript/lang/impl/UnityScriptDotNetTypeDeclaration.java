@@ -17,8 +17,8 @@
 package consulo.unity3d.unityscript.lang.impl;
 
 import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.lang.javascript.JavaScriptFileType;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.psi.PsiElement;
@@ -49,7 +49,7 @@ public class UnityScriptDotNetTypeDeclaration extends LightElement implements Do
 	private JSFile myFile;
 
 	@RequiredReadAction
-	public UnityScriptDotNetTypeDeclaration(@NotNull String nameWithoutExtension, @NotNull JSFile file)
+	public UnityScriptDotNetTypeDeclaration(@Nonnull String nameWithoutExtension, @Nonnull JSFile file)
 	{
 		super(file.getManager(), file.getLanguage());
 		myNameWithoutExtension = nameWithoutExtension;
@@ -88,7 +88,7 @@ public class UnityScriptDotNetTypeDeclaration extends LightElement implements Do
 	}
 
 	@RequiredReadAction
-	@NotNull
+	@Nonnull
 	@Override
 	public DotNetTypeRef[] getExtendTypeRefs()
 	{
@@ -97,12 +97,12 @@ public class UnityScriptDotNetTypeDeclaration extends LightElement implements Do
 
 	@RequiredReadAction
 	@Override
-	public boolean isInheritor(@NotNull String qname, boolean deep)
+	public boolean isInheritor(@Nonnull String qname, boolean deep)
 	{
 		return DotNetInheritUtil.isInheritor(this, qname, deep);
 	}
 
-	@NotNull
+	@Nonnull
 	@RequiredReadAction
 	@Override
 	public DotNetTypeRef getTypeRefForEnumConstants()
@@ -140,7 +140,7 @@ public class UnityScriptDotNetTypeDeclaration extends LightElement implements Do
 		return null;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public DotNetGenericParameter[] getGenericParameters()
 	{
@@ -154,7 +154,7 @@ public class UnityScriptDotNetTypeDeclaration extends LightElement implements Do
 	}
 
 	@RequiredReadAction
-	@NotNull
+	@Nonnull
 	@Override
 	public DotNetNamedElement[] getMembers()
 	{
@@ -163,7 +163,7 @@ public class UnityScriptDotNetTypeDeclaration extends LightElement implements Do
 
 	@RequiredReadAction
 	@Override
-	public boolean hasModifier(@NotNull DotNetModifier dotNetModifier)
+	public boolean hasModifier(@Nonnull DotNetModifier dotNetModifier)
 	{
 		if(dotNetModifier == DotNetModifier.PUBLIC)
 		{
@@ -212,7 +212,7 @@ public class UnityScriptDotNetTypeDeclaration extends LightElement implements Do
 
 	@RequiredWriteAction
 	@Override
-	public PsiElement setName(@NonNls @NotNull String name) throws IncorrectOperationException
+	public PsiElement setName(@NonNls @Nonnull String name) throws IncorrectOperationException
 	{
 		myFile.setName(name + "." + JavaScriptFileType.INSTANCE.getDefaultExtension());
 		return this;
@@ -224,7 +224,7 @@ public class UnityScriptDotNetTypeDeclaration extends LightElement implements Do
 		return myFile.isValid();
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public PsiElement getNavigationElement()
 	{

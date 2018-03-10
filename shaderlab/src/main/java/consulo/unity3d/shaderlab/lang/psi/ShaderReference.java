@@ -20,8 +20,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.icons.AllIcons;
@@ -66,12 +66,12 @@ public class ShaderReference extends ShaderLabElement implements PsiQualifiedRef
 
 	private static final TokenSet ourTokens = TokenSet.create(ShaderLabTokens.IDENTIFIER, ShaderLabTokens.STRING_LITERAL);
 
-	public ShaderReference(@NotNull ASTNode node)
+	public ShaderReference(@Nonnull ASTNode node)
 	{
 		super(node);
 	}
 
-	@NotNull
+	@Nonnull
 	public ResolveKind kind()
 	{
 		PsiElement parent = getParent();
@@ -112,14 +112,14 @@ public class ShaderReference extends ShaderLabElement implements PsiQualifiedRef
 		return this;
 	}
 
-	@NotNull
+	@Nonnull
 	@RequiredReadAction
 	public PsiElement getReferenceElement()
 	{
 		return findNotNullChildByType(ourTokens);
 	}
 
-	@NotNull
+	@Nonnull
 	@RequiredReadAction
 	@Override
 	public TextRange getRangeInElement()
@@ -187,7 +187,7 @@ public class ShaderReference extends ShaderLabElement implements PsiQualifiedRef
 	}
 
 	@RequiredReadAction
-	@NotNull
+	@Nonnull
 	@Override
 	public String getCanonicalText()
 	{
@@ -204,7 +204,7 @@ public class ShaderReference extends ShaderLabElement implements PsiQualifiedRef
 
 	@RequiredWriteAction
 	@Override
-	public PsiElement bindToElement(@NotNull PsiElement element) throws IncorrectOperationException
+	public PsiElement bindToElement(@Nonnull PsiElement element) throws IncorrectOperationException
 	{
 		return null;
 	}
@@ -217,7 +217,7 @@ public class ShaderReference extends ShaderLabElement implements PsiQualifiedRef
 	}
 
 	@RequiredReadAction
-	@NotNull
+	@Nonnull
 	@Override
 	public Object[] getVariants()
 	{
@@ -246,7 +246,7 @@ public class ShaderReference extends ShaderLabElement implements PsiQualifiedRef
 	}
 
 	@RequiredReadAction
-	public static void consumeProperties(@NotNull ShaderLabFile file, @NotNull Consumer<LookupElement> consumer)
+	public static void consumeProperties(@Nonnull ShaderLabFile file, @Nonnull Consumer<LookupElement> consumer)
 	{
 		for(ShaderProperty shaderProperty : file.getProperties())
 		{

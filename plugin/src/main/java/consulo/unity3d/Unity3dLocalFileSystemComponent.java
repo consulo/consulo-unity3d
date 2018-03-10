@@ -19,8 +19,9 @@ package consulo.unity3d;
 import java.io.File;
 import java.io.IOException;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.vfs.LocalFileOperationsHandler;
@@ -127,7 +128,7 @@ public class Unity3dLocalFileSystemComponent implements ApplicationComponent
 		LocalFileSystem.getInstance().unregisterAuxiliaryFileOperationsHandler(myHandler);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getComponentName()
 	{

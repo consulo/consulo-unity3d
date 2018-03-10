@@ -16,8 +16,9 @@
 
 package consulo.unity3d.unityscript.lang.impl.csharp;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.intellij.lang.Language;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.JSFunction;
@@ -46,13 +47,13 @@ public class UnityScriptToNativeElementTransformer implements ToNativeElementTra
 	@RequiredReadAction
 	@Nullable
 	@Override
-	public PsiElement transform(@NotNull PsiElement psiElement)
+	public PsiElement transform(@Nonnull PsiElement psiElement)
 	{
 		if(psiElement instanceof UnityScriptDotNetTypeDeclaration)
 		{
 			CSharpLightTypeDeclarationBuilder builder = new CSharpLightTypeDeclarationBuilder(psiElement)
 			{
-				@NotNull
+				@Nonnull
 				@Override
 				public Language getLanguage()
 				{

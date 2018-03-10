@@ -20,8 +20,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import org.jetbrains.yaml.psi.YAMLFile;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.components.ServiceManager;
@@ -59,8 +60,8 @@ public class Unity3dMetaManager implements Disposable
 {
 	public static final String GUID_KEY = "guid";
 
-	@NotNull
-	public static Unity3dMetaManager getInstance(@NotNull Project project)
+	@Nonnull
+	public static Unity3dMetaManager getInstance(@Nonnull Project project)
 	{
 		return ServiceManager.getService(project, Unity3dMetaManager.class);
 	}
@@ -76,36 +77,36 @@ public class Unity3dMetaManager implements Disposable
 		VirtualFileManager.getInstance().addVirtualFileListener(new VirtualFileListener()
 		{
 			@Override
-			public void fileMoved(@NotNull VirtualFileMoveEvent event)
+			public void fileMoved(@Nonnull VirtualFileMoveEvent event)
 			{
 				clearIfNeed(event.getFile());
 			}
 
 			@Override
-			public void fileDeleted(@NotNull VirtualFileEvent event)
+			public void fileDeleted(@Nonnull VirtualFileEvent event)
 			{
 				clearIfNeed(event.getFile());
 			}
 
 			@Override
-			public void contentsChanged(@NotNull VirtualFileEvent event)
+			public void contentsChanged(@Nonnull VirtualFileEvent event)
 			{
 				clearIfNeed(event.getFile());
 			}
 
 			@Override
-			public void fileCopied(@NotNull VirtualFileCopyEvent event)
+			public void fileCopied(@Nonnull VirtualFileCopyEvent event)
 			{
 				clearIfNeed(event.getFile());
 			}
 
 			@Override
-			public void propertyChanged(@NotNull VirtualFilePropertyEvent event)
+			public void propertyChanged(@Nonnull VirtualFilePropertyEvent event)
 			{
 				clearIfNeed(event.getFile());
 			}
 
-			private void clearIfNeed(@NotNull VirtualFile virtualFile)
+			private void clearIfNeed(@Nonnull VirtualFile virtualFile)
 			{
 				if(virtualFile.getFileType() == Unity3dMetaFileType.INSTANCE)
 				{
@@ -124,7 +125,7 @@ public class Unity3dMetaManager implements Disposable
 	}
 
 	@Nullable
-	public VirtualFile findFileByGUID(@NotNull String guid)
+	public VirtualFile findFileByGUID(@Nonnull String guid)
 	{
 		List<Integer> values = FileBasedIndex.getInstance().getValues(Unity3dMetaIndexExtension.KEY, guid, GlobalSearchScope.allScope(myProject));
 		if(values.isEmpty())
@@ -135,8 +136,8 @@ public class Unity3dMetaManager implements Disposable
 		return FileBasedIndex.getInstance().findFileById(myProject, values.get(0));
 	}
 
-	@NotNull
-	public MultiMap<VirtualFile, Unity3dYMLAsset> findAssetAsAttach(@NotNull VirtualFile file)
+	@Nonnull
+	public MultiMap<VirtualFile, Unity3dYMLAsset> findAssetAsAttach(@Nonnull VirtualFile file)
 	{
 		String uuid = Unity3dAssetUtil.getGUID(myProject, file);
 		if(uuid == null)
@@ -192,7 +193,7 @@ public class Unity3dMetaManager implements Disposable
 
 	@Nullable
 	@RequiredReadAction
-	public String getGUID(@NotNull VirtualFile virtualFile)
+	public String getGUID(@Nonnull VirtualFile virtualFile)
 	{
 		String name = virtualFile.getName();
 

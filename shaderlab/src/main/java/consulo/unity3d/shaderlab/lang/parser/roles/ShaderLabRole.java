@@ -18,8 +18,9 @@ package consulo.unity3d.shaderlab.lang.parser.roles;
 
 import static consulo.unity3d.shaderlab.lang.parser.ShaderLabParser.doneError;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.intellij.lang.PsiBuilder;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.util.ArrayUtilRt;
@@ -41,7 +42,7 @@ public abstract class ShaderLabRole
 
 	public abstract PsiBuilder.Marker parseAndDone(ShaderLabParserBuilder builder, PsiBuilder.Marker mark);
 
-	@NotNull
+	@Nonnull
 	public ShaderLabRole setName(String name)
 	{
 		if(myName != null)
@@ -52,13 +53,13 @@ public abstract class ShaderLabRole
 		return this;
 	}
 
-	@NotNull
+	@Nonnull
 	public String getName()
 	{
 		return myName;
 	}
 
-	@NotNull
+	@Nonnull
 	public String[] getValues()
 	{
 		return ArrayUtilRt.EMPTY_STRING_ARRAY;
@@ -80,7 +81,7 @@ public abstract class ShaderLabRole
 		return false;
 	}
 
-	protected void doneWithErrorSafe(@NotNull ShaderLabParserBuilder builder, @NotNull String error)
+	protected void doneWithErrorSafe(@Nonnull ShaderLabParserBuilder builder, @Nonnull String error)
 	{
 		IElementType tokenType = builder.getTokenType();
 		if(tokenType == ShaderLabTokens.LBRACE || tokenType == ShaderLabTokens.RBRACE)

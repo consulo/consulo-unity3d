@@ -16,8 +16,9 @@
 
 package consulo.unity3d.shaderlab.lang.parser.roles;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.intellij.lang.PsiBuilder;
 import consulo.unity3d.shaderlab.lang.parser.ShaderLabParserBuilder;
 import consulo.unity3d.shaderlab.lang.psi.ShaderLabElements;
@@ -39,7 +40,7 @@ public class ShaderLabCommaPairRole extends ShaderLabValueRole
 	}
 
 	@Override
-	public PsiBuilder.Marker parseAndDone(ShaderLabParserBuilder builder, @NotNull PsiBuilder.Marker mark)
+	public PsiBuilder.Marker parseAndDone(ShaderLabParserBuilder builder, @Nonnull PsiBuilder.Marker mark)
 	{
 		PsiBuilder.Marker firstMarker = builder.mark();
 		if(myFirstRole.parseAndDone(builder, firstMarker) != null)
@@ -80,7 +81,7 @@ public class ShaderLabCommaPairRole extends ShaderLabValueRole
 	}
 
 	@Override
-	public boolean isMyValue(@NotNull ShaderLabParserBuilder builder)
+	public boolean isMyValue(@Nonnull ShaderLabParserBuilder builder)
 	{
 		return myFirstRole instanceof ShaderLabValueRole && ((ShaderLabValueRole) myFirstRole).isMyValue(builder);
 	}

@@ -20,10 +20,10 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.annotation.Nonnull;
 import javax.swing.Icon;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 import com.intellij.ide.util.projectWizard.ModuleWizardStep;
 import com.intellij.ide.util.projectWizard.WizardContext;
 import com.intellij.openapi.application.WriteAction;
@@ -46,14 +46,14 @@ import consulo.unity3d.projectImport.ui.Unity3dWizardStep;
  */
 public class Unity3dModuleImportProvider implements ModuleImportProvider<UnityModuleImportContext>
 {
-	@NotNull
+	@Nonnull
 	@Override
 	public UnityModuleImportContext createContext()
 	{
 		return new UnityModuleImportContext();
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getName()
 	{
@@ -68,17 +68,17 @@ public class Unity3dModuleImportProvider implements ModuleImportProvider<UnityMo
 	}
 
 	@Override
-	public boolean canImport(@NotNull File fileOrDirectory)
+	public boolean canImport(@Nonnull File fileOrDirectory)
 	{
 		return fileOrDirectory.isDirectory() && new File(fileOrDirectory, "ProjectSettings/ProjectSettings.asset").exists();
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public List<Module> commit(@NotNull UnityModuleImportContext context,
-			@NotNull Project project,
+	public List<Module> commit(@Nonnull UnityModuleImportContext context,
+			@Nonnull Project project,
 			@Nullable ModifiableModuleModel originalModel,
-			@NotNull ModulesProvider modulesProvider,
+			@Nonnull ModulesProvider modulesProvider,
 			@Nullable ModifiableArtifactModel artifactModel)
 	{
 		Sdk unitySdk = context.getSdk();
@@ -99,7 +99,7 @@ public class Unity3dModuleImportProvider implements ModuleImportProvider<UnityMo
 		return Arrays.asList(rootModule);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getFileSample()
 	{
@@ -107,7 +107,7 @@ public class Unity3dModuleImportProvider implements ModuleImportProvider<UnityMo
 	}
 
 	@Override
-	public ModuleWizardStep[] createSteps(@NotNull WizardContext context, @NotNull UnityModuleImportContext moduleImportContext)
+	public ModuleWizardStep[] createSteps(@Nonnull WizardContext context, @Nonnull UnityModuleImportContext moduleImportContext)
 	{
 		return new ModuleWizardStep[]{
 				new Unity3dWizardStep(moduleImportContext, context)

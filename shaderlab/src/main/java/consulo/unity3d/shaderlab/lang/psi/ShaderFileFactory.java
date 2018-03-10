@@ -16,7 +16,8 @@
 
 package consulo.unity3d.shaderlab.lang.psi;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFileFactory;
@@ -28,8 +29,8 @@ import consulo.unity3d.shaderlab.lang.ShaderLabFileType;
  */
 public class ShaderFileFactory
 {
-	@NotNull
-	public static PsiElement createSimpleIdentifier(@NotNull Project project, @NotNull String name)
+	@Nonnull
+	public static PsiElement createSimpleIdentifier(@Nonnull Project project, @Nonnull String name)
 	{
 		ShaderLabFile fileFromText = (ShaderLabFile) PsiFileFactory.getInstance(project).createFileFromText("dummy.shader", ShaderLabFileType.INSTANCE,
 				"Shader \"dummy\" { Properties { " + name + "(\"dummy\", Int) = 1 }}");

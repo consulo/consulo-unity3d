@@ -16,7 +16,7 @@
 
 package consulo.unity3d.unityscript.index;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.psi.stubs.IndexSink;
 import consulo.javascript.index.JavaScriptIndexer;
@@ -29,7 +29,7 @@ import consulo.javascript.psi.stubs.JSFileStub;
 public class UnityScriptIndexer extends JavaScriptIndexer
 {
 	@Override
-	public void indexFile(@NotNull JSFileStub fileStub, @NotNull IndexSink sink)
+	public void indexFile(@Nonnull JSFileStub fileStub, @Nonnull IndexSink sink)
 	{
 		String nameWithoutExtension = FileUtilRt.getNameWithoutExtension(fileStub.getName());
 		sink.occurrence(UnityScriptIndexKeys.FILE_BY_NAME_INDEX, nameWithoutExtension);

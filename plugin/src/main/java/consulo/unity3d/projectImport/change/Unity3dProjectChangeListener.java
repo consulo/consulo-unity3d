@@ -25,7 +25,8 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.ProjectTopics;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
@@ -69,7 +70,7 @@ public class Unity3dProjectChangeListener implements ProjectComponent, VirtualFi
 	private final Project myProject;
 	private VirtualFilePointer myAssetsDirPointer;
 
-	@NotNull
+	@Nonnull
 	private Future<?> myUpdateCheckTask = CompletableFuture.completedFuture(null);
 
 	private volatile DataBlock myDataBlock = new DataBlock();
@@ -78,7 +79,7 @@ public class Unity3dProjectChangeListener implements ProjectComponent, VirtualFi
 
 	private final Set<FileType> mySourceFileTypes = new HashSet<>();
 
-	public Unity3dProjectChangeListener(@NotNull Project project, @NotNull StartupManager startupManager)
+	public Unity3dProjectChangeListener(@Nonnull Project project, @Nonnull StartupManager startupManager)
 	{
 		myProject = project;
 
@@ -176,13 +177,13 @@ public class Unity3dProjectChangeListener implements ProjectComponent, VirtualFi
 	}
 
 	@Override
-	public void fileCreated(@NotNull VirtualFileEvent event)
+	public void fileCreated(@Nonnull VirtualFileEvent event)
 	{
 		handleChange(event.getFile());
 	}
 
 	@Override
-	public void fileMoved(@NotNull VirtualFileMoveEvent event)
+	public void fileMoved(@Nonnull VirtualFileMoveEvent event)
 	{
 		handleChange(event.getFile());
 	}

@@ -16,7 +16,8 @@
 
 package consulo.unity3d.run.test;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.ConfigurationTypeBase;
 import com.intellij.execution.configurations.RunConfiguration;
@@ -33,7 +34,7 @@ import consulo.unity3d.module.Unity3dModuleExtensionUtil;
  */
 public class Unity3dTestConfigurationType extends ConfigurationTypeBase
 {
-	@NotNull
+	@Nonnull
 	public static Unity3dTestConfigurationType getInstance()
 	{
 		return CONFIGURATION_TYPE_EP.findExtension(Unity3dTestConfigurationType.class);
@@ -53,7 +54,7 @@ public class Unity3dTestConfigurationType extends ConfigurationTypeBase
 
 			@Override
 			@RequiredReadAction
-			public boolean isApplicable(@NotNull Project project)
+			public boolean isApplicable(@Nonnull Project project)
 			{
 				return Unity3dModuleExtensionUtil.getRootModuleExtension(project) != null;
 			}

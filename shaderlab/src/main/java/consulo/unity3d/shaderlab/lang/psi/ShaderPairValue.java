@@ -16,8 +16,9 @@
 
 package consulo.unity3d.shaderlab.lang.psi;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabRole;
@@ -29,7 +30,7 @@ import consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabRoleHolder;
  */
 public class ShaderPairValue extends ShaderLabElement implements ShaderRoleOwner
 {
-	public ShaderPairValue(@NotNull ASTNode node)
+	public ShaderPairValue(@Nonnull ASTNode node)
 	{
 		super(node);
 	}

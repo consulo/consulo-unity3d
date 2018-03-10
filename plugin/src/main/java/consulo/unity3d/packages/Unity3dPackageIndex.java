@@ -19,7 +19,7 @@ package consulo.unity3d.packages;
 import java.util.Collections;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 /**
  * @author VISTALL
@@ -36,7 +36,7 @@ public class Unity3dPackageIndex
 		myTopPackages = topPackages;
 	}
 
-	@NotNull
+	@Nonnull
 	public List<Unity3dPackage> getTopPackages()
 	{
 		return myTopPackages;

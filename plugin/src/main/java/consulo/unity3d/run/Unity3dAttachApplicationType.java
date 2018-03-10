@@ -16,7 +16,7 @@
 
 package consulo.unity3d.run;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.intellij.execution.configuration.ConfigurationFactoryEx;
 import com.intellij.execution.configurations.ConfigurationTypeBase;
 import com.intellij.execution.configurations.RunConfiguration;
@@ -30,7 +30,7 @@ import consulo.unity3d.module.Unity3dModuleExtensionUtil;
  */
 public class Unity3dAttachApplicationType extends ConfigurationTypeBase
 {
-	@NotNull
+	@Nonnull
 	public static Unity3dAttachApplicationType getInstance()
 	{
 		return CONFIGURATION_TYPE_EP.findExtension(Unity3dAttachApplicationType.class);
@@ -49,7 +49,7 @@ public class Unity3dAttachApplicationType extends ConfigurationTypeBase
 			}
 
 			@Override
-			public boolean isApplicable(@NotNull Project project)
+			public boolean isApplicable(@Nonnull Project project)
 			{
 				return Unity3dModuleExtensionUtil.getRootModuleExtension(project) != null;
 			}

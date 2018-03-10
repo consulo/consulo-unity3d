@@ -16,8 +16,8 @@
 
 package consulo.unity3d.projectImport;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.ide.actions.CreateFileFromTemplateAction;
 import com.intellij.lang.javascript.JavaScriptFileType;
 import com.intellij.openapi.fileTypes.FileType;
@@ -40,7 +40,7 @@ public class Unity3dModuleResolver implements CreateFileFromTemplateAction.Modul
 	@Nullable
 	@Override
 	@RequiredReadAction
-	public Module resolveModule(@NotNull PsiDirectory psiDirectory, @NotNull FileType fileType)
+	public Module resolveModule(@Nonnull PsiDirectory psiDirectory, @Nonnull FileType fileType)
 	{
 		Module module = resolveModuleImpl(psiDirectory, fileType);
 		return module != null && module.getModuleDirUrl() != null ? null : module;
@@ -48,7 +48,7 @@ public class Unity3dModuleResolver implements CreateFileFromTemplateAction.Modul
 
 	@Nullable
 	@RequiredReadAction
-	public Module resolveModuleImpl(@NotNull PsiDirectory psiDirectory, @NotNull FileType fileType)
+	public Module resolveModuleImpl(@Nonnull PsiDirectory psiDirectory, @Nonnull FileType fileType)
 	{
 		if(fileType == CSharpFileType.INSTANCE)
 		{

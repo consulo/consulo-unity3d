@@ -16,7 +16,8 @@
 
 package consulo.unity3d.scene.reference;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import org.jetbrains.yaml.psi.YAMLKeyValue;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
@@ -47,7 +48,7 @@ public abstract class Unity3dKeyValueReferenceBase implements PsiReference
 	}
 
 	@RequiredReadAction
-	@NotNull
+	@Nonnull
 	@Override
 	public TextRange getRangeInElement()
 	{
@@ -61,7 +62,7 @@ public abstract class Unity3dKeyValueReferenceBase implements PsiReference
 	}
 
 	@RequiredReadAction
-	@NotNull
+	@Nonnull
 	@Override
 	public String getCanonicalText()
 	{
@@ -78,7 +79,7 @@ public abstract class Unity3dKeyValueReferenceBase implements PsiReference
 
 	@RequiredWriteAction
 	@Override
-	public PsiElement bindToElement(@NotNull PsiElement psiElement) throws IncorrectOperationException
+	public PsiElement bindToElement(@Nonnull PsiElement psiElement) throws IncorrectOperationException
 	{
 		return null;
 	}

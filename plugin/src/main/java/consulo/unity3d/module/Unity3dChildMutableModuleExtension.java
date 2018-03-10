@@ -16,10 +16,10 @@
 
 package consulo.unity3d.module;
 
+import javax.annotation.Nonnull;
 import javax.swing.JComponent;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 import com.intellij.openapi.projectRoots.Sdk;
 import consulo.annotations.RequiredDispatchThread;
 import consulo.module.extension.MutableModuleInheritableNamedPointer;
@@ -31,12 +31,12 @@ import consulo.roots.ModuleRootLayer;
  */
 public class Unity3dChildMutableModuleExtension extends Unity3dChildModuleExtension implements Unity3dMutableModuleExtension<Unity3dChildModuleExtension>
 {
-	public Unity3dChildMutableModuleExtension(@NotNull String id, @NotNull ModuleRootLayer moduleRootLayer)
+	public Unity3dChildMutableModuleExtension(@Nonnull String id, @Nonnull ModuleRootLayer moduleRootLayer)
 	{
 		super(id, moduleRootLayer);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public MutableModuleInheritableNamedPointer<Sdk> getInheritableSdk()
 	{
@@ -46,7 +46,7 @@ public class Unity3dChildMutableModuleExtension extends Unity3dChildModuleExtens
 	@RequiredDispatchThread
 	@Nullable
 	@Override
-	public JComponent createConfigurablePanel(@NotNull Runnable updateOnCheck)
+	public JComponent createConfigurablePanel(@Nonnull Runnable updateOnCheck)
 	{
 		return null;
 	}
@@ -58,7 +58,7 @@ public class Unity3dChildMutableModuleExtension extends Unity3dChildModuleExtens
 	}
 
 	@Override
-	public boolean isModified(@NotNull Unity3dChildModuleExtension originalExtension)
+	public boolean isModified(@Nonnull Unity3dChildModuleExtension originalExtension)
 	{
 		return myIsEnabled != originalExtension.isEnabled();
 	}

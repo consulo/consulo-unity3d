@@ -19,7 +19,8 @@ package consulo.unity3d.scene.index;
 import java.util.Collections;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import org.jetbrains.yaml.psi.YAMLDocument;
 import org.jetbrains.yaml.psi.YAMLFile;
 import org.jetbrains.yaml.psi.YAMLKeyValue;
@@ -81,7 +82,7 @@ public class Unity3dMetaIndexExtension extends FileBasedIndexExtension<String, I
 		return Collections.singletonMap(guid, fileId);
 	};
 
-	public static String findGUIDFromFile(@NotNull YAMLFile psiFile)
+	public static String findGUIDFromFile(@Nonnull YAMLFile psiFile)
 	{
 		String guid = null;
 		List<YAMLDocument> documents = psiFile.getDocuments();
@@ -100,7 +101,7 @@ public class Unity3dMetaIndexExtension extends FileBasedIndexExtension<String, I
 	private EnumeratorIntegerDescriptor myDescriptor = new EnumeratorIntegerDescriptor();
 	private EnumeratorStringDescriptor myKeyDescriptor = new EnumeratorStringDescriptor();
 
-	@NotNull
+	@Nonnull
 	@Override
 	public FileBasedIndex.InputFilter getInputFilter()
 	{
@@ -113,28 +114,28 @@ public class Unity3dMetaIndexExtension extends FileBasedIndexExtension<String, I
 		return true;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public ID<String, Integer> getName()
 	{
 		return KEY;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public DataIndexer<String, Integer, FileContent> getIndexer()
 	{
 		return myIndexer;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public KeyDescriptor<String> getKeyDescriptor()
 	{
 		return myKeyDescriptor;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public DataExternalizer<Integer> getValueExternalizer()
 	{

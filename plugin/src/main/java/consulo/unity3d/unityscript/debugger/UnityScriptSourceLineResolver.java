@@ -19,8 +19,9 @@ package consulo.unity3d.unityscript.debugger;
 import java.util.Collections;
 import java.util.Set;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
@@ -38,7 +39,7 @@ public class UnityScriptSourceLineResolver extends DotNetDebuggerSourceLineResol
 	@RequiredReadAction
 	@Nullable
 	@Override
-	public String resolveParentVmQName(@NotNull PsiElement element)
+	public String resolveParentVmQName(@Nonnull PsiElement element)
 	{
 		Module rootModule = Unity3dModuleExtensionUtil.getRootModule(element.getProject());
 		if(rootModule == null)
@@ -50,9 +51,9 @@ public class UnityScriptSourceLineResolver extends DotNetDebuggerSourceLineResol
 	}
 
 	@RequiredReadAction
-	@NotNull
+	@Nonnull
 	@Override
-	public Set<PsiElement> getAllExecutableChildren(@NotNull PsiElement element)
+	public Set<PsiElement> getAllExecutableChildren(@Nonnull PsiElement element)
 	{
 		return Collections.emptySet();
 	}

@@ -16,7 +16,7 @@
 
 package consulo.unity3d.shaderlab.lang.psi;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElementVisitor;
@@ -27,7 +27,7 @@ import com.intellij.psi.PsiElementVisitor;
  */
 public abstract class ShaderLabElement extends ASTWrapperPsiElement
 {
-	public ShaderLabElement(@NotNull ASTNode node)
+	public ShaderLabElement(@Nonnull ASTNode node)
 	{
 		super(node);
 	}
@@ -35,7 +35,7 @@ public abstract class ShaderLabElement extends ASTWrapperPsiElement
 	public abstract void accept(SharpLabElementVisitor visitor);
 
 	@Override
-	public void accept(@NotNull PsiElementVisitor visitor)
+	public void accept(@Nonnull PsiElementVisitor visitor)
 	{
 		if(visitor instanceof SharpLabElementVisitor)
 		{

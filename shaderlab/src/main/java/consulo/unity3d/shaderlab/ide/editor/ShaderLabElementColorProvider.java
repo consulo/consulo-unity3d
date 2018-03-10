@@ -19,8 +19,8 @@ package consulo.unity3d.shaderlab.ide.editor;
 import java.awt.Color;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.openapi.editor.ElementColorProvider;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -47,7 +47,7 @@ public class ShaderLabElementColorProvider implements ElementColorProvider
 	@RequiredReadAction
 	@Nullable
 	@Override
-	public Color getColorFrom(@NotNull PsiElement element)
+	public Color getColorFrom(@Nonnull PsiElement element)
 	{
 		if(element instanceof ShaderPropertyValue)
 		{
@@ -115,7 +115,7 @@ public class ShaderLabElementColorProvider implements ElementColorProvider
 
 	@RequiredWriteAction
 	@Override
-	public void setColorTo(@NotNull PsiElement element, @NotNull Color color)
+	public void setColorTo(@Nonnull PsiElement element, @Nonnull Color color)
 	{
 		float[] colorComponents = color.getRGBComponents(null);
 
@@ -137,7 +137,7 @@ public class ShaderLabElementColorProvider implements ElementColorProvider
 		element.replace(value);
 	}
 
-	@NotNull
+	@Nonnull
 	@RequiredReadAction
 	private static ShaderPropertyValue createValue(Project project, String text)
 	{

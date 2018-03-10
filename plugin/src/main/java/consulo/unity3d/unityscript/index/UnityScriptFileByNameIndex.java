@@ -16,7 +16,8 @@
 
 package consulo.unity3d.unityscript.index;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.psi.stubs.StringStubIndexExtension;
 import com.intellij.psi.stubs.StubIndexKey;
@@ -27,13 +28,13 @@ import com.intellij.psi.stubs.StubIndexKey;
  */
 public class UnityScriptFileByNameIndex extends StringStubIndexExtension<JSFile>
 {
-	@NotNull
+	@Nonnull
 	public static UnityScriptFileByNameIndex getInstance()
 	{
 		return EP_NAME.findExtension(UnityScriptFileByNameIndex.class);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public StubIndexKey<String, JSFile> getKey()
 	{

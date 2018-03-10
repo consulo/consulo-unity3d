@@ -5,8 +5,8 @@ import static consulo.unity3d.shaderlab.lang.parser.ShaderLabParser.expectWithEr
 import static consulo.unity3d.shaderlab.lang.parser.ShaderLabParser.parseBracketReference;
 import static consulo.unity3d.shaderlab.lang.parser.ShaderLabParser.parseElementsInBraces;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiBuilderUtil;
 import com.intellij.psi.tree.IElementType;
@@ -26,7 +26,7 @@ public interface ShaderLabRoles
 	ShaderLabRole Properties = new ShaderLabRole()
 	{
 		@Override
-		public PsiBuilder.Marker parseAndDone(ShaderLabParserBuilder builder, @NotNull PsiBuilder.Marker mark)
+		public PsiBuilder.Marker parseAndDone(ShaderLabParserBuilder builder, @Nonnull PsiBuilder.Marker mark)
 		{
 			if(expectWithError(builder, ShaderLabTokens.LBRACE, "'{' expected"))
 			{
@@ -65,7 +65,7 @@ public interface ShaderLabRoles
 		}
 
 
-		@NotNull
+		@Nonnull
 		private ThreeState parseProperty(PsiBuilder builder)
 		{
 			IElementType tokenType = builder.getTokenType();
@@ -207,7 +207,7 @@ public interface ShaderLabRoles
 	ShaderLabRole Tags = new ShaderLabRole()
 	{
 		@Override
-		public PsiBuilder.Marker parseAndDone(ShaderLabParserBuilder builder, @NotNull PsiBuilder.Marker mark)
+		public PsiBuilder.Marker parseAndDone(ShaderLabParserBuilder builder, @Nonnull PsiBuilder.Marker mark)
 		{
 			if(expectWithError(builder, ShaderLabTokens.LBRACE, "'{' expected"))
 			{
@@ -256,7 +256,7 @@ public interface ShaderLabRoles
 	ShaderLabRole Fallback = new ShaderLabRole()
 	{
 		@Override
-		public PsiBuilder.Marker parseAndDone(ShaderLabParserBuilder builder, @NotNull PsiBuilder.Marker mark)
+		public PsiBuilder.Marker parseAndDone(ShaderLabParserBuilder builder, @Nonnull PsiBuilder.Marker mark)
 		{
 			IElementType valueTokenType = builder.getTokenType();
 			if(valueTokenType == ShaderLabTokens.IDENTIFIER)
@@ -287,7 +287,7 @@ public interface ShaderLabRoles
 	ShaderLabRole UsePass = new ShaderLabRole()
 	{
 		@Override
-		public PsiBuilder.Marker parseAndDone(ShaderLabParserBuilder builder, @NotNull PsiBuilder.Marker mark)
+		public PsiBuilder.Marker parseAndDone(ShaderLabParserBuilder builder, @Nonnull PsiBuilder.Marker mark)
 		{
 			IElementType valueTokenType = builder.getTokenType();
 			if(valueTokenType == ShaderLabTokens.STRING_LITERAL)
@@ -311,7 +311,7 @@ public interface ShaderLabRoles
 	ShaderLabRole Matrix = new ShaderLabRole()
 	{
 		@Override
-		public PsiBuilder.Marker parseAndDone(ShaderLabParserBuilder builder, @NotNull PsiBuilder.Marker mark)
+		public PsiBuilder.Marker parseAndDone(ShaderLabParserBuilder builder, @Nonnull PsiBuilder.Marker mark)
 		{
 			if(builder.getTokenType() == ShaderLabTokens.LBRACKET)
 			{

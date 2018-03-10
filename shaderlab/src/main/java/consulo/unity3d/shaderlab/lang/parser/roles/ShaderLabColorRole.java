@@ -19,8 +19,8 @@ package consulo.unity3d.shaderlab.lang.parser.roles;
 import static consulo.unity3d.shaderlab.lang.parser.ShaderLabParser.parseBracketReference;
 import static consulo.unity3d.shaderlab.lang.parser.ShaderLabParser.parseElementsInBraces;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.lang.PsiBuilder;
 import consulo.unity3d.shaderlab.lang.parser.ShaderLabParserBuilder;
 import consulo.unity3d.shaderlab.lang.psi.ShaderLabElements;
@@ -61,7 +61,7 @@ public class ShaderLabColorRole extends ShaderLabValueRole
 	}
 
 	@Override
-	public boolean isMyValue(@NotNull ShaderLabParserBuilder builder)
+	public boolean isMyValue(@Nonnull ShaderLabParserBuilder builder)
 	{
 		return builder.getTokenType() == ShaderLabTokens.LPAR || builder.getTokenType() == ShaderLabTokens.LBRACKET;
 	}

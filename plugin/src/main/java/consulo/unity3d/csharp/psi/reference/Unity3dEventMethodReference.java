@@ -18,8 +18,9 @@ package consulo.unity3d.csharp.psi.reference;
 
 import java.util.Set;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.util.text.StringUtil;
@@ -68,9 +69,9 @@ public class Unity3dEventMethodReference extends PsiReferenceBase<CSharpConstant
 	}
 
 	@RequiredReadAction
-	@NotNull
+	@Nonnull
 	@Override
-	public String getErrorMessage(@NotNull PsiElement element)
+	public String getErrorMessage(@Nonnull PsiElement element)
 	{
 		return StringUtil.SINGLE_QUOTER.fun((String) ((CSharpConstantExpressionImpl) element).getValue()) + " is not resolved";
 	}
@@ -124,7 +125,7 @@ public class Unity3dEventMethodReference extends PsiReferenceBase<CSharpConstant
 	}
 
 	@RequiredReadAction
-	private static DotNetMethodDeclaration findMethodByName(@NotNull String name, PsiElement owner)
+	private static DotNetMethodDeclaration findMethodByName(@Nonnull String name, PsiElement owner)
 	{
 		AsPsiElementProcessor psiElementProcessor = new AsPsiElementProcessor();
 		MemberResolveScopeProcessor memberResolveScopeProcessor = new MemberResolveScopeProcessor(owner, psiElementProcessor, new ExecuteTarget[]{ExecuteTarget.ELEMENT_GROUP}, OverrideProcessor
@@ -153,7 +154,7 @@ public class Unity3dEventMethodReference extends PsiReferenceBase<CSharpConstant
 	}
 
 	@RequiredReadAction
-	@NotNull
+	@Nonnull
 	@Override
 	public Object[] getVariants()
 	{

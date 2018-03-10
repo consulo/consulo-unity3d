@@ -16,7 +16,8 @@
 
 package consulo.unity3d.shaderlab.ide.refactoring;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.psi.PsiElement;
 import consulo.unity3d.shaderlab.lang.psi.ShaderFileFactory;
 
@@ -26,7 +27,7 @@ import consulo.unity3d.shaderlab.lang.psi.ShaderFileFactory;
  */
 public class ShaderRefactorUtil
 {
-	public static void replaceIdentifier(@NotNull PsiElement identifier, @NotNull String newName)
+	public static void replaceIdentifier(@Nonnull PsiElement identifier, @Nonnull String newName)
 	{
 		PsiElement newIdentifier = ShaderFileFactory.createSimpleIdentifier(identifier.getProject(), newName);
 		identifier.replace(newIdentifier);

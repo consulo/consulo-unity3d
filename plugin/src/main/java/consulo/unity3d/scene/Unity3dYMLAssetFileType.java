@@ -16,10 +16,10 @@
 
 package consulo.unity3d.scene;
 
+import javax.annotation.Nonnull;
 import javax.swing.Icon;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 import org.jetbrains.yaml.YAMLLanguage;
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import consulo.unity3d.shaderlab.UnityShaderIcons;
@@ -37,21 +37,21 @@ public class Unity3dYMLAssetFileType extends LanguageFileType
 		super(YAMLLanguage.INSTANCE);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getId()
 	{
 		return "UNITY_YML_ASSET";
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getDescription()
 	{
 		return "Unity yml asset file";
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getDefaultExtension()
 	{

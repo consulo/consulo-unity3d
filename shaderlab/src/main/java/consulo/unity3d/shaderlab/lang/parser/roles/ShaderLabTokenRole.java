@@ -16,8 +16,9 @@
 
 package consulo.unity3d.shaderlab.lang.parser.roles;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.intellij.lang.PsiBuilder;
 import com.intellij.psi.tree.IElementType;
 import consulo.unity3d.shaderlab.lang.parser.ShaderLabParserBuilder;
@@ -39,7 +40,7 @@ public class ShaderLabTokenRole extends ShaderLabValueRole
 
 
 	@Override
-	public PsiBuilder.Marker parseAndDone(ShaderLabParserBuilder builder, @NotNull PsiBuilder.Marker mark)
+	public PsiBuilder.Marker parseAndDone(ShaderLabParserBuilder builder, @Nonnull PsiBuilder.Marker mark)
 	{
 		if(builder.getTokenType() == myElementType)
 		{
@@ -65,7 +66,7 @@ public class ShaderLabTokenRole extends ShaderLabValueRole
 	}
 
 	@Override
-	public boolean isMyValue(@NotNull ShaderLabParserBuilder builder)
+	public boolean isMyValue(@Nonnull ShaderLabParserBuilder builder)
 	{
 		return builder.getTokenType() == myElementType;
 	}

@@ -16,7 +16,7 @@
 
 package consulo.unity3d.shaderlab.lang.parser.roles;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import consulo.unity3d.shaderlab.lang.parser.ShaderLabParserBuilder;
 
 /**
@@ -25,5 +25,5 @@ import consulo.unity3d.shaderlab.lang.parser.ShaderLabParserBuilder;
  */
 public abstract class ShaderLabValueRole extends ShaderLabRole
 {
-	public abstract boolean isMyValue(@NotNull ShaderLabParserBuilder builder);
+	public abstract boolean isMyValue(@Nonnull ShaderLabParserBuilder builder);
 }

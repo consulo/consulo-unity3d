@@ -19,8 +19,9 @@ package consulo.unity3d.unityscript.lang.impl;
 import java.util.Collection;
 import java.util.Collections;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
@@ -49,7 +50,7 @@ public class UnityScriptPsiSearcher extends DotNetPsiSearcher
 	@RequiredReadAction
 	@Nullable
 	@Override
-	public DotNetNamespaceAsElement findNamespace(@NotNull String qName, @NotNull GlobalSearchScope scope)
+	public DotNetNamespaceAsElement findNamespace(@Nonnull String qName, @Nonnull GlobalSearchScope scope)
 	{
 		if(qName.isEmpty())
 		{
@@ -59,9 +60,9 @@ public class UnityScriptPsiSearcher extends DotNetPsiSearcher
 	}
 
 	@RequiredReadAction
-	@NotNull
+	@Nonnull
 	@Override
-	public Collection<? extends DotNetTypeDeclaration> findTypesImpl(@NotNull String key, @NotNull GlobalSearchScope searchScope)
+	public Collection<? extends DotNetTypeDeclaration> findTypesImpl(@Nonnull String key, @Nonnull GlobalSearchScope searchScope)
 	{
 		if(DumbService.isDumb(myProject))
 		{

@@ -17,8 +17,8 @@
 package consulo.unity3d.shaderlab.lang.psi;
 
 import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.IncorrectOperationException;
@@ -30,7 +30,7 @@ import consulo.unity3d.shaderlab.ide.refactoring.ShaderRefactorUtil;
  */
 public class ShaderPropertyElement extends ShaderLabElement implements ShaderProperty
 {
-	public ShaderPropertyElement(@NotNull ASTNode node)
+	public ShaderPropertyElement(@Nonnull ASTNode node)
 	{
 		super(node);
 	}
@@ -77,7 +77,7 @@ public class ShaderPropertyElement extends ShaderLabElement implements ShaderPro
 	}
 
 	@Override
-	public PsiElement setName(@NonNls @NotNull String name) throws IncorrectOperationException
+	public PsiElement setName(@NonNls @Nonnull String name) throws IncorrectOperationException
 	{
 		PsiElement nameIdentifier = getNameIdentifier();
 		if(nameIdentifier == null)

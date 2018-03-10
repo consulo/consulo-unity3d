@@ -22,10 +22,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.Nonnull;
 import javax.swing.JFrame;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 import com.intellij.ide.actions.ImportModuleAction;
 import com.intellij.ide.util.newProjectWizard.AddModuleWizard;
 import com.intellij.openapi.fileEditor.FileEditorManager;
@@ -72,9 +72,9 @@ public class UnityOpenFilePostHandler extends JsonPostRequestHandler<UnityOpenFi
 		super("unityOpenFile", UnityOpenFilePostHandlerRequest.class);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public JsonResponse handle(@NotNull final UnityOpenFilePostHandlerRequest body)
+	public JsonResponse handle(@Nonnull final UnityOpenFilePostHandlerRequest body)
 	{
 		String contentType = body.contentType;
 		if(!ourSupportedContentTypes.contains(contentType))
@@ -188,7 +188,7 @@ public class UnityOpenFilePostHandler extends JsonPostRequestHandler<UnityOpenFi
 		return JsonResponse.asSuccess(null);
 	}
 
-	private void activateFrame(@Nullable Project openedProject, @NotNull UnityOpenFilePostHandlerRequest body)
+	private void activateFrame(@Nullable Project openedProject, @Nonnull UnityOpenFilePostHandlerRequest body)
 	{
 		if(openedProject == null)
 		{
@@ -221,7 +221,7 @@ public class UnityOpenFilePostHandler extends JsonPostRequestHandler<UnityOpenFi
 		}
 	}
 
-	public static void openFile(@Nullable Project openedProject, @NotNull UnityOpenFilePostHandlerRequest body)
+	public static void openFile(@Nullable Project openedProject, @Nonnull UnityOpenFilePostHandlerRequest body)
 	{
 		if(openedProject == null)
 		{

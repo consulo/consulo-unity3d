@@ -26,7 +26,7 @@ import java.util.function.Consumer;
 
 import javax.inject.Inject;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.Application;
@@ -45,7 +45,7 @@ import consulo.unity3d.util.Unity3dProjectUtil;
  */
 public class Unity3dConsoleManager implements Disposable
 {
-	@NotNull
+	@Nonnull
 	public static Unity3dConsoleManager getInstance()
 	{
 		return ApplicationManager.getApplication().getComponent(Unity3dConsoleManager.class);
@@ -103,8 +103,8 @@ public class Unity3dConsoleManager implements Disposable
 		}
 	}
 
-	@NotNull
-	public AccessToken registerProcessor(@NotNull Project project, @NotNull Consumer<Collection<UnityLogPostHandlerRequest>> consumer)
+	@Nonnull
+	public AccessToken registerProcessor(@Nonnull Project project, @Nonnull Consumer<Collection<UnityLogPostHandlerRequest>> consumer)
 	{
 		myMap.putValue(project, consumer);
 		return new AccessToken()

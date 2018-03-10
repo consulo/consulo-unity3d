@@ -16,8 +16,9 @@
 
 package consulo.unity3d.csharp.module.extension;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import consulo.annotations.RequiredReadAction;
 import consulo.csharp.module.extension.BaseCSharpSimpleModuleExtension;
 import consulo.csharp.module.extension.CSharpLanguageVersion;
@@ -29,7 +30,7 @@ import consulo.roots.ModuleRootLayer;
  */
 public class Unity3dCSharpModuleExtension extends BaseCSharpSimpleModuleExtension<Unity3dCSharpModuleExtension>
 {
-	public Unity3dCSharpModuleExtension(@NotNull String id, @NotNull ModuleRootLayer module)
+	public Unity3dCSharpModuleExtension(@Nonnull String id, @Nonnull ModuleRootLayer module)
 	{
 		super(id, module);
 	}
@@ -43,7 +44,7 @@ public class Unity3dCSharpModuleExtension extends BaseCSharpSimpleModuleExtensio
 	}
 
 	@Override
-	public boolean isSupportedLanguageVersion(@NotNull CSharpLanguageVersion languageVersion)
+	public boolean isSupportedLanguageVersion(@Nonnull CSharpLanguageVersion languageVersion)
 	{
 		return false;
 	}

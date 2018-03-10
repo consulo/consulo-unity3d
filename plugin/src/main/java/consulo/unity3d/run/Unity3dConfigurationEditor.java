@@ -16,7 +16,8 @@
 
 package consulo.unity3d.run;
 
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
+
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
 import consulo.ui.*;

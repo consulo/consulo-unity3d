@@ -16,8 +16,9 @@
 
 package consulo.unity3d.shaderlab.lang.parser.roles;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.intellij.lang.PsiBuilder;
 import consulo.unity3d.shaderlab.lang.parser.ShaderLabParser;
 import consulo.unity3d.shaderlab.lang.parser.ShaderLabParserBuilder;
@@ -37,7 +38,7 @@ public class ShaderLabSimpleRole extends ShaderLabValueRole
 		myValues = values;
 	}
 
-	@NotNull
+	@Nonnull
 	public String[] getValues()
 	{
 		return myValues;
@@ -67,7 +68,7 @@ public class ShaderLabSimpleRole extends ShaderLabValueRole
 	}
 
 	@Override
-	public boolean isMyValue(@NotNull ShaderLabParserBuilder builder)
+	public boolean isMyValue(@Nonnull ShaderLabParserBuilder builder)
 	{
 		if(builder.getTokenType() == ShaderLabTokens.IDENTIFIER)
 		{

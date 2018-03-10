@@ -22,8 +22,9 @@ import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.intellij.openapi.editor.ElementColorProvider;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
@@ -78,7 +79,7 @@ public class UnityCSharpStaticElementColorProvider implements ElementColorProvid
 	@Nullable
 	@Override
 	@RequiredReadAction
-	public Color getColorFrom(@NotNull PsiElement element)
+	public Color getColorFrom(@Nonnull PsiElement element)
 	{
 		IElementType elementType = element.getNode().getElementType();
 		if(elementType == CSharpTokens.IDENTIFIER)
@@ -176,7 +177,7 @@ public class UnityCSharpStaticElementColorProvider implements ElementColorProvid
 	}
 
 	@RequiredReadAction
-	public static boolean parentIsColorType(PsiElement resolvedElement, @NotNull String type)
+	public static boolean parentIsColorType(PsiElement resolvedElement, @Nonnull String type)
 	{
 		PsiElement typeParent = resolvedElement.getParent();
 		return typeParent instanceof CSharpTypeDeclaration && type.equals(((CSharpTypeDeclaration) typeParent).getVmQName());
@@ -184,7 +185,7 @@ public class UnityCSharpStaticElementColorProvider implements ElementColorProvid
 
 	@Override
 	@RequiredWriteAction
-	public void setColorTo(@NotNull PsiElement element, @NotNull Color color)
+	public void setColorTo(@Nonnull PsiElement element, @Nonnull Color color)
 	{
 		PsiElement targetElement = null;
 		if(element.getNode().getElementType() == CSharpTokens.NEW_KEYWORD)

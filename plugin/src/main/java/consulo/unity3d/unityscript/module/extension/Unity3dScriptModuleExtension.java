@@ -16,8 +16,9 @@
 
 package consulo.unity3d.unityscript.module.extension;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkType;
 import consulo.annotations.RequiredReadAction;
@@ -37,12 +38,12 @@ import consulo.unity3d.unityscript.lang.UnityScriptLanguageVersion;
  */
 public class Unity3dScriptModuleExtension extends ModuleExtensionImpl<Unity3dScriptModuleExtension> implements JavaScriptModuleExtension<Unity3dScriptModuleExtension>
 {
-	public Unity3dScriptModuleExtension(@NotNull String id, @NotNull ModuleRootLayer moduleRootLayer)
+	public Unity3dScriptModuleExtension(@Nonnull String id, @Nonnull ModuleRootLayer moduleRootLayer)
 	{
 		super(id, moduleRootLayer);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public ModuleInheritableNamedPointer<Sdk> getInheritableSdk()
 	{
@@ -75,14 +76,14 @@ public class Unity3dScriptModuleExtension extends ModuleExtensionImpl<Unity3dScr
 		return null;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public Class<? extends SdkType> getSdkTypeClass()
 	{
 		throw new UnsupportedOperationException("Use root module extension");
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public LanguageVersion getLanguageVersion()
 	{

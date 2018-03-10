@@ -22,10 +22,11 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import javax.annotation.Nonnull;
+
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
-import org.jetbrains.annotations.NotNull;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.psi.PsiElement;
@@ -73,7 +74,7 @@ public class UnityFunctionManager
 			return myName;
 		}
 
-		@NotNull
+		@Nonnull
 		public Map<String, String> getParameters()
 		{
 			return myParameters;
@@ -101,7 +102,7 @@ public class UnityFunctionManager
 
 	private static UnityFunctionManager ourInstance = new UnityFunctionManager();
 
-	@NotNull
+	@Nonnull
 	public static UnityFunctionManager getInstance()
 	{
 		return ourInstance;
@@ -130,9 +131,9 @@ public class UnityFunctionManager
 		}
 	}
 
-	@NotNull
+	@Nonnull
 	@RequiredReadAction
-	public static DotNetTypeRef createTypeRef(@NotNull PsiElement scope, @NotNull String type)
+	public static DotNetTypeRef createTypeRef(@Nonnull PsiElement scope, @Nonnull String type)
 	{
 		int count = 0;
 		int i = 0;
@@ -150,7 +151,7 @@ public class UnityFunctionManager
 		return typeRef;
 	}
 
-	@NotNull
+	@Nonnull
 	public Map<String, Map<String, FunctionInfo>> getFunctionsByType()
 	{
 		return myFunctionsByType;

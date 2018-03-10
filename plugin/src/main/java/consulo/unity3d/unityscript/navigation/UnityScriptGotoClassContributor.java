@@ -18,8 +18,8 @@ package consulo.unity3d.unityscript.navigation;
 
 import javax.swing.Icon;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.icons.AllIcons;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.navigation.ChooseByNameContributorEx;
@@ -61,7 +61,7 @@ public class UnityScriptGotoClassContributor implements ChooseByNameContributorE
 		return ".";
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String[] getNames(Project project, boolean includeNonProjectItems)
 	{
@@ -70,7 +70,7 @@ public class UnityScriptGotoClassContributor implements ChooseByNameContributorE
 		return processor.toArray(ArrayUtil.STRING_ARRAY_FACTORY);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public NavigationItem[] getItemsByName(String name, String pattern, Project project, boolean includeNonProjectItems)
 	{
@@ -80,13 +80,13 @@ public class UnityScriptGotoClassContributor implements ChooseByNameContributorE
 	}
 
 	@Override
-	public void processNames(@NotNull Processor<String> processor, @NotNull GlobalSearchScope scope, @Nullable IdFilter filter)
+	public void processNames(@Nonnull Processor<String> processor, @Nonnull GlobalSearchScope scope, @Nullable IdFilter filter)
 	{
 		StubIndex.getInstance().processAllKeys(UnityScriptIndexKeys.FILE_BY_NAME_INDEX, processor, scope, filter);
 	}
 
 	@Override
-	public void processElementsWithName(@NotNull String name, @NotNull final Processor<NavigationItem> processor, @NotNull FindSymbolParameters parameters)
+	public void processElementsWithName(@Nonnull String name, @Nonnull final Processor<NavigationItem> processor, @Nonnull FindSymbolParameters parameters)
 	{
 		StubIndex.getInstance().processElements(UnityScriptIndexKeys.FILE_BY_NAME_INDEX, name, parameters.getProject(), parameters.getSearchScope(), parameters.getIdFilter(), JSFile.class,
 				new Processor<JSFile>()

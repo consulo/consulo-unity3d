@@ -16,8 +16,8 @@
 
 package consulo.unity3d.shaderlab.lang.psi;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.LiteralTextEscaper;
 import com.intellij.psi.PsiElement;
@@ -30,7 +30,7 @@ import consulo.annotations.RequiredReadAction;
  */
 public class ShaderCGScript extends ShaderLabElement implements PsiLanguageInjectionHost
 {
-	public ShaderCGScript(@NotNull ASTNode node)
+	public ShaderCGScript(@Nonnull ASTNode node)
 	{
 		super(node);
 	}
@@ -56,12 +56,12 @@ public class ShaderCGScript extends ShaderLabElement implements PsiLanguageInjec
 	}
 
 	@Override
-	public PsiLanguageInjectionHost updateText(@NotNull String text)
+	public PsiLanguageInjectionHost updateText(@Nonnull String text)
 	{
 		throw new UnsupportedOperationException();
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public LiteralTextEscaper<? extends PsiLanguageInjectionHost> createLiteralTextEscaper()
 	{

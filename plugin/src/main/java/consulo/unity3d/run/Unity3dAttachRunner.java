@@ -18,8 +18,8 @@ package consulo.unity3d.run;
 
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionResult;
 import com.intellij.execution.actions.StopProcessAction;
@@ -59,7 +59,7 @@ public class Unity3dAttachRunner extends DefaultProgramRunner
 		return ProgramRunner.PROGRAM_RUNNER_EP.findExtension(Unity3dAttachRunner.class);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getRunnerId()
 	{
@@ -67,7 +67,7 @@ public class Unity3dAttachRunner extends DefaultProgramRunner
 	}
 
 	@Override
-	public boolean canRun(@NotNull String executorId, @NotNull RunProfile profile)
+	public boolean canRun(@Nonnull String executorId, @Nonnull RunProfile profile)
 	{
 		return executorId.equals(DefaultDebugExecutor.EXECUTOR_ID) && profile instanceof Unity3dAttachConfiguration;
 	}
@@ -75,7 +75,7 @@ public class Unity3dAttachRunner extends DefaultProgramRunner
 	@Nullable
 	@Override
 	@RequiredDispatchThread
-	protected RunContentDescriptor doExecute(@NotNull RunProfileState state, @NotNull final ExecutionEnvironment environment) throws ExecutionException
+	protected RunContentDescriptor doExecute(@Nonnull RunProfileState state, @Nonnull final ExecutionEnvironment environment) throws ExecutionException
 	{
 		Unity3dAttachConfiguration runProfile = (Unity3dAttachConfiguration) environment.getRunProfile();
 
@@ -118,11 +118,11 @@ public class Unity3dAttachRunner extends DefaultProgramRunner
 		return runContentDescriptor(executionResult, environment, process, null, isEditor);
 	}
 
-	@NotNull
+	@Nonnull
 	@RequiredDispatchThread
 	public static RunContentDescriptor runContentDescriptor(ExecutionResult executionResult,
-			@NotNull final ExecutionEnvironment environment,
-			@NotNull UnityProcess selected,
+			@Nonnull final ExecutionEnvironment environment,
+			@Nonnull UnityProcess selected,
 			@Nullable final ConsoleView consoleView,
 			boolean insideEditor) throws ExecutionException
 	{
@@ -138,7 +138,7 @@ public class Unity3dAttachRunner extends DefaultProgramRunner
 				private boolean myDisconnected = false;
 
 				@Override
-				public void connectionSuccess(@NotNull VirtualMachine machine)
+				public void connectionSuccess(@Nonnull VirtualMachine machine)
 				{
 					ProcessHandler processHandler = process.getProcessHandler();
 					processHandler.notifyTextAvailable(String.format("Success attach to '%s' at %s:%d\n", selected.getName(), selected.getHost(), selected.getPort()), ProcessOutputTypes.STDOUT);

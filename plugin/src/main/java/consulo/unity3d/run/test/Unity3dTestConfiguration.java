@@ -16,9 +16,10 @@
 
 package consulo.unity3d.run.test;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.ConfigurationFactory;
@@ -64,7 +65,7 @@ public class Unity3dTestConfiguration extends LocatableConfigurationBase impleme
 		XmlSerializer.serializeInto(this, element);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public SettingsEditor<? extends RunConfiguration> getConfigurationEditor()
 	{
@@ -74,12 +75,12 @@ public class Unity3dTestConfiguration extends LocatableConfigurationBase impleme
 	@Nullable
 	@Override
 	@RequiredDispatchThread
-	public RunProfileState getState(@NotNull Executor executor, @NotNull final ExecutionEnvironment environment) throws ExecutionException
+	public RunProfileState getState(@Nonnull Executor executor, @Nonnull final ExecutionEnvironment environment) throws ExecutionException
 	{
 		return new Unity3dTestRunState(environment);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	@RequiredReadAction
 	public Module[] getModules()

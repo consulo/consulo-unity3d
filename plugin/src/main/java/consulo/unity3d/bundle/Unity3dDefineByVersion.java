@@ -20,8 +20,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.intellij.lang.annotations.RegExp;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.intellij.util.ArrayUtil;
 
 /**
@@ -76,13 +77,13 @@ public enum Unity3dDefineByVersion
 		return myPluginFileName;
 	}
 
-	@NotNull
+	@Nonnull
 	public Unity3dDefineByVersion[] getMajorVersions()
 	{
 		return myMajorVersions;
 	}
 
-	@NotNull
+	@Nonnull
 	public static Unity3dDefineByVersion find(@Nullable String version)
 	{
 		if(version == null)

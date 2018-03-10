@@ -18,7 +18,8 @@ package consulo.unity3d.csharp.completion;
 
 import java.util.Map;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.codeInsight.completion.CompletionParameters;
 import com.intellij.codeInsight.completion.InsertHandler;
 import com.intellij.codeInsight.completion.InsertionContext;
@@ -56,10 +57,10 @@ public class UnitySpecificMethodCompletion implements CSharpMemberAddByCompletio
 {
 	@RequiredReadAction
 	@Override
-	public void processCompletion(@NotNull CompletionParameters completionParameters,
-			@NotNull ProcessingContext processingContext,
-			@NotNull Consumer<LookupElement> completionResultSet,
-			@NotNull CSharpTypeDeclaration typeDeclaration)
+	public void processCompletion(@Nonnull CompletionParameters completionParameters,
+			@Nonnull ProcessingContext processingContext,
+			@Nonnull Consumer<LookupElement> completionResultSet,
+			@Nonnull CSharpTypeDeclaration typeDeclaration)
 	{
 		Unity3dModuleExtension extension = ModuleUtilCore.getExtension(typeDeclaration, Unity3dModuleExtension.class);
 		if(extension == null)
@@ -89,7 +90,7 @@ public class UnitySpecificMethodCompletion implements CSharpMemberAddByCompletio
 		}
 	}
 
-	@NotNull
+	@Nonnull
 	@RequiredReadAction
 	private static LookupElementBuilder buildLookupItem(UnityFunctionManager.FunctionInfo functionInfo, CSharpTypeDeclaration scope)
 	{

@@ -16,8 +16,9 @@
 
 package consulo.unity3d.ide.ui;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.intellij.ProjectTopics;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.module.Module;
@@ -63,7 +64,7 @@ public class SetupUnitySDKProvider implements EditorNotificationProvider<EditorN
 		myProject.getMessageBus().connect().subscribe(ModuleExtension.CHANGE_TOPIC, (oldExtension, newExtension) -> notifications.updateAllNotifications());
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public Key<EditorNotificationPanel> getKey()
 	{
@@ -72,7 +73,7 @@ public class SetupUnitySDKProvider implements EditorNotificationProvider<EditorN
 
 	@Override
 	@RequiredReadAction
-	public EditorNotificationPanel createNotificationPanel(@NotNull VirtualFile file, @NotNull FileEditor fileEditor)
+	public EditorNotificationPanel createNotificationPanel(@Nonnull VirtualFile file, @Nonnull FileEditor fileEditor)
 	{
 		final PsiFile psiFile = PsiManager.getInstance(myProject).findFile(file);
 		if(psiFile == null)
@@ -92,8 +93,8 @@ public class SetupUnitySDKProvider implements EditorNotificationProvider<EditorN
 		return null;
 	}
 
-	@NotNull
-	private static EditorNotificationPanel createPanel(@Nullable String name, @NotNull final Module rootModule)
+	@Nonnull
+	private static EditorNotificationPanel createPanel(@Nullable String name, @Nonnull final Module rootModule)
 	{
 		EditorNotificationPanel panel = new EditorNotificationPanel();
 		if(StringUtil.isEmpty(name))

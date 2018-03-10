@@ -19,8 +19,8 @@ package consulo.unity3d.shaderlab.lang.psi;
 import java.util.Collections;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.extapi.psi.PsiFileBase;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.psi.FileViewProvider;
@@ -34,7 +34,7 @@ import consulo.unity3d.shaderlab.lang.ShaderLabLanguage;
  */
 public class ShaderLabFile extends PsiFileBase
 {
-	public ShaderLabFile(@NotNull FileViewProvider viewProvider)
+	public ShaderLabFile(@Nonnull FileViewProvider viewProvider)
 	{
 		super(viewProvider, ShaderLabLanguage.INSTANCE);
 	}
@@ -54,14 +54,14 @@ public class ShaderLabFile extends PsiFileBase
 		return findChildByClass(ShaderDef.class);
 	}
 
-	@NotNull
+	@Nonnull
 	public List<ShaderProperty> getProperties()
 	{
 		ShaderDef shaderDef = getShaderDef();
 		return shaderDef == null ? Collections.<ShaderProperty>emptyList() : shaderDef.getProperties();
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public FileType getFileType()
 	{

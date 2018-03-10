@@ -16,7 +16,8 @@
 
 package consulo.unity3d.shaderlab.ide.highlight;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.codeInsight.daemon.impl.HighlightInfo;
 import com.intellij.codeInsight.daemon.impl.HighlightInfoType;
 import com.intellij.codeInsight.daemon.impl.HighlightVisitor;
@@ -126,26 +127,26 @@ public class SharpLabHighlightVisitor extends SharpLabElementVisitor implements 
 	}
 
 	@Override
-	public boolean suitableForFile(@NotNull PsiFile file)
+	public boolean suitableForFile(@Nonnull PsiFile file)
 	{
 		return file instanceof ShaderLabFile;
 	}
 
 	@Override
-	public void visit(@NotNull PsiElement element)
+	public void visit(@Nonnull PsiElement element)
 	{
 		element.accept(this);
 	}
 
 	@Override
-	public boolean analyze(@NotNull PsiFile file, boolean updateWholeFile, @NotNull HighlightInfoHolder holder, @NotNull Runnable action)
+	public boolean analyze(@Nonnull PsiFile file, boolean updateWholeFile, @Nonnull HighlightInfoHolder holder, @Nonnull Runnable action)
 	{
 		myHolder = holder;
 		action.run();
 		return true;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public HighlightVisitor clone()
 	{

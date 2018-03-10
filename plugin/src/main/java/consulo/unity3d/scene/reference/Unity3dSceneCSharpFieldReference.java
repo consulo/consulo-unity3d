@@ -16,7 +16,8 @@
 
 package consulo.unity3d.scene.reference;
 
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
+
 import org.jetbrains.yaml.psi.YAMLKeyValue;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;

@@ -18,10 +18,10 @@ package consulo.unity3d.unityscript.codeInsight;
 
 import java.util.Map;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.swing.Icon;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import com.intellij.codeHighlighting.Pass;
 import com.intellij.codeInsight.daemon.LineMarkerInfo;
 import com.intellij.codeInsight.daemon.LineMarkerProviderDescriptor;
@@ -63,7 +63,7 @@ public class UnityScriptEventFunctionLineMarkerProvider extends LineMarkerProvid
 	@RequiredReadAction
 	@Nullable
 	@Override
-	public LineMarkerInfo getLineMarkerInfo(@NotNull PsiElement element)
+	public LineMarkerInfo getLineMarkerInfo(@Nonnull PsiElement element)
 	{
 		if(element.getNode().getElementType() == JSTokenTypes.IDENTIFIER && element.getParent() instanceof JSReferenceExpression && element.getParent().getParent() instanceof JSFunction)
 		{

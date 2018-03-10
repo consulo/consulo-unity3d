@@ -20,8 +20,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * @author VISTALL
@@ -51,8 +51,8 @@ public class UnityPingPong
 	private static Map<String, Consumer<Object>> ourCache = new ConcurrentHashMap<>();
 
 	@SuppressWarnings("unchecked")
-	@NotNull
-	public static <T> Token<T> wantReply(final String uuid, @NotNull Consumer<T> consumer)
+	@Nonnull
+	public static <T> Token<T> wantReply(final String uuid, @Nonnull Consumer<T> consumer)
 	{
 		Consumer<Object> old = ourCache.put(uuid, (Consumer<Object>) consumer);
 		if(old != null)

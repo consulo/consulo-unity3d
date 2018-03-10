@@ -16,7 +16,8 @@
 
 package consulo.unity3d.shaderlab.lang.psi;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.lang.ASTNode;
 
 /**
@@ -25,7 +26,7 @@ import com.intellij.lang.ASTNode;
  */
 public class ShaderTagList extends ShaderBraceOwnerElement
 {
-	public ShaderTagList(@NotNull ASTNode node)
+	public ShaderTagList(@Nonnull ASTNode node)
 	{
 		super(node);
 	}

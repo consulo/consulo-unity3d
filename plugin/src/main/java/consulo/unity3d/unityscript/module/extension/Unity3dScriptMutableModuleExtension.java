@@ -18,8 +18,8 @@ package consulo.unity3d.unityscript.module.extension;
 
 import javax.swing.JComponent;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.openapi.projectRoots.Sdk;
 import consulo.annotations.RequiredDispatchThread;
 import consulo.module.extension.MutableModuleExtensionWithSdk;
@@ -32,12 +32,12 @@ import consulo.roots.ModuleRootLayer;
  */
 public class Unity3dScriptMutableModuleExtension extends Unity3dScriptModuleExtension implements MutableModuleExtensionWithSdk<Unity3dScriptModuleExtension>
 {
-	public Unity3dScriptMutableModuleExtension(@NotNull String id, @NotNull ModuleRootLayer moduleRootLayer)
+	public Unity3dScriptMutableModuleExtension(@Nonnull String id, @Nonnull ModuleRootLayer moduleRootLayer)
 	{
 		super(id, moduleRootLayer);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public MutableModuleInheritableNamedPointer<Sdk> getInheritableSdk()
 	{
@@ -47,7 +47,7 @@ public class Unity3dScriptMutableModuleExtension extends Unity3dScriptModuleExte
 	@RequiredDispatchThread
 	@Nullable
 	@Override
-	public JComponent createConfigurablePanel(@NotNull Runnable updateOnCheck)
+	public JComponent createConfigurablePanel(@Nonnull Runnable updateOnCheck)
 	{
 		return null;
 	}
@@ -59,7 +59,7 @@ public class Unity3dScriptMutableModuleExtension extends Unity3dScriptModuleExte
 	}
 
 	@Override
-	public boolean isModified(@NotNull Unity3dScriptModuleExtension originalExtension)
+	public boolean isModified(@Nonnull Unity3dScriptModuleExtension originalExtension)
 	{
 		return myIsEnabled != originalExtension.isEnabled();
 	}

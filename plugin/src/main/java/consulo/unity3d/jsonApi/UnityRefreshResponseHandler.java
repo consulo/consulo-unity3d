@@ -16,7 +16,8 @@
 
 package consulo.unity3d.jsonApi;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import consulo.buildInWebServer.api.JsonPostRequestHandler;
 
 /**
@@ -30,9 +31,9 @@ public class UnityRefreshResponseHandler extends JsonPostRequestHandler<UnityRef
 		super("unityRefreshResponse", UnityRefreshResponse.class);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public JsonResponse handle(@NotNull UnityRefreshResponse unityRefreshResponse)
+	public JsonResponse handle(@Nonnull UnityRefreshResponse unityRefreshResponse)
 	{
 		UnityPingPong.replyReceived(unityRefreshResponse.uuid, Boolean.TRUE);
 

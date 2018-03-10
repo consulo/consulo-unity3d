@@ -16,8 +16,8 @@
 
 package consulo.unity3d.run.debugger;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.execution.configurations.RunProfile;
 import com.intellij.execution.filters.TextConsoleBuilderFactory;
 import com.intellij.execution.ui.ConsoleView;
@@ -101,7 +101,7 @@ public class UnityDebugProcess extends MonoDebugProcess
 		super.stop();
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public ExecutionConsole createConsole()
 	{

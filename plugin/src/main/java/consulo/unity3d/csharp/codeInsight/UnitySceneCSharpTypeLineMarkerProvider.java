@@ -16,10 +16,10 @@
 
 package consulo.unity3d.csharp.codeInsight;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.swing.Icon;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import com.intellij.codeHighlighting.Pass;
 import com.intellij.codeInsight.daemon.LineMarkerInfo;
 import com.intellij.codeInsight.daemon.LineMarkerProviderDescriptor;
@@ -44,7 +44,7 @@ public class UnitySceneCSharpTypeLineMarkerProvider extends LineMarkerProviderDe
 		return "Unity C# Scene Component";
 	}
 
-	@NotNull
+	@Nonnull
 	public Icon getIcon()
 	{
 		return Unity3dIcons.Unity3dLineMarker;
@@ -53,7 +53,7 @@ public class UnitySceneCSharpTypeLineMarkerProvider extends LineMarkerProviderDe
 	@RequiredReadAction
 	@Nullable
 	@Override
-	public LineMarkerInfo getLineMarkerInfo(@NotNull PsiElement element)
+	public LineMarkerInfo getLineMarkerInfo(@Nonnull PsiElement element)
 	{
 		for(Unity3dAssetCSharpLineMarker marker : Unity3dAssetCSharpLineMarker.values())
 		{

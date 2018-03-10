@@ -16,8 +16,8 @@
 
 package consulo.unity3d.scene.reference;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import org.jetbrains.yaml.psi.YAMLKeyValue;
 import org.jetbrains.yaml.psi.YAMLValue;
 import com.intellij.openapi.project.DumbService;
@@ -49,7 +49,7 @@ public class Unity3dAssetGUIDReference extends Unity3dKeyValueReferenceBase
 	}
 
 	@RequiredReadAction
-	@NotNull
+	@Nonnull
 	@Override
 	public TextRange getRangeInElement()
 	{

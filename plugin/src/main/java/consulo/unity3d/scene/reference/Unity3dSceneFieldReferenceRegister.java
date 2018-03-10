@@ -16,7 +16,8 @@
 
 package consulo.unity3d.scene.reference;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import org.jetbrains.yaml.psi.YAMLDocument;
 import org.jetbrains.yaml.psi.YAMLFile;
 import org.jetbrains.yaml.psi.YAMLKeyValue;
@@ -57,10 +58,10 @@ public class Unity3dSceneFieldReferenceRegister extends PsiReferenceContributor
 
 		psiReferenceRegistrar.registerReferenceProvider(fieldNamePattern, new PsiReferenceProvider()
 		{
-			@NotNull
+			@Nonnull
 			@Override
 			@RequiredReadAction
-			public PsiReference[] getReferencesByElement(@NotNull PsiElement psiElement, @NotNull ProcessingContext processingContext)
+			public PsiReference[] getReferencesByElement(@Nonnull PsiElement psiElement, @Nonnull ProcessingContext processingContext)
 			{
 				PsiFile containingFile = psiElement.getContainingFile();
 				if(containingFile == null || containingFile.getFileType() != Unity3dYMLAssetFileType.INSTANCE)
@@ -101,9 +102,9 @@ public class Unity3dSceneFieldReferenceRegister extends PsiReferenceContributor
 
 		psiReferenceRegistrar.registerReferenceProvider(StandardPatterns.psiElement(YAMLKeyValue.class).withParent(YAMLMapping.class), new PsiReferenceProvider()
 		{
-			@NotNull
+			@Nonnull
 			@Override
-			public PsiReference[] getReferencesByElement(@NotNull PsiElement psiElement, @NotNull ProcessingContext processingContext)
+			public PsiReference[] getReferencesByElement(@Nonnull PsiElement psiElement, @Nonnull ProcessingContext processingContext)
 			{
 				YAMLKeyValue keyValue = (YAMLKeyValue) psiElement;
 

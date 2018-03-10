@@ -16,7 +16,7 @@
 
 package consulo.unity3d.scene.reference;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import org.jetbrains.yaml.psi.YAMLFile;
 import com.intellij.openapi.application.QueryExecutorBase;
 import com.intellij.openapi.application.ReadAction;
@@ -43,7 +43,7 @@ import consulo.unity3d.scene.index.Unity3dYMLAsset;
 public class Unity3dSceneReferenceSearcher extends QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters>
 {
 	@Override
-	public void processQuery(@NotNull ReferencesSearch.SearchParameters searchParameters, @NotNull Processor<PsiReference> processor)
+	public void processQuery(@Nonnull ReferencesSearch.SearchParameters searchParameters, @Nonnull Processor<PsiReference> processor)
 	{
 		SearchScope scope = ReadAction.compute(searchParameters::getEffectiveSearchScope);
 		if(!(scope instanceof GlobalSearchScope))

@@ -16,7 +16,7 @@
 
 package consulo.unity3d.shaderlab.lang.parser.roles;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.intellij.lang.PsiBuilder;
 import consulo.unity3d.shaderlab.lang.parser.ShaderLabParser;
 import consulo.unity3d.shaderlab.lang.parser.ShaderLabParserBuilder;
@@ -30,7 +30,7 @@ import consulo.unity3d.shaderlab.lang.psi.ShaderLabTokens;
 public class ShaderLabReferenceRole extends ShaderLabValueRole
 {
 	@Override
-	public boolean isMyValue(@NotNull ShaderLabParserBuilder builder)
+	public boolean isMyValue(@Nonnull ShaderLabParserBuilder builder)
 	{
 		return builder.getTokenType() == ShaderLabTokens.LBRACKET;
 	}

@@ -21,8 +21,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ApplicationComponent;
@@ -52,7 +53,7 @@ import com.sun.jna.ptr.PointerByReference;
  */
 public class Unity3dPackageWatcher implements ApplicationComponent, Disposable
 {
-	@NotNull
+	@Nonnull
 	public static Unity3dPackageWatcher getInstance()
 	{
 		return ApplicationManager.getApplication().getComponent(Unity3dPackageWatcher.class);
@@ -80,25 +81,25 @@ public class Unity3dPackageWatcher implements ApplicationComponent, Disposable
 		VirtualFileManager.getInstance().addVirtualFileListener(new VirtualFileListener()
 		{
 			@Override
-			public void fileCopied(@NotNull VirtualFileCopyEvent event)
+			public void fileCopied(@Nonnull VirtualFileCopyEvent event)
 			{
 				dropCache(event);
 			}
 
 			@Override
-			public void fileCreated(@NotNull VirtualFileEvent event)
+			public void fileCreated(@Nonnull VirtualFileEvent event)
 			{
 				dropCache(event);
 			}
 
 			@Override
-			public void fileMoved(@NotNull VirtualFileMoveEvent event)
+			public void fileMoved(@Nonnull VirtualFileMoveEvent event)
 			{
 				dropCache(event);
 			}
 
 			@Override
-			public void fileDeleted(@NotNull VirtualFileEvent event)
+			public void fileDeleted(@Nonnull VirtualFileEvent event)
 			{
 				dropCache(event);
 			}
@@ -118,7 +119,7 @@ public class Unity3dPackageWatcher implements ApplicationComponent, Disposable
 		}, this);
 	}
 
-	@NotNull
+	@Nonnull
 	public Unity3dPackageIndex getIndex()
 	{
 		if(myPackageDirPath == null)
@@ -137,7 +138,7 @@ public class Unity3dPackageWatcher implements ApplicationComponent, Disposable
 		return newIndex;
 	}
 
-	@NotNull
+	@Nonnull
 	private Unity3dPackageIndex buildIndex()
 	{
 		VirtualFile rootDir = LocalFileSystem.getInstance().findFileByPath(myPackageDirPath);

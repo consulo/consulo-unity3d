@@ -18,7 +18,8 @@ package consulo.unity3d.shaderlab.lang;
 
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.folding.CustomFoldingBuilder;
 import com.intellij.lang.folding.FoldingDescriptor;
@@ -36,7 +37,7 @@ import consulo.unity3d.shaderlab.lang.psi.SharpLabElementVisitor;
 public class ShaderLabFoldingBuilder extends CustomFoldingBuilder
 {
 	@Override
-	protected void buildLanguageFoldRegions(@NotNull final List<FoldingDescriptor> descriptors, @NotNull PsiElement root, @NotNull Document document, boolean quick)
+	protected void buildLanguageFoldRegions(@Nonnull final List<FoldingDescriptor> descriptors, @Nonnull PsiElement root, @Nonnull Document document, boolean quick)
 	{
 		root.accept(new SharpLabElementVisitor()
 		{
@@ -53,7 +54,7 @@ public class ShaderLabFoldingBuilder extends CustomFoldingBuilder
 	}
 
 	@Override
-	protected String getLanguagePlaceholderText(@NotNull ASTNode node, @NotNull TextRange range)
+	protected String getLanguagePlaceholderText(@Nonnull ASTNode node, @Nonnull TextRange range)
 	{
 		PsiElement psi = node.getPsi();
 		assert psi instanceof ShaderRoleOwner : psi.getClass().getSimpleName();
@@ -62,7 +63,7 @@ public class ShaderLabFoldingBuilder extends CustomFoldingBuilder
 	}
 
 	@Override
-	protected boolean isRegionCollapsedByDefault(@NotNull ASTNode node)
+	protected boolean isRegionCollapsedByDefault(@Nonnull ASTNode node)
 	{
 		return false;
 	}

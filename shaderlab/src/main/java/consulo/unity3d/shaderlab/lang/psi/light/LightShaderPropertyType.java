@@ -16,8 +16,9 @@
 
 package consulo.unity3d.shaderlab.lang.psi.light;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiManager;
@@ -52,7 +53,7 @@ public class LightShaderPropertyType extends LightElement implements ShaderPrope
 		return null;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getTargetText()
 	{

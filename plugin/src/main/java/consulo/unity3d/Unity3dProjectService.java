@@ -16,8 +16,8 @@
 
 package consulo.unity3d;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.ProjectTopics;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.components.ServiceManager;
@@ -50,15 +50,15 @@ public class Unity3dProjectService implements Disposable
 		}
 	}
 
-	@NotNull
-	public static Unity3dProjectService getInstance(@NotNull Project project)
+	@Nonnull
+	public static Unity3dProjectService getInstance(@Nonnull Project project)
 	{
 		return ServiceManager.getService(project, Unity3dProjectService.class);
 	}
 
 	private ClearableLazyValue<CacheValue> myValue = new ClearableLazyValue<CacheValue>()
 	{
-		@NotNull
+		@Nonnull
 		@Override
 		@RequiredReadAction
 		protected CacheValue compute()
@@ -70,7 +70,7 @@ public class Unity3dProjectService implements Disposable
 
 	@Nullable
 	@RequiredReadAction
-	private static Module findRootModuleImpl(@NotNull Project project)
+	private static Module findRootModuleImpl(@Nonnull Project project)
 	{
 		VirtualFile baseDir = project.getBaseDir();
 		if(baseDir == null)

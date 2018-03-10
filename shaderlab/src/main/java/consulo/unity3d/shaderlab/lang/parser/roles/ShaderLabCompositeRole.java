@@ -16,7 +16,8 @@
 
 package consulo.unity3d.shaderlab.lang.parser.roles;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiBuilderUtil;
 import com.intellij.psi.tree.IElementType;
@@ -31,11 +32,11 @@ import consulo.unity3d.shaderlab.lang.psi.ShaderLabTokens;
  */
 public class ShaderLabCompositeRole extends ShaderLabRole
 {
-	@NotNull
+	@Nonnull
 	private IElementType myDoneElement;
 	private ShaderLabRole[] myRoles;
 
-	public ShaderLabCompositeRole(@NotNull IElementType doneElement, ShaderLabRole... roles)
+	public ShaderLabCompositeRole(@Nonnull IElementType doneElement, ShaderLabRole... roles)
 	{
 		myDoneElement = doneElement;
 		myRoles = roles;
@@ -51,7 +52,7 @@ public class ShaderLabCompositeRole extends ShaderLabRole
 	}
 
 	@Override
-	public PsiBuilder.Marker parseAndDone(ShaderLabParserBuilder builder, @NotNull PsiBuilder.Marker mark)
+	public PsiBuilder.Marker parseAndDone(ShaderLabParserBuilder builder, @Nonnull PsiBuilder.Marker mark)
 	{
 		parseBefore(builder);
 

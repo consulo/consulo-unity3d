@@ -27,7 +27,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import org.jetbrains.yaml.psi.YAMLDocument;
 import org.jetbrains.yaml.psi.YAMLFile;
 import org.jetbrains.yaml.psi.YAMLKeyValue;
@@ -262,7 +263,7 @@ public class Unity3dYMLAssetIndexExtension extends FileBasedIndexExtension<Integ
 		return true;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public FileBasedIndex.InputFilter getInputFilter()
 	{
@@ -275,28 +276,28 @@ public class Unity3dYMLAssetIndexExtension extends FileBasedIndexExtension<Integ
 		return true;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public ID<Integer, List<Unity3dYMLAsset>> getName()
 	{
 		return KEY;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public DataIndexer<Integer, List<Unity3dYMLAsset>, FileContent> getIndexer()
 	{
 		return myIndexer;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public KeyDescriptor<Integer> getKeyDescriptor()
 	{
 		return myKeyDescriptor;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public DataExternalizer<List<Unity3dYMLAsset>> getValueExternalizer()
 	{

@@ -16,8 +16,8 @@
 
 package consulo.unity3d.scene;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -56,7 +56,7 @@ public class Unity3dAssetUtil
 
 	@Nullable
 	@RequiredReadAction
-	public static CSharpTypeDeclaration findPrimaryType(@NotNull PsiFile file)
+	public static CSharpTypeDeclaration findPrimaryType(@Nonnull PsiFile file)
 	{
 		Ref<CSharpTypeDeclaration> typeRef = Ref.create();
 		file.accept(new PsiRecursiveElementWalkingVisitor()
@@ -75,7 +75,7 @@ public class Unity3dAssetUtil
 		return typeRef.get();
 	}
 
-	@NotNull
+	@Nonnull
 	public static VirtualFile[] sortAssetFiles(VirtualFile[] virtualFiles)
 	{
 		ContainerUtil.sort(virtualFiles, (o1, o2) -> weight(o1) - weight(o2));

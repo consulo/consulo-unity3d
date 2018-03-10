@@ -20,8 +20,9 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.testframework.sm.runner.GeneralTestEventsProcessor;
 import com.intellij.openapi.components.ServiceManager;
@@ -32,7 +33,7 @@ import com.intellij.openapi.components.ServiceManager;
  */
 public class Unity3dTestSessionManager
 {
-	@NotNull
+	@Nonnull
 	public static Unity3dTestSessionManager getInstance()
 	{
 		return ServiceManager.getService(Unity3dTestSessionManager.class);

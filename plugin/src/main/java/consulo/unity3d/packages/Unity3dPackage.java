@@ -16,7 +16,8 @@
 
 package consulo.unity3d.packages;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.openapi.util.Version;
 
 /**
@@ -29,26 +30,26 @@ public class Unity3dPackage
 	private final Version myVersion;
 	private final String myPath;
 
-	public Unity3dPackage(@NotNull String id, @NotNull Version version, @NotNull String path)
+	public Unity3dPackage(@Nonnull String id, @Nonnull Version version, @Nonnull String path)
 	{
 		myId = id;
 		myVersion = version;
 		myPath = path;
 	}
 
-	@NotNull
+	@Nonnull
 	public String getId()
 	{
 		return myId;
 	}
 
-	@NotNull
+	@Nonnull
 	public Version getVersion()
 	{
 		return myVersion;
 	}
 
-	@NotNull
+	@Nonnull
 	public String getPath()
 	{
 		return myPath;

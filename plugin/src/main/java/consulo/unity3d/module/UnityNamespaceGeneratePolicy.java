@@ -16,8 +16,9 @@
 
 package consulo.unity3d.module;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
@@ -35,7 +36,7 @@ public class UnityNamespaceGeneratePolicy extends DotNetNamespaceGeneratePolicy
 {
 	public static final UnityNamespaceGeneratePolicy INSTANCE = new UnityNamespaceGeneratePolicy(null);
 
-	public static UnityNamespaceGeneratePolicy createOrGet(@NotNull Unity3dRootModuleExtension rootModuleExtension)
+	public static UnityNamespaceGeneratePolicy createOrGet(@Nonnull Unity3dRootModuleExtension rootModuleExtension)
 	{
 		String namespacePrefix = rootModuleExtension.getNamespacePrefix();
 		if(namespacePrefix != null)
@@ -56,7 +57,7 @@ public class UnityNamespaceGeneratePolicy extends DotNetNamespaceGeneratePolicy
 	@RequiredReadAction
 	@Nullable
 	@Override
-	public String calculateDirtyNamespace(@NotNull PsiDirectory psiDirectory)
+	public String calculateDirtyNamespace(@Nonnull PsiDirectory psiDirectory)
 	{
 		Project project = psiDirectory.getProject();
 		VirtualFile baseDir = project.getBaseDir();

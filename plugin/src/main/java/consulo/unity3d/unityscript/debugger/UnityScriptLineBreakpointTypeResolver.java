@@ -16,8 +16,9 @@
 
 package consulo.unity3d.unityscript.debugger;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -34,7 +35,7 @@ public class UnityScriptLineBreakpointTypeResolver implements XLineBreakpointTyp
 {
 	@Nullable
 	@Override
-	public XLineBreakpointType<?> resolveBreakpointType(@NotNull Project project, @NotNull VirtualFile virtualFile, int line)
+	public XLineBreakpointType<?> resolveBreakpointType(@Nonnull Project project, @Nonnull VirtualFile virtualFile, int line)
 	{
 		Unity3dScriptModuleExtension extension = ModuleUtilCore.getExtension(project, virtualFile, Unity3dScriptModuleExtension.class);
 		if(extension != null)

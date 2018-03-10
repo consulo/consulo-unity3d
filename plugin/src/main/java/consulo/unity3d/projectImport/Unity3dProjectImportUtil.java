@@ -26,8 +26,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.execution.RunManager;
 import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.configurations.ConfigurationFactory;
@@ -123,7 +123,7 @@ public class Unity3dProjectImportUtil
 	public static final Key<Boolean> ourInProgressFlag = Key.create("Unity3dProjectUtil#ourInProgressFlag");
 
 	@Nullable
-	public static String loadVersionFromProject(@NotNull String path)
+	public static String loadVersionFromProject(@Nonnull String path)
 	{
 		File file = new File(path, "ProjectSettings/ProjectVersion.txt");
 		if(!file.exists())
@@ -151,7 +151,7 @@ public class Unity3dProjectImportUtil
 		return null;
 	}
 
-	public static void syncProjectStep1(@NotNull final Project project, @Nullable final Sdk sdk, @Nullable UnityOpenFilePostHandlerRequest requestor, final boolean runValidator)
+	public static void syncProjectStep1(@Nonnull final Project project, @Nullable final Sdk sdk, @Nullable UnityOpenFilePostHandlerRequest requestor, final boolean runValidator)
 	{
 		// set flag
 		project.putUserData(ourInProgressFlag, Boolean.TRUE);
@@ -203,7 +203,7 @@ public class Unity3dProjectImportUtil
 	/**
 	 * this method will called from webservice thread
 	 */
-	private static void syncProjectStep2(@NotNull final Project project,
+	private static void syncProjectStep2(@Nonnull final Project project,
 			@Nullable final Sdk sdk,
 			@Nullable UnityOpenFilePostHandlerRequest requestor,
 			final boolean runValidator,
@@ -223,10 +223,10 @@ public class Unity3dProjectImportUtil
 		});
 	}
 
-	private static void importAfterDefines(@NotNull final Project project,
+	private static void importAfterDefines(@Nonnull final Project project,
 			@Nullable final Sdk sdk,
 			final boolean runValidator,
-			@NotNull ProgressIndicator indicator,
+			@Nonnull ProgressIndicator indicator,
 			@Nullable UnityOpenFilePostHandlerRequest requestor,
 			@Nullable UnitySetDefines setDefines)
 	{
@@ -260,11 +260,11 @@ public class Unity3dProjectImportUtil
 		}
 	}
 
-	@NotNull
-	private static List<Module> importOrUpdate(@NotNull final Project project,
+	@Nonnull
+	private static List<Module> importOrUpdate(@Nonnull final Project project,
 			@Nullable Sdk unitySdk,
 			@Nullable ModifiableModuleModel originalModel,
-			@NotNull ProgressIndicator progressIndicator,
+			@Nonnull ProgressIndicator progressIndicator,
 			@Nullable Collection<String> defines)
 	{
 		boolean fromProjectStructure = originalModel != null;
@@ -360,7 +360,7 @@ public class Unity3dProjectImportUtil
 			VfsUtil.visitChildrenRecursively(assetsDir, new VirtualFileVisitor()
 			{
 				@Override
-				public boolean visitFile(@NotNull VirtualFile file)
+				public boolean visitFile(@Nonnull VirtualFile file)
 				{
 					if(file.isDirectory() && "Editor".equals(file.getName()))
 					{
@@ -409,18 +409,18 @@ public class Unity3dProjectImportUtil
 		}, "unity3d-csharp-child", CSharpFileType.INSTANCE, virtualFilesByModule, progressIndicator);
 	}
 
-	@NotNull
+	@Nonnull
 	@SuppressWarnings("unchecked")
-	private static Module createAndSetupModule(@NotNull String moduleName,
-			@NotNull Project project,
-			@NotNull ModifiableModuleModel modifiableModuleModels,
-			@NotNull String[] paths,
+	private static Module createAndSetupModule(@Nonnull String moduleName,
+			@Nonnull Project project,
+			@Nonnull ModifiableModuleModel modifiableModuleModels,
+			@Nonnull String[] paths,
 			@Nullable Sdk unityBundle,
 			@Nullable final Consumer<ModuleRootLayerImpl> setupConsumer,
-			@NotNull String moduleExtensionId,
-			@NotNull final FileType fileType,
-			@NotNull final MultiMap<Module, VirtualFile> virtualFilesByModule,
-			@NotNull final ProgressIndicator progressIndicator)
+			@Nonnull String moduleExtensionId,
+			@Nonnull final FileType fileType,
+			@Nonnull final MultiMap<Module, VirtualFile> virtualFilesByModule,
+			@Nonnull final ProgressIndicator progressIndicator)
 	{
 		progressIndicator.setText(Unity3dBundle.message("syncing.0.module", moduleName));
 
@@ -456,7 +456,7 @@ public class Unity3dProjectImportUtil
 				VfsUtil.visitChildrenRecursively(fileByPath, new VirtualFileVisitor()
 				{
 					@Override
-					public boolean visitFile(@NotNull VirtualFile file)
+					public boolean visitFile(@Nonnull VirtualFile file)
 					{
 						if(file.getFileType() == fileType)
 						{
@@ -596,21 +596,21 @@ public class Unity3dProjectImportUtil
 		return versionHigherOrEqual && vuforia != null;
 	}
 
-	@NotNull
+	@Nonnull
 	private static Version parseBundleVersion(@Nullable Sdk unityBundle)
 	{
 		String currentVersionString = unityBundle == null ? Unity3dBundleType.UNKNOWN_VERSION : unityBundle.getVersionString();
 		return parseVersion(currentVersionString);
 	}
 
-	private static boolean isVersionHigherOrEqual(@Nullable Sdk unityBundle, @NotNull String requiredVersionString)
+	private static boolean isVersionHigherOrEqual(@Nullable Sdk unityBundle, @Nonnull String requiredVersionString)
 	{
 		Version currentVersion = parseBundleVersion(unityBundle);
 		Version requiredVersion = parseVersion(requiredVersionString);
 		return currentVersion.isOrGreaterThan(requiredVersion.major, requiredVersion.minor, requiredVersion.bugfix);
 	}
 
-	@NotNull
+	@Nonnull
 	public static Version parseVersion(@Nullable String versionString)
 	{
 		if(versionString == null)
@@ -655,11 +655,11 @@ public class Unity3dProjectImportUtil
 		}
 	}
 
-	@NotNull
-	private static Module createRootModule(@NotNull final Project project,
-			@NotNull ModifiableModuleModel newModel,
+	@Nonnull
+	private static Module createRootModule(@Nonnull final Project project,
+			@Nonnull ModifiableModuleModel newModel,
 			@Nullable Sdk unityBundle,
-			@NotNull ProgressIndicator progressIndicator,
+			@Nonnull ProgressIndicator progressIndicator,
 			@Nullable Collection<String> defines)
 	{
 		Ref<String> namespacePrefix = Ref.create();
@@ -750,7 +750,7 @@ public class Unity3dProjectImportUtil
 		return rootModule;
 	}
 
-	@NotNull
+	@Nonnull
 	public static Unity3dDefineByVersion getUnity3dDefineByVersion(@Nullable Sdk sdk)
 	{
 		Version currentBundleVersion = parseBundleVersion(sdk);

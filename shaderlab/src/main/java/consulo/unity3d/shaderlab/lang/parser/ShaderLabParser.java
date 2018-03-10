@@ -18,7 +18,8 @@ package consulo.unity3d.shaderlab.lang.parser;
 
 import java.util.Objects;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiBuilderUtil;
@@ -42,9 +43,9 @@ public class ShaderLabParser implements PsiParser
 		ShaderLabRoleHolder.build();
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public ASTNode parse(@NotNull IElementType root, @NotNull PsiBuilder b, @NotNull LanguageVersion languageVersion)
+	public ASTNode parse(@Nonnull IElementType root, @Nonnull PsiBuilder b, @Nonnull LanguageVersion languageVersion)
 	{
 		ShaderLabParserBuilder builder = new ShaderLabParserBuilder(b);
 
@@ -63,14 +64,14 @@ public class ShaderLabParser implements PsiParser
 		return builder.getTreeBuilt();
 	}
 
-	public static boolean isTokenTextEqualTo(@NotNull PsiBuilder builder, String value)
+	public static boolean isTokenTextEqualTo(@Nonnull PsiBuilder builder, String value)
 	{
 		assert builder.getTokenType() == ShaderLabTokens.IDENTIFIER;
 		String tokenText = builder.getTokenText();
 		return Objects.equals(tokenText, value);
 	}
 
-	public static boolean validateIdentifier(@NotNull PsiBuilder builder, String... values)
+	public static boolean validateIdentifier(@Nonnull PsiBuilder builder, String... values)
 	{
 		assert builder.getTokenType() == ShaderLabTokens.IDENTIFIER;
 		String tokenText = builder.getTokenText();
@@ -123,7 +124,7 @@ public class ShaderLabParser implements PsiParser
 		return false;
 	}
 
-	public static void parseElementsInBraces(@NotNull PsiBuilder builder, IElementType open, IElementType close, IElementType valid)
+	public static void parseElementsInBraces(@Nonnull PsiBuilder builder, IElementType open, IElementType close, IElementType valid)
 	{
 		if(builder.getTokenType() == open)
 		{
@@ -173,7 +174,7 @@ public class ShaderLabParser implements PsiParser
 		mark.error(message);
 	}
 
-	public static boolean expectWithError(PsiBuilder builder, IElementType elementType, @NotNull String message)
+	public static boolean expectWithError(PsiBuilder builder, IElementType elementType, @Nonnull String message)
 	{
 		if(PsiBuilderUtil.expect(builder, elementType))
 		{

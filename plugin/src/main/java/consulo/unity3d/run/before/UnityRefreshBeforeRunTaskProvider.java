@@ -18,8 +18,8 @@ package consulo.unity3d.run.before;
 
 import javax.swing.Icon;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.execution.BeforeRunTaskProvider;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.runners.ExecutionEnvironment;
@@ -126,7 +126,7 @@ public class UnityRefreshBeforeRunTaskProvider extends BeforeRunTaskProvider<Uni
 					private UnityPingPong.Token<Boolean> myAccessToken;
 
 					@Override
-					public void run(@NotNull ProgressIndicator indicator)
+					public void run(@Nonnull ProgressIndicator indicator)
 					{
 						UnityRefresh postObject = new UnityRefresh();
 						myAccessToken = UnityPingPong.wantReply(postObject.uuid, o -> {

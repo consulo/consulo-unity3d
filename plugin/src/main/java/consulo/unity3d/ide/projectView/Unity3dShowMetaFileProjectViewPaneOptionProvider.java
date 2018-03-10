@@ -16,7 +16,8 @@
 
 package consulo.unity3d.ide.projectView;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.ide.projectView.ProjectView;
 import com.intellij.ide.projectView.impl.AbstractProjectViewPane;
 import com.intellij.ide.projectView.impl.ProjectViewPane;
@@ -83,7 +84,7 @@ public class Unity3dShowMetaFileProjectViewPaneOptionProvider extends ProjectVie
 		}
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public KeyWithDefaultValue<Boolean> getKey()
 	{
@@ -92,7 +93,7 @@ public class Unity3dShowMetaFileProjectViewPaneOptionProvider extends ProjectVie
 
 	@Override
 	@RequiredDispatchThread
-	public void addToolbarActions(@NotNull AbstractProjectViewPane pane, @NotNull DefaultActionGroup actionGroup)
+	public void addToolbarActions(@Nonnull AbstractProjectViewPane pane, @Nonnull DefaultActionGroup actionGroup)
 	{
 		if(pane instanceof ProjectViewPane)
 		{

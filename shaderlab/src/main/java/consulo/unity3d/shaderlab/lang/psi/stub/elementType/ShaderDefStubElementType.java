@@ -18,7 +18,8 @@ package consulo.unity3d.shaderlab.lang.psi.stub.elementType;
 
 import java.io.IOException;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.stubs.IStubElementType;
@@ -46,27 +47,27 @@ public class ShaderDefStubElementType extends IStubElementType<ShaderDefStub, Sh
 		super("SHADER_DEF", ShaderLabLanguage.INSTANCE);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public PsiElement createElement(@NotNull ASTNode astNode)
+	public PsiElement createElement(@Nonnull ASTNode astNode)
 	{
 		return new ShaderDefImpl(astNode);
 	}
 
 	@Override
-	public ShaderDef createPsi(@NotNull ShaderDefStub stub)
+	public ShaderDef createPsi(@Nonnull ShaderDefStub stub)
 	{
 		return new ShaderDefImpl(stub, this);
 	}
 
 	@RequiredReadAction
 	@Override
-	public ShaderDefStub createStub(@NotNull ShaderDef psi, StubElement parentStub)
+	public ShaderDefStub createStub(@Nonnull ShaderDef psi, StubElement parentStub)
 	{
 		return new ShaderDefStub(parentStub, this, psi.getName());
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getExternalId()
 	{
@@ -74,21 +75,21 @@ public class ShaderDefStubElementType extends IStubElementType<ShaderDefStub, Sh
 	}
 
 	@Override
-	public void serialize(@NotNull ShaderDefStub stub, @NotNull StubOutputStream dataStream) throws IOException
+	public void serialize(@Nonnull ShaderDefStub stub, @Nonnull StubOutputStream dataStream) throws IOException
 	{
 		dataStream.writeName(stub.getName());
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public ShaderDefStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException
+	public ShaderDefStub deserialize(@Nonnull StubInputStream dataStream, StubElement parentStub) throws IOException
 	{
 		StringRef name = dataStream.readName();
 		return new ShaderDefStub(parentStub, this, name);
 	}
 
 	@Override
-	public void indexStub(@NotNull ShaderDefStub stub, @NotNull IndexSink sink)
+	public void indexStub(@Nonnull ShaderDefStub stub, @Nonnull IndexSink sink)
 	{
 		String name = stub.getName();
 		if(name != null)

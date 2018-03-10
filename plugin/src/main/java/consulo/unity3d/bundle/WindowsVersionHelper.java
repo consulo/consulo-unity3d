@@ -19,7 +19,7 @@ package consulo.unity3d.bundle;
 import java.util.Arrays;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.intellij.openapi.util.io.FileUtil;
 import com.sun.jna.Library;
 import com.sun.jna.Memory;
@@ -78,7 +78,7 @@ class WindowsVersionHelper
 		}
 	}
 
-	@NotNull
+	@Nonnull
 	public static String getVersion(String path) throws Exception
 	{
 		path = FileUtil.toSystemDependentName(path);

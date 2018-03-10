@@ -16,7 +16,7 @@
 
 package consulo.unity3d.nunit.module.extension;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import consulo.module.extension.impl.ModuleExtensionImpl;
 import consulo.nunit.module.extension.NUnitSimpleModuleExtension;
 import consulo.roots.ModuleRootLayer;
@@ -27,7 +27,7 @@ import consulo.roots.ModuleRootLayer;
  */
 public class Unity3dNUnitModuleExtension extends ModuleExtensionImpl<Unity3dNUnitModuleExtension> implements NUnitSimpleModuleExtension<Unity3dNUnitModuleExtension>
 {
-	public Unity3dNUnitModuleExtension(@NotNull String id, @NotNull ModuleRootLayer moduleRootLayer)
+	public Unity3dNUnitModuleExtension(@Nonnull String id, @Nonnull ModuleRootLayer moduleRootLayer)
 	{
 		super(id, moduleRootLayer);
 	}
