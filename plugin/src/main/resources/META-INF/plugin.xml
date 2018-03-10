@@ -88,11 +88,11 @@
 	</extensions>
 
 	<extensionPoints>
-		<extensionPoint name="projectSourceFileTypeFactory" interface="consulo.unity3d.projectImport.change.Unity3dProjectSourceFileTypeFactory" />
+		<extensionPoint name="projectSourceFileTypeFactory" interface="consulo.unity3d.projectImport.change.Unity3dProjectSourceFileTypeFactory"/>
 	</extensionPoints>
 
 	<extensions defaultExtensionNs="consulo.unity3d">
-		<projectSourceFileTypeFactory implementation="consulo.unity3d.projectImport.change.DefaultUnity3dProjectSourceFileTypeFactory" />
+		<projectSourceFileTypeFactory implementation="consulo.unity3d.projectImport.change.DefaultUnity3dProjectSourceFileTypeFactory"/>
 	</extensions>
 
 	<extensions defaultExtensionNs="consulo.dotnet">
@@ -143,6 +143,9 @@
 				groupName="Unity"
 				displayName="GameObject.tag equality warning"
 				implementationClass="consulo.unity3d.csharp.codeInsight.inspection.UnityCompareTagInspection"/>
+
+		<usageFilteringRuleProvider implementation="consulo.unity3d.usages.Unity3dAssetUsageFilteringRuleProvider"/>
+		<applicationService serviceImplementation="consulo.unity3d.usages.Unity3dAssetUsageSettings" />
 
 		<colorProvider implementation="consulo.unity3d.csharp.codeInsight.UnityCSharpStaticElementColorProvider"/>
 		<colorProvider implementation="consulo.unity3d.csharp.codeInsight.UnityCSharpStaticElementColor32Provider"/>
