@@ -196,7 +196,7 @@ public class UnityOpenFilePostHandler extends JsonPostRequestHandler<UnityOpenFi
 		}
 
 		IdeFrame ideFrame = WindowManager.getInstance().getIdeFrame(openedProject);
-		if(!((JFrame)ideFrame).isVisible())
+		if(ideFrame == null || !((JFrame)ideFrame).isVisible())
 		{
 			return;
 		}
