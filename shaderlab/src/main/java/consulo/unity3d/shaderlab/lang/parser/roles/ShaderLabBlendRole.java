@@ -74,9 +74,13 @@ public class ShaderLabBlendRole extends ShaderLabRole
 		{
 			ShaderLabParser.parseBracketReference(builder);
 		}
-		else
+		else if(builder.getTokenType() == ShaderLabTokens.IDENTIFIER)
 		{
 			ShaderLabParser.validateIdentifier(builder, ourFactors);
+		}
+		else
+		{
+			builder.error("Unexpected token");
 		}
 	}
 
