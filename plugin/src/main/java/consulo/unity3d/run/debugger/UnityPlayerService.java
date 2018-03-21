@@ -32,23 +32,29 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Nonnull;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.components.ApplicationComponent;
+
+import com.intellij.openapi.Disposable;
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.progress.Task;
+import com.intellij.openapi.project.Project;
+import com.intellij.util.ThreeState;
 import com.intellij.util.concurrency.AppExecutorUtil;
+import consulo.annotations.RequiredDispatchThread;
 
 /**
  * @author VISTALL
  * @since 10.11.14
  */
-public class UnityPlayerService implements ApplicationComponent
+public class UnityPlayerService implements Disposable
 {
 	private static final Logger LOGGER = Logger.getInstance(UnityPlayerService.class);
 
 	@Nonnull
 	public static UnityPlayerService getInstance()
 	{
-		return ApplicationManager.getApplication().getComponent(UnityPlayerService.class);
+		return ServiceManager.getService(UnityPlayerService.class);
 	}
 
 	private static final int[] ourPorts = {
@@ -66,8 +72,9 @@ public class UnityPlayerService implements ApplicationComponent
 
 	private Future<?> myUpdateFuture;
 
-	@Override
-	public void initComponent()
+	private ThreeState myBindState = ThreeState.NO;
+
+	private void runUpdateTask()
 	{
 		myUpdateFuture = AppExecutorUtil.getAppScheduledExecutorService().scheduleWithFixedDelay((Runnable) () ->
 		{
@@ -81,11 +88,46 @@ public class UnityPlayerService implements ApplicationComponent
 				}
 			}
 		}, 5, 5, TimeUnit.SECONDS);
-
-		AppExecutorUtil.getAppExecutorService().execute(this::bind);
 	}
 
-	private void bind()
+	@RequiredDispatchThread
+	public void bindAndRun(@Nonnull Project project, @Nonnull Runnable runnable)
+	{
+		switch(myBindState)
+		{
+			case YES:
+				runnable.run();
+				break;
+			case UNSURE:
+				// nothing
+				break;
+			default:
+				myBindState = ThreeState.UNSURE;
+
+				new Task.Backgroundable(project, "Preparing network listeners...")
+				{
+					@Override
+					public void run(@Nonnull ProgressIndicator progressIndicator)
+					{
+						bind(progressIndicator);
+					}
+
+					@RequiredDispatchThread
+					@Override
+					public void onFinished()
+					{
+						myBindState = ThreeState.YES;
+
+						runUpdateTask();
+
+						runnable.run();
+					}
+				}.queue();
+				break;
+		}
+	}
+
+	private void bind(@Nonnull ProgressIndicator progressIndicator)
 	{
 		try
 		{
@@ -118,6 +160,9 @@ public class UnityPlayerService implements ApplicationComponent
 						myThreads.add(udpThread);
 
 						succBinds++;
+
+						progressIndicator.setText2("Binding " + networkInterface + ", port: " + playerMulticastPort);
+
 						LOGGER.info("Successfully binding network interface " + networkInterface + ", port: " + playerMulticastPort);
 					}
 					catch(Exception e)
@@ -150,9 +195,12 @@ public class UnityPlayerService implements ApplicationComponent
 	}
 
 	@Override
-	public void disposeComponent()
+	public void dispose()
 	{
-		myUpdateFuture.cancel(false);
+		if(myUpdateFuture != null)
+		{
+			myUpdateFuture.cancel(false);
+		}
 
 		for(UnityUdpThread thread : myThreads)
 		{

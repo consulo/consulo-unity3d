@@ -46,9 +46,6 @@
 
 	<application-components>
 		<component>
-			<implementation-class>consulo.unity3d.run.debugger.UnityPlayerService</implementation-class>
-		</component>
-		<component>
 			<implementation-class>consulo.unity3d.Unity3dLocalFileSystemComponent</implementation-class>
 		</component>
 		<component>
@@ -152,6 +149,8 @@
 		<iconDescriptorUpdater implementation="consulo.unity3d.unityscript.UnityScriptIconDescriptorUpdater"/>
 		<gotoClassContributor implementation="consulo.unity3d.unityscript.navigation.UnityScriptGotoClassContributor"/>
 		<sdkType implementation="consulo.unity3d.bundle.Unity3dBundleType"/>
+
+		<applicationService serviceImplementation="consulo.unity3d.run.debugger.UnityPlayerService" />
 
 		<moduleExtensionProvider
 				key="unity3d"

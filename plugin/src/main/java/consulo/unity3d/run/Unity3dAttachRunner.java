@@ -20,6 +20,7 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionResult;
 import com.intellij.execution.actions.StopProcessAction;
@@ -28,12 +29,15 @@ import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.executors.DefaultDebugExecutor;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.process.ProcessOutputTypes;
-import com.intellij.execution.runners.DefaultProgramRunner;
+import com.intellij.execution.runners.AsyncProgramRunner;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ProgramRunner;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.progress.Task;
+import com.intellij.openapi.util.AsyncResult;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.containers.ContainerUtil;
@@ -44,6 +48,7 @@ import consulo.dotnet.execution.DebugConnectionInfo;
 import consulo.dotnet.mono.debugger.MonoVirtualMachineListener;
 import consulo.unity3d.editor.UnityEditorCommunication;
 import consulo.unity3d.run.debugger.UnityDebugProcess;
+import consulo.unity3d.run.debugger.UnityPlayerService;
 import consulo.unity3d.run.debugger.UnityProcess;
 import consulo.unity3d.run.debugger.UnityProcessDialog;
 import mono.debugger.VirtualMachine;
@@ -52,7 +57,7 @@ import mono.debugger.VirtualMachine;
  * @author VISTALL
  * @since 10.11.14
  */
-public class Unity3dAttachRunner extends DefaultProgramRunner
+public class Unity3dAttachRunner extends AsyncProgramRunner
 {
 	public static Unity3dAttachRunner getInstance()
 	{
@@ -72,52 +77,6 @@ public class Unity3dAttachRunner extends DefaultProgramRunner
 		return executorId.equals(DefaultDebugExecutor.EXECUTOR_ID) && profile instanceof Unity3dAttachConfiguration;
 	}
 
-	@Nullable
-	@Override
-	@RequiredDispatchThread
-	protected RunContentDescriptor doExecute(@Nonnull RunProfileState state, @Nonnull final ExecutionEnvironment environment) throws ExecutionException
-	{
-		Unity3dAttachConfiguration runProfile = (Unity3dAttachConfiguration) environment.getRunProfile();
-
-		UnityProcess process = null;
-		switch(runProfile.getAttachTarget())
-		{
-			case UNITY_EDITOR:
-				process = UnityEditorCommunication.findEditorProcess();
-				break;
-			case BY_NAME:
-				for(UnityProcess unityProcess : UnityProcessDialog.collectItems())
-				{
-					if(StringUtil.isEmpty(runProfile.getProcessName()) || Comparing.equal(unityProcess.getName(), runProfile.getProcessName()))
-					{
-						process = unityProcess;
-						break;
-					}
-				}
-				break;
-			case FROM_DIALOG:
-				UnityProcessDialog dialog = new UnityProcessDialog(environment.getProject());
-
-				List<UnityProcess> unityProcesses = dialog.showAndGetResult();
-
-				process = ContainerUtil.getFirstItem(unityProcesses);
-				if(process == null)
-				{
-					return null;
-				}
-				break;
-		}
-
-		if(process == null)
-		{
-			throw new ExecutionException("Process not find for attach");
-		}
-
-		boolean isEditor = Comparing.equal(UnityEditorCommunication.findEditorProcess(), process);
-		ExecutionResult executionResult = state.execute(environment.getExecutor(), this);
-		return runContentDescriptor(executionResult, environment, process, null, isEditor);
-	}
-
 	@Nonnull
 	@RequiredDispatchThread
 	public static RunContentDescriptor runContentDescriptor(ExecutionResult executionResult,
@@ -126,7 +85,6 @@ public class Unity3dAttachRunner extends DefaultProgramRunner
 			@Nullable final ConsoleView consoleView,
 			boolean insideEditor) throws ExecutionException
 	{
-		FileDocumentManager.getInstance().saveAllDocuments();
 		final XDebugSession debugSession = XDebuggerManager.getInstance(environment.getProject()).startSession(environment, session ->
 		{
 			DebugConnectionInfo debugConnectionInfo = new DebugConnectionInfo(selected.getHost(), selected.getPort(), true);
@@ -171,5 +129,130 @@ public class Unity3dAttachRunner extends DefaultProgramRunner
 		});
 
 		return debugSession.getRunContentDescriptor();
+	}
+
+	@Nonnull
+	@Override
+	@RequiredDispatchThread
+	protected AsyncResult<RunContentDescriptor> execute(@Nonnull ExecutionEnvironment environment, @Nonnull RunProfileState state) throws ExecutionException
+	{
+		FileDocumentManager.getInstance().saveAllDocuments();
+
+		AsyncResult<RunContentDescriptor> result = new AsyncResult<>();
+
+		Unity3dAttachConfiguration runProfile = (Unity3dAttachConfiguration) environment.getRunProfile();
+
+		ExecutionResult executionResult = state.execute(environment.getExecutor(), this);
+
+		switch(runProfile.getAttachTarget())
+		{
+			case UNITY_EDITOR:
+				new Task.Backgroundable(environment.getProject(), "Searching Unity Editor...", false)
+				{
+					private UnityProcess myUnityProcess;
+
+					@Override
+					public void run(@Nonnull ProgressIndicator progressIndicator)
+					{
+						myUnityProcess = UnityEditorCommunication.findEditorProcess();
+					}
+
+					@RequiredDispatchThread
+					@Override
+					public void onSuccess()
+					{
+						if(myUnityProcess != null)
+						{
+							try
+							{
+								result.setDone(runContentDescriptor(executionResult, environment, myUnityProcess, null, true));
+							}
+							catch(ExecutionException e)
+							{
+								result.rejectWithThrowable(e);
+							}
+						}
+						else
+						{
+							result.rejectWithThrowable(new ExecutionException("Unity Editor is not running"));
+						}
+					}
+				}.queue();
+				return result;
+			case BY_NAME:
+				UnityPlayerService.getInstance().bindAndRun(environment.getProject(), () ->
+				{
+					new Task.Backgroundable(environment.getProject(), "Searching process by name: " + runProfile.getProcessName())
+					{
+						private UnityProcess myUnityProcess;
+						private UnityProcess myEditorProcess;
+
+						@Override
+						public void run(@Nonnull ProgressIndicator progressIndicator)
+						{
+							myEditorProcess = UnityEditorCommunication.findEditorProcess();
+
+							for(UnityProcess unityProcess : UnityProcessDialog.collectItems())
+							{
+								if(StringUtil.isEmpty(runProfile.getProcessName()) || Comparing.equal(unityProcess.getName(), runProfile.getProcessName()))
+								{
+									myUnityProcess = unityProcess;
+									break;
+								}
+							}
+						}
+
+						@RequiredDispatchThread
+						@Override
+						public void onFinished()
+						{
+							setRunDescriptor(result, environment, executionResult, myUnityProcess, myEditorProcess);
+						}
+					}.queue();
+				});
+				break;
+			case FROM_DIALOG:
+				UnityPlayerService.getInstance().bindAndRun(environment.getProject(), () ->
+				{
+					UnityProcessDialog dialog = new UnityProcessDialog(environment.getProject());
+
+					List<UnityProcess> unityProcesses = dialog.showAndGetResult();
+
+					UnityProcess process = ContainerUtil.getFirstItem(unityProcesses);
+					if(process == null)
+					{
+						result.setDone(null);
+						return;
+					}
+					setRunDescriptor(result, environment, executionResult, process, null);
+				});
+				break;
+		}
+		return result;
+	}
+
+	@RequiredDispatchThread
+	private static void setRunDescriptor(AsyncResult<RunContentDescriptor> result,
+			ExecutionEnvironment environment,
+			ExecutionResult executionResult,
+			@Nullable UnityProcess process,
+			@Nullable UnityProcess editorProcess)
+	{
+		if(process == null)
+		{
+			result.rejectWithThrowable(new ExecutionException("Process not find for attach"));
+			return;
+		}
+
+		boolean isEditor = editorProcess != null && Comparing.equal(editorProcess, process);
+
+		try
+		{
+			result.setDone(runContentDescriptor(executionResult, environment, process, null, isEditor));
+		}
+		catch(ExecutionException e)
+		{
+			result.rejectWithThrowable(e);
+		}
 	}
 }

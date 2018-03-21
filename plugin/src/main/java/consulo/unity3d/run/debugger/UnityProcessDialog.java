@@ -54,11 +54,16 @@ public class UnityProcessDialog extends ChooseElementsDialog<UnityProcess>
 	@Override
 	public void show()
 	{
-		myTask = AppExecutorUtil.getAppScheduledExecutorService().scheduleWithFixedDelay((Runnable) () -> UIUtil.invokeLaterIfNeeded(() ->
+		myTask = AppExecutorUtil.getAppScheduledExecutorService().scheduleWithFixedDelay((Runnable) () ->
 		{
-			List<UnityProcess> selectedElements = myChooser.getSelectedElements();
-			UnityProcessDialog.this.setElements(collectItems(), selectedElements);
-		}), 0, 1, TimeUnit.SECONDS);
+			List<UnityProcess> elements = collectItems();
+
+			UIUtil.invokeLaterIfNeeded(() ->
+			{
+				List<UnityProcess> selectedElements = myChooser.getSelectedElements();
+				setElements(elements, selectedElements);
+			});
+		}, 0, 1, TimeUnit.SECONDS);
 		super.show();
 	}
 
