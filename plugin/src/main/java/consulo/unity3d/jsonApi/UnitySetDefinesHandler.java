@@ -107,7 +107,7 @@ public class UnitySetDefinesHandler extends JsonPostRequestHandler<UnitySetDefin
 			return;
 		}
 
-		new Notification("unity", ApplicationNamesInfo.getInstance().getProductName(), "Build Target Changed.<br>Defines updated.", NotificationType.WARNING).notify(modifiableRootModel.getProject());
+		new Notification("unity", ApplicationNamesInfo.getInstance().getProductName(), "Build Target Changed.<br>Defines updated.", NotificationType.INFORMATION).notify(modifiableRootModel.getProject());
 
 		Unity3dRootMutableModuleExtension extension = modifiableRootModel.getExtension(Unity3dRootMutableModuleExtension.class);
 		assert extension != null;

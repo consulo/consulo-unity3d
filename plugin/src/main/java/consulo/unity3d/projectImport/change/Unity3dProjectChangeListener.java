@@ -159,7 +159,7 @@ public class Unity3dProjectChangeListener implements ProjectComponent, VirtualFi
 
 			if(needNotification)
 			{
-				new Notification("unity", ApplicationNamesInfo.getInstance().getProductName(), "Project structure changed<br><a href=\"#\">Rebuild project</a>", NotificationType.WARNING,
+				new Notification("unity", ApplicationNamesInfo.getInstance().getProductName(), "Project structure changed<br><a href=\"#\">Rebuild project</a>", NotificationType.INFORMATION,
 						(notification, hyperlinkEvent) ->
 				{
 					notification.hideBalloon();

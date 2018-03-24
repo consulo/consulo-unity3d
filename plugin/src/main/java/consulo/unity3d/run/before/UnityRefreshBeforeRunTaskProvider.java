@@ -137,7 +137,7 @@ public class UnityRefreshBeforeRunTaskProvider extends BeforeRunTaskProvider<Uni
 						boolean request = UnityEditorCommunication.request(env.getProject(), postObject, true);
 						if(!request)
 						{
-							new Notification("unity", ApplicationNamesInfo.getInstance().getProductName(), "UnityEditor is not responding", NotificationType.WARNING).notify(env.getProject());
+							new Notification("unity", ApplicationNamesInfo.getInstance().getProductName(), "UnityEditor is not responding", NotificationType.INFORMATION).notify(env.getProject());
 
 							myAccessToken.finish(Boolean.FALSE);
 							done.up();

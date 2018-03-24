@@ -197,7 +197,7 @@ public class Unity3dProjectImportUtil
 	private static void notifyAboutUnityEditorProblem(Project project)
 	{
 		UIUtil.invokeLaterIfNeeded(() -> new Notification("unity", ApplicationNamesInfo.getInstance().getProductName(), "UnityEditor is not responding.<br>Defines is not resolved.", NotificationType
-				.WARNING).notify(project));
+				.INFORMATION).notify(project));
 	}
 
 	/**
