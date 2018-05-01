@@ -47,7 +47,11 @@ import consulo.unity3d.projectImport.Unity3dProjectImportUtil;
  */
 public class Unity3dRootModuleExtension extends BaseDotNetSimpleModuleExtension<Unity3dRootModuleExtension>
 {
+	private static final int NET_2_TO_3_5 = 0;
+	private static final int NET_4_6 = 1;
+
 	protected String myNamespacePrefix = null;
+	protected int scriptRuntimeVersion;
 
 	public Unity3dRootModuleExtension(@Nonnull String id, @Nonnull ModuleRootLayer rootModel)
 	{
@@ -67,6 +71,7 @@ public class Unity3dRootModuleExtension extends BaseDotNetSimpleModuleExtension<
 	{
 		super.commit(mutableModuleExtension);
 		myNamespacePrefix = mutableModuleExtension.myNamespacePrefix;
+		scriptRuntimeVersion = mutableModuleExtension.scriptRuntimeVersion;
 	}
 
 	@Override
@@ -77,6 +82,10 @@ public class Unity3dRootModuleExtension extends BaseDotNetSimpleModuleExtension<
 		{
 			element.setAttribute("namespace-prefix", myNamespacePrefix);
 		}
+		if(scriptRuntimeVersion != 0)
+		{
+			element.setAttribute("script-runtime-version", String.valueOf(scriptRuntimeVersion));
+		}
 	}
 
 	@RequiredReadAction
@@ -85,6 +94,7 @@ public class Unity3dRootModuleExtension extends BaseDotNetSimpleModuleExtension<
 	{
 		super.loadStateImpl(element);
 		myNamespacePrefix = element.getAttributeValue("namespace-prefix");
+		scriptRuntimeVersion = Integer.parseInt(element.getAttributeValue("script-runtime-version", "0"));
 	}
 
 	@Nullable
@@ -142,11 +152,20 @@ public class Unity3dRootModuleExtension extends BaseDotNetSimpleModuleExtension<
 		if(SystemInfo.isMac)
 		{
 			list.add(homePath + "/Contents/Frameworks/Managed");
-			list.add(homePath + "/Contents/Frameworks/Mono/lib/mono/2.0");
+			switch(scriptRuntimeVersion)
+			{
+				case NET_2_TO_3_5:
+					list.add(homePath + "/Contents/Frameworks/Mono/lib/mono/2.0");
+					// actual at unity5.4 beta
+					list.add(homePath + "/Contents/Mono/lib/mono/2.0");
+					break;
+				case NET_4_6:
+					list.add(homePath + "/Contents/MonoBleedingEdge/lib/mono/4.5");
+					break;
+			}
 
 			// actual at unity5.4 beta
 			list.add(homePath + "/Contents/Managed");
-			list.add(homePath + "/Contents/Mono/lib/mono/2.0");
 
 			// dead path?
 			addUnityExtensions(list, version, homePath + "/Contents/Frameworks/UnityExtensions/Unity");
@@ -173,7 +192,15 @@ public class Unity3dRootModuleExtension extends BaseDotNetSimpleModuleExtension<
 		else if(SystemInfo.isWindows || SystemInfo.isLinux)
 		{
 			list.add(homePath + "/Editor/Data/Managed");
-			list.add(homePath + "/Editor/Data/Mono/lib/mono/2.0");
+			switch(scriptRuntimeVersion)
+			{
+				case NET_2_TO_3_5:
+					list.add(homePath + "/Editor/Data/Mono/lib/mono/2.0");
+					break;
+				case NET_4_6:
+					list.add(homePath + "/Editor/Data/MonoBleedingEdge/lib/mono/4.5");
+					break;
+			}
 
 			addUnityExtensions(list, version, homePath + "/Editor/Data/UnityExtensions/Unity");
 		}

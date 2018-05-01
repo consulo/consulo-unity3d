@@ -28,6 +28,12 @@ import java.util.TreeSet;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import org.jetbrains.yaml.psi.YAMLDocument;
+import org.jetbrains.yaml.psi.YAMLFile;
+import org.jetbrains.yaml.psi.YAMLKeyValue;
+import org.jetbrains.yaml.psi.YAMLMapping;
+import org.jetbrains.yaml.psi.YAMLValue;
 import com.intellij.execution.RunManager;
 import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.configurations.ConfigurationFactory;
@@ -38,7 +44,6 @@ import com.intellij.notification.NotificationType;
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ApplicationNamesInfo;
-import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.application.Result;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.fileTypes.FileType;
@@ -64,6 +69,8 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileVisitor;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiManager;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Consumer;
 import com.intellij.util.TimeoutUtil;
@@ -71,6 +78,7 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import com.intellij.util.io.storage.HeavyProcessLatch;
 import com.intellij.util.ui.UIUtil;
+import consulo.application.AccessRule;
 import consulo.csharp.lang.CSharpFileType;
 import consulo.csharp.module.extension.CSharpLanguageVersion;
 import consulo.csharp.module.extension.CSharpSimpleMutableModuleExtension;
@@ -100,6 +108,7 @@ import consulo.unity3d.module.Unity3dRootMutableModuleExtension;
 import consulo.unity3d.nunit.module.extension.Unity3dNUnitMutableModuleExtension;
 import consulo.unity3d.run.Unity3dAttachApplicationType;
 import consulo.unity3d.run.Unity3dAttachConfiguration;
+import consulo.unity3d.scene.Unity3dYMLAssetFileType;
 import consulo.vfs.util.ArchiveVfsUtil;
 
 /**
@@ -269,11 +278,53 @@ public class Unity3dProjectImportUtil
 	{
 		boolean fromProjectStructure = originalModel != null;
 
-		final ModifiableModuleModel newModel = fromProjectStructure ? originalModel : ReadAction.compute(() -> ModuleManager.getInstance(project).getModifiableModel());
+		VirtualFile baseDir = project.getBaseDir();
+		assert baseDir != null;
+
+		int scriptRuntimeVersion = 0;
+		VirtualFile projectSettingsFile = baseDir.findFileByRelativePath("ProjectSettings/ProjectSettings.asset");
+		if(projectSettingsFile != null && projectSettingsFile.getFileType() == Unity3dYMLAssetFileType.INSTANCE)
+		{
+			Integer version = AccessRule.read(() ->
+			{
+				PsiFile file = PsiManager.getInstance(project).findFile(projectSettingsFile);
+				if(file instanceof YAMLFile)
+				{
+					List<YAMLDocument> documents = ((YAMLFile) file).getDocuments();
+					for(YAMLDocument document : documents)
+					{
+						YAMLValue topLevelValue = document.getTopLevelValue();
+						if(topLevelValue instanceof YAMLMapping)
+						{
+							YAMLKeyValue playerSettings = ((YAMLMapping) topLevelValue).getKeyValueByKey("PlayerSettings");
+							if(playerSettings != null)
+							{
+								YAMLValue value = playerSettings.getValue();
+								if(value instanceof YAMLMapping)
+								{
+									YAMLKeyValue scriptingRuntimeVersion = ((YAMLMapping) value).getKeyValueByKey("scriptingRuntimeVersion");
+									if(scriptingRuntimeVersion != null)
+									{
+										String valueText = scriptingRuntimeVersion.getValueText();
+										return StringUtil.parseInt(valueText, 0);
+									}
+								}
+							}
+						}
+					}
+				}
+
+				return 0;
+			});
+			assert version != null;
+			scriptRuntimeVersion = version;
+		}
+
+		final ModifiableModuleModel newModel = fromProjectStructure ? originalModel : AccessRule.read(() -> ModuleManager.getInstance(project).getModifiableModel());
 
 		List<Module> modules = new ArrayList<>(5);
 
-		ContainerUtil.addIfNotNull(modules, createRootModule(project, newModel, unitySdk, progressIndicator, defines));
+		ContainerUtil.addIfNotNull(modules, createRootModule(project, newModel, unitySdk, progressIndicator, defines, scriptRuntimeVersion));
 		progressIndicator.setFraction(0.1);
 
 		MultiMap<Module, VirtualFile> sourceFilesByModule = MultiMap.create();
@@ -440,7 +491,7 @@ public class Unity3dProjectImportUtil
 			module = temp;
 		}
 
-		final ModifiableRootModel modifiableModel = ReadAction.compute(() -> ModuleRootManager.getInstance(module).getModifiableModel());
+		final ModifiableRootModel modifiableModel = AccessRule.read(() -> ModuleRootManager.getInstance(module).getModifiableModel());
 
 		final List<VirtualFile> toAdd = new ArrayList<>();
 		final List<VirtualFile> libraryFiles = new ArrayList<>();
@@ -571,7 +622,7 @@ public class Unity3dProjectImportUtil
 
 			runManager.addConfiguration(configurationSettings, false);
 
-			ReadAction.run(() -> runManager.setSelectedConfiguration(configurationSettings));
+			AccessRule.read(() -> runManager.setSelectedConfiguration(configurationSettings));
 		}
 
 		new WriteAction<Object>()
@@ -660,7 +711,8 @@ public class Unity3dProjectImportUtil
 			@Nonnull ModifiableModuleModel newModel,
 			@Nullable Sdk unityBundle,
 			@Nonnull ProgressIndicator progressIndicator,
-			@Nullable Collection<String> defines)
+			@Nullable Collection<String> defines,
+			int scriptRuntimeVersion)
 	{
 		Ref<String> namespacePrefix = Ref.create();
 		Set<String> excludedUrls = new TreeSet<>();
@@ -672,13 +724,13 @@ public class Unity3dProjectImportUtil
 		excludedUrls.add(projectUrl + "/test_Data");
 
 		final Module rootModule;
-		Unity3dRootModuleExtension rootModuleExtension = ReadAction.compute(() -> Unity3dModuleExtensionUtil.getRootModuleExtension(project));
+		Unity3dRootModuleExtension rootModuleExtension = AccessRule.read(() -> Unity3dModuleExtensionUtil.getRootModuleExtension(project));
 		if(rootModuleExtension != null)
 		{
 			namespacePrefix.set(rootModuleExtension.getNamespacePrefix());
 
 			rootModule = rootModuleExtension.getModule();
-			ReadAction.run(() ->
+			AccessRule.read(() ->
 			{
 				ContentFolder[] contentFolders = ModuleRootManager.getInstance(rootModule).getContentFolders(ContentFolderScopes.excluded());
 				for(ContentFolder contentFolder : contentFolders)
@@ -695,7 +747,7 @@ public class Unity3dProjectImportUtil
 		progressIndicator.setText(Unity3dBundle.message("syncing.0.module", rootModule.getName()));
 
 
-		final ModifiableRootModel modifiableModel = ReadAction.compute(() -> ModuleRootManager.getInstance(rootModule).getModifiableModel());
+		final ModifiableRootModel modifiableModel = AccessRule.read(() -> ModuleRootManager.getInstance(rootModule).getModifiableModel());
 
 		modifiableModel.removeAllLayers(true);
 
@@ -708,6 +760,7 @@ public class Unity3dProjectImportUtil
 		assert extension != null;
 		extension.setEnabled(true);
 		extension.setNamespacePrefix(namespacePrefix.get());
+		extension.setScriptRuntimeVersion(scriptRuntimeVersion);
 		extension.getInheritableSdk().set(null, unityBundle);
 
 		List<String> variables = extension.getVariables();

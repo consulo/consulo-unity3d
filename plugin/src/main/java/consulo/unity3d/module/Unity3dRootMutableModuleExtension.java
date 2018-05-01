@@ -44,6 +44,11 @@ public class Unity3dRootMutableModuleExtension extends Unity3dRootModuleExtensio
 		myNamespacePrefix = prefix;
 	}
 
+	public void setScriptRuntimeVersion(int version)
+	{
+		scriptRuntimeVersion = version;
+	}
+
 	@Nonnull
 	@Override
 	public MutableModuleInheritableNamedPointer<Sdk> getInheritableSdk()
@@ -68,6 +73,6 @@ public class Unity3dRootMutableModuleExtension extends Unity3dRootModuleExtensio
 	@Override
 	public boolean isModified(@Nonnull Unity3dRootModuleExtension ex)
 	{
-		return isModifiedImpl(ex) || !Comparing.equal(getNamespacePrefix(), ex.getNamespacePrefix());
+		return isModifiedImpl(ex) || !Comparing.equal(getNamespacePrefix(), ex.getNamespacePrefix()) || scriptRuntimeVersion != ex.scriptRuntimeVersion;
 	}
 }
