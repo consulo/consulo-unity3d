@@ -16,9 +16,8 @@
 
 package consulo.unity3d.shaderlab;
 
-import javax.swing.Icon;
-
 import com.intellij.openapi.util.IconLoader;
+import consulo.ui.image.Image;
 
 /**
  * @author VISTALL
@@ -26,5 +25,5 @@ import com.intellij.openapi.util.IconLoader;
  */
 public interface UnityShaderIcons
 {
-	Icon Shader = IconLoader.getIcon("/icons/shader.png");  // 16x16
+	Image Shader = IconLoader.getIcon("/icons/shader.png");  // 16x16
 }

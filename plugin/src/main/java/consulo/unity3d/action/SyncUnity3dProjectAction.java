@@ -25,6 +25,7 @@ import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import consulo.annotations.RequiredDispatchThread;
+import consulo.awt.TargetAWT;
 import consulo.unity3d.Unity3dIcons;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import consulo.unity3d.module.Unity3dRootModuleExtension;
@@ -38,7 +39,7 @@ public class SyncUnity3dProjectAction extends AnAction
 {
 	public SyncUnity3dProjectAction()
 	{
-		super(Unity3dIcons.Unity3d);
+		super(TargetAWT.to(Unity3dIcons.Unity3d));
 	}
 
 	@Override

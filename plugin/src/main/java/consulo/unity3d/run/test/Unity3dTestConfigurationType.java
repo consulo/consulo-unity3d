@@ -24,6 +24,7 @@ import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.project.Project;
 import consulo.annotations.RequiredReadAction;
+import consulo.awt.TargetAWT;
 import consulo.ide.IconDescriptor;
 import consulo.unity3d.Unity3dIcons;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
@@ -42,7 +43,7 @@ public class Unity3dTestConfigurationType extends ConfigurationTypeBase
 
 	public Unity3dTestConfigurationType()
 	{
-		super("#Unity3dTestConfigurationType", "Unity Test", "", new IconDescriptor(Unity3dIcons.Unity3d).addLayerIcon(AllIcons.Nodes.JunitTestMark).toIcon());
+		super("#Unity3dTestConfigurationType", "Unity Test", "", new IconDescriptor(TargetAWT.to(Unity3dIcons.Unity3d)).addLayerIcon(AllIcons.Nodes.JunitTestMark).toIcon());
 
 		addFactory(new ConfigurationFactory(this)
 		{

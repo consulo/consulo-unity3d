@@ -40,6 +40,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.ui.LayeredIcon;
 import com.intellij.util.ProcessingContext;
 import consulo.annotations.RequiredReadAction;
+import consulo.awt.TargetAWT;
 import consulo.codeInsight.completion.CompletionProvider;
 import consulo.csharp.ide.completion.util.SpaceInsertHandler;
 import consulo.dotnet.psi.search.searches.DirectTypeInheritorsSearch;
@@ -166,7 +167,7 @@ public class ShaderLabCompletionContributor extends CompletionContributor
 						continue;
 					}
 					LookupElementBuilder builder = LookupElementBuilder.create(key);
-					builder = builder.withIcon(ShaderLabFileType.INSTANCE.getIcon());
+					builder = builder.withIcon(TargetAWT.to(ShaderLabFileType.INSTANCE.getIcon()));
 					result.addElement(builder);
 				}
 
@@ -175,7 +176,7 @@ public class ShaderLabCompletionContributor extends CompletionContributor
 					ProgressManager.checkCanceled();
 
 					LookupElementBuilder builder = LookupElementBuilder.create(shaderDef.getName());
-					builder = builder.withIcon(new LayeredIcon(ShaderLabFileType.INSTANCE.getIcon(), AllIcons.Nodes.FinalMark));
+					builder = builder.withIcon(new LayeredIcon(TargetAWT.to(ShaderLabFileType.INSTANCE.getIcon()), AllIcons.Nodes.FinalMark));
 					result.addElement(builder);
 				}
 

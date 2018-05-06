@@ -35,6 +35,7 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ui.configuration.ModulesProvider;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.packaging.artifacts.ModifiableArtifactModel;
+import consulo.awt.TargetAWT;
 import consulo.moduleImport.ModuleImportProvider;
 import consulo.unity3d.Unity3dIcons;
 import consulo.unity3d.jsonApi.UnityOpenFilePostHandlerRequest;
@@ -64,7 +65,7 @@ public class Unity3dModuleImportProvider implements ModuleImportProvider<UnityMo
 	@Override
 	public Icon getIcon()
 	{
-		return Unity3dIcons.Unity3d;
+		return TargetAWT.to(Unity3dIcons.Unity3d);
 	}
 
 	@Override

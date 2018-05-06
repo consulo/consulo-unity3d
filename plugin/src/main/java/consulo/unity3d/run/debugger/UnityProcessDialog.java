@@ -34,6 +34,7 @@ import com.intellij.util.concurrency.AppExecutorUtil;
 import com.intellij.util.ui.UIUtil;
 import com.jezhumble.javasysmon.JavaSysMon;
 import com.jezhumble.javasysmon.ProcessInfo;
+import consulo.awt.TargetAWT;
 import consulo.unity3d.Unity3dIcons;
 
 /**
@@ -133,6 +134,6 @@ public class UnityProcessDialog extends ChooseElementsDialog<UnityProcess>
 	@Override
 	protected Icon getItemIcon(UnityProcess item)
 	{
-		return Unity3dIcons.Unity3d;
+		return TargetAWT.to(Unity3dIcons.Unity3d);
 	}
 }

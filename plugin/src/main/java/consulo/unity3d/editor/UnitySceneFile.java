@@ -27,6 +27,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.NavigatablePsiElement;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.impl.light.LightElement;
+import consulo.awt.TargetAWT;
 
 /**
  * @author VISTALL
@@ -76,7 +77,7 @@ public class UnitySceneFile extends LightElement implements NavigatablePsiElemen
 			@Override
 			public Icon getIcon(boolean unused)
 			{
-				return myVirtualFile.getFileType().getIcon();
+				return TargetAWT.to(myVirtualFile.getFileType().getIcon());
 			}
 		};
 	}

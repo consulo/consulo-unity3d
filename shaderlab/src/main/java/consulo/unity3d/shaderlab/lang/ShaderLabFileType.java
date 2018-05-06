@@ -16,12 +16,11 @@
 
 package consulo.unity3d.shaderlab.lang;
 
-import javax.annotation.Nullable;
-import javax.swing.Icon;
-
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import com.intellij.openapi.fileTypes.LanguageFileType;
+import consulo.ui.image.Image;
 import consulo.unity3d.shaderlab.UnityShaderIcons;
 
 /**
@@ -60,7 +59,7 @@ public class ShaderLabFileType extends LanguageFileType
 
 	@Nullable
 	@Override
-	public Icon getIcon()
+	public Image getIcon()
 	{
 		return UnityShaderIcons.Shader;
 	}

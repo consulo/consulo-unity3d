@@ -17,11 +17,11 @@
 package consulo.unity3d.scene;
 
 import javax.annotation.Nonnull;
-import javax.swing.Icon;
-
 import javax.annotation.Nullable;
+
 import org.jetbrains.yaml.YAMLLanguage;
 import com.intellij.openapi.fileTypes.LanguageFileType;
+import consulo.ui.image.Image;
 import consulo.unity3d.shaderlab.UnityShaderIcons;
 
 /**
@@ -60,7 +60,7 @@ public class Unity3dYMLAssetFileType extends LanguageFileType
 
 	@Nullable
 	@Override
-	public Icon getIcon()
+	public Image getIcon()
 	{
 		return UnityShaderIcons.Shader;
 	}

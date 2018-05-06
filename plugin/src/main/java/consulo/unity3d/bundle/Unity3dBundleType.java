@@ -32,6 +32,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.projectRoots.SdkType;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.util.SmartList;
+import consulo.awt.TargetAWT;
 import consulo.unity3d.Unity3dIcons;
 
 /**
@@ -81,7 +82,7 @@ public class Unity3dBundleType extends SdkType
 	@Override
 	public Icon getIcon()
 	{
-		return Unity3dIcons.Unity3d;
+		return TargetAWT.to(Unity3dIcons.Unity3d);
 	}
 
 	@Nonnull

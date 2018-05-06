@@ -18,11 +18,11 @@ package consulo.unity3d;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.swing.Icon;
 
 import org.jetbrains.yaml.YAMLLanguage;
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.openapi.fileTypes.PlainTextFileType;
+import consulo.ui.image.Image;
 
 /**
  * @author VISTALL
@@ -60,7 +60,7 @@ public class Unity3dMetaFileType extends LanguageFileType
 
 	@Nullable
 	@Override
-	public Icon getIcon()
+	public Image getIcon()
 	{
 		return PlainTextFileType.INSTANCE.getIcon();
 	}

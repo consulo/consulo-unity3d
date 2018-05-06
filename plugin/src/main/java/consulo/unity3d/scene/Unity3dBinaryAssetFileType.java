@@ -17,11 +17,10 @@
 package consulo.unity3d.scene;
 
 import javax.annotation.Nonnull;
-import javax.swing.Icon;
-
 import javax.annotation.Nullable;
+
 import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.vfs.VirtualFile;
+import consulo.ui.image.Image;
 import consulo.unity3d.Unity3dIcons;
 
 /**
@@ -59,7 +58,7 @@ public class Unity3dBinaryAssetFileType implements FileType
 
 	@Nullable
 	@Override
-	public Icon getIcon()
+	public Image getIcon()
 	{
 		return Unity3dIcons.Unity3d;
 	}
@@ -74,12 +73,5 @@ public class Unity3dBinaryAssetFileType implements FileType
 	public boolean isReadOnly()
 	{
 		return true;
-	}
-
-	@Nullable
-	@Override
-	public String getCharset(@Nonnull VirtualFile file, byte[] content)
-	{
-		return null;
 	}
 }

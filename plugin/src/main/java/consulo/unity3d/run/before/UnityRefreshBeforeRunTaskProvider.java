@@ -35,6 +35,7 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.util.TimeoutUtil;
 import com.intellij.util.concurrency.Semaphore;
 import com.intellij.util.ui.UIUtil;
+import consulo.awt.TargetAWT;
 import consulo.unity3d.Unity3dIcons;
 import consulo.unity3d.editor.UnityEditorCommunication;
 import consulo.unity3d.editor.UnityRefresh;
@@ -59,14 +60,14 @@ public class UnityRefreshBeforeRunTaskProvider extends BeforeRunTaskProvider<Uni
 	@Override
 	public Icon getIcon()
 	{
-		return Unity3dIcons.Unity3d;
+		return TargetAWT.to(Unity3dIcons.Unity3d);
 	}
 
 	@Nullable
 	@Override
 	public Icon getTaskIcon(UnityRefreshBeforeRunTask task)
 	{
-		return Unity3dIcons.Unity3d;
+		return TargetAWT.to(Unity3dIcons.Unity3d);
 	}
 
 	@Override
