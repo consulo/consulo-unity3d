@@ -21,9 +21,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.annotation.Nonnull;
-import javax.swing.Icon;
-
 import javax.annotation.Nullable;
+
 import com.intellij.ide.util.projectWizard.ModuleWizardStep;
 import com.intellij.ide.util.projectWizard.WizardContext;
 import com.intellij.openapi.application.WriteAction;
@@ -35,8 +34,8 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ui.configuration.ModulesProvider;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.packaging.artifacts.ModifiableArtifactModel;
-import consulo.awt.TargetAWT;
 import consulo.moduleImport.ModuleImportProvider;
+import consulo.ui.image.Image;
 import consulo.unity3d.Unity3dIcons;
 import consulo.unity3d.jsonApi.UnityOpenFilePostHandlerRequest;
 import consulo.unity3d.projectImport.ui.Unity3dWizardStep;
@@ -61,11 +60,11 @@ public class Unity3dModuleImportProvider implements ModuleImportProvider<UnityMo
 		return "Unity3D";
 	}
 
-	@Nullable
+	@Nonnull
 	@Override
-	public Icon getIcon()
+	public Image getIcon()
 	{
-		return TargetAWT.to(Unity3dIcons.Unity3d);
+		return Unity3dIcons.Unity3d;
 	}
 
 	@Override

@@ -22,7 +22,6 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.swing.Icon;
 
 import com.dd.plist.NSDictionary;
 import com.dd.plist.NSObject;
@@ -32,7 +31,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.projectRoots.SdkType;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.util.SmartList;
-import consulo.awt.TargetAWT;
+import consulo.ui.image.Image;
 import consulo.unity3d.Unity3dIcons;
 
 /**
@@ -80,9 +79,9 @@ public class Unity3dBundleType extends SdkType
 
 	@Nullable
 	@Override
-	public Icon getIcon()
+	public Image getIcon()
 	{
-		return TargetAWT.to(Unity3dIcons.Unity3d);
+		return Unity3dIcons.Unity3d;
 	}
 
 	@Nonnull
