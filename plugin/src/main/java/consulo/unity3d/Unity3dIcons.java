@@ -16,16 +16,14 @@
 
 package consulo.unity3d;
 
-import javax.swing.Icon;
-
 import com.intellij.openapi.util.IconLoader;
 import consulo.ui.image.Image;
 
 // Generated Consulo DevKit plugin 
 public interface Unity3dIcons
 {
-	Icon EventMethod = IconLoader.getIcon("/icons/eventMethod.png");  // 12x12
-	Icon Js = IconLoader.getIcon("/icons/js.PNG");  // 16x16
+	Image EventMethod = IconLoader.getIcon("/icons/eventMethod.png");  // 12x12
+	Image Js = IconLoader.getIcon("/icons/js.PNG");  // 16x16
 	Image Unity3d = IconLoader.getIcon("/icons/unity3d.png");  // 16x16
-	Icon Unity3dLineMarker = IconLoader.getIcon("/icons/unity3dLineMarker.png");  // 12x12
+	Image Unity3dLineMarker = IconLoader.getIcon("/icons/unity3dLineMarker.png");  // 12x12
 }

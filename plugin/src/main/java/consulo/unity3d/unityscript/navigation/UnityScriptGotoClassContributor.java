@@ -37,6 +37,7 @@ import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.FindSymbolParameters;
 import com.intellij.util.indexing.IdFilter;
+import consulo.awt.TargetAWT;
 import consulo.ide.IconDescriptor;
 import consulo.unity3d.Unity3dIcons;
 import consulo.unity3d.unityscript.index.UnityScriptIndexKeys;
@@ -109,7 +110,7 @@ public class UnityScriptGotoClassContributor implements ChooseByNameContributorE
 						IconDescriptor descriptor = new IconDescriptor(AllIcons.Nodes.Class);
 						descriptor.addLayerIcon(Unity3dIcons.Js);
 						descriptor.setRightIcon(AllIcons.Nodes.C_public);
-						return descriptor.toIcon();
+						return TargetAWT.to(descriptor.toIcon());
 					}
 
 					@Override

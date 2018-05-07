@@ -72,7 +72,7 @@ import consulo.unity3d.shaderlab.UnityShaderIcons;
  */
 public enum Unity3dAssetCSharpLineMarker
 {
-	Type(CSharpTypeDeclaration.class, Unity3dIcons.Unity3dLineMarker)
+	Type(CSharpTypeDeclaration.class, TargetAWT.to(Unity3dIcons.Unity3dLineMarker))
 			{
 				@Nonnull
 				@Override

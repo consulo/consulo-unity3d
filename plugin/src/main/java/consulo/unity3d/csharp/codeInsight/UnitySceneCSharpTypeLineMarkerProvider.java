@@ -27,6 +27,7 @@ import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiUtilCore;
 import consulo.annotations.RequiredReadAction;
+import consulo.awt.TargetAWT;
 import consulo.csharp.ide.lineMarkerProvider.CSharpLineMarkerUtil;
 import consulo.unity3d.Unity3dIcons;
 import consulo.unity3d.scene.Unity3dAssetUtil;
@@ -47,7 +48,7 @@ public class UnitySceneCSharpTypeLineMarkerProvider extends LineMarkerProviderDe
 	@Nonnull
 	public Icon getIcon()
 	{
-		return Unity3dIcons.Unity3dLineMarker;
+		return TargetAWT.to(Unity3dIcons.Unity3dLineMarker);
 	}
 
 	@RequiredReadAction

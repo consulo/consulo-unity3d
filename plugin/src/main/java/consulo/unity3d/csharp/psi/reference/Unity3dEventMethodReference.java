@@ -54,6 +54,7 @@ import consulo.dotnet.psi.DotNetMethodDeclaration;
 import consulo.dotnet.resolve.DotNetGenericExtractor;
 import consulo.dotnet.resolve.DotNetTypeRef;
 import consulo.dotnet.resolve.DotNetTypeResolveResult;
+import consulo.ui.image.Image;
 import consulo.unity3d.Unity3dTypes;
 
 /**
@@ -210,7 +211,7 @@ public class Unity3dEventMethodReference extends PsiReferenceBase<CSharpConstant
 				}
 
 				LookupElementBuilder builder = LookupElementBuilder.create(name);
-				builder = builder.withIcon(AllIcons.Nodes.Method);
+				builder = builder.withIcon((Image) AllIcons.Nodes.Method);
 
 				elements.add(builder);
 			}

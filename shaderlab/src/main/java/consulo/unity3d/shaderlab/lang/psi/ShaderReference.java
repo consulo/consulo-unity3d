@@ -43,6 +43,7 @@ import consulo.annotations.RequiredWriteAction;
 import consulo.csharp.lang.psi.impl.msil.CSharpTransform;
 import consulo.dotnet.psi.DotNetTypeDeclaration;
 import consulo.dotnet.resolve.DotNetPsiSearcher;
+import consulo.ui.image.Image;
 import consulo.unity3d.shaderlab.ide.refactoring.ShaderRefactorUtil;
 import consulo.unity3d.shaderlab.lang.ShaderMaterialAttribute;
 import consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabRole;
@@ -229,7 +230,7 @@ public class ShaderReference extends ShaderLabElement implements PsiQualifiedRef
 				for(ShaderMaterialAttribute attribute : ShaderMaterialAttribute.values())
 				{
 					LookupElementBuilder builder = LookupElementBuilder.create(attribute.name());
-					builder = builder.withIcon(AllIcons.Nodes.Class);
+					builder = builder.withIcon((Image) AllIcons.Nodes.Class);
 					builder = builder.withTypeText(attribute.getType(), true);
 					values.add(builder);
 				}
@@ -256,7 +257,7 @@ public class ShaderReference extends ShaderLabElement implements PsiQualifiedRef
 				continue;
 			}
 			LookupElementBuilder builder = LookupElementBuilder.create(name);
-			builder = builder.withIcon(AllIcons.Nodes.Property);
+			builder = builder.withIcon((Image) AllIcons.Nodes.Property);
 			ShaderPropertyType type = shaderProperty.getType();
 			if(type != null)
 			{

@@ -34,6 +34,7 @@ import consulo.annotations.RequiredReadAction;
 import consulo.cgshader.CGLanguage;
 import consulo.cgshader.lexer.CGKeywords;
 import consulo.codeInsight.completion.CompletionProvider;
+import consulo.ui.image.Image;
 
 /**
  * @author VISTALL
@@ -65,7 +66,7 @@ public class CGCompletionContributor extends CompletionContributor
 
 				for(String m : ourMethods)
 				{
-					result.addElement(LookupElementBuilder.create(m + "()").withIcon(AllIcons.Nodes.Method).withInsertHandler(ParenthesesInsertHandler.getInstance(true)));
+					result.addElement(LookupElementBuilder.create(m + "()").withIcon((Image) AllIcons.Nodes.Method).withInsertHandler(ParenthesesInsertHandler.getInstance(true)));
 				}
 			}
 		});
