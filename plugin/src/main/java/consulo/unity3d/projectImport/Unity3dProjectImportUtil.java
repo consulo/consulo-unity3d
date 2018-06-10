@@ -251,7 +251,7 @@ public class Unity3dProjectImportUtil
 				}
 			}
 
-			Unity3dProjectImportUtil.importOrUpdate(project, sdk, null, indicator, defines);
+			importOrUpdate(project, sdk, null, indicator, defines);
 		}
 		finally
 		{
@@ -377,7 +377,6 @@ public class Unity3dProjectImportUtil
 			MultiMap<Module, VirtualFile> virtualFilesByModule,
 			ProgressIndicator progressIndicator)
 	{
-
 		return createAndSetupModule("Assembly-UnityScript-firstpass", project, newModel, FIRST_PASS_PATHS, unityBundle, null, "unity3d-unityscript-child", JavaScriptFileType.INSTANCE,
 				virtualFilesByModule, progressIndicator);
 	}
@@ -442,6 +441,8 @@ public class Unity3dProjectImportUtil
 				if(isVersionHigherOrEqual(unityBundle, "5.3.0"))
 				{
 					layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "nunit.framework"));
+					layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEngine.TestRunner"));
+					layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEditor.TestRunner"));
 
 					// enable nunit
 					layer.getExtensionWithoutCheck(Unity3dNUnitMutableModuleExtension.class).setEnabled(true);

@@ -17,10 +17,7 @@
 package consulo.unity3d.nunit.module.extension;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.swing.JComponent;
 
-import consulo.annotations.RequiredDispatchThread;
 import consulo.module.extension.MutableModuleExtension;
 import consulo.roots.ModuleRootLayer;
 
@@ -33,14 +30,6 @@ public class Unity3dNUnitMutableModuleExtension extends Unity3dNUnitModuleExtens
 	public Unity3dNUnitMutableModuleExtension(@Nonnull String id, @Nonnull ModuleRootLayer moduleRootLayer)
 	{
 		super(id, moduleRootLayer);
-	}
-
-	@RequiredDispatchThread
-	@Nullable
-	@Override
-	public JComponent createConfigurablePanel(@Nonnull Runnable updateOnCheck)
-	{
-		return null;
 	}
 
 	@Override
