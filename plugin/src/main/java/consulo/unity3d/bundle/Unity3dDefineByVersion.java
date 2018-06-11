@@ -19,10 +19,10 @@ package consulo.unity3d.bundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.intellij.lang.annotations.RegExp;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.intellij.lang.annotations.RegExp;
 import com.intellij.util.ArrayUtil;
 
 /**
@@ -57,6 +57,8 @@ public enum Unity3dDefineByVersion
 	UNITY_5_6("5.6.\\d", "UnityEditorConsuloPlugin5.6.dll", UNITY_5_0),
 	UNITY_2017_1("2017.1.\\d", "UnityEditorConsuloPlugin5.6.dll"),
 	UNITY_2017_2("2017.2.\\d", "UnityEditorConsuloPlugin2017.2.dll"),
+	UNITY_2018_1("2018.1.\\d", "UnityEditorConsuloPlugin2017.2.dll"),
+	UNITY_2018_2("2018.2.\\d", "UnityEditorConsuloPlugin2017.2.dll"),
 	UNKNOWN("\\d.\\d.\\d", null);
 
 	private final Pattern myVersionPattern;
