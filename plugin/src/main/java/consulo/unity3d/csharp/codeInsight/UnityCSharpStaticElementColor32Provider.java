@@ -49,7 +49,6 @@ import consulo.unity3d.Unity3dTypes;
  * @author VISTALL
  * @since 01.04.2015
  */
-@SuppressWarnings("UseJBColor")
 public class UnityCSharpStaticElementColor32Provider implements ElementColorProvider
 {
 	@Nullable
