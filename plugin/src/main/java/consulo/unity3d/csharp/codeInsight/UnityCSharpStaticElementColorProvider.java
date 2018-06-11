@@ -18,7 +18,6 @@ package consulo.unity3d.csharp.codeInsight;
 
 import gnu.trove.THashMap;
 
-import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -50,6 +49,9 @@ import consulo.csharp.lang.psi.impl.source.resolve.util.CSharpResolveUtil;
 import consulo.dotnet.psi.DotNetExpression;
 import consulo.dotnet.psi.DotNetType;
 import consulo.dotnet.psi.DotNetVariable;
+import consulo.ui.shared.ColorValue;
+import consulo.ui.shared.RGBColor;
+import consulo.ui.style.StandardColors;
 import consulo.unity3d.Unity3dTypes;
 
 /**
@@ -59,27 +61,27 @@ import consulo.unity3d.Unity3dTypes;
 @SuppressWarnings("UseJBColor")
 public class UnityCSharpStaticElementColorProvider implements ElementColorProvider
 {
-	private static final Map<String, Color> staticNames = new THashMap<String, Color>()
+	private static final Map<String, ColorValue> staticNames = new THashMap<String, ColorValue>()
 	{
 		{
-			put("red", Color.RED);
-			put("green", Color.GREEN);
-			put("blue", Color.BLUE);
-			put("white", Color.WHITE);
-			put("black", Color.BLACK);
-			put("yellow", Color.YELLOW);
-			put("cyan", Color.CYAN);
-			put("magenta", Color.MAGENTA);
-			put("gray", Color.GRAY);
-			put("grey", Color.GRAY);
-			put("clear", new Color(0, 0, 0, 0));
+			put("red", StandardColors.RED);
+			put("green", StandardColors.GREEN);
+			put("blue", StandardColors.BLUE);
+			put("white", StandardColors.WHITE);
+			put("black", StandardColors.BLACK);
+			put("yellow", StandardColors.YELLOW);
+			put("cyan", StandardColors.CYAN);
+			put("magenta", StandardColors.MAGENTA);
+			put("gray", StandardColors.GRAY);
+			put("grey", StandardColors.GRAY);
+			put("clear", new RGBColor(0, 0, 0, 0));
 		}
 	};
 
 	@Nullable
 	@Override
 	@RequiredReadAction
-	public Color getColorFrom(@Nonnull PsiElement element)
+	public ColorValue getColorFrom(@Nonnull PsiElement element)
 	{
 		IElementType elementType = element.getNode().getElementType();
 		if(elementType == CSharpTokens.IDENTIFIER)
@@ -88,7 +90,7 @@ public class UnityCSharpStaticElementColorProvider implements ElementColorProvid
 			if(parent instanceof CSharpReferenceExpression)
 			{
 				String referenceName = ((CSharpReferenceExpression) parent).getReferenceName();
-				Color color = staticNames.get(referenceName);
+				ColorValue color = staticNames.get(referenceName);
 				if(color != null)
 				{
 					PsiElement resolvedElement = ((CSharpReferenceExpression) parent).resolve();
@@ -168,7 +170,7 @@ public class UnityCSharpStaticElementColorProvider implements ElementColorProvid
 
 				if(map.size() == 3 || map.size() == 4)
 				{
-					return new Color(map.get("r"), map.get("g"), map.get("b"), ObjectUtil.<Float>notNull(map.get("a"), 1f));
+					return RGBColor.fromFloatValues(map.get("r"), map.get("g"), map.get("b"), ObjectUtil.<Float>notNull(map.get("a"), 1f));
 				}
 			}
 		}
@@ -185,7 +187,7 @@ public class UnityCSharpStaticElementColorProvider implements ElementColorProvid
 
 	@Override
 	@RequiredWriteAction
-	public void setColorTo(@Nonnull PsiElement element, @Nonnull Color color)
+	public void setColorTo(@Nonnull PsiElement element, @Nonnull ColorValue color)
 	{
 		PsiElement targetElement = null;
 		if(element.getNode().getElementType() == CSharpTokens.NEW_KEYWORD)
@@ -200,7 +202,7 @@ public class UnityCSharpStaticElementColorProvider implements ElementColorProvid
 
 		String constantName = null;
 
-		for(Map.Entry<String, Color> entry : staticNames.entrySet())
+		for(Map.Entry<String, ColorValue> entry : staticNames.entrySet())
 		{
 			if(entry.getValue().equals(color))
 			{
@@ -210,7 +212,7 @@ public class UnityCSharpStaticElementColorProvider implements ElementColorProvid
 		}
 
 
-		boolean qualified = false;
+		boolean qualified;
 		if(targetElement instanceof CSharpReferenceExpression)
 		{
 			// for example Color.grey or UnityEngine.Color.grey
@@ -246,7 +248,7 @@ public class UnityCSharpStaticElementColorProvider implements ElementColorProvid
 		else
 		{
 			builder.append("(");
-			float[] components = color.getRGBComponents(null);
+			float[] components = color.toRGB().getFloatValues();
 
 			builder.append(components[0]).append("f").append(", ");
 			builder.append(components[1]).append("f").append(", ");

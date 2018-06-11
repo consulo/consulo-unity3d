@@ -16,12 +16,12 @@
 
 package consulo.unity3d.csharp.codeInsight;
 
-import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
 import com.intellij.openapi.editor.ElementColorProvider;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveResult;
@@ -41,6 +41,8 @@ import consulo.csharp.lang.psi.impl.source.resolve.methodResolving.arguments.NCa
 import consulo.csharp.lang.psi.impl.source.resolve.util.CSharpResolveUtil;
 import consulo.dotnet.psi.DotNetExpression;
 import consulo.dotnet.psi.DotNetType;
+import consulo.ui.shared.ColorValue;
+import consulo.ui.shared.RGBColor;
 import consulo.unity3d.Unity3dTypes;
 
 /**
@@ -53,7 +55,7 @@ public class UnityCSharpStaticElementColor32Provider implements ElementColorProv
 	@Nullable
 	@Override
 	@RequiredReadAction
-	public Color getColorFrom(@Nonnull PsiElement element)
+	public ColorValue getColorFrom(@Nonnull PsiElement element)
 	{
 		IElementType elementType = element.getNode().getElementType();
 		if(elementType == CSharpTokens.NEW_KEYWORD)
@@ -122,7 +124,7 @@ public class UnityCSharpStaticElementColor32Provider implements ElementColorProv
 
 				if(map.size() == 4)
 				{
-					return new Color(map.get("r"), map.get("g"), map.get("b"), map.get("a"));
+					return new RGBColor(map.get("r"), map.get("g"), map.get("b"), map.get("a") / 255f);
 				}
 			}
 		}
@@ -132,17 +134,20 @@ public class UnityCSharpStaticElementColor32Provider implements ElementColorProv
 
 	@Override
 	@RequiredWriteAction
-	public void setColorTo(@Nonnull PsiElement element, @Nonnull Color color)
+	public void setColorTo(@Nonnull PsiElement element, @Nonnull ColorValue color)
 	{
 		CSharpNewExpression newExpression = PsiTreeUtil.getParentOfType(element, CSharpNewExpression.class);
 		assert newExpression != null;
 		DotNetType newType = newExpression.getNewType();
 		assert newType != null;
 		StringBuilder builder = new StringBuilder().append("new ").append(newType.getText()).append("(");
-		builder.append(color.getRed()).append(", ");
-		builder.append(color.getGreen()).append(", ");
-		builder.append(color.getBlue()).append(", ");
-		builder.append(color.getAlpha());
+
+		consulo.ui.shared.RGBColor rgbColor = color.toRGB();
+
+		builder.append(rgbColor.getRed()).append(", ");
+		builder.append(rgbColor.getGreen()).append(", ");
+		builder.append(rgbColor.getBlue()).append(", ");
+		builder.append((int) (rgbColor.getAlpha() * 255f));
 		builder.append(")");
 
 		CSharpNewExpression expression = (CSharpNewExpression) CSharpFileFactory.createExpression(element.getProject(), builder.toString());
