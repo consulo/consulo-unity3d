@@ -64,16 +64,16 @@ public class UnityCSharpStaticElementColorProvider implements ElementColorProvid
 	private static final Map<String, ColorValue> staticNames = new THashMap<String, ColorValue>()
 	{
 		{
-			put("red", StandardColors.RED);
-			put("green", StandardColors.GREEN);
-			put("blue", StandardColors.BLUE);
-			put("white", StandardColors.WHITE);
-			put("black", StandardColors.BLACK);
-			put("yellow", StandardColors.YELLOW);
-			put("cyan", StandardColors.CYAN);
-			put("magenta", StandardColors.MAGENTA);
-			put("gray", StandardColors.GRAY);
-			put("grey", StandardColors.GRAY);
+			put("red", StandardColors.RED.getStaticValue());
+			put("green", StandardColors.GREEN.getStaticValue());
+			put("blue", StandardColors.BLUE.getStaticValue());
+			put("white", StandardColors.WHITE.getStaticValue());
+			put("black", StandardColors.BLACK.getStaticValue());
+			put("yellow", StandardColors.YELLOW.getStaticValue());
+			put("cyan", StandardColors.CYAN.getStaticValue());
+			put("magenta", StandardColors.MAGENTA.getStaticValue());
+			put("gray", StandardColors.GRAY.getStaticValue());
+			put("grey", StandardColors.GRAY.getStaticValue());
 			put("clear", new RGBColor(0, 0, 0, 0));
 		}
 	};
@@ -133,7 +133,7 @@ public class UnityCSharpStaticElementColorProvider implements ElementColorProvid
 				}
 
 				MethodResolvePriorityInfo calcResult = ((MethodResolveResult) validResult).getCalcResult();
-				Map<String, Float> map = new HashMap<String, Float>(4);
+				Map<String, Float> map = new HashMap<>(4);
 				for(NCallArgument nCallArgument : calcResult.getArguments())
 				{
 					String parameterName = nCallArgument.getParameterName();
@@ -189,7 +189,7 @@ public class UnityCSharpStaticElementColorProvider implements ElementColorProvid
 	@RequiredWriteAction
 	public void setColorTo(@Nonnull PsiElement element, @Nonnull ColorValue color)
 	{
-		PsiElement targetElement = null;
+		PsiElement targetElement;
 		if(element.getNode().getElementType() == CSharpTokens.NEW_KEYWORD)
 		{
 			targetElement = PsiTreeUtil.getParentOfType(element, CSharpNewExpression.class);
@@ -204,7 +204,7 @@ public class UnityCSharpStaticElementColorProvider implements ElementColorProvid
 
 		for(Map.Entry<String, ColorValue> entry : staticNames.entrySet())
 		{
-			if(entry.getValue().equals(color))
+			if(equals(entry.getValue(), color))
 			{
 				constantName = entry.getKey();
 				break;
@@ -265,5 +265,10 @@ public class UnityCSharpStaticElementColorProvider implements ElementColorProvid
 		DotNetExpression expression = CSharpFileFactory.createExpression(element.getProject(), builder.toString());
 
 		targetElement.replace(expression);
+	}
+
+	private static boolean equals(ColorValue o1, ColorValue o2)
+	{
+		return o1.toRGB().equals(o2.toRGB());
 	}
 }

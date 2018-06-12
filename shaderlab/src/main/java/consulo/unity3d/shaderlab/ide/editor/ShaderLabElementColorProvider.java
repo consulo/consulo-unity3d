@@ -16,17 +16,19 @@
 
 package consulo.unity3d.shaderlab.ide.editor;
 
-import java.awt.Color;
 import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
 import com.intellij.openapi.editor.ElementColorProvider;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFileFactory;
 import consulo.annotations.RequiredReadAction;
 import consulo.annotations.RequiredWriteAction;
+import consulo.ui.shared.ColorValue;
+import consulo.ui.shared.RGBColor;
 import consulo.unity3d.shaderlab.lang.ShaderLabFileType;
 import consulo.unity3d.shaderlab.lang.ShaderLabPropertyType;
 import consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabColorRole;
@@ -47,7 +49,7 @@ public class ShaderLabElementColorProvider implements ElementColorProvider
 	@RequiredReadAction
 	@Nullable
 	@Override
-	public Color getColorFrom(@Nonnull PsiElement element)
+	public ColorValue getColorFrom(@Nonnull PsiElement element)
 	{
 		if(element instanceof ShaderPropertyValue)
 		{
@@ -82,8 +84,7 @@ public class ShaderLabElementColorProvider implements ElementColorProvider
 				return null;
 			}
 
-			//noinspection UseJBColor
-			return new Color(floats[0], floats[1], floats[2], floats[3]);
+			return RGBColor.fromFloatValues(floats[0], floats[1], floats[2], floats[3]);
 		}
 		return null;
 	}
@@ -115,9 +116,9 @@ public class ShaderLabElementColorProvider implements ElementColorProvider
 
 	@RequiredWriteAction
 	@Override
-	public void setColorTo(@Nonnull PsiElement element, @Nonnull Color color)
+	public void setColorTo(@Nonnull PsiElement element, @Nonnull ColorValue color)
 	{
-		float[] colorComponents = color.getRGBComponents(null);
+		float[] colorComponents = color.toRGB().getFloatValues();
 
 		StringBuilder builder = new StringBuilder();
 		builder.append("(");
