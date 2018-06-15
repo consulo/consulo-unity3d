@@ -18,7 +18,6 @@ package consulo.unity3d.csharp.codeInsight;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.swing.Icon;
 
 import com.intellij.codeHighlighting.Pass;
 import com.intellij.codeInsight.daemon.LineMarkerInfo;
@@ -27,8 +26,8 @@ import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiUtilCore;
 import consulo.annotations.RequiredReadAction;
-import consulo.awt.TargetAWT;
 import consulo.csharp.ide.lineMarkerProvider.CSharpLineMarkerUtil;
+import consulo.ui.image.Image;
 import consulo.unity3d.Unity3dIcons;
 import consulo.unity3d.scene.Unity3dAssetUtil;
 
@@ -46,9 +45,9 @@ public class UnitySceneCSharpTypeLineMarkerProvider extends LineMarkerProviderDe
 	}
 
 	@Nonnull
-	public Icon getIcon()
+	public Image getIcon()
 	{
-		return TargetAWT.to(Unity3dIcons.Unity3dLineMarker);
+		return Unity3dIcons.Unity3dLineMarker;
 	}
 
 	@RequiredReadAction

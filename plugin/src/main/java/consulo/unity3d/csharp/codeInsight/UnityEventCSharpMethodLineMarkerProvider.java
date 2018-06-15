@@ -20,7 +20,6 @@ import java.util.Map;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.swing.Icon;
 
 import com.intellij.codeHighlighting.Pass;
 import com.intellij.codeInsight.daemon.LineMarkerInfo;
@@ -40,6 +39,7 @@ import consulo.dotnet.psi.DotNetParameter;
 import consulo.dotnet.psi.DotNetParameterListOwner;
 import consulo.dotnet.psi.DotNetTypeDeclaration;
 import consulo.dotnet.resolve.DotNetTypeRef;
+import consulo.ui.image.Image;
 import consulo.unity3d.Unity3dIcons;
 import consulo.unity3d.csharp.UnityFunctionManager;
 import consulo.unity3d.module.Unity3dModuleExtension;
@@ -59,9 +59,9 @@ public class UnityEventCSharpMethodLineMarkerProvider extends LineMarkerProvider
 
 	@Nullable
 	@Override
-	public Icon getIcon()
+	public Image getIcon()
 	{
-		return TargetAWT.to(Unity3dIcons.EventMethod);
+		return Unity3dIcons.EventMethod;
 	}
 
 	@RequiredReadAction
