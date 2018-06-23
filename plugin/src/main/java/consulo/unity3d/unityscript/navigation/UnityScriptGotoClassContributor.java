@@ -103,6 +103,13 @@ public class UnityScriptGotoClassContributor implements ChooseByNameContributorE
 						return FileUtil.getNameWithoutExtension(file.getName());
 					}
 
+					@Nonnull
+					@Override
+					public Project getProject()
+					{
+						return file.getProject();
+					}
+
 					@Nullable
 					@Override
 					public Icon getIcon(boolean open)
