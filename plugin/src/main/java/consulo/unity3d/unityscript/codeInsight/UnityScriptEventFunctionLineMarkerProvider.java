@@ -34,7 +34,6 @@ import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.ConstantFunction;
 import consulo.annotations.RequiredReadAction;
-import consulo.awt.TargetAWT;
 import consulo.ui.image.Image;
 import consulo.unity3d.Unity3dIcons;
 import consulo.unity3d.Unity3dTypes;
@@ -92,7 +91,7 @@ public class UnityScriptEventFunctionLineMarkerProvider extends LineMarkerProvid
 					return null;
 				}
 
-				return new LineMarkerInfo<>(element, element.getTextRange(), TargetAWT.to(Unity3dIcons.EventMethod), Pass.LINE_MARKERS, new ConstantFunction<>(functionInfo.getDescription()), null,
+				return new LineMarkerInfo<>(element, element.getTextRange(), Unity3dIcons.EventMethod, Pass.LINE_MARKERS, new ConstantFunction<>(functionInfo.getDescription()), null,
 						GutterIconRenderer.Alignment.LEFT);
 			}
 		}

@@ -16,10 +16,9 @@
 
 package consulo.unity3d.run.before;
 
-import javax.swing.Icon;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
 import com.intellij.execution.BeforeRunTaskProvider;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.runners.ExecutionEnvironment;
@@ -35,7 +34,7 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.util.TimeoutUtil;
 import com.intellij.util.concurrency.Semaphore;
 import com.intellij.util.ui.UIUtil;
-import consulo.awt.TargetAWT;
+import consulo.ui.image.Image;
 import consulo.unity3d.Unity3dIcons;
 import consulo.unity3d.editor.UnityEditorCommunication;
 import consulo.unity3d.editor.UnityRefresh;
@@ -58,16 +57,16 @@ public class UnityRefreshBeforeRunTaskProvider extends BeforeRunTaskProvider<Uni
 
 	@Nullable
 	@Override
-	public Icon getIcon()
+	public Image getIcon()
 	{
-		return TargetAWT.to(Unity3dIcons.Unity3d);
+		return Unity3dIcons.Unity3d;
 	}
 
 	@Nullable
 	@Override
-	public Icon getTaskIcon(UnityRefreshBeforeRunTask task)
+	public Image getTaskIcon(UnityRefreshBeforeRunTask task)
 	{
-		return TargetAWT.to(Unity3dIcons.Unity3d);
+		return Unity3dIcons.Unity3d;
 	}
 
 	@Override

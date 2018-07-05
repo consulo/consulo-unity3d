@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
-import javax.swing.Icon;
 import javax.swing.JList;
 
 import com.intellij.codeInsight.daemon.GutterIconNavigationHandler;
@@ -58,6 +57,7 @@ import consulo.dotnet.DotNetTypes;
 import consulo.dotnet.psi.DotNetTypeDeclaration;
 import consulo.dotnet.resolve.DotNetTypeRef;
 import consulo.dotnet.util.ArrayUtil2;
+import consulo.ui.image.Image;
 import consulo.unity3d.Unity3dIcons;
 import consulo.unity3d.scene.Unity3dAssetUtil;
 import consulo.unity3d.scene.Unity3dMetaManager;
@@ -72,7 +72,7 @@ import consulo.unity3d.shaderlab.UnityShaderIcons;
  */
 public enum Unity3dAssetCSharpLineMarker
 {
-	Type(CSharpTypeDeclaration.class, TargetAWT.to(Unity3dIcons.Unity3dLineMarker))
+	Type(CSharpTypeDeclaration.class, Unity3dIcons.Unity3dLineMarker)
 			{
 				@Nonnull
 				@Override
@@ -382,16 +382,16 @@ public enum Unity3dAssetCSharpLineMarker
 			};
 
 	private final Class<? extends PsiElement> myElementClass;
-	private final Icon myIcon;
+	private final Image myIcon;
 
-	private Unity3dAssetCSharpLineMarker(Class<? extends PsiElement> elementClass, Icon icon)
+	private Unity3dAssetCSharpLineMarker(Class<? extends PsiElement> elementClass, Image icon)
 	{
 		myElementClass = elementClass;
 		myIcon = icon;
 	}
 
 	@Nonnull
-	public Icon getIcon()
+	public Image getIcon()
 	{
 		return myIcon;
 	}

@@ -29,7 +29,6 @@ import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.ConstantFunction;
 import consulo.annotations.RequiredReadAction;
-import consulo.awt.TargetAWT;
 import consulo.csharp.ide.lineMarkerProvider.CSharpLineMarkerUtil;
 import consulo.csharp.lang.psi.CSharpMethodDeclaration;
 import consulo.csharp.lang.psi.CSharpTypeDeclaration;
@@ -88,7 +87,7 @@ public class UnityEventCSharpMethodLineMarkerProvider extends LineMarkerProvider
 			UnityFunctionManager.FunctionInfo magicMethod = findMagicMethod(methodDeclaration);
 			if(magicMethod != null)
 			{
-				return new LineMarkerInfo<>(element, element.getTextRange(), TargetAWT.to(Unity3dIcons.EventMethod), Pass.LINE_MARKERS, new ConstantFunction<>(magicMethod.getDescription()), null,
+				return new LineMarkerInfo<>(element, element.getTextRange(), Unity3dIcons.EventMethod, Pass.LINE_MARKERS, new ConstantFunction<>(magicMethod.getDescription()), null,
 						GutterIconRenderer.Alignment.LEFT);
 			}
 		}
