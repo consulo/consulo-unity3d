@@ -35,5 +35,7 @@ public class Unity3dFileTypeFactory extends FileTypeFactory
 		consumer.consume(Unity3dMetaFileType.INSTANCE);
 		consumer.consume(Unity3dBinaryAssetFileType.INSTANCE);
 		consumer.consume(Unity3dYMLAssetFileType.INSTANCE);
+
+		consumer.consume(Unity3dBinaryFileType.INSTANCE, "fbx");
 	}
 }
