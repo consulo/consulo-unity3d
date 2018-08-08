@@ -137,5 +137,10 @@
 			<version>${project.parent.version}</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>consulo.internal</groupId>
+			<artifactId>build.serviceMessages</artifactId>
+			<scope>provided</scope>
+		</dependency>
 	</dependencies>
 </project>
