@@ -19,27 +19,30 @@ package consulo.unity3d;
 import java.io.File;
 import java.io.IOException;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
-import com.intellij.openapi.components.ApplicationComponent;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.vfs.LocalFileOperationsHandler;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.util.ThrowableConsumer;
 
 /**
  * @author VISTALL
  * @since 17.12.2015
  */
-public class Unity3dLocalFileSystemComponent implements ApplicationComponent
+@Singleton
+public class Unity3dLocalFileSystemComponent implements Disposable
 {
 	private static final Logger LOGGER = Logger.getInstance(Unity3dLocalFileSystemComponent.class);
 
 	private static final String ourMetaSuffix = ".meta";
 
-	private LocalFileOperationsHandler myHandler = new LocalFileOperationsHandler()
+	private final LocalFileOperationsHandler myHandler = new LocalFileOperationsHandler()
 	{
 		@Override
 		public boolean delete(VirtualFile file) throws IOException
@@ -116,22 +119,19 @@ public class Unity3dLocalFileSystemComponent implements ApplicationComponent
 		return false;
 	}
 
-	@Override
-	public void initComponent()
+	private LocalFileSystem myLocalFileSystem;
+
+	@Inject
+	public Unity3dLocalFileSystemComponent(VirtualFileManager virtualFileManager)
 	{
-		LocalFileSystem.getInstance().registerAuxiliaryFileOperationsHandler(myHandler);
+		myLocalFileSystem = LocalFileSystem.get(virtualFileManager);
+
+		myLocalFileSystem.registerAuxiliaryFileOperationsHandler(myHandler);
 	}
 
 	@Override
-	public void disposeComponent()
+	public void dispose()
 	{
-		LocalFileSystem.getInstance().unregisterAuxiliaryFileOperationsHandler(myHandler);
-	}
-
-	@Nonnull
-	@Override
-	public String getComponentName()
-	{
-		return "Unity3dLocalFileSystemComponent";
+		myLocalFileSystem.unregisterAuxiliaryFileOperationsHandler(myHandler);
 	}
 }

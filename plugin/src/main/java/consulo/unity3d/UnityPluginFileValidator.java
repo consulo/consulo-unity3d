@@ -22,6 +22,8 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Nonnull;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import com.intellij.ide.BrowserUtil;
 import com.intellij.ide.plugins.PluginManager;
@@ -29,15 +31,17 @@ import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationDisplayType;
 import com.intellij.notification.NotificationGroup;
 import com.intellij.notification.NotificationType;
+import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.command.WriteCommandAction;
-import com.intellij.openapi.components.AbstractProjectComponent;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectManager;
+import com.intellij.openapi.project.ProjectManagerListener;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.libraries.Library;
@@ -66,22 +70,33 @@ import consulo.vfs.util.ArchiveVfsUtil;
  * @author VISTALL
  * @since 26-Jul-16
  */
-public class UnityPluginFileValidator extends AbstractProjectComponent
+@Singleton
+public class UnityPluginFileValidator
 {
 	private static final Logger LOGGER = Logger.getInstance(UnityPluginFileValidator.class);
 
 	private static final String ourPath = "Assets/Editor/Plugins";
 	private static final NotificationGroup ourGroup = new NotificationGroup("consulo.unity", NotificationDisplayType.STICKY_BALLOON, true);
 
-	public UnityPluginFileValidator(Project project)
+	@Inject
+	public UnityPluginFileValidator(Application application, Project project)
 	{
-		super(project);
-	}
+		if(project.isDefault())
+		{
+			return;
+		}
 
-	@Override
-	public void projectOpened()
-	{
-		runValidation(myProject);
+		application.getMessageBus().connect(project).subscribe(ProjectManager.TOPIC, new ProjectManagerListener()
+		{
+			@Override
+			public void projectOpened(Project target)
+			{
+				if(project == target)
+				{
+					runValidation(project);
+				}
+			}
+		});
 	}
 
 	public static void runValidation(@Nonnull final Project project)

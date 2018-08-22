@@ -23,10 +23,11 @@ import java.util.Map;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.components.ApplicationComponent;
+import com.intellij.openapi.application.Application;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.Version;
 import com.intellij.openapi.util.io.FileUtil;
@@ -51,13 +52,16 @@ import com.sun.jna.ptr.PointerByReference;
  * @author VISTALL
  * @since 20-Oct-17
  */
-public class Unity3dPackageWatcher implements ApplicationComponent, Disposable
+@Singleton
+public class Unity3dPackageWatcher implements Disposable
 {
 	@Nonnull
 	public static Unity3dPackageWatcher getInstance()
 	{
-		return ApplicationManager.getApplication().getComponent(Unity3dPackageWatcher.class);
+		return Application.get().getComponent(Unity3dPackageWatcher.class);
 	}
+
+	private final LocalFileSystem myLocalFileSystem;
 
 	private LocalFileSystem.WatchRequest myWatchRequest;
 
@@ -65,9 +69,11 @@ public class Unity3dPackageWatcher implements ApplicationComponent, Disposable
 
 	private String myPackageDirPath;
 
-	@Override
-	public void initComponent()
+	@Inject
+	public Unity3dPackageWatcher(VirtualFileManager virtualFileManager)
 	{
+		myLocalFileSystem = LocalFileSystem.get(virtualFileManager);
+
 		String packagePath = getPackagePath();
 		if(packagePath == null)
 		{
@@ -76,9 +82,9 @@ public class Unity3dPackageWatcher implements ApplicationComponent, Disposable
 
 		myPackageDirPath = packagePath;
 
-		myWatchRequest = LocalFileSystem.getInstance().addRootToWatch(packagePath, true);
+		myWatchRequest = myLocalFileSystem.addRootToWatch(packagePath, true);
 
-		VirtualFileManager.getInstance().addVirtualFileListener(new VirtualFileListener()
+		virtualFileManager.addVirtualFileListener(new VirtualFileListener()
 		{
 			@Override
 			public void fileCopied(@Nonnull VirtualFileCopyEvent event)
@@ -106,7 +112,7 @@ public class Unity3dPackageWatcher implements ApplicationComponent, Disposable
 
 			private void dropCache(VirtualFileEvent event)
 			{
-				VirtualFile packageDir = LocalFileSystem.getInstance().findFileByPath(packagePath);
+				VirtualFile packageDir = myLocalFileSystem.findFileByPath(packagePath);
 				if(packageDir == null)
 				{
 					return;
@@ -141,7 +147,7 @@ public class Unity3dPackageWatcher implements ApplicationComponent, Disposable
 	@Nonnull
 	private Unity3dPackageIndex buildIndex()
 	{
-		VirtualFile rootDir = LocalFileSystem.getInstance().findFileByPath(myPackageDirPath);
+		VirtualFile rootDir = myLocalFileSystem.findFileByPath(myPackageDirPath);
 		if(rootDir == null)
 		{
 			return Unity3dPackageIndex.EMPTY;

@@ -44,32 +44,6 @@
 		</group>
 	</actions>
 
-	<application-components>
-		<component>
-			<implementation-class>consulo.unity3d.Unity3dLocalFileSystemComponent</implementation-class>
-		</component>
-		<component>
-			<implementation-class>consulo.unity3d.packages.Unity3dPackageWatcher</implementation-class>
-		</component>
-		<component>
-			<implementation-class>consulo.unity3d.console.Unity3dConsoleManager</implementation-class>
-		</component>
-	</application-components>
-
-	<project-components>
-		<component>
-			<implementation-class>consulo.unity3d.UnityPluginFileValidator</implementation-class>
-			<skipForDefaultProject/>
-		</component>
-		<component>
-			<implementation-class>consulo.unity3d.Unity3dConsoleToolWindowService</implementation-class>
-		</component>
-		<component>
-			<implementation-class>consulo.unity3d.projectImport.change.Unity3dProjectChangeListener</implementation-class>
-			<skipForDefaultProject/>
-		</component>
-	</project-components>
-
 	<extensions defaultExtensionNs="consulo.javascript">
 		<indexer implementation="consulo.unity3d.unityscript.index.UnityScriptIndexer"/>
 	</extensions>
@@ -229,5 +203,13 @@
 		<editorNotificationProvider implementation="consulo.unity3d.scene.prefab.Unity3dAssetEditorNotificationProvider"/>
 
 		<psi.referenceContributor language="C#" implementation="consulo.unity3d.csharp.psi.reference.Unity3dEventMethodReferenceProvider"/>
+
+		<applicationService serviceImplementation="consulo.unity3d.packages.Unity3dPackageWatcher" lazy="false" />
+		<applicationService serviceImplementation="consulo.unity3d.Unity3dLocalFileSystemComponent" lazy="false" />
+		<applicationService serviceImplementation="consulo.unity3d.console.Unity3dConsoleManager" lazy="false" />
+
+		<projectService serviceImplementation="consulo.unity3d.UnityPluginFileValidator" lazy="false" />
+		<projectService serviceImplementation="consulo.unity3d.projectImport.change.Unity3dProjectChangeListener" lazy="false" />
+		<projectService serviceImplementation="consulo.unity3d.Unity3dConsoleToolWindowService" lazy="false" />
 	</extensions>
 </idea-plugin>

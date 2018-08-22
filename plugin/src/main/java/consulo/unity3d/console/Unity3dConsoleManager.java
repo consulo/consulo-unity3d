@@ -24,13 +24,13 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
-import javax.inject.Inject;
-
 import javax.annotation.Nonnull;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.Application;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.concurrency.AppExecutorUtil;
 import com.intellij.util.containers.ConcurrentMultiMap;
@@ -43,12 +43,13 @@ import consulo.unity3d.util.Unity3dProjectUtil;
  * @author VISTALL
  * @since 03-Nov-17
  */
+@Singleton
 public class Unity3dConsoleManager implements Disposable
 {
 	@Nonnull
 	public static Unity3dConsoleManager getInstance()
 	{
-		return ApplicationManager.getApplication().getComponent(Unity3dConsoleManager.class);
+		return Application.get().getComponent(Unity3dConsoleManager.class);
 	}
 
 	private final MultiMap<Project, Consumer<Collection<UnityLogPostHandlerRequest>>> myMap = new ConcurrentMultiMap<>();

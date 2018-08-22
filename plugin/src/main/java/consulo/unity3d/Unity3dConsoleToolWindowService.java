@@ -21,17 +21,20 @@ import java.util.Collections;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.annotation.Nonnull;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.errorTreeView.NewErrorTreeViewPanel;
 import com.intellij.ide.util.PropertiesComponent;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.actionSystem.ToggleAction;
 import com.intellij.openapi.application.AccessToken;
-import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
@@ -54,7 +57,8 @@ import consulo.unity3d.jsonApi.UnityLogPostHandlerRequest;
  * @author VISTALL
  * @since 09-Jun-16
  */
-public class Unity3dConsoleToolWindowService implements ProjectComponent
+@Singleton
+public class Unity3dConsoleToolWindowService implements Disposable
 {
 	private static class MyErrorPanel extends NewErrorTreeViewPanel
 	{
@@ -110,15 +114,15 @@ public class Unity3dConsoleToolWindowService implements ProjectComponent
 
 	private AccessToken myUnregister;
 
-	public Unity3dConsoleToolWindowService(Project project)
+	@Inject
+	public Unity3dConsoleToolWindowService(Project project, StartupManager startupManager)
 	{
 		myProject = project;
-	}
-
-	@Override
-	public void projectOpened()
-	{
-		myUnregister = Unity3dConsoleManager.getInstance().registerProcessor(myProject, this::process);
+		if(myProject.isDefault())
+		{
+			return;
+		}
+		startupManager.registerPostStartupActivity((ui) -> myUnregister = Unity3dConsoleManager.getInstance().registerProcessor(myProject, this::process));
 	}
 
 	private void process(Collection<UnityLogPostHandlerRequest> list)
@@ -161,7 +165,7 @@ public class Unity3dConsoleToolWindowService implements ProjectComponent
 	}
 
 	@Override
-	public void projectClosed()
+	public void dispose()
 	{
 		myUnregister.finish();
 	}

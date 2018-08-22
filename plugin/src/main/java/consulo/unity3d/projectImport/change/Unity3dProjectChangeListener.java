@@ -26,13 +26,14 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.annotation.Nonnull;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import com.intellij.ProjectTopics;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationNamesInfo;
-import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
@@ -60,7 +61,8 @@ import consulo.unity3d.projectImport.Unity3dProjectImportUtil;
  * @author VISTALL
  * @since 1/11/18
  */
-public class Unity3dProjectChangeListener implements ProjectComponent, VirtualFileListener, Disposable
+@Singleton
+public class Unity3dProjectChangeListener implements VirtualFileListener, Disposable
 {
 	public static class DataBlock
 	{
@@ -79,9 +81,15 @@ public class Unity3dProjectChangeListener implements ProjectComponent, VirtualFi
 
 	private final Set<FileType> mySourceFileTypes = new HashSet<>();
 
+	@Inject
 	public Unity3dProjectChangeListener(@Nonnull Project project, @Nonnull StartupManager startupManager)
 	{
 		myProject = project;
+
+		if(project.isDefault())
+		{
+			return;
+		}
 
 		for(Unity3dProjectSourceFileTypeFactory factory : Unity3dProjectSourceFileTypeFactory.EP_NAME.getExtensions())
 		{
