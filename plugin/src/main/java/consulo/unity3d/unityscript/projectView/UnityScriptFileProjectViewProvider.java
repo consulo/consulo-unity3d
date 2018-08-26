@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import com.intellij.ide.projectView.TreeStructureProvider;
 import com.intellij.ide.projectView.ViewSettings;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
@@ -42,6 +44,7 @@ public class UnityScriptFileProjectViewProvider implements TreeStructureProvider
 {
 	private final Project myProject;
 
+	@Inject
 	public UnityScriptFileProjectViewProvider(Project project)
 	{
 		myProject = project;

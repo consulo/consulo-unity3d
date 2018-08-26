@@ -32,6 +32,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Nonnull;
+import javax.inject.Singleton;
 
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.components.ServiceManager;
@@ -47,6 +48,7 @@ import consulo.annotations.RequiredDispatchThread;
  * @author VISTALL
  * @since 10.11.14
  */
+@Singleton
 public class UnityPlayerService implements Disposable
 {
 	private static final Logger LOGGER = Logger.getInstance(UnityPlayerService.class);

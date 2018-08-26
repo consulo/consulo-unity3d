@@ -18,6 +18,7 @@ package consulo.unity3d.ide.ui;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.inject.Inject;
 
 import com.intellij.ProjectTopics;
 import com.intellij.openapi.fileEditor.FileEditor;
@@ -50,6 +51,7 @@ public class SetupUnitySDKProvider implements EditorNotificationProvider<EditorN
 
 	private final Project myProject;
 
+	@Inject
 	public SetupUnitySDKProvider(Project project, final EditorNotifications notifications)
 	{
 		myProject = project;

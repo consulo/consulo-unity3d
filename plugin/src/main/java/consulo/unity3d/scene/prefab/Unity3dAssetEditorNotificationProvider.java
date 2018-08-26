@@ -18,6 +18,7 @@ package consulo.unity3d.scene.prefab;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.inject.Inject;
 
 import com.intellij.find.FindManager;
 import com.intellij.openapi.fileEditor.FileEditor;
@@ -46,6 +47,7 @@ public class Unity3dAssetEditorNotificationProvider implements EditorNotificatio
 
 	private final Project myProject;
 
+	@Inject
 	public Unity3dAssetEditorNotificationProvider(Project project)
 	{
 		myProject = project;

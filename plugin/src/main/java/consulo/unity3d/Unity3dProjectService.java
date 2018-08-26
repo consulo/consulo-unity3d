@@ -18,6 +18,9 @@ package consulo.unity3d;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import com.intellij.ProjectTopics;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.components.ServiceManager;
@@ -36,6 +39,7 @@ import consulo.unity3d.module.Unity3dRootModuleExtension;
  * @author VISTALL
  * @since 18-Jun-17
  */
+@Singleton
 public class Unity3dProjectService implements Disposable
 {
 	private static class CacheValue
@@ -91,6 +95,7 @@ public class Unity3dProjectService implements Disposable
 
 	private final Project myProject;
 
+	@Inject
 	Unity3dProjectService(Project project)
 	{
 		myProject = project;

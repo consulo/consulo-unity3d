@@ -1,6 +1,7 @@
 package consulo.unity3d.usages;
 
 import javax.annotation.Nonnull;
+import javax.inject.Singleton;
 
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.ServiceManager;
@@ -12,6 +13,7 @@ import com.intellij.util.xmlb.XmlSerializerUtil;
  * @author VISTALL
  * @since 2018-03-10
  */
+@Singleton
 @State(name = "Unity3dAssetUsageSettings", storages = @Storage("other.xml"))
 public class Unity3dAssetUsageSettings implements PersistentStateComponent<Unity3dAssetUsageSettings>
 {

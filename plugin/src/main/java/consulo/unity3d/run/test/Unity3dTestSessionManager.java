@@ -22,6 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.inject.Singleton;
 
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.testframework.sm.runner.GeneralTestEventsProcessor;
@@ -31,6 +32,7 @@ import com.intellij.openapi.components.ServiceManager;
  * @author VISTALL
  * @since 18.01.2016
  */
+@Singleton
 public class Unity3dTestSessionManager
 {
 	@Nonnull

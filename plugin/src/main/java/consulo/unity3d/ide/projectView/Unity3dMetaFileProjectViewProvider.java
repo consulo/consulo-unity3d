@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import com.intellij.ide.projectView.ProjectViewNode;
 import com.intellij.ide.projectView.TreeStructureProvider;
 import com.intellij.ide.projectView.ViewSettings;
@@ -40,6 +42,7 @@ public class Unity3dMetaFileProjectViewProvider implements TreeStructureProvider
 {
 	private final Project myProject;
 
+	@Inject
 	public Unity3dMetaFileProjectViewProvider(Project project)
 	{
 		myProject = project;
