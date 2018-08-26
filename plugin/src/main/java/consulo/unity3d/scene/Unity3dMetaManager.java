@@ -22,6 +22,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.jetbrains.yaml.psi.YAMLFile;
 import com.intellij.openapi.Disposable;
@@ -56,6 +58,7 @@ import consulo.unity3d.scene.index.Unity3dYMLAssetIndexExtension;
  * @author VISTALL
  * @since 01-Sep-17
  */
+@Singleton
 public class Unity3dMetaManager implements Disposable
 {
 	public static final String GUID_KEY = "guid";
@@ -70,6 +73,7 @@ public class Unity3dMetaManager implements Disposable
 	private Map<Integer, Object> myGUIDs = new ConcurrentHashMap<>();
 	private Map<String, MultiMap<VirtualFile, Unity3dYMLAsset>> myAttaches = new ConcurrentHashMap<>();
 
+	@Inject
 	public Unity3dMetaManager(Project project)
 	{
 		myProject = project;
