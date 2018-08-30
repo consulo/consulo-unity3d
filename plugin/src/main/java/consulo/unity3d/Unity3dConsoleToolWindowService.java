@@ -167,7 +167,10 @@ public class Unity3dConsoleToolWindowService implements Disposable
 	@Override
 	public void dispose()
 	{
-		myUnregister.finish();
+		if(myUnregister != null)
+		{
+			myUnregister.finish();
+		}
 	}
 
 	private boolean isClearOnPlay()
