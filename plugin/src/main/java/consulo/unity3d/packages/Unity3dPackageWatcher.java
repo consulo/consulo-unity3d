@@ -16,35 +16,27 @@
 
 package consulo.unity3d.packages;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.util.SystemInfo;
-import com.intellij.openapi.util.Version;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VfsUtil;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileCopyEvent;
-import com.intellij.openapi.vfs.VirtualFileEvent;
-import com.intellij.openapi.vfs.VirtualFileListener;
 import com.intellij.openapi.vfs.VirtualFileManager;
-import com.intellij.openapi.vfs.VirtualFileMoveEvent;
+import com.intellij.util.SmartList;
 import com.intellij.util.SystemProperties;
-import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.MultiMap;
 import com.sun.jna.platform.win32.Guid;
 import com.sun.jna.platform.win32.Shell32;
+import com.sun.jna.platform.win32.Shell32Util;
+import com.sun.jna.platform.win32.ShlObj;
 import com.sun.jna.platform.win32.WinNT;
 import com.sun.jna.ptr.PointerByReference;
 
@@ -63,185 +55,69 @@ public class Unity3dPackageWatcher implements Disposable
 
 	private final LocalFileSystem myLocalFileSystem;
 
-	private LocalFileSystem.WatchRequest myWatchRequest;
+	private Set<LocalFileSystem.WatchRequest> myWatchRequests = Collections.emptySet();
 
-	private volatile Unity3dPackageIndex myIndex;
-
-	private String myPackageDirPath;
+	private final List<String> myPackageDirPaths;
 
 	@Inject
 	public Unity3dPackageWatcher(VirtualFileManager virtualFileManager)
 	{
 		myLocalFileSystem = LocalFileSystem.get(virtualFileManager);
 
-		String packagePath = getPackagePath();
-		if(packagePath == null)
+		myPackageDirPaths = convertUserPathToPackagePaths();
+
+		if(myPackageDirPaths.isEmpty())
 		{
 			return;
 		}
 
-		myPackageDirPath = packagePath;
-
-		myWatchRequest = myLocalFileSystem.addRootToWatch(packagePath, true);
-
-		virtualFileManager.addVirtualFileListener(new VirtualFileListener()
-		{
-			@Override
-			public void fileCopied(@Nonnull VirtualFileCopyEvent event)
-			{
-				dropCache(event);
-			}
-
-			@Override
-			public void fileCreated(@Nonnull VirtualFileEvent event)
-			{
-				dropCache(event);
-			}
-
-			@Override
-			public void fileMoved(@Nonnull VirtualFileMoveEvent event)
-			{
-				dropCache(event);
-			}
-
-			@Override
-			public void fileDeleted(@Nonnull VirtualFileEvent event)
-			{
-				dropCache(event);
-			}
-
-			private void dropCache(VirtualFileEvent event)
-			{
-				VirtualFile packageDir = myLocalFileSystem.findFileByPath(packagePath);
-				if(packageDir == null)
-				{
-					return;
-				}
-				if(VfsUtil.isAncestor(packageDir, event.getFile(), false))
-				{
-					myIndex = null;
-				}
-			}
-		}, this);
+		myWatchRequests = myLocalFileSystem.addRootsToWatch(myPackageDirPaths, true);
 	}
 
 	@Nonnull
-	public Unity3dPackageIndex getIndex()
+	public List<String> getPackageDirPaths()
 	{
-		if(myPackageDirPath == null)
-		{
-			return Unity3dPackageIndex.EMPTY;
-		}
-
-		Unity3dPackageIndex index = myIndex;
-		if(index != null)
-		{
-			return index;
-		}
-
-		Unity3dPackageIndex newIndex = buildIndex();
-		myIndex = newIndex;
-		return newIndex;
-	}
-
-	@Nonnull
-	private Unity3dPackageIndex buildIndex()
-	{
-		VirtualFile rootDir = myLocalFileSystem.findFileByPath(myPackageDirPath);
-		if(rootDir == null)
-		{
-			return Unity3dPackageIndex.EMPTY;
-		}
-
-		MultiMap<String, Unity3dPackage> map = MultiMap.createOrderedSet();
-
-		for(VirtualFile packageDir : rootDir.getChildren())
-		{
-			CharSequence name = packageDir.getNameSequence();
-
-			List<CharSequence> split = StringUtil.split(name, "@");
-			if(split.size() != 2)
-			{
-				continue;
-			}
-
-			CharSequence id = split.get(0);
-			CharSequence version = split.get(1);
-
-			Version parsedVersion = Version.parseVersion(version.toString());
-			if(parsedVersion == null)
-			{
-				continue;
-			}
-
-			String idAsString = id.toString();
-			map.putValue(idAsString, new Unity3dPackage(idAsString, parsedVersion, packageDir.getPath()));
-		}
-
-		if(map.isEmpty())
-		{
-			return Unity3dPackageIndex.EMPTY;
-		}
-
-		List<Unity3dPackage> topPackages = new ArrayList<>();
-		for(Map.Entry<String, Collection<Unity3dPackage>> entry : map.entrySet())
-		{
-			// hack for get last element
-			List<Unity3dPackage> value = (List<Unity3dPackage>) entry.getValue();
-
-			Unity3dPackage lastItem = ContainerUtil.getLastItem(value);
-			if(lastItem == null)
-			{
-				continue;
-			}
-
-			topPackages.add(lastItem);
-		}
-
-		return new Unity3dPackageIndex(topPackages);
+		return myPackageDirPaths;
 	}
 
 	@Override
 	public void dispose()
 	{
-		LocalFileSystem.getInstance().removeWatchedRoot(myWatchRequest);
+		myLocalFileSystem.removeWatchedRoots(myWatchRequests);
 	}
 
-	@Nullable
-	private static String getPackagePath()
+	@Nonnull
+	private List<String> convertUserPathToPackagePaths()
 	{
-		String unityUserPath = getUnityUserPath();
-		if(unityUserPath == null)
-		{
-			return null;
-		}
-		unityUserPath = FileUtil.toSystemIndependentName(unityUserPath) + "/cache/packages/packages.unity.com/";
-		return unityUserPath;
+		return getUnityUserPaths().stream().map(path -> FileUtil.toSystemIndependentName(path) + "/cache/packages/packages.unity.com/").collect(Collectors.toList());
 	}
 
-	@Nullable
-	private static String getUnityUserPath()
+	@Nonnull
+	private static List<String> getUnityUserPaths()
 	{
+		List<String> paths = new SmartList<>();
 		if(SystemInfo.isWinVistaOrNewer)
 		{
+			paths.add(Shell32Util.getFolderPath(ShlObj.CSIDL_LOCAL_APPDATA) + "\\Unity");
+
 			PointerByReference pointerByReference = new PointerByReference();
+			// LocalLow
 			WinNT.HRESULT hresult = Shell32.INSTANCE.SHGetKnownFolderPath(Guid.GUID.fromString("{A520A1A4-1780-4FF6-BD18-167343C5AF16}"), 0, null, pointerByReference);
 
-			if(hresult.longValue() != 0)
+			if(hresult.longValue() == 0)
 			{
-				return null;
+				paths.add(pointerByReference.getValue().getWideString(0) + "\\Unity");
 			}
-			return pointerByReference.getValue().getWideString(0) + "\\Unity";
 		}
 		else if(SystemInfo.isMac)
 		{
-			return SystemProperties.getUserHome() + "/Library/Unity";
+			paths.add(SystemProperties.getUserHome() + "/Library/Unity");
 		}
 		else if(SystemInfo.isLinux)
 		{
-			return SystemProperties.getUserHome() + "/.config/unity3d";
+			paths.add(SystemProperties.getUserHome() + "/.config/unity3d");
 		}
 
-		return null;
+		return paths;
 	}
 }

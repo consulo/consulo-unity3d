@@ -36,9 +36,6 @@ import consulo.dotnet.module.DotNetNamespaceGeneratePolicy;
 import consulo.dotnet.module.extension.BaseDotNetSimpleModuleExtension;
 import consulo.roots.ModuleRootLayer;
 import consulo.unity3d.bundle.Unity3dBundleType;
-import consulo.unity3d.packages.Unity3dPackage;
-import consulo.unity3d.packages.Unity3dPackageIndex;
-import consulo.unity3d.packages.Unity3dPackageWatcher;
 import consulo.unity3d.projectImport.Unity3dProjectImportUtil;
 
 /**
@@ -212,12 +209,6 @@ public class Unity3dRootModuleExtension extends BaseDotNetSimpleModuleExtension<
 			{
 				list.add(homePath + "/Editor/Data/PlaybackEngines/VuforiaSupport/Managed/Runtime");
 				list.add(homePath + "/Editor/Data/PlaybackEngines/VuforiaSupport/Managed/Editor");
-			}
-
-			Unity3dPackageIndex index = Unity3dPackageWatcher.getInstance().getIndex();
-			for(Unity3dPackage unity3dPackage : index.getTopPackages())
-			{
-				list.add(unity3dPackage.getPath());
 			}
 		}
 		return list;

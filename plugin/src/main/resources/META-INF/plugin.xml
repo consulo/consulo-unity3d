@@ -208,6 +208,9 @@
 		<applicationService serviceImplementation="consulo.unity3d.Unity3dLocalFileSystemComponent" lazy="false" />
 		<applicationService serviceImplementation="consulo.unity3d.console.Unity3dConsoleManager" lazy="false" />
 
+		<orderEntryType implementation="consulo.unity3d.packages.orderEntry.Unity3dPackageOrderEntryType" />
+		<orderEntryTypeEditor key="unity-package" implementationClass="consulo.unity3d.packages.orderEntry.Unity3dPackageOrderEntryTypeEditor" />
+
 		<projectService serviceImplementation="consulo.unity3d.UnityPluginFileValidator" lazy="false" />
 		<projectService serviceImplementation="consulo.unity3d.projectImport.change.Unity3dProjectChangeListener" lazy="false" />
 		<projectService serviceImplementation="consulo.unity3d.Unity3dConsoleToolWindowService" lazy="false" />

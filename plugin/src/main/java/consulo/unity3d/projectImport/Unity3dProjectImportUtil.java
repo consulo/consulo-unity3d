@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
@@ -106,6 +107,8 @@ import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import consulo.unity3d.module.Unity3dRootModuleExtension;
 import consulo.unity3d.module.Unity3dRootMutableModuleExtension;
 import consulo.unity3d.nunit.module.extension.Unity3dNUnitMutableModuleExtension;
+import consulo.unity3d.packages.Unity3dManifest;
+import consulo.unity3d.packages.orderEntry.Unity3dPackageOrderEntry;
 import consulo.unity3d.run.Unity3dAttachApplicationType;
 import consulo.unity3d.run.Unity3dAttachConfiguration;
 import consulo.unity3d.scene.Unity3dYMLAssetFileType;
@@ -213,10 +216,10 @@ public class Unity3dProjectImportUtil
 	 * this method will called from webservice thread
 	 */
 	private static void syncProjectStep2(@Nonnull final Project project,
-			@Nullable final Sdk sdk,
-			@Nullable UnityOpenFilePostHandlerRequest requestor,
-			final boolean runValidator,
-			UnitySetDefines unitySetDefines)
+										 @Nullable final Sdk sdk,
+										 @Nullable UnityOpenFilePostHandlerRequest requestor,
+										 final boolean runValidator,
+										 UnitySetDefines unitySetDefines)
 	{
 		Task.Backgroundable.queue(project, "Sync Project", indicator ->
 		{
@@ -233,11 +236,11 @@ public class Unity3dProjectImportUtil
 	}
 
 	private static void importAfterDefines(@Nonnull final Project project,
-			@Nullable final Sdk sdk,
-			final boolean runValidator,
-			@Nonnull ProgressIndicator indicator,
-			@Nullable UnityOpenFilePostHandlerRequest requestor,
-			@Nullable UnitySetDefines setDefines)
+										   @Nullable final Sdk sdk,
+										   final boolean runValidator,
+										   @Nonnull ProgressIndicator indicator,
+										   @Nullable UnityOpenFilePostHandlerRequest requestor,
+										   @Nullable UnitySetDefines setDefines)
 	{
 		try
 		{
@@ -270,16 +273,18 @@ public class Unity3dProjectImportUtil
 	}
 
 	@Nonnull
-	private static List<Module> importOrUpdate(@Nonnull final Project project,
-			@Nullable Sdk unitySdk,
-			@Nullable ModifiableModuleModel originalModel,
-			@Nonnull ProgressIndicator progressIndicator,
-			@Nullable Collection<String> defines)
+	private static List<Module> importOrUpdate(@Nonnull Project project,
+											   @Nullable Sdk unitySdk,
+											   @Nullable ModifiableModuleModel originalModel,
+											   @Nonnull ProgressIndicator progressIndicator,
+											   @Nullable Collection<String> defines)
 	{
 		boolean fromProjectStructure = originalModel != null;
 
 		VirtualFile baseDir = project.getBaseDir();
 		assert baseDir != null;
+
+		Unity3dManifest manifest = Unity3dManifest.parse(project);
 
 		int scriptRuntimeVersion = 0;
 		VirtualFile projectSettingsFile = baseDir.findFileByRelativePath("ProjectSettings/ProjectSettings.asset");
@@ -329,16 +334,16 @@ public class Unity3dProjectImportUtil
 
 		MultiMap<Module, VirtualFile> sourceFilesByModule = MultiMap.create();
 
-		ContainerUtil.addIfNotNull(modules, createAssemblyCSharpModuleFirstPass(project, newModel, unitySdk, sourceFilesByModule, progressIndicator));
+		ContainerUtil.addIfNotNull(modules, createAssemblyCSharpModuleFirstPass(project, newModel, unitySdk, sourceFilesByModule, progressIndicator, manifest));
 		progressIndicator.setFraction(0.25);
 
-		ContainerUtil.addIfNotNull(modules, createAssemblyUnityScriptModuleFirstPass(project, newModel, unitySdk, sourceFilesByModule, progressIndicator));
+		ContainerUtil.addIfNotNull(modules, createAssemblyUnityScriptModuleFirstPass(project, newModel, unitySdk, sourceFilesByModule, progressIndicator, manifest));
 		progressIndicator.setFraction(0.5);
 
-		ContainerUtil.addIfNotNull(modules, createAssemblyCSharpModuleEditor(project, newModel, unitySdk, sourceFilesByModule, progressIndicator));
+		ContainerUtil.addIfNotNull(modules, createAssemblyCSharpModuleEditor(project, newModel, unitySdk, sourceFilesByModule, progressIndicator, manifest));
 		progressIndicator.setFraction(0.75);
 
-		ContainerUtil.addIfNotNull(modules, createAssemblyCSharpModule(project, newModel, unitySdk, sourceFilesByModule, progressIndicator));
+		ContainerUtil.addIfNotNull(modules, createAssemblyCSharpModule(project, newModel, unitySdk, sourceFilesByModule, progressIndicator, manifest));
 
 		progressIndicator.setFraction(1);
 		progressIndicator.setText(null);
@@ -358,44 +363,48 @@ public class Unity3dProjectImportUtil
 	}
 
 	private static Module createAssemblyCSharpModule(Project project,
-			ModifiableModuleModel newModel,
-			final Sdk unityBundle,
-			MultiMap<Module, VirtualFile> virtualFilesByModule,
-			ProgressIndicator progressIndicator)
+													 ModifiableModuleModel newModel,
+													 final Sdk unityBundle,
+													 MultiMap<Module, VirtualFile> virtualFilesByModule,
+													 ProgressIndicator progressIndicator,
+													 Unity3dManifest manifest)
 	{
 		String[] paths = {ASSETS_DIRECTORY};
 		return createAndSetupModule("Assembly-CSharp", project, newModel, paths, unityBundle, layer ->
 		{
 			layer.addInvalidModuleEntry("Assembly-UnityScript-firstpass");
 			layer.addInvalidModuleEntry("Assembly-CSharp-firstpass");
-		}, "unity3d-csharp-child", CSharpFileType.INSTANCE, virtualFilesByModule, progressIndicator);
+		}, "unity3d-csharp-child", CSharpFileType.INSTANCE, virtualFilesByModule, progressIndicator, manifest);
 	}
 
-	private static Module createAssemblyUnityScriptModuleFirstPass(final Project project,
-			ModifiableModuleModel newModel,
-			final Sdk unityBundle,
-			MultiMap<Module, VirtualFile> virtualFilesByModule,
-			ProgressIndicator progressIndicator)
+	private static Module createAssemblyUnityScriptModuleFirstPass(Project project,
+																   ModifiableModuleModel newModel,
+																   Sdk unityBundle,
+																   MultiMap<Module, VirtualFile> virtualFilesByModule,
+																   ProgressIndicator progressIndicator,
+																   Unity3dManifest manifest)
 	{
 		return createAndSetupModule("Assembly-UnityScript-firstpass", project, newModel, FIRST_PASS_PATHS, unityBundle, null, "unity3d-unityscript-child", JavaScriptFileType.INSTANCE,
-				virtualFilesByModule, progressIndicator);
+				virtualFilesByModule, progressIndicator, manifest);
 	}
 
-	private static Module createAssemblyCSharpModuleFirstPass(final Project project,
-			ModifiableModuleModel newModel,
-			Sdk unityBundle,
-			MultiMap<Module, VirtualFile> virtualFilesByModule,
-			ProgressIndicator progressIndicator)
+	private static Module createAssemblyCSharpModuleFirstPass(Project project,
+															  ModifiableModuleModel newModel,
+															  Sdk unityBundle,
+															  MultiMap<Module, VirtualFile> virtualFilesByModule,
+															  ProgressIndicator progressIndicator,
+															  Unity3dManifest manifest)
 	{
 		return createAndSetupModule("Assembly-CSharp-firstpass", project, newModel, FIRST_PASS_PATHS, unityBundle, null, "unity3d-csharp-child", CSharpFileType.INSTANCE, virtualFilesByModule,
-				progressIndicator);
+				progressIndicator, manifest);
 	}
 
 	private static Module createAssemblyCSharpModuleEditor(final Project project,
-			ModifiableModuleModel newModel,
-			final Sdk unityBundle,
-			MultiMap<Module, VirtualFile> virtualFilesByModule,
-			ProgressIndicator progressIndicator)
+														   ModifiableModuleModel newModel,
+														   final Sdk unityBundle,
+														   MultiMap<Module, VirtualFile> virtualFilesByModule,
+														   ProgressIndicator progressIndicator,
+														   Unity3dManifest manifest)
 	{
 		final List<String> paths = new ArrayList<>();
 		paths.add("Assets/Standard Assets/Editor");
@@ -422,57 +431,54 @@ public class Unity3dProjectImportUtil
 		}
 
 		final String[] pathsAsArray = ArrayUtil.toStringArray(paths);
-		return createAndSetupModule("Assembly-CSharp-Editor", project, newModel, pathsAsArray, unityBundle, new Consumer<ModuleRootLayerImpl>()
+		return createAndSetupModule("Assembly-CSharp-Editor", project, newModel, pathsAsArray, unityBundle, layer ->
 		{
-			@Override
-			public void consume(final ModuleRootLayerImpl layer)
+			layer.addInvalidModuleEntry("Assembly-UnityScript-firstpass");
+			layer.addInvalidModuleEntry("Assembly-CSharp-firstpass");
+			layer.addInvalidModuleEntry("Assembly-CSharp");
+
+			layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEditor.Graphs"));
+
+			if(isVersionHigherOrEqual(unityBundle, "4.6.0"))
 			{
-				layer.addInvalidModuleEntry("Assembly-UnityScript-firstpass");
-				layer.addInvalidModuleEntry("Assembly-CSharp-firstpass");
-				layer.addInvalidModuleEntry("Assembly-CSharp");
-
-				layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEditor.Graphs"));
-
-				if(isVersionHigherOrEqual(unityBundle, "4.6.0"))
-				{
-					layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEditor.UI"));
-				}
-
-				if(isVersionHigherOrEqual(unityBundle, "5.3.0"))
-				{
-					layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "nunit.framework"));
-					layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEngine.TestRunner"));
-					layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEditor.TestRunner"));
-
-					// enable nunit
-					layer.getExtensionWithoutCheck(Unity3dNUnitMutableModuleExtension.class).setEnabled(true);
-				}
-
-				if(isVersionHigherOrEqual(unityBundle, "2017.1.0"))
-				{
-					layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEditor.Timeline"));
-				}
-
-				if(isVuforiaEnabled(unityBundle, project))
-				{
-					layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "Vuforia.UnityExtensions.Editor"));
-				}
+				layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEditor.UI"));
 			}
-		}, "unity3d-csharp-child", CSharpFileType.INSTANCE, virtualFilesByModule, progressIndicator);
+
+			if(isVersionHigherOrEqual(unityBundle, "5.3.0"))
+			{
+				layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "nunit.framework"));
+				layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEngine.TestRunner"));
+				layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEditor.TestRunner"));
+
+				// enable nunit
+				layer.getExtensionWithoutCheck(Unity3dNUnitMutableModuleExtension.class).setEnabled(true);
+			}
+
+			if(isVersionHigherOrEqual(unityBundle, "2017.1.0"))
+			{
+				layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEditor.Timeline"));
+			}
+
+			if(isVuforiaEnabled(unityBundle, project))
+			{
+				layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "Vuforia.UnityExtensions.Editor"));
+			}
+		}, "unity3d-csharp-child", CSharpFileType.INSTANCE, virtualFilesByModule, progressIndicator, manifest);
 	}
 
 	@Nonnull
 	@SuppressWarnings("unchecked")
 	private static Module createAndSetupModule(@Nonnull String moduleName,
-			@Nonnull Project project,
-			@Nonnull ModifiableModuleModel modifiableModuleModels,
-			@Nonnull String[] paths,
-			@Nullable Sdk unityBundle,
-			@Nullable final Consumer<ModuleRootLayerImpl> setupConsumer,
-			@Nonnull String moduleExtensionId,
-			@Nonnull final FileType fileType,
-			@Nonnull final MultiMap<Module, VirtualFile> virtualFilesByModule,
-			@Nonnull final ProgressIndicator progressIndicator)
+											   @Nonnull Project project,
+											   @Nonnull ModifiableModuleModel modifiableModuleModels,
+											   @Nonnull String[] paths,
+											   @Nullable Sdk unityBundle,
+											   @Nullable Consumer<ModuleRootLayerImpl> setupConsumer,
+											   @Nonnull String moduleExtensionId,
+											   @Nonnull FileType fileType,
+											   @Nonnull MultiMap<Module, VirtualFile> virtualFilesByModule,
+											   @Nonnull ProgressIndicator progressIndicator,
+											   @Nonnull Unity3dManifest manifest)
 	{
 		progressIndicator.setText(Unity3dBundle.message("syncing.0.module", moduleName));
 
@@ -569,10 +575,17 @@ public class Unity3dProjectImportUtil
 		layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "mscorlib"));
 		layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEditor"));
 		layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEngine"));
+
+		for(Map.Entry<String, Version> entry : manifest.getParsedVersions().entrySet())
+		{
+			layer.addOrderEntry(new Unity3dPackageOrderEntry(layer, entry.getKey() + "@" + entry.getValue()));
+		}
+
 		if(isVersionHigherOrEqual(unityBundle, "4.6.0"))
 		{
 			layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEngine.UI"));
 		}
+
 		if(isVersionHigherOrEqual(unityBundle, "5.1.0"))
 		{
 			layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEngine.Networking"));
@@ -582,10 +595,12 @@ public class Unity3dProjectImportUtil
 		{
 			layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEngine.Advertisements"));
 		}
+
 		if(isVersionHigherOrEqual(unityBundle, "5.3.0"))
 		{
 			layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEngine.Purchasing"));
 		}
+
 		if(isVersionHigherOrEqual(unityBundle, "2017.1.0"))
 		{
 			layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEngine.Timeline"));
@@ -709,11 +724,11 @@ public class Unity3dProjectImportUtil
 
 	@Nonnull
 	private static Module createRootModule(@Nonnull final Project project,
-			@Nonnull ModifiableModuleModel newModel,
-			@Nullable Sdk unityBundle,
-			@Nonnull ProgressIndicator progressIndicator,
-			@Nullable Collection<String> defines,
-			int scriptRuntimeVersion)
+										   @Nonnull ModifiableModuleModel newModel,
+										   @Nullable Sdk unityBundle,
+										   @Nonnull ProgressIndicator progressIndicator,
+										   @Nullable Collection<String> defines,
+										   int scriptRuntimeVersion)
 	{
 		Ref<String> namespacePrefix = Ref.create();
 		Set<String> excludedUrls = new TreeSet<>();
