@@ -92,6 +92,18 @@ public class Unity3dBundleType extends SdkType
 		if(SystemInfo.isMac)
 		{
 			paths.add("/Applications/Unity/Unity.app");
+			File hubPath = new File("/Applications/Unity/Hub/Editor");
+			if(hubPath.exists())
+			{
+				for(File versionPath : hubPath.listFiles())
+				{
+					File unityApp = new File(versionPath, "Unity.app");
+					if(unityApp.exists())
+					{
+						paths.add(unityApp.getPath());
+					}
+				}
+			}
 		}
 		else if(SystemInfo.isWindows)
 		{
