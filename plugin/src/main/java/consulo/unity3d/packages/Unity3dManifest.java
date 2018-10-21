@@ -30,7 +30,6 @@ import com.google.gson.Gson;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
-import com.intellij.openapi.util.Version;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiModificationTracker;
@@ -76,26 +75,20 @@ public class Unity3dManifest
 	}
 
 	@Nonnull
-	public Map<String, Version> getParsedVersions()
+	public Map<String, String> getFilteredDependencies()
 	{
 		if(dependencies.isEmpty())
 		{
 			return Collections.emptyMap();
 		}
-		Map<String, Version> map = new LinkedHashMap<>();
+		Map<String, String> map = new LinkedHashMap<>();
 		for(Map.Entry<String, String> entry : dependencies.entrySet())
 		{
 			if("excluded".equals(entry.getValue()))
 			{
 				continue;
 			}
-
-			Version version = Version.parseVersion(entry.getValue());
-			if(version == null)
-			{
-				continue;
-			}
-			map.put(entry.getKey(), version);
+			map.put(entry.getKey(), entry.getValue());
 		}
 		return map;
 	}

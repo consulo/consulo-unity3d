@@ -576,7 +576,7 @@ public class Unity3dProjectImportUtil
 		layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEditor"));
 		layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEngine"));
 
-		for(Map.Entry<String, Version> entry : manifest.getParsedVersions().entrySet())
+		for(Map.Entry<String, String> entry : manifest.getFilteredDependencies().entrySet())
 		{
 			layer.addOrderEntry(new Unity3dPackageOrderEntry(layer, entry.getKey() + "@" + entry.getValue()));
 		}
