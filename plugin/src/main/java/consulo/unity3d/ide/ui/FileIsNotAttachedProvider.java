@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2016 consulo.io
+ * Copyright 2013-2018 consulo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,36 +23,34 @@ import javax.inject.Inject;
 import com.intellij.ProjectTopics;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootEvent;
 import com.intellij.openapi.roots.ModuleRootListener;
-import com.intellij.openapi.roots.ui.configuration.ProjectSettingsService;
 import com.intellij.openapi.util.Key;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiManager;
 import com.intellij.ui.EditorNotificationPanel;
 import com.intellij.ui.EditorNotifications;
 import consulo.annotations.RequiredReadAction;
+import consulo.csharp.lang.CSharpFileType;
 import consulo.editor.notifications.EditorNotificationProvider;
 import consulo.module.extension.ModuleExtension;
-import consulo.unity3d.Unity3dBundle;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import consulo.unity3d.module.Unity3dRootModuleExtension;
+import consulo.unity3d.projectImport.Unity3dProjectImportUtil;
 
 /**
  * @author VISTALL
- * @since 29.07.2015
+ * @since 2018-11-29
  */
-public class SetupUnitySDKProvider implements EditorNotificationProvider<EditorNotificationPanel>
+public class FileIsNotAttachedProvider implements EditorNotificationProvider<EditorNotificationPanel>
 {
-	private static final Key<EditorNotificationPanel> KEY = Key.create("setup.unity.sdk.notifier");
+	private static final Key<EditorNotificationPanel> KEY = Key.create("FileIsNotAttachedProvider");
 
 	private final Project myProject;
 
 	@Inject
-	public SetupUnitySDKProvider(Project project, final EditorNotifications notifications)
+	public FileIsNotAttachedProvider(Project project, final EditorNotifications notifications)
 	{
 		myProject = project;
 		myProject.getMessageBus().connect().subscribe(ProjectTopics.PROJECT_ROOTS, new ModuleRootListener()
@@ -73,12 +71,12 @@ public class SetupUnitySDKProvider implements EditorNotificationProvider<EditorN
 		return KEY;
 	}
 
-	@Override
 	@RequiredReadAction
-	public EditorNotificationPanel createNotificationPanel(@Nonnull VirtualFile file, @Nonnull FileEditor fileEditor)
+	@Nullable
+	@Override
+	public EditorNotificationPanel createNotificationPanel(@Nonnull VirtualFile virtualFile, @Nonnull FileEditor fileEditor)
 	{
-		final PsiFile psiFile = PsiManager.getInstance(myProject).findFile(file);
-		if(psiFile == null)
+		if(virtualFile.getFileType() != CSharpFileType.INSTANCE)
 		{
 			return null;
 		}
@@ -88,26 +86,19 @@ public class SetupUnitySDKProvider implements EditorNotificationProvider<EditorN
 		{
 			return null;
 		}
-		if(rootModuleExtension.getSdk() == null)
+
+		Module module = ModuleUtilCore.findModuleForFile(virtualFile, myProject);
+
+		if(module == null || module.equals(rootModuleExtension.getModule()))
 		{
-			return createPanel(rootModuleExtension.getInheritableSdk().isNull() ? null : rootModuleExtension.getInheritableSdk().getName(), rootModuleExtension.getModule());
+			EditorNotificationPanel panel = new EditorNotificationPanel();
+			panel.text("File is not attached to project. Some features are unavailable (code analysis, debugging, etc)");
+			panel.createActionLabel("Re-import Unity Project", () ->
+			{
+				Unity3dProjectImportUtil.syncProjectStep1(myProject, rootModuleExtension.getSdk(), null, true);
+			});
+			return panel;
 		}
 		return null;
-	}
-
-	@Nonnull
-	private static EditorNotificationPanel createPanel(@Nullable String name, @Nonnull final Module rootModule)
-	{
-		EditorNotificationPanel panel = new EditorNotificationPanel();
-		if(StringUtil.isEmpty(name))
-		{
-			panel.setText(Unity3dBundle.message("unity.sdk.is.not.defiled"));
-		}
-		else
-		{
-			panel.setText(Unity3dBundle.message("unity.0.sdk.is.not.defined", name));
-		}
-		panel.createActionLabel("Open Settings", () -> ProjectSettingsService.getInstance(rootModule.getProject()).openModuleSettings(rootModule));
-		return panel;
 	}
 }

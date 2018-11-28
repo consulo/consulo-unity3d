@@ -178,6 +178,7 @@
 
 		<moduleImportProvider implementation="consulo.unity3d.projectImport.Unity3dModuleImportProvider"/>
 		<editorNotificationProvider implementation="consulo.unity3d.ide.ui.SetupUnitySDKProvider"/>
+		<editorNotificationProvider implementation="consulo.unity3d.ide.ui.FileIsNotAttachedProvider"/>
 
 		<fileTypeFactory implementation="consulo.unity3d.Unity3dFileTypeFactory"/>
 		<treeStructureProvider implementation="consulo.unity3d.ide.projectView.Unity3dMetaFileProjectViewProvider"/>
