@@ -40,7 +40,7 @@ import consulo.unity3d.run.test.Unity3dTestSessionManager;
  */
 public class UnityTestStatePostHandler extends JsonPostRequestHandler<UnityTestStatePostRequest>
 {
-	protected UnityTestStatePostHandler()
+	public UnityTestStatePostHandler()
 	{
 		super("unityTestState", UnityTestStatePostRequest.class);
 	}
