@@ -27,6 +27,7 @@ import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootEvent;
 import com.intellij.openapi.roots.ModuleRootListener;
+import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.EditorNotificationPanel;
@@ -35,6 +36,7 @@ import consulo.annotations.RequiredReadAction;
 import consulo.csharp.lang.CSharpFileType;
 import consulo.editor.notifications.EditorNotificationProvider;
 import consulo.module.extension.ModuleExtension;
+import consulo.msil.representation.MsilFileRepresentationVirtualFile;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import consulo.unity3d.module.Unity3dRootModuleExtension;
 import consulo.unity3d.projectImport.Unity3dProjectImportUtil;
@@ -83,6 +85,11 @@ public class FileIsNotAttachedProvider implements EditorNotificationProvider<Edi
 
 		Unity3dRootModuleExtension rootModuleExtension = Unity3dModuleExtensionUtil.getRootModuleExtension(myProject);
 		if(rootModuleExtension == null)
+		{
+			return null;
+		}
+
+		if(ProjectFileIndex.getInstance(myProject).isInLibraryClasses(virtualFile) || virtualFile instanceof MsilFileRepresentationVirtualFile)
 		{
 			return null;
 		}
