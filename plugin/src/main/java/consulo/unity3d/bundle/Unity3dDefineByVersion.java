@@ -61,6 +61,8 @@ public enum Unity3dDefineByVersion
 	UNITY_2017_4("2017.4.\\d", "UnityEditorConsuloPlugin2017.2.dll"),
 	UNITY_2018_1("2018.1.\\d", "UnityEditorConsuloPlugin2017.2.dll"),
 	UNITY_2018_2("2018.2.\\d", "UnityEditorConsuloPlugin2017.2.dll"),
+	UNITY_2018_3("2018.3.\\d", "UnityEditorConsuloPlugin2017.2.dll"),
+	UNITY_2019_1("2019.1.\\d", "UnityEditorConsuloPlugin2017.2.dll"),
 	UNKNOWN("\\d.\\d.\\d", null);
 
 	private final Pattern myVersionPattern;
