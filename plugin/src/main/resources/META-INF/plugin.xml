@@ -193,6 +193,7 @@
 		<psi.referenceContributor language="yaml" implementation="consulo.unity3d.scene.reference.Unity3dSceneFieldReferenceRegister"/>
 
 		<referencesSearch implementation="consulo.unity3d.scene.reference.Unity3dSceneReferenceSearcher"/>
+		<lang.documentationProvider language="C#" implementationClass="consulo.unity3d.documentation.UnityExternalDocumentationProvider" />
 
 		<httpRequestHandler implementation="consulo.unity3d.jsonApi.UnityOpenFilePostHandler"/>
 		<httpRequestHandler implementation="consulo.unity3d.jsonApi.UnityLogPostHandler"/>
