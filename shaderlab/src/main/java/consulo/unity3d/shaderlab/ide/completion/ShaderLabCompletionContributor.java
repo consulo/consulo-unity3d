@@ -37,14 +37,13 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.patterns.StandardPatterns;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.ui.LayeredIcon;
 import com.intellij.util.ProcessingContext;
 import consulo.annotations.RequiredReadAction;
-import consulo.awt.TargetAWT;
 import consulo.codeInsight.completion.CompletionProvider;
 import consulo.csharp.ide.completion.util.SpaceInsertHandler;
 import consulo.dotnet.psi.search.searches.DirectTypeInheritorsSearch;
 import consulo.ide.IconDescriptorUpdaters;
+import consulo.ui.image.ImageEffects;
 import consulo.unity3d.shaderlab.lang.ShaderLabFileType;
 import consulo.unity3d.shaderlab.lang.ShaderLabPropertyType;
 import consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabCompositeRole;
@@ -167,7 +166,7 @@ public class ShaderLabCompletionContributor extends CompletionContributor
 						continue;
 					}
 					LookupElementBuilder builder = LookupElementBuilder.create(key);
-					builder = builder.withIcon(TargetAWT.to(ShaderLabFileType.INSTANCE.getIcon()));
+					builder = builder.withIcon(ShaderLabFileType.INSTANCE.getIcon());
 					result.addElement(builder);
 				}
 
@@ -176,7 +175,7 @@ public class ShaderLabCompletionContributor extends CompletionContributor
 					ProgressManager.checkCanceled();
 
 					LookupElementBuilder builder = LookupElementBuilder.create(shaderDef.getName());
-					builder = builder.withIcon(new LayeredIcon(TargetAWT.to(ShaderLabFileType.INSTANCE.getIcon()), AllIcons.Nodes.FinalMark));
+					builder = builder.withIcon(ImageEffects.layered(ShaderLabFileType.INSTANCE.getIcon(), AllIcons.Nodes.FinalMark));
 					result.addElement(builder);
 				}
 

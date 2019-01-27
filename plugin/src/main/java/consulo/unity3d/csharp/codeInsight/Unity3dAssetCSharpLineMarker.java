@@ -46,7 +46,6 @@ import com.intellij.util.Function;
 import com.intellij.util.containers.MultiMap;
 import consulo.annotations.RequiredDispatchThread;
 import consulo.annotations.RequiredReadAction;
-import consulo.awt.TargetAWT;
 import consulo.csharp.ide.highlight.CSharpHighlightKey;
 import consulo.csharp.ide.lineMarkerProvider.CSharpLineMarkerUtil;
 import consulo.csharp.lang.psi.CSharpEnumConstantDeclaration;
@@ -110,7 +109,7 @@ public enum Unity3dAssetCSharpLineMarker
 										@Override
 										protected void customizeCellRenderer(@Nonnull JList<? extends UnityAssetWrapper> jList, UnityAssetWrapper unityAssetWrapper, int i, boolean b, boolean b1)
 										{
-											setIcon(TargetAWT.to(UnityShaderIcons.Shader));
+											setIcon(UnityShaderIcons.Shader);
 
 											append(unityAssetWrapper.getAsset().getGameObjectName());
 										}
@@ -220,7 +219,7 @@ public enum Unity3dAssetCSharpLineMarker
 										@RequiredDispatchThread
 										protected void customizeCellRenderer(@Nonnull JList<? extends UnityAssetWrapper> jList, UnityAssetWrapper unityAssetWrapper, int i, boolean b, boolean b1)
 										{
-											setIcon(TargetAWT.to(UnityShaderIcons.Shader));
+											setIcon(UnityShaderIcons.Shader);
 
 											String prefix = null;
 											TextAttributesKey prefixKey = null;
