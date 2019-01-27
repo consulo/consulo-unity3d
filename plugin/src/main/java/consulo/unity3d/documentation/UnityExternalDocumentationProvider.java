@@ -16,17 +16,11 @@
 
 package consulo.unity3d.documentation;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-
-import javax.annotation.Nullable;
-
 import com.intellij.lang.documentation.DocumentationProvider;
 import com.intellij.lang.documentation.ExternalDocumentationProvider;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.StandardFileSystems;
@@ -41,6 +35,12 @@ import consulo.dotnet.psi.DotNetPropertyDeclaration;
 import consulo.dotnet.psi.DotNetTypeDeclaration;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import consulo.unity3d.module.Unity3dRootModuleExtension;
+
+import javax.annotation.Nullable;
+import java.io.File;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author VISTALL
@@ -82,7 +82,15 @@ public class UnityExternalDocumentationProvider implements ExternalDocumentation
 
 		String homePath = sdk.getHomePath();
 
-		File file = new File(homePath, "Editor/Data/Documentation/en/ScriptReference/" + fileName + ".html");
+		File file;
+		if(SystemInfo.isMac)
+		{
+			file = new File(homePath, "Contents/Documentation/en/ScriptReference/" + fileName + ".html");
+		}
+		else
+		{
+			file = new File(homePath, "Editor/Data/Documentation/en/ScriptReference/" + fileName + ".html");
+		}
 
 		try
 		{
