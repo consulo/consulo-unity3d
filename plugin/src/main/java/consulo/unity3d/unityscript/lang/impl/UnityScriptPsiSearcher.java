@@ -21,6 +21,7 @@ import java.util.Collections;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.inject.Inject;
 
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.project.DumbService;
@@ -42,6 +43,7 @@ public class UnityScriptPsiSearcher extends DotNetPsiSearcher
 {
 	private Project myProject;
 
+	@Inject
 	public UnityScriptPsiSearcher(Project project)
 	{
 		myProject = project;
