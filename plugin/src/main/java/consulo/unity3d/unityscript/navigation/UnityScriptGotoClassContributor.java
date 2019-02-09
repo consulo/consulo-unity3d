@@ -16,10 +16,9 @@
 
 package consulo.unity3d.unityscript.navigation;
 
-import javax.swing.Icon;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
 import com.intellij.icons.AllIcons;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.navigation.ChooseByNameContributorEx;
@@ -37,8 +36,8 @@ import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.FindSymbolParameters;
 import com.intellij.util.indexing.IdFilter;
-import consulo.awt.TargetAWT;
 import consulo.ide.IconDescriptor;
+import consulo.ui.image.Image;
 import consulo.unity3d.Unity3dIcons;
 import consulo.unity3d.unityscript.index.UnityScriptIndexKeys;
 
@@ -112,12 +111,12 @@ public class UnityScriptGotoClassContributor implements ChooseByNameContributorE
 
 					@Nullable
 					@Override
-					public Icon getIcon(boolean open)
+					public Image getIcon()
 					{
 						IconDescriptor descriptor = new IconDescriptor(AllIcons.Nodes.Class);
 						descriptor.addLayerIcon(Unity3dIcons.Js);
 						descriptor.setRightIcon(AllIcons.Nodes.C_public);
-						return TargetAWT.to(descriptor.toIcon());
+						return descriptor.toIcon();
 					}
 
 					@Override

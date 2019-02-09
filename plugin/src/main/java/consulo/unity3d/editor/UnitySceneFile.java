@@ -16,9 +16,8 @@
 
 package consulo.unity3d.editor;
 
-import javax.swing.Icon;
-
 import javax.annotation.Nullable;
+
 import com.intellij.lang.Language;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.project.Project;
@@ -27,7 +26,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.NavigatablePsiElement;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.impl.light.LightElement;
-import consulo.awt.TargetAWT;
+import consulo.ui.image.Image;
 
 /**
  * @author VISTALL
@@ -75,9 +74,9 @@ public class UnitySceneFile extends LightElement implements NavigatablePsiElemen
 
 			@Nullable
 			@Override
-			public Icon getIcon(boolean unused)
+			public Image getIcon()
 			{
-				return TargetAWT.to(myVirtualFile.getFileType().getIcon());
+				return myVirtualFile.getFileType().getIcon();
 			}
 		};
 	}
