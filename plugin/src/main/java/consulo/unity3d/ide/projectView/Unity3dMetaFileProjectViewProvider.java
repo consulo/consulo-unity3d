@@ -29,7 +29,7 @@ import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import consulo.annotations.RequiredDispatchThread;
+import consulo.ui.RequiredUIAccess;
 import consulo.unity3d.Unity3dMetaFileType;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import consulo.unity3d.module.Unity3dRootModuleExtension;
@@ -49,7 +49,7 @@ public class Unity3dMetaFileProjectViewProvider implements TreeStructureProvider
 	}
 
 	@Override
-	@RequiredDispatchThread
+	@RequiredUIAccess
 	public Collection<AbstractTreeNode> modify(AbstractTreeNode parent, Collection<AbstractTreeNode> children, ViewSettings settings)
 	{
 		if(!myProject.isInitialized())

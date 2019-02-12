@@ -24,7 +24,7 @@ import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import consulo.annotations.RequiredDispatchThread;
+import consulo.ui.RequiredUIAccess;
 import consulo.unity3d.Unity3dIcons;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import consulo.unity3d.module.Unity3dRootModuleExtension;
@@ -42,7 +42,7 @@ public class SyncUnity3dProjectAction extends AnAction
 	}
 
 	@Override
-	@RequiredDispatchThread
+	@RequiredUIAccess
 	public void actionPerformed(@Nonnull AnActionEvent anActionEvent)
 	{
 		final Project project = anActionEvent.getProject();
@@ -59,7 +59,7 @@ public class SyncUnity3dProjectAction extends AnAction
 		Unity3dProjectImportUtil.syncProjectStep1(project, rootModuleExtension.getSdk(), null, true);
 	}
 
-	@RequiredDispatchThread
+	@RequiredUIAccess
 	@Override
 	public void update(@Nonnull AnActionEvent e)
 	{

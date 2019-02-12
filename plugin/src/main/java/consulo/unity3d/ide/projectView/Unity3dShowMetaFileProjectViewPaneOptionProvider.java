@@ -26,7 +26,7 @@ import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.actionSystem.ToggleAction;
 import com.intellij.openapi.util.KeyWithDefaultValue;
-import consulo.annotations.RequiredDispatchThread;
+import consulo.ui.RequiredUIAccess;
 import consulo.ide.projectView.impl.ProjectViewPaneOptionProvider;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 
@@ -74,7 +74,7 @@ public class Unity3dShowMetaFileProjectViewPaneOptionProvider extends ProjectVie
 		}
 
 		@Override
-		@RequiredDispatchThread
+		@RequiredUIAccess
 		public void update(AnActionEvent e)
 		{
 			super.update(e);
@@ -92,7 +92,7 @@ public class Unity3dShowMetaFileProjectViewPaneOptionProvider extends ProjectVie
 	}
 
 	@Override
-	@RequiredDispatchThread
+	@RequiredUIAccess
 	public void addToolbarActions(@Nonnull AbstractProjectViewPane pane, @Nonnull DefaultActionGroup actionGroup)
 	{
 		if(pane instanceof ProjectViewPane)

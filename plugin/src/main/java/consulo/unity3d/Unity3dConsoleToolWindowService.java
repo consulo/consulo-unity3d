@@ -47,7 +47,7 @@ import com.intellij.ui.content.MessageView;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.MessageCategory;
 import com.intellij.util.ui.UIUtil;
-import consulo.annotations.RequiredDispatchThread;
+import consulo.ui.RequiredUIAccess;
 import consulo.dotnet.compiler.DotNetCompilerMessage;
 import consulo.unity3d.console.Unity3dConsoleManager;
 import consulo.unity3d.jsonApi.UnityLogParser;
@@ -87,7 +87,7 @@ public class Unity3dConsoleToolWindowService implements Disposable
 
 			group.add(new AnAction("Clear", null, AllIcons.Actions.Reset_to_empty)
 			{
-				@RequiredDispatchThread
+				@RequiredUIAccess
 				@Override
 				public void actionPerformed(@Nonnull AnActionEvent anActionEvent)
 				{
@@ -184,7 +184,7 @@ public class Unity3dConsoleToolWindowService implements Disposable
 		return myProject;
 	}
 
-	@RequiredDispatchThread
+	@RequiredUIAccess
 	public void onPlay()
 	{
 		if(myErrorPanel != null && isClearOnPlay())
@@ -193,7 +193,7 @@ public class Unity3dConsoleToolWindowService implements Disposable
 		}
 	}
 
-	@RequiredDispatchThread
+	@RequiredUIAccess
 	@Nonnull
 	private NewErrorTreeViewPanel getOrInitPanel()
 	{

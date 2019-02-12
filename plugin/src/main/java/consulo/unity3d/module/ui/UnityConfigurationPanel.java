@@ -33,7 +33,7 @@ import com.intellij.ui.ToolbarDecorator;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBList;
 import com.intellij.ui.components.JBTextField;
-import consulo.annotations.RequiredDispatchThread;
+import consulo.ui.RequiredUIAccess;
 import consulo.dotnet.DotNetBundle;
 import consulo.extension.ui.ModuleExtensionSdkBoxBuilder;
 import consulo.unity3d.module.Unity3dRootMutableModuleExtension;
@@ -45,7 +45,7 @@ import consulo.unity3d.module.Unity3dRootMutableModuleExtension;
  */
 public class UnityConfigurationPanel extends JPanel
 {
-	@RequiredDispatchThread
+	@RequiredUIAccess
 	public UnityConfigurationPanel(final Unity3dRootMutableModuleExtension extension, final List<String> variables, final Runnable updater)
 	{
 		super(new VerticalFlowLayout(true, true));
@@ -110,14 +110,14 @@ public class UnityConfigurationPanel extends JPanel
 			String name1 = Messages.showInputDialog(UnityConfigurationPanel.this, DotNetBundle.message("new.variable.message"), DotNetBundle.message("new.variable.title"), null, null,
 					new InputValidator()
 			{
-				@RequiredDispatchThread
+				@RequiredUIAccess
 				@Override
 				public boolean checkInput(String s)
 				{
 					return !variables.contains(s);
 				}
 
-				@RequiredDispatchThread
+				@RequiredUIAccess
 				@Override
 				public boolean canClose(String s)
 				{

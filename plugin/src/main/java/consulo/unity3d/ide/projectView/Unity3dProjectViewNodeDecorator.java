@@ -24,7 +24,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.packageDependencies.ui.PackageDependenciesNode;
 import com.intellij.ui.ColoredTreeCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
-import consulo.annotations.RequiredDispatchThread;
+import consulo.ui.RequiredUIAccess;
 import consulo.unity3d.Unity3dMetaFileType;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import consulo.unity3d.module.Unity3dRootModuleExtension;
@@ -35,7 +35,7 @@ import consulo.unity3d.module.Unity3dRootModuleExtension;
  */
 public class Unity3dProjectViewNodeDecorator implements ProjectViewNodeDecorator
 {
-	@RequiredDispatchThread
+	@RequiredUIAccess
 	@Override
 	public void decorate(ProjectViewNode node, PresentationData data)
 	{

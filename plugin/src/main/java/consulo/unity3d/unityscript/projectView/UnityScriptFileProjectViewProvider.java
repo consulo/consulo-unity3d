@@ -32,7 +32,7 @@ import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import consulo.annotations.RequiredDispatchThread;
+import consulo.ui.RequiredUIAccess;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import consulo.unity3d.module.Unity3dRootModuleExtension;
 
@@ -51,7 +51,7 @@ public class UnityScriptFileProjectViewProvider implements TreeStructureProvider
 	}
 
 	@Override
-	@RequiredDispatchThread
+	@RequiredUIAccess
 	public Collection<AbstractTreeNode> modify(AbstractTreeNode parent, Collection<AbstractTreeNode> children, ViewSettings settings)
 	{
 		if(!myProject.isInitialized())

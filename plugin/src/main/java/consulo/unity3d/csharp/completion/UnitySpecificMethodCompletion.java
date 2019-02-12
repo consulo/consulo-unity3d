@@ -33,7 +33,7 @@ import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Consumer;
 import com.intellij.util.ProcessingContext;
-import consulo.annotations.RequiredDispatchThread;
+import consulo.ui.RequiredUIAccess;
 import consulo.annotations.RequiredReadAction;
 import consulo.csharp.ide.completion.CSharpMemberAddByCompletionContributor;
 import consulo.csharp.lang.psi.CSharpMethodDeclaration;
@@ -136,7 +136,7 @@ public class UnitySpecificMethodCompletion implements CSharpMemberAddByCompletio
 		lookupElementBuilder = lookupElementBuilder.withInsertHandler(new InsertHandler<LookupElement>()
 		{
 			@Override
-			@RequiredDispatchThread
+			@RequiredUIAccess
 			public void handleInsert(InsertionContext context, LookupElement item)
 			{
 				CaretModel caretModel = context.getEditor().getCaretModel();

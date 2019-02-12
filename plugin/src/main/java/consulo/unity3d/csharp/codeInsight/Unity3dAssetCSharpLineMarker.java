@@ -44,7 +44,7 @@ import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
 import com.intellij.util.containers.MultiMap;
-import consulo.annotations.RequiredDispatchThread;
+import consulo.ui.RequiredUIAccess;
 import consulo.annotations.RequiredReadAction;
 import consulo.csharp.ide.highlight.CSharpHighlightKey;
 import consulo.csharp.ide.lineMarkerProvider.CSharpLineMarkerUtil;
@@ -216,7 +216,7 @@ public enum Unity3dAssetCSharpLineMarker
 									return new ColoredListCellRenderer<UnityAssetWrapper>()
 									{
 										@Override
-										@RequiredDispatchThread
+										@RequiredUIAccess
 										protected void customizeCellRenderer(@Nonnull JList<? extends UnityAssetWrapper> jList, UnityAssetWrapper unityAssetWrapper, int i, boolean b, boolean b1)
 										{
 											setIcon(UnityShaderIcons.Shader);

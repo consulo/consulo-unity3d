@@ -43,7 +43,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebuggerManager;
-import consulo.annotations.RequiredDispatchThread;
+import consulo.ui.RequiredUIAccess;
 import consulo.dotnet.execution.DebugConnectionInfo;
 import consulo.dotnet.mono.debugger.MonoVirtualMachineListener;
 import consulo.unity3d.editor.UnityEditorCommunication;
@@ -78,7 +78,7 @@ public class Unity3dAttachRunner extends AsyncProgramRunner
 	}
 
 	@Nonnull
-	@RequiredDispatchThread
+	@RequiredUIAccess
 	public static RunContentDescriptor runContentDescriptor(ExecutionResult executionResult,
 			@Nonnull final ExecutionEnvironment environment,
 			@Nonnull UnityProcess selected,
@@ -133,7 +133,7 @@ public class Unity3dAttachRunner extends AsyncProgramRunner
 
 	@Nonnull
 	@Override
-	@RequiredDispatchThread
+	@RequiredUIAccess
 	protected AsyncResult<RunContentDescriptor> execute(@Nonnull ExecutionEnvironment environment, @Nonnull RunProfileState state) throws ExecutionException
 	{
 		FileDocumentManager.getInstance().saveAllDocuments();
@@ -157,7 +157,7 @@ public class Unity3dAttachRunner extends AsyncProgramRunner
 						myUnityProcess = UnityEditorCommunication.findEditorProcess();
 					}
 
-					@RequiredDispatchThread
+					@RequiredUIAccess
 					@Override
 					public void onSuccess()
 					{
@@ -202,7 +202,7 @@ public class Unity3dAttachRunner extends AsyncProgramRunner
 							}
 						}
 
-						@RequiredDispatchThread
+						@RequiredUIAccess
 						@Override
 						public void onFinished()
 						{
@@ -231,7 +231,7 @@ public class Unity3dAttachRunner extends AsyncProgramRunner
 		return result;
 	}
 
-	@RequiredDispatchThread
+	@RequiredUIAccess
 	private static void setRunDescriptor(AsyncResult<RunContentDescriptor> result,
 			ExecutionEnvironment environment,
 			ExecutionResult executionResult,

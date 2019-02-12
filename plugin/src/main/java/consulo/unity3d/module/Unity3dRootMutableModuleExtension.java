@@ -22,7 +22,7 @@ import javax.swing.JComponent;
 
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.Comparing;
-import consulo.annotations.RequiredDispatchThread;
+import consulo.ui.RequiredUIAccess;
 import consulo.dotnet.module.extension.DotNetSimpleMutableModuleExtension;
 import consulo.module.extension.MutableModuleInheritableNamedPointer;
 import consulo.roots.ModuleRootLayer;
@@ -58,7 +58,7 @@ public class Unity3dRootMutableModuleExtension extends Unity3dRootModuleExtensio
 
 	@Nullable
 	@Override
-	@RequiredDispatchThread
+	@RequiredUIAccess
 	public JComponent createConfigurablePanel(@Nonnull Runnable runnable)
 	{
 		return new UnityConfigurationPanel(this, getVariables(), runnable);

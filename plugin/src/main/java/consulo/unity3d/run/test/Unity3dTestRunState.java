@@ -47,7 +47,7 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Ref;
 import com.intellij.xdebugger.DefaultDebugProcessHandler;
-import consulo.annotations.RequiredDispatchThread;
+import consulo.ui.RequiredUIAccess;
 import consulo.unity3d.editor.UnityEditorCommunication;
 import consulo.unity3d.editor.UnityRunTest;
 
@@ -68,7 +68,7 @@ public class Unity3dTestRunState implements RunProfileState
 
 	@Nullable
 	@Override
-	@RequiredDispatchThread
+	@RequiredUIAccess
 	public ExecutionResult execute(Executor executor, @Nonnull ProgramRunner runner) throws ExecutionException
 	{
 		Unity3dTestConfiguration profile = (Unity3dTestConfiguration) myEnvironment.getRunProfile();

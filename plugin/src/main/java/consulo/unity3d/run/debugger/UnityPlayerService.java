@@ -42,7 +42,7 @@ import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.ThreeState;
 import com.intellij.util.concurrency.AppExecutorUtil;
-import consulo.annotations.RequiredDispatchThread;
+import consulo.ui.RequiredUIAccess;
 
 /**
  * @author VISTALL
@@ -92,7 +92,7 @@ public class UnityPlayerService implements Disposable
 		}, 5, 5, TimeUnit.SECONDS);
 	}
 
-	@RequiredDispatchThread
+	@RequiredUIAccess
 	public void bindAndRun(@Nonnull Project project, @Nonnull Runnable runnable)
 	{
 		switch(myBindState)
@@ -114,7 +114,7 @@ public class UnityPlayerService implements Disposable
 						bind(progressIndicator);
 					}
 
-					@RequiredDispatchThread
+					@RequiredUIAccess
 					@Override
 					public void onFinished()
 					{

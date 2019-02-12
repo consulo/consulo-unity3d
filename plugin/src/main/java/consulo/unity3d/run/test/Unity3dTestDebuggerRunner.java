@@ -28,7 +28,7 @@ import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
-import consulo.annotations.RequiredDispatchThread;
+import consulo.ui.RequiredUIAccess;
 import consulo.unity3d.editor.UnityEditorCommunication;
 import consulo.unity3d.run.Unity3dAttachRunner;
 import consulo.unity3d.run.debugger.UnityProcess;
@@ -47,7 +47,7 @@ public class Unity3dTestDebuggerRunner extends DefaultProgramRunner
 	}
 
 	@Override
-	@RequiredDispatchThread
+	@RequiredUIAccess
 	protected RunContentDescriptor doExecute(@Nonnull RunProfileState state, @Nonnull ExecutionEnvironment env) throws ExecutionException
 	{
 		UnityProcess editorProcess = UnityEditorCommunication.findEditorProcess();

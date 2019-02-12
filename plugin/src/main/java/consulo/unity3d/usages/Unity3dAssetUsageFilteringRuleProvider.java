@@ -13,7 +13,7 @@ import com.intellij.usages.impl.RuleAction;
 import com.intellij.usages.rules.PsiElementUsage;
 import com.intellij.usages.rules.UsageFilteringRule;
 import com.intellij.usages.rules.UsageFilteringRuleProvider;
-import consulo.annotations.RequiredDispatchThread;
+import consulo.ui.RequiredUIAccess;
 import consulo.unity3d.Unity3dIcons;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import consulo.unity3d.scene.Unity3dYMLAssetFileType;
@@ -31,7 +31,7 @@ public class Unity3dAssetUsageFilteringRuleProvider implements UsageFilteringRul
 			super(view, "Show assets usage", Unity3dIcons.Unity3d);
 		}
 
-		@RequiredDispatchThread
+		@RequiredUIAccess
 		@Override
 		public void update(AnActionEvent e)
 		{

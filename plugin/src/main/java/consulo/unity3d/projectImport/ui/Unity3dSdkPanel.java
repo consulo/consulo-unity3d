@@ -32,7 +32,7 @@ import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Conditions;
 import com.intellij.ui.components.panels.HorizontalLayout;
-import consulo.annotations.RequiredDispatchThread;
+import consulo.ui.RequiredUIAccess;
 import consulo.roots.ui.configuration.SdkComboBox;
 import consulo.unity3d.bundle.Unity3dBundleType;
 
@@ -57,7 +57,7 @@ public class Unity3dSdkPanel extends JPanel
 		myComboBox.setSetupButton(button, null, projectSdksModel, null, new Condition<Sdk>()
 		{
 			@Override
-			@RequiredDispatchThread
+			@RequiredUIAccess
 			public boolean value(final Sdk sdk)
 			{
 				ApplicationManager.getApplication().runWriteAction(new Runnable()
