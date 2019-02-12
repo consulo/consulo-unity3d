@@ -22,10 +22,10 @@ import java.util.List;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-import javax.swing.Icon;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.swing.Icon;
+
 import com.intellij.ide.util.ChooseElementsDialog;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
@@ -87,10 +87,21 @@ public class UnityProcessDialog extends ChooseElementsDialog<UnityProcess>
 			for(ProcessInfo processInfo : processInfos)
 			{
 				String name = processInfo.getName();
-				if((StringUtil.startsWithIgnoreCase(name, "unity") || StringUtil.containsIgnoreCase(name, "Unity.app")) && !(StringUtil.containsIgnoreCase(name, "Unity") && StringUtil
-						.containsIgnoreCase(name, "Helper")) //ignore 'UnityHelper' and 'Unity Helper'
-						&& !StringUtil.containsIgnoreCase(name, "UnityShader"))
+
+				if(StringUtil.startsWithIgnoreCase(name, "unity") || StringUtil.containsIgnoreCase(name, "Unity.app"))
 				{
+					// ignore 'UnityHelper' and 'Unity Helper'
+					if(StringUtil.containsIgnoreCase(name, "Unity") && StringUtil.containsIgnoreCase(name, "Helper"))
+					{
+						continue;
+					}
+
+					// UnityShader - Package Manager - Hub compiler
+					if(StringUtil.containsIgnoreCase(name, "UnityShader") || StringUtil.containsIgnoreCase(name, "UnityPackageMan") || StringUtil.containsIgnoreCase(name, "unityhub"))
+					{
+						continue;
+					}
+
 					items.add(new UnityProcess(processInfo.getPid(), name, "localhost", buildDebuggerPort(processInfo.getPid())));
 				}
 			}
