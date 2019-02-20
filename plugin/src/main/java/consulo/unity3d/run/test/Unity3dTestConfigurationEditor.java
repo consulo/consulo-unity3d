@@ -21,7 +21,7 @@ import javax.annotation.Nullable;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
 import consulo.ui.Component;
-import consulo.ui.VerticalLayout;
+import consulo.ui.layout.VerticalLayout;
 
 /**
  * @author VISTALL

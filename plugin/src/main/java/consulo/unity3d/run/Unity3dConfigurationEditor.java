@@ -20,7 +20,15 @@ import javax.annotation.Nullable;
 
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
-import consulo.ui.*;
+import consulo.ui.Component;
+import consulo.ui.RadioButton;
+import consulo.ui.RequiredUIAccess;
+import consulo.ui.TextBox;
+import consulo.ui.ValueGroup;
+import consulo.ui.ValueGroups;
+import consulo.ui.layout.LabeledLayout;
+import consulo.ui.layout.VerticalLayout;
+import consulo.ui.util.LabeledComponents;
 
 /**
  * @author VISTALL
