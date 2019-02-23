@@ -34,7 +34,7 @@ import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import consulo.buildInWebServer.api.JsonPostRequestHandler;
+import consulo.builtInServer.json.JsonPostRequestHandler;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import consulo.unity3d.module.Unity3dRootMutableModuleExtension;
 

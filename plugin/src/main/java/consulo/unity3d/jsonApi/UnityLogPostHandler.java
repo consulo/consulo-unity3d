@@ -23,7 +23,7 @@ import javax.annotation.Nonnull;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.util.ui.MessageCategory;
-import consulo.buildInWebServer.api.JsonPostRequestHandler;
+import consulo.builtInServer.json.JsonPostRequestHandler;
 
 /**
  * @author VISTALL

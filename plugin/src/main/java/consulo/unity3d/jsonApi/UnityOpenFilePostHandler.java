@@ -16,16 +16,14 @@
 
 package consulo.unity3d.jsonApi;
 
-import java.awt.Window;
 import java.io.File;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
-import javax.swing.JFrame;
-
 import javax.annotation.Nullable;
+
 import com.intellij.ide.actions.ImportModuleAction;
 import com.intellij.ide.util.newProjectWizard.AddModuleWizard;
 import com.intellij.openapi.fileEditor.FileEditorManager;
@@ -53,8 +51,9 @@ import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.WinDef;
-import consulo.buildInWebServer.api.JsonPostRequestHandler;
-import consulo.buildInWebServer.api.RequestFocusHttpRequestHandler;
+import consulo.awt.TargetAWT;
+import consulo.builtInServer.impl.net.json.RequestFocusHttpRequestHandler;
+import consulo.builtInServer.json.JsonPostRequestHandler;
 import consulo.unity3d.bundle.Unity3dBundleType;
 import consulo.unity3d.projectImport.Unity3dModuleImportProvider;
 import consulo.unity3d.projectImport.UnityModuleImportContext;
@@ -196,7 +195,7 @@ public class UnityOpenFilePostHandler extends JsonPostRequestHandler<UnityOpenFi
 		}
 
 		IdeFrame ideFrame = WindowManager.getInstance().getIdeFrame(openedProject);
-		if(ideFrame == null || !((JFrame)ideFrame).isVisible())
+		if(ideFrame == null || !ideFrame.getWindow().isVisible())
 		{
 			return;
 		}
@@ -204,7 +203,7 @@ public class UnityOpenFilePostHandler extends JsonPostRequestHandler<UnityOpenFi
 		if(SystemInfo.isMac)
 		{
 			RequestFocusHttpRequestHandler.activateFrame(ideFrame);
-			ID id = MacUtil.findWindowFromJavaWindow((Window) ideFrame);
+			ID id = MacUtil.findWindowFromJavaWindow(TargetAWT.to(ideFrame.getWindow()));
 			if(id != null)
 			{
 				Foundation.invoke(id, "makeKeyAndOrderFront:", ID.NIL);
@@ -212,7 +211,7 @@ public class UnityOpenFilePostHandler extends JsonPostRequestHandler<UnityOpenFi
 		}
 		else if(SystemInfo.isWindows)
 		{
-			Pointer windowPointer = Native.getWindowPointer((Window) ideFrame);
+			Pointer windowPointer = Native.getWindowPointer(TargetAWT.to(ideFrame.getWindow()));
 			User32.INSTANCE.SetForegroundWindow(new WinDef.HWND(windowPointer));
 		}
 		else

@@ -30,7 +30,7 @@ import com.intellij.execution.testframework.sm.runner.events.TestStartedEvent;
 import com.intellij.execution.testframework.sm.runner.events.TestSuiteFinishedEvent;
 import com.intellij.execution.testframework.sm.runner.events.TestSuiteStartedEvent;
 import com.intellij.openapi.util.text.StringUtil;
-import consulo.buildInWebServer.api.JsonPostRequestHandler;
+import consulo.builtInServer.json.JsonPostRequestHandler;
 import consulo.unity3d.run.test.Unity3dTestSession;
 import consulo.unity3d.run.test.Unity3dTestSessionManager;
 

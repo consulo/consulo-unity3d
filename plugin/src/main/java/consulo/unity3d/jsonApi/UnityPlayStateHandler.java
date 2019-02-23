@@ -20,7 +20,7 @@ import javax.annotation.Nonnull;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.util.ui.UIUtil;
-import consulo.buildInWebServer.api.JsonPostRequestHandler;
+import consulo.builtInServer.json.JsonPostRequestHandler;
 import consulo.unity3d.Unity3dConsoleToolWindowService;
 import consulo.unity3d.util.Unity3dProjectUtil;
 
