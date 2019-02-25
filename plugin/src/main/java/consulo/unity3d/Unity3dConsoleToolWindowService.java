@@ -68,7 +68,7 @@ public class Unity3dConsoleToolWindowService implements Disposable
 		}
 
 		@Override
-		protected void fillRightToolbarGroup(DefaultActionGroup group)
+		public void addActionsAfter(DefaultActionGroup group)
 		{
 			group.add(new ToggleAction("Clear on Play", null, AllIcons.Actions.Execute)
 			{
@@ -94,7 +94,6 @@ public class Unity3dConsoleToolWindowService implements Disposable
 					clearMessages();
 				}
 			});
-			super.fillRightToolbarGroup(group);
 		}
 	}
 
