@@ -29,11 +29,13 @@ import com.intellij.openapi.application.ApplicationNamesInfo;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.Task;
+import com.intellij.openapi.util.AsyncResult;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Ref;
 import com.intellij.util.TimeoutUtil;
 import com.intellij.util.concurrency.Semaphore;
 import com.intellij.util.ui.UIUtil;
+import consulo.ui.RequiredUIAccess;
 import consulo.ui.image.Image;
 import consulo.unity3d.Unity3dIcons;
 import consulo.unity3d.editor.UnityEditorCommunication;
@@ -94,10 +96,12 @@ public class UnityRefreshBeforeRunTaskProvider extends BeforeRunTaskProvider<Uni
 		return runConfiguration instanceof Unity3dTestConfiguration ? new UnityRefreshBeforeRunTask(ourKey) : null;
 	}
 
+	@RequiredUIAccess
+	@Nonnull
 	@Override
-	public boolean configureTask(RunConfiguration runConfiguration, UnityRefreshBeforeRunTask task)
+	public AsyncResult<Void> configureTask(RunConfiguration runConfiguration, UnityRefreshBeforeRunTask task)
 	{
-		return false;
+		return AsyncResult.rejected();
 	}
 
 	@Override
