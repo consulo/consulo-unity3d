@@ -27,15 +27,12 @@ import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.application.ApplicationNamesInfo;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.util.AsyncResult;
 import com.intellij.openapi.util.Key;
-import com.intellij.openapi.util.Ref;
 import com.intellij.util.TimeoutUtil;
-import com.intellij.util.concurrency.Semaphore;
-import com.intellij.util.ui.UIUtil;
 import consulo.ui.RequiredUIAccess;
+import consulo.ui.UIAccess;
 import consulo.ui.image.Image;
 import consulo.unity3d.Unity3dIcons;
 import consulo.unity3d.editor.UnityEditorCommunication;
@@ -51,6 +48,7 @@ public class UnityRefreshBeforeRunTaskProvider extends BeforeRunTaskProvider<Uni
 {
 	private static final Key<UnityRefreshBeforeRunTask> ourKey = Key.create("unity.refresh.task");
 
+	@Nonnull
 	@Override
 	public Key<UnityRefreshBeforeRunTask> getId()
 	{
@@ -64,23 +62,11 @@ public class UnityRefreshBeforeRunTaskProvider extends BeforeRunTaskProvider<Uni
 		return Unity3dIcons.Unity3d;
 	}
 
-	@Nullable
-	@Override
-	public Image getTaskIcon(UnityRefreshBeforeRunTask task)
-	{
-		return Unity3dIcons.Unity3d;
-	}
-
+	@Nonnull
 	@Override
 	public String getName()
 	{
 		return "UnityEditor refresh";
-	}
-
-	@Override
-	public String getDescription(UnityRefreshBeforeRunTask task)
-	{
-		return getName();
 	}
 
 	@Override
@@ -104,68 +90,54 @@ public class UnityRefreshBeforeRunTaskProvider extends BeforeRunTaskProvider<Uni
 		return AsyncResult.rejected();
 	}
 
+	@Nonnull
 	@Override
-	public boolean canExecuteTask(RunConfiguration configuration, UnityRefreshBeforeRunTask task)
+	public AsyncResult<Void> executeTaskAsync(UIAccess uiAccess, DataContext context, RunConfiguration configuration, ExecutionEnvironment env, UnityRefreshBeforeRunTask task)
 	{
-		return true;
-	}
+		AsyncResult<Void> result = AsyncResult.undefined();
 
-	@Override
-	public boolean executeTask(DataContext context, RunConfiguration configuration, final ExecutionEnvironment env, UnityRefreshBeforeRunTask task)
-	{
-		final Semaphore done = new Semaphore();
-		done.down();
-		final Ref<Boolean> ref = Ref.create();
+		uiAccess.give(() -> {
+			FileDocumentManager.getInstance().saveAllDocuments();
 
-		UIUtil.invokeLaterIfNeeded(new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				FileDocumentManager.getInstance().saveAllDocuments();
+			Task.Backgroundable.queue(env.getProject(), "Queue UnityEditor refresh", true, indicator -> {
+				boolean[] receiveData = new boolean[1];
 
-				new Task.Backgroundable(env.getProject(), "Queue UnityEditor refresh", true)
-				{
-					private boolean myReceiveData;
-					private UnityPingPong.Token<Boolean> myAccessToken;
+				UnityRefresh postObject = new UnityRefresh();
 
-					@Override
-					public void run(@Nonnull ProgressIndicator indicator)
+				UnityPingPong.Token<Boolean> accessToken = UnityPingPong.wantReply(postObject.uuid, o -> {
+					if(o)
 					{
-						UnityRefresh postObject = new UnityRefresh();
-						myAccessToken = UnityPingPong.wantReply(postObject.uuid, o -> {
-							ref.set(o);
-							myReceiveData = o;
-						});
-
-						boolean request = UnityEditorCommunication.request(env.getProject(), postObject, true);
-						if(!request)
-						{
-							new Notification("unity", ApplicationNamesInfo.getInstance().getProductName(), "UnityEditor is not responding", NotificationType.INFORMATION).notify(env.getProject());
-
-							myAccessToken.finish(Boolean.FALSE);
-							done.up();
-							return;
-						}
-
-						while(!myReceiveData)
-						{
-							if(indicator.isCanceled())
-							{
-								myAccessToken.finish(Boolean.FALSE);
-								break;
-							}
-
-							TimeoutUtil.sleep(500L);
-						}
-
-						done.up();
+						result.setDone();
 					}
-				}.queue();
-			}
-		});
+					else
+					{
+						result.setRejected();
+					}
+					receiveData[0] = o;
+				});
 
-		done.waitFor();
-		return ref.get() == Boolean.TRUE;
+				boolean request = UnityEditorCommunication.request(env.getProject(), postObject, true);
+				if(!request)
+				{
+					new Notification("unity", ApplicationNamesInfo.getInstance().getProductName(), "UnityEditor is not responding", NotificationType.INFORMATION).notify(env.getProject());
+
+					accessToken.finish(Boolean.FALSE);
+					return;
+				}
+
+				while(!receiveData[0])
+				{
+					if(indicator.isCanceled())
+					{
+						accessToken.finish(Boolean.FALSE);
+						break;
+					}
+
+					TimeoutUtil.sleep(500L);
+				}
+			});
+		}).doWhenRejectedWithThrowable(result::rejectWithThrowable);
+
+		return result;
 	}
 }
