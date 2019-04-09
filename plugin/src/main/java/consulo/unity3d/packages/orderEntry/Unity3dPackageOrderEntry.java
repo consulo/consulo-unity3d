@@ -34,19 +34,23 @@ import com.intellij.openapi.roots.impl.ProjectRootManagerImpl;
 import com.intellij.openapi.roots.impl.RootProviderBaseImpl;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ObjectUtil;
+import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
+import consulo.annotations.RequiredReadAction;
+import consulo.platform.Platform;
 import consulo.roots.OrderEntryWithTracking;
 import consulo.roots.impl.ModuleRootLayerImpl;
 import consulo.roots.types.BinariesOrderRootType;
 import consulo.roots.types.SourcesOrderRootType;
-import consulo.unity3d.bundle.Unity3dDefineByVersion;
 import consulo.unity3d.module.Unity3dChildModuleExtension;
+import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import consulo.unity3d.module.Unity3dRootModuleExtension;
 import consulo.unity3d.packages.Unity3dPackageWatcher;
 
@@ -60,32 +64,43 @@ public class Unity3dPackageOrderEntry extends LibraryOrderEntryBaseImpl implemen
 	{
 		@Nonnull
 		@Override
+		@RequiredReadAction
 		public String[] getUrls(@Nonnull OrderRootType rootType)
 		{
-			List<String> urls = new ArrayList<>();
-			// moved to project files
-			if(getVersion().ordinal() >= Unity3dDefineByVersion.UNITY_2018_3.ordinal())
+			List<String> urls = new SmartList<>();
+
+			if(rootType == BinariesOrderRootType.getInstance() || rootType == SourcesOrderRootType.getInstance())
 			{
-				if(rootType == BinariesOrderRootType.getInstance() || rootType == SourcesOrderRootType.getInstance())
+				// moved to project files
+				String projectPackageCache = getProjectPackageCache();
+				if(new File(projectPackageCache, myNameWithVersion).exists())
 				{
-					String projectPackageCache = getProjectPackageCache();
-					if(new File(projectPackageCache, myName).exists())
+					urls.add(StandardFileSystems.FILE_PROTOCOL_PREFIX + FileUtil.toSystemIndependentName(projectPackageCache + "/" + myNameWithVersion));
+				}
+
+				if(urls.isEmpty())
+				{
+					Unity3dPackageWatcher watcher = Unity3dPackageWatcher.getInstance();
+					for(String path : watcher.getPackageDirPaths())
 					{
-						urls.add(StandardFileSystems.FILE_PROTOCOL_PREFIX + FileUtil.toSystemIndependentName(projectPackageCache + "/" + myName));
+						if(new File(path, myNameWithVersion).exists())
+						{
+							urls.add(StandardFileSystems.FILE_PROTOCOL_PREFIX + FileUtil.toSystemIndependentName(path + "/" + myNameWithVersion));
+						}
 					}
 				}
 			}
-			else
+
+			if(urls.isEmpty())
 			{
-				Unity3dPackageWatcher watcher = Unity3dPackageWatcher.getInstance();
-				if(rootType == BinariesOrderRootType.getInstance() || rootType == SourcesOrderRootType.getInstance())
+				Sdk sdk = getSdk();
+				if(sdk != null)
 				{
-					for(String path : watcher.getPackageDirPaths())
+					String builtInPath = sdk.getHomePath() + "/" + getBuiltInPackagesRelativePath();
+					String packageName = getPackageName();
+					if(new File(builtInPath, packageName).exists())
 					{
-						if(new File(path, myName).exists())
-						{
-							urls.add(StandardFileSystems.FILE_PROTOCOL_PREFIX + FileUtil.toSystemIndependentName(path + "/" + myName));
-						}
+						urls.add(StandardFileSystems.FILE_PROTOCOL_PREFIX + FileUtil.toSystemIndependentName(builtInPath + "/" + packageName));
 					}
 				}
 			}
@@ -95,29 +110,45 @@ public class Unity3dPackageOrderEntry extends LibraryOrderEntryBaseImpl implemen
 
 		@Nonnull
 		@Override
+		@RequiredReadAction
 		public VirtualFile[] getFiles(@Nonnull OrderRootType rootType)
 		{
 			List<VirtualFile> files = new ArrayList<>();
-			LocalFileSystem localFileSystem = LocalFileSystem.getInstance();
-			// moved to project files
-			if(getVersion().ordinal() >= Unity3dDefineByVersion.UNITY_2018_3.ordinal())
+
+			if(rootType == BinariesOrderRootType.getInstance() || rootType == SourcesOrderRootType.getInstance())
 			{
-				if(rootType == BinariesOrderRootType.getInstance() || rootType == SourcesOrderRootType.getInstance())
+				LocalFileSystem localFileSystem = LocalFileSystem.getInstance();
+
+				// moved to project files
+				String projectPackageCache = getProjectPackageCache();
+				VirtualFile localFile = localFileSystem.findFileByIoFile(new File(projectPackageCache, myNameWithVersion));
+				ContainerUtil.addIfNotNull(files, localFile);
+
+				if(files.isEmpty())
 				{
-					String projectPackageCache = getProjectPackageCache();
-					VirtualFile file = localFileSystem.findFileByIoFile(new File(projectPackageCache, myName));
-					ContainerUtil.addIfNotNull(files, file);
-				}
-			}
-			else
-			{
-				Unity3dPackageWatcher watcher = Unity3dPackageWatcher.getInstance();
-				if(rootType == BinariesOrderRootType.getInstance() || rootType == SourcesOrderRootType.getInstance())
-				{
+					Unity3dPackageWatcher watcher = Unity3dPackageWatcher.getInstance();
 					for(String path : watcher.getPackageDirPaths())
 					{
-						VirtualFile file = localFileSystem.findFileByIoFile(new File(path, myName));
+						VirtualFile file = localFileSystem.findFileByIoFile(new File(path, myNameWithVersion));
 						ContainerUtil.addIfNotNull(files, file);
+					}
+				}
+			}
+
+			if(files.isEmpty())
+			{
+				Sdk sdk = getSdk();
+				if(sdk != null)
+				{
+					VirtualFile homeDirectory = sdk.getHomeDirectory();
+					if(homeDirectory != null)
+					{
+						VirtualFile builtInDirectory = homeDirectory.findFileByRelativePath(getBuiltInPackagesRelativePath());
+						if(builtInDirectory != null)
+						{
+							VirtualFile packageDirectory = builtInDirectory.findChild(getPackageName());
+							ContainerUtil.addIfNotNull(files, packageDirectory);
+						}
 					}
 				}
 			}
@@ -131,33 +162,51 @@ public class Unity3dPackageOrderEntry extends LibraryOrderEntryBaseImpl implemen
 		}
 
 		@Nonnull
-		private Unity3dDefineByVersion getVersion()
+		private String getBuiltInPackagesRelativePath()
 		{
-			Unity3dRootModuleExtension extension = myModuleRootLayer.getExtension(Unity3dRootModuleExtension.class);
+			if(Platform.current().os().isMac())
+			{
+				return "Contents/Resources/PackageManager/BuiltInPackages";
+			}
+			return "Editor/Data/Resources/PackageManager/BuiltInPackages";
+		}
+
+		@Nullable
+		@RequiredReadAction
+		private Sdk getSdk()
+		{
+			// FIXME [VISTALL] we can't access to another module from roots and we don't need target module for UI, that mean we don't care about then we call that code
+			Unity3dRootModuleExtension extension = Unity3dModuleExtensionUtil.getRootModuleExtension(myModuleRootLayer.getProject());
 			if(extension == null)
 			{
-				return Unity3dDefineByVersion.UNKNOWN;
+				return null;
 			}
-			Sdk sdk = extension.getSdk();
-			if(sdk == null)
+			return extension.getSdk();
+		}
+
+		@Nonnull
+		private String getPackageName()
+		{
+			List<String> values = StringUtil.split(myNameWithVersion, "@");
+			if(values.size() != 2)
 			{
-				return Unity3dDefineByVersion.UNKNOWN;
+				return myNameWithVersion;
 			}
-			return Unity3dDefineByVersion.find(sdk.getVersionString());
+			return values.get(0);
 		}
 	};
 
-	private String myName;
+	private String myNameWithVersion;
 
-	public Unity3dPackageOrderEntry(@Nonnull ModuleRootLayerImpl rootLayer, String name)
+	public Unity3dPackageOrderEntry(@Nonnull ModuleRootLayerImpl rootLayer, String nameWithVersion)
 	{
-		this(rootLayer, name, true);
+		this(rootLayer, nameWithVersion, true);
 	}
 
-	public Unity3dPackageOrderEntry(@Nonnull ModuleRootLayerImpl rootLayer, String name, boolean init)
+	public Unity3dPackageOrderEntry(@Nonnull ModuleRootLayerImpl rootLayer, String nameWithVersion, boolean init)
 	{
 		super(Unity3dPackageOrderEntryType.getInstance(), rootLayer, ProjectRootManagerImpl.getInstanceImpl(rootLayer.getProject()));
-		myName = name;
+		myNameWithVersion = nameWithVersion;
 		if(init)
 		{
 			init();
@@ -189,7 +238,7 @@ public class Unity3dPackageOrderEntry extends LibraryOrderEntryBaseImpl implemen
 	@Override
 	public String getPresentableName()
 	{
-		return myName;
+		return myNameWithVersion;
 	}
 
 	@Override
@@ -207,7 +256,7 @@ public class Unity3dPackageOrderEntry extends LibraryOrderEntryBaseImpl implemen
 	@Override
 	public boolean isEquivalentTo(@Nonnull OrderEntry entry)
 	{
-		return entry instanceof Unity3dPackageOrderEntry && Comparing.equal(myName, entry.getPresentableName());
+		return entry instanceof Unity3dPackageOrderEntry && Comparing.equal(myNameWithVersion, entry.getPresentableName());
 	}
 
 	@Override
