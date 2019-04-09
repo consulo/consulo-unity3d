@@ -21,13 +21,9 @@ import javax.annotation.Nonnull;
 import com.intellij.ide.projectView.PresentationData;
 import com.intellij.ide.projectView.ViewSettings;
 import com.intellij.ide.projectView.impl.nodes.PsiFileNode;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Iconable;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import consulo.ide.IconDescriptorUpdaters;
 
 /**
  * @author VISTALL
@@ -35,25 +31,16 @@ import consulo.ide.IconDescriptorUpdaters;
  */
 public class UnityScriptFileNode extends PsiFileNode
 {
-	private static final Logger LOGGER = Logger.getInstance(UnityScriptFileNode.class);
-
 	public UnityScriptFileNode(Project project, @Nonnull PsiFile value, ViewSettings viewSettings)
 	{
 		super(project, value, viewSettings);
 	}
 
 	@Override
-	public void update(final PresentationData data)
+	protected void updateImpl(PresentationData data)
 	{
-		if(!validate())
-		{
-			return;
-		}
+		super.updateImpl(data);
 
-		final PsiElement value = extractPsiFromValue();
-		LOGGER.assertTrue(value.isValid());
-
-		data.setIcon(IconDescriptorUpdaters.getIcon(getValue(), Iconable.ICON_FLAG_VISIBILITY));
 		data.setPresentableText(FileUtil.getNameWithoutExtension(getValue().getName()));
 	}
 }

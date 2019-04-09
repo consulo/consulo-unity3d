@@ -29,6 +29,7 @@ import consulo.csharp.lang.psi.impl.light.builder.CSharpLightTypeDeclarationBuil
 import consulo.ide.IconDescriptor;
 import consulo.ide.IconDescriptorUpdater;
 import consulo.unity3d.Unity3dIcons;
+import consulo.unity3d.unityscript.lang.UnityScriptLanguageVersion;
 import consulo.unity3d.unityscript.lang.impl.csharp.UnityScriptToNativeElementTransformer;
 import consulo.unity3d.unityscript.module.extension.Unity3dScriptModuleExtension;
 
@@ -46,6 +47,11 @@ public class UnityScriptIconDescriptorUpdater implements IconDescriptorUpdater
 		{
 			Unity3dScriptModuleExtension moduleExtension = ModuleUtilCore.getExtension(element, Unity3dScriptModuleExtension.class);
 			if(moduleExtension == null)
+			{
+				return;
+			}
+
+			if(!(element.getLanguageVersion() instanceof UnityScriptLanguageVersion))
 			{
 				return;
 			}
