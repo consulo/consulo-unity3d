@@ -16,23 +16,26 @@
 
 package consulo.unity3d.ide.projectView;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
-import javax.inject.Inject;
-
 import com.intellij.ide.projectView.ProjectViewNode;
 import com.intellij.ide.projectView.TreeStructureProvider;
 import com.intellij.ide.projectView.ViewSettings;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
+import com.intellij.ide.util.treeView.AbstractTreeUi;
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import consulo.annotations.RequiredReadAction;
 import consulo.ui.RequiredUIAccess;
 import consulo.unity3d.Unity3dMetaFileType;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import consulo.unity3d.module.Unity3dRootModuleExtension;
+
+import javax.annotation.Nonnull;
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * @author VISTALL
@@ -51,6 +54,13 @@ public class Unity3dMetaFileProjectViewProvider implements TreeStructureProvider
 	@Override
 	@RequiredUIAccess
 	public Collection<AbstractTreeNode> modify(AbstractTreeNode parent, Collection<AbstractTreeNode> children, ViewSettings settings)
+	{
+		return AbstractTreeUi.calculateYieldingToWriteAction(() -> doModify(children, settings));
+	}
+
+	@Nonnull
+	@RequiredReadAction
+	private Collection<AbstractTreeNode> doModify(Collection<AbstractTreeNode> children, ViewSettings settings)
 	{
 		if(!myProject.isInitialized())
 		{
@@ -71,6 +81,8 @@ public class Unity3dMetaFileProjectViewProvider implements TreeStructureProvider
 		List<AbstractTreeNode> nodes = new ArrayList<>(children.size());
 		for(AbstractTreeNode child : children)
 		{
+			ProgressManager.checkCanceled();
+
 			if(child instanceof ProjectViewNode)
 			{
 				VirtualFile virtualFile = ((ProjectViewNode) child).getVirtualFile();
