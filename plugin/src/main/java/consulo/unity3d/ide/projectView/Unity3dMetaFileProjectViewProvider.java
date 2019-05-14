@@ -62,10 +62,6 @@ public class Unity3dMetaFileProjectViewProvider implements TreeStructureProvider
 	@RequiredReadAction
 	private Collection<AbstractTreeNode> doModify(Collection<AbstractTreeNode> children, ViewSettings settings)
 	{
-		if(!myProject.isInitialized())
-		{
-			return children;
-		}
 		Unity3dRootModuleExtension rootModuleExtension = Unity3dModuleExtensionUtil.getRootModuleExtension(myProject);
 		if(rootModuleExtension == null)
 		{
