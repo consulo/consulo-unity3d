@@ -16,25 +16,6 @@
 
 package consulo.unity3d.projectImport;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.TreeSet;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import org.jetbrains.yaml.psi.YAMLDocument;
-import org.jetbrains.yaml.psi.YAMLFile;
-import org.jetbrains.yaml.psi.YAMLKeyValue;
-import org.jetbrains.yaml.psi.YAMLMapping;
-import org.jetbrains.yaml.psi.YAMLValue;
 import com.intellij.execution.RunManager;
 import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.configurations.ConfigurationFactory;
@@ -45,7 +26,6 @@ import com.intellij.notification.NotificationType;
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ApplicationNamesInfo;
-import com.intellij.openapi.application.Result;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.module.ModifiableModuleModel;
@@ -55,11 +35,7 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.roots.ContentEntry;
-import com.intellij.openapi.roots.ContentFolder;
-import com.intellij.openapi.roots.LibraryOrderEntry;
-import com.intellij.openapi.roots.ModifiableRootModel;
-import com.intellij.openapi.roots.ModuleRootManager;
+import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Ref;
@@ -113,6 +89,13 @@ import consulo.unity3d.run.Unity3dAttachApplicationType;
 import consulo.unity3d.run.Unity3dAttachConfiguration;
 import consulo.unity3d.scene.Unity3dYMLAssetFileType;
 import consulo.vfs.util.ArchiveVfsUtil;
+import org.jetbrains.yaml.psi.*;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * @author VISTALL
@@ -350,14 +333,7 @@ public class Unity3dProjectImportUtil
 
 		if(!fromProjectStructure)
 		{
-			new WriteAction<Object>()
-			{
-				@Override
-				protected void run(Result<Object> result) throws Throwable
-				{
-					newModel.commit();
-				}
-			}.execute();
+			WriteAction.run(newModel::commit);
 		}
 		return modules;
 	}
@@ -641,14 +617,7 @@ public class Unity3dProjectImportUtil
 			AccessRule.read(() -> runManager.setSelectedConfiguration(configurationSettings));
 		}
 
-		new WriteAction<Object>()
-		{
-			@Override
-			protected void run(Result<Object> result) throws Throwable
-			{
-				modifiableModel.commit();
-			}
-		}.execute();
+		WriteAction.run(modifiableModel::commit);
 		return module;
 	}
 
@@ -808,14 +777,7 @@ public class Unity3dProjectImportUtil
 			contentEntry.addFolder(excludedUrl, ExcludedContentFolderTypeProvider.getInstance());
 		}
 
-		new WriteAction<Object>()
-		{
-			@Override
-			protected void run(Result<Object> result) throws Throwable
-			{
-				modifiableModel.commit();
-			}
-		}.execute();
+		WriteAction.run(modifiableModel::commit);
 		return rootModule;
 	}
 
