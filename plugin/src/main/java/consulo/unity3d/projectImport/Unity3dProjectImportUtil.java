@@ -333,7 +333,7 @@ public class Unity3dProjectImportUtil
 
 		if(!fromProjectStructure)
 		{
-			WriteAction.run(newModel::commit);
+			WriteAction.runAndWait(newModel::commit);
 		}
 		return modules;
 	}
@@ -617,7 +617,7 @@ public class Unity3dProjectImportUtil
 			AccessRule.read(() -> runManager.setSelectedConfiguration(configurationSettings));
 		}
 
-		WriteAction.run(modifiableModel::commit);
+		WriteAction.runAndWait(modifiableModel::commit);
 		return module;
 	}
 
@@ -777,7 +777,7 @@ public class Unity3dProjectImportUtil
 			contentEntry.addFolder(excludedUrl, ExcludedContentFolderTypeProvider.getInstance());
 		}
 
-		WriteAction.run(modifiableModel::commit);
+		WriteAction.runAndWait(modifiableModel::commit);
 		return rootModule;
 	}
 
