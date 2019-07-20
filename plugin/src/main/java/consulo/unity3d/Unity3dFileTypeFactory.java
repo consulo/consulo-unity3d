@@ -16,12 +16,12 @@
 
 package consulo.unity3d;
 
-import javax.annotation.Nonnull;
-
 import com.intellij.openapi.fileTypes.FileTypeConsumer;
 import com.intellij.openapi.fileTypes.FileTypeFactory;
 import consulo.unity3d.scene.Unity3dBinaryAssetFileType;
 import consulo.unity3d.scene.Unity3dYMLAssetFileType;
+
+import javax.annotation.Nonnull;
 
 /**
  * @author VISTALL

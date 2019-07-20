@@ -22,6 +22,10 @@ import consulo.ui.image.Image;
 // Generated Consulo DevKit plugin 
 public interface Unity3dIcons
 {
+	Image EditorLayer = IconLoader.getIcon("/icons/editorLayer.svg");  // 16x16
+	Image AssetsLayer = IconLoader.getIcon("/icons/assetsLayer.svg");  // 16x16
+	Image PluginsLayer = IconLoader.getIcon("/icons/pluginsLayer.svg");  // 16x16
+	Image GizmosLayer = IconLoader.getIcon("/icons/gizmosLayer.svg");  // 16x16
 	Image EventMethod = IconLoader.getIcon("/icons/eventMethod.png");  // 12x12
 	Image Js = IconLoader.getIcon("/icons/js.PNG");  // 16x16
 	Image Unity3d = IconLoader.getIcon("/icons/unity3d.png");  // 16x16

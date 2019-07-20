@@ -1,0 +1,1 @@
+Some icons from resharper-unity (https://github.com/JetBrains/resharper-unity) Apache 2

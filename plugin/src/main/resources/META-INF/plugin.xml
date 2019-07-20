@@ -121,6 +121,7 @@
 		<colorProvider implementation="consulo.unity3d.csharp.codeInsight.UnityCSharpStaticElementColorProvider"/>
 		<colorProvider implementation="consulo.unity3d.csharp.codeInsight.UnityCSharpStaticElementColor32Provider"/>
 		<iconDescriptorUpdater implementation="consulo.unity3d.unityscript.UnityScriptIconDescriptorUpdater"/>
+		<iconDescriptorUpdater implementation="consulo.unity3d.UnityDirectoryIconDescriptorUpdater"/>
 		<gotoClassContributor implementation="consulo.unity3d.unityscript.navigation.UnityScriptGotoClassContributor"/>
 		<sdkType implementation="consulo.unity3d.bundle.Unity3dBundleType"/>
 
