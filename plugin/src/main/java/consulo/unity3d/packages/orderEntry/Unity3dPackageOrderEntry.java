@@ -16,13 +16,6 @@
 
 package consulo.unity3d.packages.orderEntry;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.OrderEntry;
 import com.intellij.openapi.roots.OrderRootType;
@@ -44,6 +37,7 @@ import com.intellij.util.ObjectUtil;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import consulo.annotations.RequiredReadAction;
+import consulo.dotnet.dll.DotNetModuleFileType;
 import consulo.platform.Platform;
 import consulo.roots.OrderEntryWithTracking;
 import consulo.roots.impl.ModuleRootLayerImpl;
@@ -53,6 +47,13 @@ import consulo.unity3d.module.Unity3dChildModuleExtension;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import consulo.unity3d.module.Unity3dRootModuleExtension;
 import consulo.unity3d.packages.Unity3dPackageWatcher;
+import consulo.vfs.util.ArchiveVfsUtil;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author VISTALL
@@ -122,7 +123,7 @@ public class Unity3dPackageOrderEntry extends LibraryOrderEntryBaseImpl implemen
 				// moved to project files
 				String projectPackageCache = getProjectPackageCache();
 				VirtualFile localFile = localFileSystem.findFileByIoFile(new File(projectPackageCache, myNameWithVersion));
-				ContainerUtil.addIfNotNull(files, localFile);
+				addDotNetModulesInsideLibrary(files, localFile);
 
 				if(files.isEmpty())
 				{
@@ -130,7 +131,7 @@ public class Unity3dPackageOrderEntry extends LibraryOrderEntryBaseImpl implemen
 					for(String path : watcher.getPackageDirPaths())
 					{
 						VirtualFile file = localFileSystem.findFileByIoFile(new File(path, myNameWithVersion));
-						ContainerUtil.addIfNotNull(files, file);
+						addDotNetModulesInsideLibrary(files, file);
 					}
 				}
 			}
@@ -153,6 +154,46 @@ public class Unity3dPackageOrderEntry extends LibraryOrderEntryBaseImpl implemen
 				}
 			}
 			return VfsUtilCore.toVirtualFileArray(files);
+		}
+
+		private void addDotNetModulesInsideLibrary(@Nonnull List<VirtualFile> result, @Nullable VirtualFile virtualFile)
+		{
+			if(virtualFile == null)
+			{
+				return;
+			}
+
+			result.add(virtualFile);
+
+			boolean isEditor = StringUtil.contains(myModuleRootLayer.getModule().getName(), "Editor");
+			if(virtualFile.isDirectory())
+			{
+				addChildrenNetModules(virtualFile, result);
+
+				if(isEditor)
+				{
+					VirtualFile editorDirectory = virtualFile.findChild("Editor");
+					if(editorDirectory != null)
+					{
+						addChildrenNetModules(editorDirectory, result);
+					}
+				}
+			}
+		}
+
+		private void addChildrenNetModules(VirtualFile virtualFile, List<VirtualFile> result)
+		{
+			for(VirtualFile fileOrDir : virtualFile.getChildren())
+			{
+				if(fileOrDir.getFileType() == DotNetModuleFileType.INSTANCE)
+				{
+					VirtualFile archiveRoot = ArchiveVfsUtil.getArchiveRootForLocalFile(fileOrDir);
+					if(archiveRoot != null)
+					{
+						result.add(archiveRoot);
+					}
+				}
+			}
 		}
 
 		@Nonnull
