@@ -16,29 +16,24 @@
 
 package consulo.unity3d.projectImport;
 
-import java.io.File;
-import java.util.Arrays;
-import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import com.intellij.ide.util.projectWizard.ModuleWizardStep;
-import com.intellij.ide.util.projectWizard.WizardContext;
-import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.module.ModifiableModuleModel;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.roots.ui.configuration.ModulesProvider;
 import com.intellij.openapi.startup.StartupManager;
-import com.intellij.packaging.artifacts.ModifiableArtifactModel;
+import consulo.annotations.RequiredReadAction;
 import consulo.moduleImport.ModuleImportProvider;
 import consulo.ui.image.Image;
+import consulo.ui.wizard.WizardStep;
 import consulo.unity3d.Unity3dIcons;
 import consulo.unity3d.jsonApi.UnityOpenFilePostHandlerRequest;
 import consulo.unity3d.projectImport.ui.Unity3dWizardStep;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.inject.Inject;
+import java.io.File;
+import java.util.function.Consumer;
 
 /**
  * @author VISTALL
@@ -46,11 +41,30 @@ import consulo.unity3d.projectImport.ui.Unity3dWizardStep;
  */
 public class Unity3dModuleImportProvider implements ModuleImportProvider<UnityModuleImportContext>
 {
+	@Nullable
+	private Sdk myPredefinedSdk;
+	@Nullable
+	private UnityOpenFilePostHandlerRequest myRequest;
+
+	@Inject
+	public Unity3dModuleImportProvider()
+	{
+	}
+
+	public Unity3dModuleImportProvider(@Nonnull Sdk predefinedSdk, @Nonnull UnityOpenFilePostHandlerRequest request)
+	{
+		myPredefinedSdk = predefinedSdk;
+		myRequest = request;
+	}
+
 	@Nonnull
 	@Override
-	public UnityModuleImportContext createContext()
+	public UnityModuleImportContext createContext(@Nullable Project project)
 	{
-		return new UnityModuleImportContext();
+		UnityModuleImportContext context = new UnityModuleImportContext(project);
+		context.setSdk(myPredefinedSdk);
+		context.setRequestor(myRequest);
+		return context;
 	}
 
 	@Nonnull
@@ -73,30 +87,26 @@ public class Unity3dModuleImportProvider implements ModuleImportProvider<UnityMo
 		return fileOrDirectory.isDirectory() && new File(fileOrDirectory, "ProjectSettings/ProjectSettings.asset").exists();
 	}
 
-	@Nonnull
+	@RequiredReadAction
 	@Override
-	public List<Module> commit(@Nonnull UnityModuleImportContext context,
-			@Nonnull Project project,
-			@Nullable ModifiableModuleModel originalModel,
-			@Nonnull ModulesProvider modulesProvider,
-			@Nullable ModifiableArtifactModel artifactModel)
+	public void process(@Nonnull UnityModuleImportContext context, @Nonnull Project project, @Nonnull ModifiableModuleModel model, @Nonnull Consumer<Module> newModuleConsumer)
 	{
 		Sdk unitySdk = context.getSdk();
 		UnityOpenFilePostHandlerRequest requestor = context.getRequestor();
 
-		boolean fromProjectStructure = originalModel != null;
+		Module rootModule = model.newModule(project.getName(), project.getBasePath());
 
-		final ModifiableModuleModel newModel = fromProjectStructure ? originalModel : ModuleManager.getInstance(project).getModifiableModel();
 
-		Module rootModule = newModel.newModule(project.getName(), project.getBasePath());
-
-		if(!fromProjectStructure)
-		{
-			WriteAction.run(newModel::commit);
-		}
+		newModuleConsumer.accept(rootModule);
 
 		StartupManager.getInstance(project).registerPostStartupActivity(() -> Unity3dProjectImportUtil.syncProjectStep1(project, unitySdk, requestor, true));
-		return Arrays.asList(rootModule);
+
+	}
+
+	@Override
+	public void buildSteps(@Nonnull Consumer<WizardStep<UnityModuleImportContext>> consumer, @Nonnull UnityModuleImportContext context)
+	{
+		consumer.accept(new Unity3dWizardStep(context));
 	}
 
 	@Nonnull
@@ -104,13 +114,5 @@ public class Unity3dModuleImportProvider implements ModuleImportProvider<UnityMo
 	public String getFileSample()
 	{
 		return "<b>Unity3D</b> project";
-	}
-
-	@Override
-	public ModuleWizardStep[] createSteps(@Nonnull WizardContext context, @Nonnull UnityModuleImportContext moduleImportContext)
-	{
-		return new ModuleWizardStep[]{
-				new Unity3dWizardStep(moduleImportContext, context)
-		};
 	}
 }

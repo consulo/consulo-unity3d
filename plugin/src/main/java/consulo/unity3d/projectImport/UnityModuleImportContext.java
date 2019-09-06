@@ -16,9 +16,12 @@
 
 package consulo.unity3d.projectImport;
 
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import consulo.moduleImport.ModuleImportContext;
 import consulo.unity3d.jsonApi.UnityOpenFilePostHandlerRequest;
+
+import javax.annotation.Nullable;
 
 /**
  * @author VISTALL
@@ -29,10 +32,14 @@ public class UnityModuleImportContext extends ModuleImportContext
 	private Sdk mySdk;
 	private UnityOpenFilePostHandlerRequest myRequestor;
 
-	public UnityModuleImportContext setSdk(Sdk sdk)
+	public UnityModuleImportContext(@Nullable Project project)
+	{
+		super(project);
+	}
+
+	public void setSdk(Sdk sdk)
 	{
 		mySdk = sdk;
-		return this;
 	}
 
 	public Sdk getSdk()
@@ -40,21 +47,13 @@ public class UnityModuleImportContext extends ModuleImportContext
 		return mySdk;
 	}
 
-	public UnityModuleImportContext setRequestor(UnityOpenFilePostHandlerRequest requestor)
+	public void setRequestor(UnityOpenFilePostHandlerRequest requestor)
 	{
 		myRequestor = requestor;
-		return this;
 	}
 
 	public UnityOpenFilePostHandlerRequest getRequestor()
 	{
 		return myRequestor;
-	}
-
-	@Override
-	public void dispose()
-	{
-		super.dispose();
-		mySdk = null;
 	}
 }

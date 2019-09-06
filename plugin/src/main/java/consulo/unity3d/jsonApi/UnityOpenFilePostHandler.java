@@ -16,27 +16,18 @@
 
 package consulo.unity3d.jsonApi;
 
-import java.io.File;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import com.intellij.ide.actions.ImportModuleAction;
-import com.intellij.ide.util.newProjectWizard.AddModuleWizard;
+import com.intellij.ide.impl.util.NewOrImportModuleUtil;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
-import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkTable;
 import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil;
 import com.intellij.openapi.startup.StartupManager;
-import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.util.AsyncResult;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -54,9 +45,19 @@ import com.sun.jna.platform.win32.WinDef;
 import consulo.awt.TargetAWT;
 import consulo.builtInServer.impl.net.json.RequestFocusHttpRequestHandler;
 import consulo.builtInServer.json.JsonPostRequestHandler;
+import consulo.moduleImport.ModuleImportContext;
+import consulo.moduleImport.ModuleImportProvider;
+import consulo.moduleImport.ui.ModuleImportProcessor;
+import consulo.ui.UIAccess;
 import consulo.unity3d.bundle.Unity3dBundleType;
 import consulo.unity3d.projectImport.Unity3dModuleImportProvider;
-import consulo.unity3d.projectImport.UnityModuleImportContext;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.io.File;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author VISTALL
@@ -135,28 +136,23 @@ public class UnityOpenFilePostHandler extends JsonPostRequestHandler<UnityOpenFi
 							return;
 						}
 
-						Unity3dModuleImportProvider importProvider = new Unity3dModuleImportProvider();
+						UIAccess uiAccess = UIAccess.current();
 
-						AddModuleWizard wizard = ImportModuleAction.createImportWizard(null, null, projectVirtualFile, Collections.singletonList(importProvider));
-						if(wizard == null)
-						{
-							return;
-						}
+						Unity3dModuleImportProvider importProvider = new Unity3dModuleImportProvider(targetSdk, body);
 
-						UnityModuleImportContext importContext = (UnityModuleImportContext) wizard.getWizardContext().getModuleImportContext(importProvider);
-						importContext.setSdk(targetSdk);
-						importContext.setRequestor(body);
+						AsyncResult<Pair<ModuleImportContext, ModuleImportProvider<ModuleImportContext>>> result = AsyncResult.undefined();
 
-						List<Module> fromWizard = ImportModuleAction.createFromWizard(null, wizard);
-						if(fromWizard.isEmpty())
-						{
-							return;
-						}
+						ModuleImportProcessor.showImportChooser(null, projectVirtualFile, Collections.singletonList(importProvider), result);
 
-						wizard.close(DialogWrapper.OK_EXIT_CODE);
+						result.doWhenDone(pair -> {
+							ModuleImportContext context = pair.getFirst();
 
-						final Project temp = fromWizard.get(0).getProject();
-						activateFrame(temp, body);
+							ModuleImportProvider<ModuleImportContext> provider = pair.getSecond();
+
+							AsyncResult<Project> importProjectAsync = NewOrImportModuleUtil.importProject(context, provider);
+
+							importProjectAsync.doWhenDone((newProject) -> ProjectManager.getInstance().openProjectAsync(newProject, uiAccess).doWhenDone((project) -> activateFrame(project, body)));
+						});
 					}
 					else
 					{

@@ -16,37 +16,40 @@
 
 package consulo.unity3d.projectImport.ui;
 
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.SwingConstants;
-
-import javax.annotation.Nullable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkTable;
 import com.intellij.openapi.projectRoots.SdkTypeId;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel;
 import com.intellij.openapi.ui.LabeledComponent;
-import com.intellij.openapi.ui.VerticalFlowLayout;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Conditions;
 import com.intellij.ui.components.panels.HorizontalLayout;
-import consulo.ui.RequiredUIAccess;
 import consulo.roots.ui.configuration.SdkComboBox;
+import consulo.ui.RequiredUIAccess;
 import consulo.unity3d.bundle.Unity3dBundleType;
+import consulo.unity3d.projectImport.UnityModuleImportContext;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ItemEvent;
 
 /**
  * @author VISTALL
  * @since 27.10.14
  */
-public class Unity3dSdkPanel extends JPanel
+public class Unity3SdkPanel
 {
-	private SdkComboBox myComboBox;
+	private final SdkComboBox myComboBox;
 
-	public Unity3dSdkPanel(@Nullable String requiredVersion)
+	private final JPanel myPanel;
+
+	public Unity3SdkPanel(@Nonnull UnityModuleImportContext context, @Nullable String requiredVersion)
 	{
-		super(new VerticalFlowLayout());
+		myPanel = new JPanel(new BorderLayout());
 
 		ProjectSdksModel projectSdksModel = new ProjectSdksModel();
 		projectSdksModel.reset();
@@ -54,6 +57,12 @@ public class Unity3dSdkPanel extends JPanel
 		JButton button = new JButton("Ne\u001Bw...");
 		Condition<SdkTypeId> filter = Conditions.<SdkTypeId>is(Unity3dBundleType.getInstance());
 		myComboBox = new SdkComboBox(projectSdksModel, filter, true);
+		myComboBox.addItemListener(e -> {
+			if(e.getStateChange() == ItemEvent.SELECTED)
+			{
+				context.setSdk(myComboBox.getSelectedSdk());
+			}
+		});
 		myComboBox.setSetupButton(button, null, projectSdksModel, null, new Condition<Sdk>()
 		{
 			@Override
@@ -90,7 +99,13 @@ public class Unity3dSdkPanel extends JPanel
 		JPanel panel = new JPanel(new HorizontalLayout(0, SwingConstants.CENTER));
 		panel.add(LabeledComponent.create(myComboBox, "Unity SDK"), HorizontalLayout.LEFT);
 		panel.add(button, HorizontalLayout.RIGHT);
-		add(panel);
+
+		myPanel.add(panel, BorderLayout.CENTER);
+	}
+
+	public JPanel getPanel()
+	{
+		return myPanel;
 	}
 
 	@Nullable
