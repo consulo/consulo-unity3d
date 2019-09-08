@@ -45,12 +45,14 @@ import com.sun.jna.platform.win32.WinDef;
 import consulo.awt.TargetAWT;
 import consulo.builtInServer.impl.net.json.RequestFocusHttpRequestHandler;
 import consulo.builtInServer.json.JsonPostRequestHandler;
+import consulo.logging.Logger;
 import consulo.moduleImport.ModuleImportContext;
 import consulo.moduleImport.ModuleImportProvider;
 import consulo.moduleImport.ui.ModuleImportProcessor;
 import consulo.ui.UIAccess;
 import consulo.unity3d.bundle.Unity3dBundleType;
 import consulo.unity3d.projectImport.Unity3dModuleImportProvider;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -65,6 +67,8 @@ import java.util.Set;
  */
 public class UnityOpenFilePostHandler extends JsonPostRequestHandler<UnityOpenFilePostHandlerRequest>
 {
+	private static final Logger LOG = Logger.getInstance(UnityOpenFilePostHandler.class);
+
 	private static final Set<String> ourSupportedContentTypes = ContainerUtil.newHashSet("UnityEditor.MonoScript", "UnityEngine.Shader");
 
 	public UnityOpenFilePostHandler()
@@ -76,6 +80,7 @@ public class UnityOpenFilePostHandler extends JsonPostRequestHandler<UnityOpenFi
 	@Override
 	public JsonResponse handle(@Nonnull final UnityOpenFilePostHandlerRequest body)
 	{
+		LOG.info("unityOpenFile: " + ReflectionToStringBuilder.toString(body));
 		String contentType = body.contentType;
 		if(!ourSupportedContentTypes.contains(contentType))
 		{
