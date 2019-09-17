@@ -544,7 +544,19 @@ public class Unity3dProjectImportUtil
 		langExtension.setEnabled(true);
 		if(langExtension instanceof CSharpSimpleMutableModuleExtension)
 		{
-			CSharpLanguageVersion languageVersion = isVersionHigherOrEqual(unityBundle, "5.5.0") ? CSharpLanguageVersion._6_0 : CSharpLanguageVersion._4_0;
+			CSharpLanguageVersion languageVersion;
+			if(isVersionHigherOrEqual(unityBundle, "2019.0"))
+			{
+				languageVersion = CSharpLanguageVersion._7_1;
+			}
+			else if(isVersionHigherOrEqual(unityBundle, "5.5.0"))
+			{
+				languageVersion = CSharpLanguageVersion._6_0;
+			}
+			else
+			{
+				languageVersion = CSharpLanguageVersion._4_0;
+			}
 			((CSharpSimpleMutableModuleExtension) langExtension).setLanguageVersion(languageVersion);
 		}
 
