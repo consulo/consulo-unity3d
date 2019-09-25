@@ -16,13 +16,6 @@
 
 package consulo.unity3d.module;
 
-import java.io.File;
-import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import org.jdom.Element;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkType;
 import com.intellij.openapi.util.SystemInfo;
@@ -34,9 +27,16 @@ import com.intellij.util.SmartList;
 import consulo.annotations.RequiredReadAction;
 import consulo.dotnet.module.DotNetNamespaceGeneratePolicy;
 import consulo.dotnet.module.extension.BaseDotNetSimpleModuleExtension;
+import consulo.platform.Platform;
 import consulo.roots.ModuleRootLayer;
 import consulo.unity3d.bundle.Unity3dBundleType;
 import consulo.unity3d.projectImport.Unity3dProjectImportUtil;
+import org.jdom.Element;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.io.File;
+import java.util.List;
 
 /**
  * @author VISTALL
@@ -145,8 +145,10 @@ public class Unity3dRootModuleExtension extends BaseDotNetSimpleModuleExtension<
 	{
 		Version version = Unity3dProjectImportUtil.parseVersion(sdk.getVersionString());
 
+		Platform.OperatingSystem os = Platform.current().os();
+
 		List<String> list = new SmartList<>();
-		if(SystemInfo.isMac)
+		if(os.isMac())
 		{
 			list.add(homePath + "/Contents/Frameworks/Managed");
 			switch(scriptRuntimeVersion)
@@ -186,7 +188,7 @@ public class Unity3dRootModuleExtension extends BaseDotNetSimpleModuleExtension<
 				}
 			}
 		}
-		else if(SystemInfo.isWindows || SystemInfo.isLinux)
+		else if(os.isWindows() || SystemInfo.isLinux)
 		{
 			list.add(homePath + "/Editor/Data/Managed");
 			switch(scriptRuntimeVersion)

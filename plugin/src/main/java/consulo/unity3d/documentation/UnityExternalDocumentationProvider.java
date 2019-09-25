@@ -20,7 +20,6 @@ import com.intellij.lang.documentation.DocumentationProvider;
 import com.intellij.lang.documentation.ExternalDocumentationProvider;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.StandardFileSystems;
@@ -33,6 +32,7 @@ import consulo.dotnet.psi.DotNetFieldDeclaration;
 import consulo.dotnet.psi.DotNetLikeMethodDeclaration;
 import consulo.dotnet.psi.DotNetPropertyDeclaration;
 import consulo.dotnet.psi.DotNetTypeDeclaration;
+import consulo.platform.Platform;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import consulo.unity3d.module.Unity3dRootModuleExtension;
 
@@ -83,7 +83,7 @@ public class UnityExternalDocumentationProvider implements ExternalDocumentation
 		String homePath = sdk.getHomePath();
 
 		File file;
-		if(SystemInfo.isMac)
+		if(Platform.current().os().isMac())
 		{
 			file = new File(homePath, "Contents/Documentation/en/ScriptReference/" + fileName + ".html");
 		}

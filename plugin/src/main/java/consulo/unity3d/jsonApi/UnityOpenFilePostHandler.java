@@ -49,6 +49,7 @@ import consulo.logging.Logger;
 import consulo.moduleImport.ModuleImportContext;
 import consulo.moduleImport.ModuleImportProvider;
 import consulo.moduleImport.ui.ModuleImportProcessor;
+import consulo.platform.Platform;
 import consulo.ui.UIAccess;
 import consulo.unity3d.bundle.Unity3dBundleType;
 import consulo.unity3d.projectImport.Unity3dModuleImportProvider;
@@ -107,7 +108,7 @@ public class UnityOpenFilePostHandler extends JsonPostRequestHandler<UnityOpenFi
 				{
 					if(!new File(projectVirtualFile.getPath(), Project.DIRECTORY_STORE_FOLDER).exists())
 					{
-						String sdkPath = SystemInfo.isMac ? body.editorPath : new File(body.editorPath).getParentFile().getParentFile().getPath();
+						String sdkPath = Platform.current().os().isMac() ? body.editorPath : new File(body.editorPath).getParentFile().getParentFile().getPath();
 
 						VirtualFile sdkFileHome = LocalFileSystem.getInstance().findFileByPath(sdkPath);
 						if(sdkFileHome == null)
