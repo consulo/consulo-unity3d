@@ -545,9 +545,9 @@ public class Unity3dProjectImportUtil
 		if(langExtension instanceof CSharpSimpleMutableModuleExtension)
 		{
 			CSharpLanguageVersion languageVersion;
-			if(isVersionHigherOrEqual(unityBundle, "2019.0"))
+			if(isVersionHigherOrEqual(unityBundle, "2018.3"))
 			{
-				languageVersion = CSharpLanguageVersion._7_1;
+				languageVersion = CSharpLanguageVersion.HIGHEST;
 			}
 			else if(isVersionHigherOrEqual(unityBundle, "5.5.0"))
 			{
