@@ -111,6 +111,9 @@ public class Unity3dProjectImportUtil
 			"Assets/Plugins"
 	};
 
+
+	private static final String ASSEMBLY_UNITYSCRIPT_FIRSTPASS = "Assembly-UnityScript-firstpass";
+
 	private static final String UNITY_EDITOR = "UNITY_EDITOR";
 
 	private static final String UNITY_EDITOR_ATTACH = "Attach to Unity Editor";
@@ -348,7 +351,11 @@ public class Unity3dProjectImportUtil
 		String[] paths = {ASSETS_DIRECTORY};
 		return createAndSetupModule("Assembly-CSharp", project, newModel, paths, unityBundle, layer ->
 		{
-			layer.addInvalidModuleEntry("Assembly-UnityScript-firstpass");
+			if(!isVersionHigherOrEqual(unityBundle, "2018.2"))
+			{
+				layer.addInvalidModuleEntry(ASSEMBLY_UNITYSCRIPT_FIRSTPASS);
+			}
+
 			layer.addInvalidModuleEntry("Assembly-CSharp-firstpass");
 		}, "unity3d-csharp-child", CSharpFileType.INSTANCE, virtualFilesByModule, progressIndicator, manifest);
 	}
@@ -360,8 +367,20 @@ public class Unity3dProjectImportUtil
 																   ProgressIndicator progressIndicator,
 																   Unity3dManifest manifest)
 	{
-		return createAndSetupModule("Assembly-UnityScript-firstpass", project, newModel, FIRST_PASS_PATHS, unityBundle, null, "unity3d-unityscript-child", JavaScriptFileType.INSTANCE,
-				virtualFilesByModule, progressIndicator, manifest);
+		if(isVersionHigherOrEqual(unityBundle, "2018.2"))
+		{
+			Module module = newModel.findModuleByName(ASSEMBLY_UNITYSCRIPT_FIRSTPASS);
+			if(module != null)
+			{
+				newModel.disposeModule(module);
+			}
+			return null;
+		}
+		else
+		{
+			return createAndSetupModule(ASSEMBLY_UNITYSCRIPT_FIRSTPASS, project, newModel, FIRST_PASS_PATHS, unityBundle, null, "unity3d-unityscript-child", JavaScriptFileType.INSTANCE,
+					virtualFilesByModule, progressIndicator, manifest);
+		}
 	}
 
 	private static Module createAssemblyCSharpModuleFirstPass(Project project,
@@ -409,7 +428,11 @@ public class Unity3dProjectImportUtil
 		final String[] pathsAsArray = ArrayUtil.toStringArray(paths);
 		return createAndSetupModule("Assembly-CSharp-Editor", project, newModel, pathsAsArray, unityBundle, layer ->
 		{
-			layer.addInvalidModuleEntry("Assembly-UnityScript-firstpass");
+			if(!isVersionHigherOrEqual(unityBundle, "2018.2"))
+			{
+				layer.addInvalidModuleEntry(ASSEMBLY_UNITYSCRIPT_FIRSTPASS);
+			}
+
 			layer.addInvalidModuleEntry("Assembly-CSharp-firstpass");
 			layer.addInvalidModuleEntry("Assembly-CSharp");
 
