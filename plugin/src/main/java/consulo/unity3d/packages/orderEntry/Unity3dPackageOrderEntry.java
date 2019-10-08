@@ -37,6 +37,7 @@ import com.intellij.util.ObjectUtil;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import consulo.annotations.RequiredReadAction;
+import consulo.dotnet.dll.DotNetModuleFileType;
 import consulo.platform.Platform;
 import consulo.roots.OrderEntryWithTracking;
 import consulo.roots.impl.ModuleRootLayerImpl;
@@ -185,7 +186,7 @@ public class Unity3dPackageOrderEntry extends LibraryOrderEntryBaseImpl implemen
 			for(VirtualFile fileOrDir : virtualFile.getChildren())
 			{
 				// more faster check - and it will SOE if file type is unknown
-				if("dll".equalsIgnoreCase(fileOrDir.getExtension()))
+				if(DotNetModuleFileType.isDllFile(fileOrDir.getName()))
 				{
 					VirtualFile archiveRoot = ArchiveVfsUtil.getArchiveRootForLocalFile(fileOrDir);
 					if(archiveRoot != null)
