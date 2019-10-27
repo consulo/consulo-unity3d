@@ -83,6 +83,12 @@ public class Unity3dAssetFileTypeDetector implements FileTypeRegistry.FileTypeDe
 	}
 
 	@Override
+	public int getDesiredContentPrefixLength()
+	{
+		return 24;
+	}
+
+	@Override
 	public int getVersion()
 	{
 		return 6;
