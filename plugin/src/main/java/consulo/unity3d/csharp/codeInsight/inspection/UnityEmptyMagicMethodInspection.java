@@ -16,9 +16,6 @@
 
 package consulo.unity3d.csharp.codeInsight.inspection;
 
-import javax.annotation.Nonnull;
-
-import org.jetbrains.annotations.Nls;
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.codeInspection.LocalQuickFixOnPsiElement;
 import com.intellij.codeInspection.ProblemsHolder;
@@ -35,6 +32,9 @@ import consulo.unity3d.Unity3dBundle;
 import consulo.unity3d.csharp.UnityFunctionManager;
 import consulo.unity3d.csharp.codeInsight.UnityEventCSharpMethodLineMarkerProvider;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
+import org.jetbrains.annotations.Nls;
+
+import javax.annotation.Nonnull;
 
 /**
  * @author VISTALL
@@ -89,7 +89,7 @@ public class UnityEmptyMagicMethodInspection extends LocalInspectionTool
 				UnityFunctionManager.FunctionInfo magicMethod = UnityEventCSharpMethodLineMarkerProvider.findMagicMethod(declaration);
 				if(magicMethod != null)
 				{
-					PsiElement codeBlock = declaration.getCodeBlock();
+					PsiElement codeBlock = declaration.getCodeBlock().getElement();
 					if(codeBlock == null || codeBlock instanceof CSharpBlockStatementImpl && ((CSharpBlockStatementImpl) codeBlock).getStatements().length == 0)
 					{
 						PsiElement nameIdentifier = declaration.getNameIdentifier();

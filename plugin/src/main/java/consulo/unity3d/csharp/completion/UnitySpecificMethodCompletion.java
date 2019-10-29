@@ -16,10 +16,6 @@
 
 package consulo.unity3d.csharp.completion;
 
-import java.util.Map;
-
-import javax.annotation.Nonnull;
-
 import com.intellij.codeInsight.completion.CompletionParameters;
 import com.intellij.codeInsight.completion.InsertHandler;
 import com.intellij.codeInsight.completion.InsertionContext;
@@ -33,7 +29,6 @@ import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Consumer;
 import com.intellij.util.ProcessingContext;
-import consulo.ui.RequiredUIAccess;
 import consulo.annotations.RequiredReadAction;
 import consulo.csharp.ide.completion.CSharpMemberAddByCompletionContributor;
 import consulo.csharp.lang.psi.CSharpMethodDeclaration;
@@ -45,9 +40,13 @@ import consulo.dotnet.psi.DotNetStatement;
 import consulo.dotnet.psi.DotNetVirtualImplementOwner;
 import consulo.dotnet.resolve.DotNetTypeRef;
 import consulo.ide.IconDescriptor;
+import consulo.ui.RequiredUIAccess;
 import consulo.unity3d.Unity3dIcons;
 import consulo.unity3d.csharp.UnityFunctionManager;
 import consulo.unity3d.module.Unity3dModuleExtension;
+
+import javax.annotation.Nonnull;
+import java.util.Map;
 
 /**
  * @author VISTALL
@@ -155,7 +154,7 @@ public class UnitySpecificMethodCompletion implements CSharpMemberAddByCompletio
 
 				if(virtualImplementOwner instanceof CSharpMethodDeclaration)
 				{
-					PsiElement codeBlock = ((CSharpMethodDeclaration) virtualImplementOwner).getCodeBlock();
+					PsiElement codeBlock = ((CSharpMethodDeclaration) virtualImplementOwner).getCodeBlock().getElement();
 					if(codeBlock instanceof CSharpBlockStatementImpl)
 					{
 						DotNetStatement[] statements = ((CSharpBlockStatementImpl) codeBlock).getStatements();
