@@ -16,15 +16,13 @@
 
 package consulo.unity3d.unityscript;
 
-import javax.annotation.Nonnull;
-
 import com.intellij.icons.AllIcons;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.util.Iconable;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.BitUtil;
-import consulo.annotations.RequiredReadAction;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.csharp.lang.psi.impl.light.builder.CSharpLightTypeDeclarationBuilder;
 import consulo.ide.IconDescriptor;
 import consulo.ide.IconDescriptorUpdater;
@@ -32,6 +30,8 @@ import consulo.unity3d.Unity3dIcons;
 import consulo.unity3d.unityscript.lang.UnityScriptLanguageVersion;
 import consulo.unity3d.unityscript.lang.impl.csharp.UnityScriptToNativeElementTransformer;
 import consulo.unity3d.unityscript.module.extension.Unity3dScriptModuleExtension;
+
+import javax.annotation.Nonnull;
 
 /**
  * @author VISTALL

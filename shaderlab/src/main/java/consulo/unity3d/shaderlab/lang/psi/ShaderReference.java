@@ -16,12 +16,6 @@
 
 package consulo.unity3d.shaderlab.lang.psi;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.icons.AllIcons;
@@ -38,8 +32,8 @@ import com.intellij.util.Consumer;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
-import consulo.annotations.RequiredReadAction;
-import consulo.annotations.RequiredWriteAction;
+import consulo.annotation.access.RequiredReadAction;
+import consulo.annotation.access.RequiredWriteAction;
 import consulo.csharp.lang.psi.impl.msil.CSharpTransform;
 import consulo.dotnet.psi.DotNetTypeDeclaration;
 import consulo.dotnet.resolve.DotNetPsiSearcher;
@@ -50,6 +44,12 @@ import consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabRole;
 import consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabRoles;
 import consulo.unity3d.shaderlab.lang.psi.light.LightShaderDef;
 import consulo.unity3d.shaderlab.lang.psi.stub.index.ShaderDefIndex;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * @author VISTALL

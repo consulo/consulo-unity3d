@@ -24,7 +24,7 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.SmartList;
-import consulo.annotations.RequiredReadAction;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.dotnet.module.DotNetNamespaceGeneratePolicy;
 import consulo.dotnet.module.extension.BaseDotNetSimpleModuleExtension;
 import consulo.platform.Platform;

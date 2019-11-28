@@ -16,8 +16,6 @@
 
 package consulo.unity3d.shaderlab.ide.completion;
 
-import javax.annotation.Nonnull;
-
 import com.intellij.codeInsight.completion.CompletionContributor;
 import com.intellij.codeInsight.completion.CompletionParameters;
 import com.intellij.codeInsight.completion.CompletionResultSet;
@@ -27,12 +25,14 @@ import com.intellij.psi.PsiLanguageInjectionHost;
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.psi.impl.source.tree.injected.Place;
 import com.intellij.util.ProcessingContext;
-import consulo.annotations.RequiredReadAction;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.cgshader.CGLanguage;
 import consulo.codeInsight.completion.CompletionProvider;
 import consulo.unity3d.shaderlab.lang.psi.ShaderCGScript;
 import consulo.unity3d.shaderlab.lang.psi.ShaderLabFile;
 import consulo.unity3d.shaderlab.lang.psi.ShaderReference;
+
+import javax.annotation.Nonnull;
 
 /**
  * @author VISTALL

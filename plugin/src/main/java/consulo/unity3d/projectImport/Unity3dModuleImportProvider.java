@@ -21,7 +21,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.startup.StartupManager;
-import consulo.annotations.RequiredReadAction;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.moduleImport.ModuleImportProvider;
 import consulo.ui.image.Image;
 import consulo.ui.wizard.WizardStep;

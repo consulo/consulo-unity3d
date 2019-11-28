@@ -36,7 +36,7 @@ import com.intellij.util.ArrayUtil;
 import com.intellij.util.ObjectUtil;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
-import consulo.annotations.RequiredReadAction;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.dotnet.dll.DotNetModuleFileType;
 import consulo.platform.Platform;
 import consulo.roots.OrderEntryWithTracking;

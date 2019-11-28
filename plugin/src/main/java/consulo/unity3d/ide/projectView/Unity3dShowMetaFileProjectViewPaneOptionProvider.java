@@ -16,8 +16,6 @@
 
 package consulo.unity3d.ide.projectView;
 
-import javax.annotation.Nonnull;
-
 import com.intellij.ide.projectView.ProjectView;
 import com.intellij.ide.projectView.impl.AbstractProjectViewPane;
 import com.intellij.ide.projectView.impl.ProjectViewPane;
@@ -26,9 +24,11 @@ import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.actionSystem.ToggleAction;
 import com.intellij.openapi.util.KeyWithDefaultValue;
-import consulo.ui.RequiredUIAccess;
 import consulo.ide.projectView.impl.ProjectViewPaneOptionProvider;
+import consulo.ui.annotation.RequiredUIAccess;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
+
+import javax.annotation.Nonnull;
 
 /**
  * @author VISTALL

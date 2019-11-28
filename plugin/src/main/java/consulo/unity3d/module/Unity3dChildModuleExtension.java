@@ -16,22 +16,21 @@
 
 package consulo.unity3d.module;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkType;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.util.ArrayUtil;
-import consulo.annotations.RequiredReadAction;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.dotnet.module.DotNetNamespaceGeneratePolicy;
 import consulo.module.extension.ModuleInheritableNamedPointer;
 import consulo.module.extension.impl.ModuleExtensionImpl;
 import consulo.roots.ModuleRootLayer;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author VISTALL

@@ -16,13 +16,13 @@
 
 package consulo.unity3d.csharp.module.extension;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import consulo.annotations.RequiredReadAction;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.csharp.module.extension.BaseCSharpSimpleModuleExtension;
 import consulo.csharp.module.extension.CSharpLanguageVersion;
 import consulo.roots.ModuleRootLayer;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * @author VISTALL

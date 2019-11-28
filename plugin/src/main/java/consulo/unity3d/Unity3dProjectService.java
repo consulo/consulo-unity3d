@@ -16,11 +16,6 @@
 
 package consulo.unity3d;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
 import com.intellij.ProjectTopics;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.components.ServiceManager;
@@ -32,8 +27,13 @@ import com.intellij.openapi.roots.ModuleRootEvent;
 import com.intellij.openapi.roots.ModuleRootListener;
 import com.intellij.openapi.util.ClearableLazyValue;
 import com.intellij.openapi.vfs.VirtualFile;
-import consulo.annotations.RequiredReadAction;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.unity3d.module.Unity3dRootModuleExtension;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 /**
  * @author VISTALL

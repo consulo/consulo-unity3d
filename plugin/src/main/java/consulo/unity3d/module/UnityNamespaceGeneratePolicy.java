@@ -16,17 +16,17 @@
 
 package consulo.unity3d.module;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
-import consulo.annotations.RequiredReadAction;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.dotnet.module.DotNetNamespaceGeneratePolicy;
 import consulo.unity3d.projectImport.Unity3dProjectImportUtil;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * @author VISTALL

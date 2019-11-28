@@ -16,10 +16,6 @@
 
 package consulo.cgshader.completion;
 
-import java.util.Set;
-
-import javax.annotation.Nonnull;
-
 import com.intellij.codeInsight.completion.CompletionContributor;
 import com.intellij.codeInsight.completion.CompletionParameters;
 import com.intellij.codeInsight.completion.CompletionResultSet;
@@ -30,11 +26,14 @@ import com.intellij.icons.AllIcons;
 import com.intellij.patterns.StandardPatterns;
 import com.intellij.util.ProcessingContext;
 import com.intellij.util.containers.ContainerUtil;
-import consulo.annotations.RequiredReadAction;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.cgshader.CGLanguage;
 import consulo.cgshader.lexer.CGKeywords;
 import consulo.codeInsight.completion.CompletionProvider;
 import consulo.ui.image.Image;
+
+import javax.annotation.Nonnull;
+import java.util.Set;
 
 /**
  * @author VISTALL

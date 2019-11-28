@@ -16,24 +16,22 @@
 
 package consulo.unity3d.csharp;
 
-import gnu.trove.THashMap;
-
-import java.io.IOException;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
-import javax.annotation.Nonnull;
-
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.JDOMException;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.psi.PsiElement;
-import consulo.annotations.RequiredReadAction;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.csharp.lang.psi.impl.source.resolve.type.CSharpArrayTypeRef;
 import consulo.csharp.lang.psi.impl.source.resolve.type.CSharpTypeRefByQName;
 import consulo.dotnet.resolve.DotNetTypeRef;
+import gnu.trove.THashMap;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.JDOMException;
+
+import javax.annotation.Nonnull;
+import java.io.IOException;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * @author VISTALL

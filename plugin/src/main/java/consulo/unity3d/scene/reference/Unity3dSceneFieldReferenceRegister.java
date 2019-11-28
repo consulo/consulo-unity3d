@@ -16,29 +16,20 @@
 
 package consulo.unity3d.scene.reference;
 
-import javax.annotation.Nonnull;
-
-import org.jetbrains.yaml.psi.YAMLDocument;
-import org.jetbrains.yaml.psi.YAMLFile;
-import org.jetbrains.yaml.psi.YAMLKeyValue;
-import org.jetbrains.yaml.psi.YAMLMapping;
-import org.jetbrains.yaml.psi.YAMLValue;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.patterns.PsiElementPattern;
 import com.intellij.patterns.StandardPatterns;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiReference;
-import com.intellij.psi.PsiReferenceContributor;
-import com.intellij.psi.PsiReferenceProvider;
-import com.intellij.psi.PsiReferenceRegistrar;
+import com.intellij.psi.*;
 import com.intellij.util.ProcessingContext;
-import consulo.annotations.RequiredReadAction;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.csharp.lang.CSharpFileType;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import consulo.unity3d.scene.Unity3dMetaManager;
 import consulo.unity3d.scene.Unity3dYMLAssetFileType;
+import org.jetbrains.yaml.psi.*;
+
+import javax.annotation.Nonnull;
 
 /**
  * @author VISTALL

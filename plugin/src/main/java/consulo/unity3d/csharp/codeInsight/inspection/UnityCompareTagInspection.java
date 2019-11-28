@@ -16,9 +16,6 @@
 
 package consulo.unity3d.csharp.codeInsight.inspection;
 
-import javax.annotation.Nonnull;
-
-import org.jetbrains.annotations.Nls;
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.codeInspection.LocalQuickFixOnPsiElement;
 import com.intellij.codeInspection.ProblemsHolder;
@@ -28,17 +25,15 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
-import consulo.annotations.RequiredReadAction;
-import consulo.csharp.lang.psi.CSharpElementVisitor;
-import consulo.csharp.lang.psi.CSharpFileFactory;
-import consulo.csharp.lang.psi.CSharpPropertyDeclaration;
-import consulo.csharp.lang.psi.CSharpReferenceExpression;
-import consulo.csharp.lang.psi.CSharpTokens;
-import consulo.csharp.lang.psi.CSharpTypeDeclaration;
+import consulo.annotation.access.RequiredReadAction;
+import consulo.csharp.lang.psi.*;
 import consulo.csharp.lang.psi.impl.source.CSharpBinaryExpressionImpl;
 import consulo.dotnet.psi.DotNetExpression;
 import consulo.unity3d.Unity3dTypes;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
+import org.jetbrains.annotations.Nls;
+
+import javax.annotation.Nonnull;
 
 /**
  * @author VISTALL

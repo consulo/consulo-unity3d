@@ -16,10 +16,6 @@
 
 package consulo.unity3d.run.test;
 
-import java.util.UUID;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import com.intellij.execution.DefaultExecutionResult;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionResult;
@@ -47,9 +43,13 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Ref;
 import com.intellij.xdebugger.DefaultDebugProcessHandler;
-import consulo.ui.RequiredUIAccess;
+import consulo.ui.annotation.RequiredUIAccess;
 import consulo.unity3d.editor.UnityEditorCommunication;
 import consulo.unity3d.editor.UnityRunTest;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.UUID;
 
 /**
  * @author VISTALL

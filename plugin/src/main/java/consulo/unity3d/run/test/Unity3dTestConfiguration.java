@@ -16,17 +16,9 @@
 
 package consulo.unity3d.run.test;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import org.jdom.Element;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
-import com.intellij.execution.configurations.ConfigurationFactory;
-import com.intellij.execution.configurations.LocatableConfigurationBase;
-import com.intellij.execution.configurations.ModuleRunConfiguration;
-import com.intellij.execution.configurations.RunConfiguration;
-import com.intellij.execution.configurations.RunProfileState;
+import com.intellij.execution.configurations.*;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
@@ -35,8 +27,12 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.util.xmlb.XmlSerializer;
-import consulo.ui.RequiredUIAccess;
-import consulo.annotations.RequiredReadAction;
+import consulo.annotation.access.RequiredReadAction;
+import consulo.ui.annotation.RequiredUIAccess;
+import org.jdom.Element;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * @author VISTALL

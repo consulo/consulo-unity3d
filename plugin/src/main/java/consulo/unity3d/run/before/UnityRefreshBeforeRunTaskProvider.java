@@ -16,9 +16,6 @@
 
 package consulo.unity3d.run.before;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import com.intellij.execution.BeforeRunTaskProvider;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.runners.ExecutionEnvironment;
@@ -31,14 +28,17 @@ import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.util.AsyncResult;
 import com.intellij.openapi.util.Key;
 import com.intellij.util.TimeoutUtil;
-import consulo.ui.RequiredUIAccess;
 import consulo.ui.UIAccess;
+import consulo.ui.annotation.RequiredUIAccess;
 import consulo.ui.image.Image;
 import consulo.unity3d.Unity3dIcons;
 import consulo.unity3d.editor.UnityEditorCommunication;
 import consulo.unity3d.editor.UnityRefresh;
 import consulo.unity3d.jsonApi.UnityPingPong;
 import consulo.unity3d.run.test.Unity3dTestConfiguration;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * @author VISTALL

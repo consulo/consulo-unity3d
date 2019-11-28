@@ -16,8 +16,6 @@
 
 package consulo.unity3d.projectImport;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import com.intellij.ide.actions.CreateFileFromTemplateAction;
 import com.intellij.lang.javascript.JavaScriptFileType;
 import com.intellij.openapi.fileTypes.FileType;
@@ -27,9 +25,12 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
-import consulo.annotations.RequiredReadAction;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.csharp.lang.CSharpFileType;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * @author VISTALL

@@ -16,10 +16,6 @@
 
 package consulo.unity3d.ide.ui;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.inject.Inject;
-
 import com.intellij.ProjectTopics;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.module.Module;
@@ -32,7 +28,7 @@ import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.EditorNotificationPanel;
 import com.intellij.ui.EditorNotifications;
-import consulo.annotations.RequiredReadAction;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.csharp.lang.CSharpFileType;
 import consulo.editor.notifications.EditorNotificationProvider;
 import consulo.module.extension.ModuleExtension;
@@ -40,6 +36,10 @@ import consulo.msil.representation.MsilFileRepresentationVirtualFile;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import consulo.unity3d.module.Unity3dRootModuleExtension;
 import consulo.unity3d.projectImport.Unity3dProjectImportUtil;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.inject.Inject;
 
 /**
  * @author VISTALL

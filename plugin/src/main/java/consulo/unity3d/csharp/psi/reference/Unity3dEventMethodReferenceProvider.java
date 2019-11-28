@@ -16,18 +16,13 @@
 
 package consulo.unity3d.csharp.psi.reference;
 
-import javax.annotation.Nonnull;
 import com.intellij.patterns.PsiElementPattern;
 import com.intellij.patterns.StandardPatterns;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiReference;
-import com.intellij.psi.PsiReferenceContributor;
-import com.intellij.psi.PsiReferenceProvider;
-import com.intellij.psi.PsiReferenceRegistrar;
+import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ProcessingContext;
-import consulo.annotations.RequiredReadAction;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.csharp.lang.psi.CSharpCallArgument;
 import consulo.csharp.lang.psi.CSharpReferenceExpression;
 import consulo.csharp.lang.psi.CSharpTypeDeclaration;
@@ -39,6 +34,8 @@ import consulo.csharp.lang.psi.impl.source.resolve.type.CSharpTypeRefByTypeDecla
 import consulo.dotnet.psi.DotNetExpression;
 import consulo.dotnet.resolve.DotNetTypeRef;
 import consulo.unity3d.Unity3dTypes;
+
+import javax.annotation.Nonnull;
 
 /**
  * @author VISTALL

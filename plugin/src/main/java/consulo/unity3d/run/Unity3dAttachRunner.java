@@ -16,11 +16,6 @@
 
 package consulo.unity3d.run;
 
-import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionResult;
 import com.intellij.execution.actions.StopProcessAction;
@@ -43,15 +38,19 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebuggerManager;
-import consulo.ui.RequiredUIAccess;
 import consulo.dotnet.execution.DebugConnectionInfo;
 import consulo.dotnet.mono.debugger.MonoVirtualMachineListener;
+import consulo.ui.annotation.RequiredUIAccess;
 import consulo.unity3d.editor.UnityEditorCommunication;
 import consulo.unity3d.run.debugger.UnityDebugProcess;
 import consulo.unity3d.run.debugger.UnityPlayerService;
 import consulo.unity3d.run.debugger.UnityProcess;
 import consulo.unity3d.run.debugger.UnityProcessDialog;
 import mono.debugger.VirtualMachine;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.List;
 
 /**
  * @author VISTALL

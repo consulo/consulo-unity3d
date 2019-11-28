@@ -16,8 +16,6 @@
 
 package consulo.unity3d.shaderlab.ide.highlight;
 
-import javax.annotation.Nonnull;
-
 import com.intellij.codeInsight.daemon.impl.HighlightInfo;
 import com.intellij.codeInsight.daemon.impl.HighlightInfoType;
 import com.intellij.codeInsight.daemon.impl.HighlightVisitor;
@@ -27,14 +25,11 @@ import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import consulo.annotations.RequiredReadAction;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.unity3d.shaderlab.lang.ShaderLabPropertyType;
-import consulo.unity3d.shaderlab.lang.psi.ShaderLabFile;
-import consulo.unity3d.shaderlab.lang.psi.ShaderLabKeyTokens;
-import consulo.unity3d.shaderlab.lang.psi.ShaderPropertyElement;
-import consulo.unity3d.shaderlab.lang.psi.ShaderPropertyTypeElement;
-import consulo.unity3d.shaderlab.lang.psi.ShaderReference;
-import consulo.unity3d.shaderlab.lang.psi.SharpLabElementVisitor;
+import consulo.unity3d.shaderlab.lang.psi.*;
+
+import javax.annotation.Nonnull;
 
 /**
  * @author VISTALL

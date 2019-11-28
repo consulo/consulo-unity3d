@@ -16,17 +16,8 @@
 
 package consulo.unity3d.shaderlab.ide.completion;
 
-import java.util.Collection;
-
-import javax.annotation.Nonnull;
-
 import com.intellij.codeInsight.TailType;
-import com.intellij.codeInsight.completion.CompletionContributor;
-import com.intellij.codeInsight.completion.CompletionParameters;
-import com.intellij.codeInsight.completion.CompletionResultSet;
-import com.intellij.codeInsight.completion.CompletionType;
-import com.intellij.codeInsight.completion.InsertHandler;
-import com.intellij.codeInsight.completion.InsertionContext;
+import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.icons.AllIcons;
@@ -38,7 +29,7 @@ import com.intellij.patterns.StandardPatterns;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ProcessingContext;
-import consulo.annotations.RequiredReadAction;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.codeInsight.completion.CompletionProvider;
 import consulo.csharp.ide.completion.util.SpaceInsertHandler;
 import consulo.dotnet.psi.search.searches.DirectTypeInheritorsSearch;
@@ -49,14 +40,12 @@ import consulo.unity3d.shaderlab.lang.ShaderLabPropertyType;
 import consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabCompositeRole;
 import consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabRole;
 import consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabRoles;
-import consulo.unity3d.shaderlab.lang.psi.ShaderBraceOwner;
-import consulo.unity3d.shaderlab.lang.psi.ShaderDef;
-import consulo.unity3d.shaderlab.lang.psi.ShaderLabKeyTokens;
-import consulo.unity3d.shaderlab.lang.psi.ShaderLabTokens;
-import consulo.unity3d.shaderlab.lang.psi.ShaderPropertyTypeElement;
-import consulo.unity3d.shaderlab.lang.psi.ShaderSimpleValue;
+import consulo.unity3d.shaderlab.lang.psi.*;
 import consulo.unity3d.shaderlab.lang.psi.light.LightShaderDef;
 import consulo.unity3d.shaderlab.lang.psi.stub.index.ShaderDefIndex;
+
+import javax.annotation.Nonnull;
+import java.util.Collection;
 
 /**
  * @author VISTALL

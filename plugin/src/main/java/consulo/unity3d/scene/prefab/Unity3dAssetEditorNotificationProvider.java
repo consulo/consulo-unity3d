@@ -16,10 +16,6 @@
 
 package consulo.unity3d.scene.prefab;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.inject.Inject;
-
 import com.intellij.find.FindManager;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.Project;
@@ -30,12 +26,16 @@ import com.intellij.psi.PsiManager;
 import com.intellij.ui.EditorNotificationPanel;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.containers.MultiMap;
-import consulo.annotations.RequiredReadAction;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.editor.notifications.EditorNotificationProvider;
 import consulo.unity3d.scene.Unity3dAssetFileTypeDetector;
 import consulo.unity3d.scene.Unity3dAssetUtil;
 import consulo.unity3d.scene.Unity3dYMLAssetFileType;
 import consulo.unity3d.scene.index.Unity3dYMLAsset;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.inject.Inject;
 
 /**
  * @author VISTALL

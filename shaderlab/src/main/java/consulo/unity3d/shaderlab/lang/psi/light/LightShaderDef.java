@@ -16,16 +16,6 @@
 
 package consulo.unity3d.shaderlab.lang.psi.light;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Nonnull;
-
-import org.jetbrains.annotations.NonNls;
-
-import javax.annotation.Nullable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.text.StringUtil;
@@ -33,13 +23,21 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.impl.light.LightElement;
 import com.intellij.util.IncorrectOperationException;
-import consulo.annotations.RequiredReadAction;
-import consulo.annotations.RequiredWriteAction;
+import consulo.annotation.access.RequiredReadAction;
+import consulo.annotation.access.RequiredWriteAction;
 import consulo.unity3d.shaderlab.lang.ShaderLabLanguage;
 import consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabRole;
 import consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabRoles;
 import consulo.unity3d.shaderlab.lang.psi.ShaderDef;
 import consulo.unity3d.shaderlab.lang.psi.ShaderProperty;
+import org.jetbrains.annotations.NonNls;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author VISTALL

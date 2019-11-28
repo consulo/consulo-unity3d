@@ -16,19 +16,18 @@
 
 package consulo.unity3d.unityscript.debugger;
 
-import java.util.Collections;
-import java.util.Set;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiUtilCore;
-import consulo.annotations.RequiredReadAction;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.dotnet.debugger.DotNetDebuggerSourceLineResolver;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.Collections;
+import java.util.Set;
 
 /**
  * @author VISTALL

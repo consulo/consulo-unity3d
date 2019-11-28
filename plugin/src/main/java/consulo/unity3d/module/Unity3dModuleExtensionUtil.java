@@ -16,12 +16,13 @@
 
 package consulo.unity3d.module;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
-import consulo.annotations.RequiredReadAction;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.unity3d.Unity3dProjectService;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * @author VISTALL

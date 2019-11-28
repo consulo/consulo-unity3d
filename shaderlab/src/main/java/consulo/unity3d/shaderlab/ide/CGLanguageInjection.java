@@ -16,15 +16,15 @@
 
 package consulo.unity3d.shaderlab.ide;
 
-import javax.annotation.Nonnull;
 import com.intellij.lang.injection.MultiHostInjector;
 import com.intellij.lang.injection.MultiHostRegistrar;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
-import consulo.annotations.RequiredReadAction;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.cgshader.CGLanguage;
 import consulo.unity3d.shaderlab.lang.psi.ShaderCGScript;
 
+import javax.annotation.Nonnull;
 /**
  * @author VISTALL
  * @since 11.10.2015

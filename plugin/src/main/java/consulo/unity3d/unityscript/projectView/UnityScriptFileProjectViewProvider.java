@@ -28,8 +28,8 @@ import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import consulo.annotations.RequiredReadAction;
-import consulo.ui.RequiredUIAccess;
+import consulo.annotation.access.RequiredReadAction;
+import consulo.ui.annotation.RequiredUIAccess;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import consulo.unity3d.module.Unity3dRootModuleExtension;
 

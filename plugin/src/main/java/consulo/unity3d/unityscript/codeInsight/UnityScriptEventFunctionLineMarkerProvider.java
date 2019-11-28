@@ -16,11 +16,6 @@
 
 package consulo.unity3d.unityscript.codeInsight;
 
-import java.util.Map;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import com.intellij.codeHighlighting.Pass;
 import com.intellij.codeInsight.daemon.LineMarkerInfo;
 import com.intellij.codeInsight.daemon.LineMarkerProviderDescriptor;
@@ -33,12 +28,16 @@ import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.ConstantFunction;
-import consulo.annotations.RequiredReadAction;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.ui.image.Image;
 import consulo.unity3d.Unity3dIcons;
 import consulo.unity3d.Unity3dTypes;
 import consulo.unity3d.csharp.UnityFunctionManager;
 import consulo.unity3d.module.Unity3dModuleExtension;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.Map;
 
 /**
  * @author VISTALL

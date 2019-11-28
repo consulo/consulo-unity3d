@@ -24,7 +24,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.packageDependencies.ui.PackageDependenciesNode;
 import com.intellij.ui.ColoredTreeCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
-import consulo.ui.RequiredUIAccess;
+import consulo.ui.annotation.RequiredUIAccess;
 import consulo.unity3d.Unity3dMetaFileType;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import consulo.unity3d.module.Unity3dRootModuleExtension;

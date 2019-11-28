@@ -1,7 +1,5 @@
 package consulo.unity3d.usages;
 
-import javax.annotation.Nonnull;
-
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
@@ -13,10 +11,12 @@ import com.intellij.usages.impl.RuleAction;
 import com.intellij.usages.rules.PsiElementUsage;
 import com.intellij.usages.rules.UsageFilteringRule;
 import com.intellij.usages.rules.UsageFilteringRuleProvider;
-import consulo.ui.RequiredUIAccess;
+import consulo.ui.annotation.RequiredUIAccess;
 import consulo.unity3d.Unity3dIcons;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import consulo.unity3d.scene.Unity3dYMLAssetFileType;
+
+import javax.annotation.Nonnull;
 
 /**
  * @author VISTALL

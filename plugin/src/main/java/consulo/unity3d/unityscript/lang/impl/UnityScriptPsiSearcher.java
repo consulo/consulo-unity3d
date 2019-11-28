@@ -16,24 +16,23 @@
 
 package consulo.unity3d.unityscript.lang.impl;
 
-import java.util.Collection;
-import java.util.Collections;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.inject.Inject;
-
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.containers.ContainerUtil;
-import consulo.annotations.RequiredReadAction;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.dotnet.psi.DotNetTypeDeclaration;
 import consulo.dotnet.resolve.DotNetNamespaceAsElement;
 import consulo.dotnet.resolve.DotNetPsiSearcher;
 import consulo.javascript.lang.JavaScriptLanguage;
 import consulo.unity3d.unityscript.index.UnityScriptFileByNameIndex;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.inject.Inject;
+import java.util.Collection;
+import java.util.Collections;
 
 /**
  * @author VISTALL

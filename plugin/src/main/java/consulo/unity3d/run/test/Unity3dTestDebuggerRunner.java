@@ -16,8 +16,6 @@
 
 package consulo.unity3d.run.test;
 
-import javax.annotation.Nonnull;
-
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionResult;
 import com.intellij.execution.configurations.RunProfile;
@@ -28,10 +26,12 @@ import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
-import consulo.ui.RequiredUIAccess;
+import consulo.ui.annotation.RequiredUIAccess;
 import consulo.unity3d.editor.UnityEditorCommunication;
 import consulo.unity3d.run.Unity3dAttachRunner;
 import consulo.unity3d.run.debugger.UnityProcess;
+
+import javax.annotation.Nonnull;
 
 /**
  * @author VISTALL

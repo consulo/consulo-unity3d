@@ -16,25 +16,20 @@
 
 package consulo.unity3d.shaderlab.lang.psi.stub.elementType;
 
-import java.io.IOException;
-
-import javax.annotation.Nonnull;
-
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.stubs.IStubElementType;
-import com.intellij.psi.stubs.IndexSink;
-import com.intellij.psi.stubs.StubElement;
-import com.intellij.psi.stubs.StubInputStream;
-import com.intellij.psi.stubs.StubOutputStream;
+import com.intellij.psi.stubs.*;
 import com.intellij.util.io.StringRef;
-import consulo.annotations.RequiredReadAction;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.psi.tree.IElementTypeAsPsiFactory;
 import consulo.unity3d.shaderlab.lang.ShaderLabLanguage;
 import consulo.unity3d.shaderlab.lang.psi.ShaderDef;
 import consulo.unity3d.shaderlab.lang.psi.impl.ShaderDefImpl;
 import consulo.unity3d.shaderlab.lang.psi.stub.ShaderDefStub;
 import consulo.unity3d.shaderlab.lang.psi.stub.index.ShaderDefIndex;
+
+import javax.annotation.Nonnull;
+import java.io.IOException;
 
 /**
  * @author VISTALL

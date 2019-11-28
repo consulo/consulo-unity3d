@@ -16,16 +16,13 @@
 
 package consulo.unity3d.unityscript.lang.impl.csharp;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import com.intellij.lang.Language;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.JSSourceElement;
 import com.intellij.openapi.util.Key;
 import com.intellij.psi.PsiElement;
-import consulo.annotations.RequiredReadAction;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.csharp.lang.psi.ToNativeElementTransformer;
 import consulo.csharp.lang.psi.impl.light.builder.CSharpLightMethodDeclarationBuilder;
 import consulo.csharp.lang.psi.impl.light.builder.CSharpLightTypeDeclarationBuilder;
@@ -35,6 +32,9 @@ import consulo.dotnet.psi.DotNetModifier;
 import consulo.javascript.lang.JavaScriptLanguage;
 import consulo.unity3d.Unity3dTypes;
 import consulo.unity3d.unityscript.lang.impl.UnityScriptDotNetTypeDeclaration;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * @author VISTALL

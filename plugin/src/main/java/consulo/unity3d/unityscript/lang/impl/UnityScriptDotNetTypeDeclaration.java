@@ -16,28 +16,22 @@
 
 package consulo.unity3d.unityscript.lang.impl;
 
-import org.jetbrains.annotations.NonNls;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import com.intellij.lang.javascript.JavaScriptFileType;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.light.LightElement;
 import com.intellij.util.IncorrectOperationException;
-import consulo.annotations.RequiredReadAction;
-import consulo.annotations.RequiredWriteAction;
+import consulo.annotation.access.RequiredReadAction;
+import consulo.annotation.access.RequiredWriteAction;
 import consulo.csharp.lang.psi.impl.source.resolve.type.CSharpTypeRefByQName;
-import consulo.dotnet.psi.DotNetGenericParameter;
-import consulo.dotnet.psi.DotNetGenericParameterList;
-import consulo.dotnet.psi.DotNetInheritUtil;
-import consulo.dotnet.psi.DotNetModifier;
-import consulo.dotnet.psi.DotNetModifierList;
-import consulo.dotnet.psi.DotNetNamedElement;
-import consulo.dotnet.psi.DotNetTypeDeclaration;
-import consulo.dotnet.psi.DotNetTypeList;
+import consulo.dotnet.psi.*;
 import consulo.dotnet.resolve.DotNetTypeRef;
 import consulo.unity3d.Unity3dTypes;
+import org.jetbrains.annotations.NonNls;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * @author VISTALL

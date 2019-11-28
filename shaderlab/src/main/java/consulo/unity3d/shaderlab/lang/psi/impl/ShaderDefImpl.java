@@ -16,15 +16,6 @@
 
 package consulo.unity3d.shaderlab.lang.psi.impl;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import javax.annotation.Nonnull;
-
-import org.jetbrains.annotations.NonNls;
-
-import javax.annotation.Nullable;
 import com.intellij.extapi.psi.StubBasedPsiElementBase;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
@@ -32,17 +23,20 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.StubBasedPsiElement;
 import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.util.IncorrectOperationException;
-import consulo.annotations.RequiredReadAction;
-import consulo.annotations.RequiredWriteAction;
+import consulo.annotation.access.RequiredReadAction;
+import consulo.annotation.access.RequiredWriteAction;
 import consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabRole;
 import consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabRoles;
-import consulo.unity3d.shaderlab.lang.psi.ShaderDef;
-import consulo.unity3d.shaderlab.lang.psi.ShaderLabTokens;
-import consulo.unity3d.shaderlab.lang.psi.ShaderProperty;
-import consulo.unity3d.shaderlab.lang.psi.ShaderPropertyList;
-import consulo.unity3d.shaderlab.lang.psi.SharpLabElementVisitor;
+import consulo.unity3d.shaderlab.lang.psi.*;
 import consulo.unity3d.shaderlab.lang.psi.light.LightShaderProperty;
 import consulo.unity3d.shaderlab.lang.psi.stub.ShaderDefStub;
+import org.jetbrains.annotations.NonNls;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author VISTALL

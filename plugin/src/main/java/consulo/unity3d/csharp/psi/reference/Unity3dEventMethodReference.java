@@ -16,11 +16,6 @@
 
 package consulo.unity3d.csharp.psi.reference;
 
-import java.util.Set;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.util.text.StringUtil;
@@ -30,7 +25,7 @@ import com.intellij.psi.ResolveState;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.containers.ArrayListSet;
-import consulo.annotations.RequiredReadAction;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.csharp.lang.psi.CSharpMethodDeclaration;
 import consulo.csharp.lang.psi.CSharpReferenceExpression;
 import consulo.csharp.lang.psi.CSharpReferenceWithValidation;
@@ -56,6 +51,10 @@ import consulo.dotnet.resolve.DotNetTypeRef;
 import consulo.dotnet.resolve.DotNetTypeResolveResult;
 import consulo.ui.image.Image;
 import consulo.unity3d.Unity3dTypes;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.Set;
 
 /**
  * @author VISTALL

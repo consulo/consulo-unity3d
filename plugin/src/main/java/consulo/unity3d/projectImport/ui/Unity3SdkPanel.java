@@ -27,7 +27,7 @@ import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Conditions;
 import com.intellij.ui.components.panels.HorizontalLayout;
 import consulo.roots.ui.configuration.SdkComboBox;
-import consulo.ui.RequiredUIAccess;
+import consulo.ui.annotation.RequiredUIAccess;
 import consulo.unity3d.bundle.Unity3dBundleType;
 import consulo.unity3d.projectImport.UnityModuleImportContext;
 

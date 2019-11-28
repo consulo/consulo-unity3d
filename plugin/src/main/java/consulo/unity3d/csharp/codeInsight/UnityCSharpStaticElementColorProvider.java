@@ -16,32 +16,16 @@
 
 package consulo.unity3d.csharp.codeInsight;
 
-import gnu.trove.THashMap;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import com.intellij.openapi.editor.ElementColorProvider;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveResult;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ObjectUtil;
-import consulo.annotations.RequiredReadAction;
-import consulo.annotations.RequiredWriteAction;
+import consulo.annotation.access.RequiredReadAction;
+import consulo.annotation.access.RequiredWriteAction;
 import consulo.csharp.lang.evaluator.ConstantExpressionEvaluator;
-import consulo.csharp.lang.psi.CSharpCallArgument;
-import consulo.csharp.lang.psi.CSharpConstructorDeclaration;
-import consulo.csharp.lang.psi.CSharpFileFactory;
-import consulo.csharp.lang.psi.CSharpNewExpression;
-import consulo.csharp.lang.psi.CSharpReferenceExpression;
-import consulo.csharp.lang.psi.CSharpTokens;
-import consulo.csharp.lang.psi.CSharpTypeDeclaration;
-import consulo.csharp.lang.psi.CSharpUserType;
+import consulo.csharp.lang.psi.*;
 import consulo.csharp.lang.psi.impl.source.resolve.MethodResolveResult;
 import consulo.csharp.lang.psi.impl.source.resolve.methodResolving.MethodResolvePriorityInfo;
 import consulo.csharp.lang.psi.impl.source.resolve.methodResolving.arguments.NCallArgument;
@@ -49,10 +33,17 @@ import consulo.csharp.lang.psi.impl.source.resolve.util.CSharpResolveUtil;
 import consulo.dotnet.psi.DotNetExpression;
 import consulo.dotnet.psi.DotNetType;
 import consulo.dotnet.psi.DotNetVariable;
+import consulo.language.editor.ElementColorProvider;
 import consulo.ui.shared.ColorValue;
 import consulo.ui.shared.RGBColor;
 import consulo.ui.style.StandardColors;
 import consulo.unity3d.Unity3dTypes;
+import gnu.trove.THashMap;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author VISTALL

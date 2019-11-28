@@ -16,14 +16,6 @@
 
 package consulo.unity3d;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import javax.annotation.Nonnull;
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.errorTreeView.NewErrorTreeViewPanel;
 import com.intellij.ide.util.PropertiesComponent;
@@ -47,11 +39,18 @@ import com.intellij.ui.content.MessageView;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.MessageCategory;
 import com.intellij.util.ui.UIUtil;
-import consulo.ui.RequiredUIAccess;
 import consulo.dotnet.compiler.DotNetCompilerMessage;
+import consulo.ui.annotation.RequiredUIAccess;
 import consulo.unity3d.console.Unity3dConsoleManager;
 import consulo.unity3d.jsonApi.UnityLogParser;
 import consulo.unity3d.jsonApi.UnityLogPostHandlerRequest;
+
+import javax.annotation.Nonnull;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @author VISTALL

@@ -16,16 +16,16 @@
 
 package consulo.unity3d.scene.reference;
 
-import javax.annotation.Nonnull;
-
-import org.jetbrains.yaml.psi.YAMLKeyValue;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.PsiReference;
 import com.intellij.util.IncorrectOperationException;
-import consulo.annotations.RequiredReadAction;
-import consulo.annotations.RequiredWriteAction;
+import consulo.annotation.access.RequiredReadAction;
+import consulo.annotation.access.RequiredWriteAction;
+import org.jetbrains.yaml.psi.YAMLKeyValue;
+
+import javax.annotation.Nonnull;
 
 /**
  * @author VISTALL

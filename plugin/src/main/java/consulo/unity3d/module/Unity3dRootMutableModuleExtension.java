@@ -16,17 +16,17 @@
 
 package consulo.unity3d.module;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.swing.JComponent;
-
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.Comparing;
-import consulo.ui.RequiredUIAccess;
 import consulo.dotnet.module.extension.DotNetSimpleMutableModuleExtension;
 import consulo.module.extension.MutableModuleInheritableNamedPointer;
 import consulo.roots.ModuleRootLayer;
+import consulo.ui.annotation.RequiredUIAccess;
 import consulo.unity3d.module.ui.UnityConfigurationPanel;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.swing.*;
 
 /**
  * @author VISTALL

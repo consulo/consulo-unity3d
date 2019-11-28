@@ -16,30 +16,13 @@
 
 package consulo.unity3d.scene;
 
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
-import org.jetbrains.yaml.psi.YAMLFile;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.LowMemoryWatcher;
-import com.intellij.openapi.vfs.VfsUtilCore;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileCopyEvent;
-import com.intellij.openapi.vfs.VirtualFileEvent;
-import com.intellij.openapi.vfs.VirtualFileListener;
-import com.intellij.openapi.vfs.VirtualFileManager;
-import com.intellij.openapi.vfs.VirtualFileMoveEvent;
-import com.intellij.openapi.vfs.VirtualFilePropertyEvent;
+import com.intellij.openapi.vfs.*;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -48,11 +31,20 @@ import com.intellij.util.CommonProcessors;
 import com.intellij.util.ObjectUtil;
 import com.intellij.util.containers.MultiMap;
 import com.intellij.util.indexing.FileBasedIndex;
-import consulo.annotations.RequiredReadAction;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.unity3d.Unity3dMetaFileType;
 import consulo.unity3d.scene.index.Unity3dMetaIndexExtension;
 import consulo.unity3d.scene.index.Unity3dYMLAsset;
 import consulo.unity3d.scene.index.Unity3dYMLAssetIndexExtension;
+import org.jetbrains.yaml.psi.YAMLFile;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author VISTALL

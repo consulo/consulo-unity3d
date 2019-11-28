@@ -16,15 +16,15 @@
 
 package consulo.unity3d.unityscript.module.extension;
 
-import javax.swing.JComponent;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import com.intellij.openapi.projectRoots.Sdk;
-import consulo.ui.RequiredUIAccess;
 import consulo.module.extension.MutableModuleExtensionWithSdk;
 import consulo.module.extension.MutableModuleInheritableNamedPointer;
 import consulo.roots.ModuleRootLayer;
+import consulo.ui.annotation.RequiredUIAccess;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.swing.*;
 
 /**
  * @author VISTALL

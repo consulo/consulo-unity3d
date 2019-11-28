@@ -16,14 +16,6 @@
 
 package consulo.unity3d.csharp.codeInsight;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Nonnull;
-import javax.swing.JList;
-
 import com.intellij.codeInsight.daemon.GutterIconNavigationHandler;
 import com.intellij.codeInsight.daemon.impl.PsiElementListNavigator;
 import com.intellij.icons.AllIcons;
@@ -44,8 +36,7 @@ import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
 import com.intellij.util.containers.MultiMap;
-import consulo.ui.RequiredUIAccess;
-import consulo.annotations.RequiredReadAction;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.csharp.ide.highlight.CSharpHighlightKey;
 import consulo.csharp.ide.lineMarkerProvider.CSharpLineMarkerUtil;
 import consulo.csharp.lang.psi.CSharpEnumConstantDeclaration;
@@ -56,6 +47,7 @@ import consulo.dotnet.DotNetTypes;
 import consulo.dotnet.psi.DotNetTypeDeclaration;
 import consulo.dotnet.resolve.DotNetTypeRef;
 import consulo.dotnet.util.ArrayUtil2;
+import consulo.ui.annotation.RequiredUIAccess;
 import consulo.ui.image.Image;
 import consulo.unity3d.Unity3dIcons;
 import consulo.unity3d.scene.Unity3dAssetUtil;
@@ -64,6 +56,13 @@ import consulo.unity3d.scene.index.Unity3dYMLAsset;
 import consulo.unity3d.scene.index.Unity3dYMLAssetIndexExtension;
 import consulo.unity3d.scene.index.Unity3dYMLField;
 import consulo.unity3d.shaderlab.UnityShaderIcons;
+
+import javax.annotation.Nonnull;
+import javax.swing.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author VISTALL

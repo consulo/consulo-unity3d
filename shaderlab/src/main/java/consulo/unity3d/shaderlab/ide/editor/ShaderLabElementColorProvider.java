@@ -16,29 +16,23 @@
 
 package consulo.unity3d.shaderlab.ide.editor;
 
-import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import com.intellij.openapi.editor.ElementColorProvider;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFileFactory;
-import consulo.annotations.RequiredReadAction;
-import consulo.annotations.RequiredWriteAction;
+import consulo.annotation.access.RequiredReadAction;
+import consulo.annotation.access.RequiredWriteAction;
+import consulo.language.editor.ElementColorProvider;
 import consulo.ui.shared.ColorValue;
 import consulo.ui.shared.RGBColor;
 import consulo.unity3d.shaderlab.lang.ShaderLabFileType;
 import consulo.unity3d.shaderlab.lang.ShaderLabPropertyType;
 import consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabColorRole;
 import consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabRole;
-import consulo.unity3d.shaderlab.lang.psi.ShaderLabFile;
-import consulo.unity3d.shaderlab.lang.psi.ShaderLabTokens;
-import consulo.unity3d.shaderlab.lang.psi.ShaderProperty;
-import consulo.unity3d.shaderlab.lang.psi.ShaderPropertyType;
-import consulo.unity3d.shaderlab.lang.psi.ShaderPropertyValue;
-import consulo.unity3d.shaderlab.lang.psi.ShaderSimpleValue;
+import consulo.unity3d.shaderlab.lang.psi.*;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.List;
 
 /**
  * @author VISTALL

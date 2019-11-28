@@ -16,19 +16,19 @@
 
 package consulo.unity3d.csharp.codeInsight.inspection;
 
-import javax.annotation.Nonnull;
-
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import consulo.annotations.RequiredReadAction;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.csharp.lang.psi.CSharpElementVisitor;
 import consulo.csharp.lang.psi.CSharpMethodDeclaration;
 import consulo.unity3d.Unity3dBundle;
 import consulo.unity3d.csharp.UnityFunctionManager;
 import consulo.unity3d.csharp.codeInsight.UnityEventCSharpMethodLineMarkerProvider;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
+
+import javax.annotation.Nonnull;
 
 /**
  * @author VISTALL

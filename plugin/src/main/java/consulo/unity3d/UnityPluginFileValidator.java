@@ -16,15 +16,6 @@
 
 package consulo.unity3d;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
 import com.intellij.ide.BrowserUtil;
 import com.intellij.ide.plugins.PluginManager;
 import com.intellij.notification.Notification;
@@ -55,7 +46,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Consumer;
 import com.intellij.util.PathUtil;
 import com.intellij.util.SmartList;
-import consulo.annotations.RequiredReadAction;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.dotnet.dll.DotNetModuleFileType;
 import consulo.roots.ModifiableModuleRootLayer;
 import consulo.roots.ModuleRootLayer;
@@ -65,6 +56,14 @@ import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import consulo.unity3d.module.Unity3dRootModuleExtension;
 import consulo.unity3d.projectImport.Unity3dProjectImportUtil;
 import consulo.vfs.util.ArchiveVfsUtil;
+
+import javax.annotation.Nonnull;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author VISTALL

@@ -16,24 +16,23 @@
 
 package consulo.unity3d.unityscript.lang.impl;
 
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.Set;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import com.intellij.lang.Language;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
-import consulo.annotations.RequiredReadAction;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.dotnet.lang.psi.impl.BaseDotNetNamespaceAsElement;
 import consulo.dotnet.lang.psi.impl.DotNetNamespaceCacheManager;
 import consulo.dotnet.resolve.impl.IndexBasedDotNetPsiSearcher;
 import consulo.unity3d.unityscript.index.UnityScriptFileByNameIndex;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  * @author VISTALL

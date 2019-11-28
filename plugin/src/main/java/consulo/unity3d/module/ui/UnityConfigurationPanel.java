@@ -16,12 +16,6 @@
 
 package consulo.unity3d.module.ui;
 
-import java.util.List;
-
-import javax.swing.JPanel;
-import javax.swing.event.DocumentEvent;
-
-import javax.annotation.Nonnull;
 import com.intellij.openapi.ui.InputValidator;
 import com.intellij.openapi.ui.LabeledComponent;
 import com.intellij.openapi.ui.Messages;
@@ -33,10 +27,15 @@ import com.intellij.ui.ToolbarDecorator;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBList;
 import com.intellij.ui.components.JBTextField;
-import consulo.ui.RequiredUIAccess;
 import consulo.dotnet.DotNetBundle;
 import consulo.extension.ui.ModuleExtensionSdkBoxBuilder;
+import consulo.ui.annotation.RequiredUIAccess;
 import consulo.unity3d.module.Unity3dRootMutableModuleExtension;
+
+import javax.annotation.Nonnull;
+import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import java.util.List;
 
 /**
  * @author VISTALL

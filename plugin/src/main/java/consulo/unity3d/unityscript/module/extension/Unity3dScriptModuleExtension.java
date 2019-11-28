@@ -16,12 +16,9 @@
 
 package consulo.unity3d.unityscript.module.extension;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkType;
-import consulo.annotations.RequiredReadAction;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.javascript.module.extension.JavaScriptModuleExtension;
 import consulo.lang.LanguageVersion;
 import consulo.module.extension.ModuleInheritableNamedPointer;
@@ -31,6 +28,9 @@ import consulo.unity3d.module.EmptyModuleInheritableNamedPointer;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import consulo.unity3d.module.Unity3dRootModuleExtension;
 import consulo.unity3d.unityscript.lang.UnityScriptLanguageVersion;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * @author VISTALL
