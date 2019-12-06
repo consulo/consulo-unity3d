@@ -24,7 +24,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootEvent;
 import com.intellij.openapi.roots.ModuleRootListener;
 import com.intellij.openapi.roots.ProjectFileIndex;
-import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.EditorNotificationPanel;
 import com.intellij.ui.EditorNotifications;
@@ -47,8 +46,6 @@ import javax.inject.Inject;
  */
 public class FileIsNotAttachedProvider implements EditorNotificationProvider<EditorNotificationPanel>
 {
-	private static final Key<EditorNotificationPanel> KEY = Key.create("FileIsNotAttachedProvider");
-
 	private final Project myProject;
 
 	@Inject
@@ -64,13 +61,6 @@ public class FileIsNotAttachedProvider implements EditorNotificationProvider<Edi
 			}
 		});
 		myProject.getMessageBus().connect().subscribe(ModuleExtension.CHANGE_TOPIC, (oldExtension, newExtension) -> notifications.updateAllNotifications());
-	}
-
-	@Nonnull
-	@Override
-	public Key<EditorNotificationPanel> getKey()
-	{
-		return KEY;
 	}
 
 	@RequiredReadAction

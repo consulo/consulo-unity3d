@@ -23,7 +23,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootEvent;
 import com.intellij.openapi.roots.ModuleRootListener;
 import com.intellij.openapi.roots.ui.configuration.ProjectSettingsService;
-import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
@@ -47,8 +46,6 @@ import javax.inject.Inject;
  */
 public class SetupUnitySDKProvider implements EditorNotificationProvider<EditorNotificationPanel>
 {
-	private static final Key<EditorNotificationPanel> KEY = Key.create("setup.unity.sdk.notifier");
-
 	private final Project myProject;
 
 	@Inject
@@ -64,13 +61,6 @@ public class SetupUnitySDKProvider implements EditorNotificationProvider<EditorN
 			}
 		});
 		myProject.getMessageBus().connect().subscribe(ModuleExtension.CHANGE_TOPIC, (oldExtension, newExtension) -> notifications.updateAllNotifications());
-	}
-
-	@Nonnull
-	@Override
-	public Key<EditorNotificationPanel> getKey()
-	{
-		return KEY;
 	}
 
 	@Override

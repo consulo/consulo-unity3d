@@ -14,7 +14,7 @@
   - limitations under the License.
   -->
 
-<idea-plugin>
+<consulo-plugin>
 	<extensions defaultExtensionNs="com.intellij">
 		<completion.contributor language="CG" implementationClass="consulo.cgshader.completion.CGCompletionContributor" />
 
@@ -28,4 +28,4 @@
 
 		<lang.braceMatcher language="CG" implementationClass="consulo.cgshader.CGBraceMatcher" />
 	</extensions>
-</idea-plugin>
+</consulo-plugin>

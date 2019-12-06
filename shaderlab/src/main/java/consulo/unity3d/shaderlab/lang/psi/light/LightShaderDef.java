@@ -17,7 +17,6 @@
 package consulo.unity3d.shaderlab.lang.psi.light;
 
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiManager;
@@ -30,6 +29,7 @@ import consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabRole;
 import consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabRoles;
 import consulo.unity3d.shaderlab.lang.psi.ShaderDef;
 import consulo.unity3d.shaderlab.lang.psi.ShaderProperty;
+import consulo.util.dataholder.Key;
 import org.jetbrains.annotations.NonNls;
 
 import javax.annotation.Nonnull;

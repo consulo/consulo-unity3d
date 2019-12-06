@@ -14,7 +14,7 @@
   - limitations under the License.
   -->
 
-<idea-plugin>
+<consulo-plugin>
 	<extensions defaultExtensionNs="com.intellij">
 		<fileTypeFactory implementation="consulo.unity3d.shaderlab.lang.ShaderLabFileTypeFactory"/>
 
@@ -38,4 +38,4 @@
 
 		<multiHostInjector forClass="consulo.unity3d.shaderlab.lang.psi.ShaderCGScript" implementationClass="consulo.unity3d.shaderlab.ide.CGLanguageInjection"/>
 	</extensions>
-</idea-plugin>
+</consulo-plugin>

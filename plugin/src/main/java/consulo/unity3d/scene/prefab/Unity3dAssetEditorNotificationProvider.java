@@ -19,7 +19,6 @@ package consulo.unity3d.scene.prefab;
 import com.intellij.find.FindManager;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
@@ -43,21 +42,12 @@ import javax.inject.Inject;
  */
 public class Unity3dAssetEditorNotificationProvider implements EditorNotificationProvider<EditorNotificationPanel>
 {
-	private static final Key<EditorNotificationPanel> ourKey = Key.create("Unity3dAssetEditorNotificationProvider");
-
 	private final Project myProject;
 
 	@Inject
 	public Unity3dAssetEditorNotificationProvider(Project project)
 	{
 		myProject = project;
-	}
-
-	@Nonnull
-	@Override
-	public Key<EditorNotificationPanel> getKey()
-	{
-		return ourKey;
 	}
 
 	@RequiredReadAction

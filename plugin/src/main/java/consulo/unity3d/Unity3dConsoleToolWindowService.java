@@ -27,7 +27,6 @@ import com.intellij.openapi.actionSystem.ToggleAction;
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupManager;
-import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.problems.Problem;
@@ -44,6 +43,7 @@ import consulo.ui.annotation.RequiredUIAccess;
 import consulo.unity3d.console.Unity3dConsoleManager;
 import consulo.unity3d.jsonApi.UnityLogParser;
 import consulo.unity3d.jsonApi.UnityLogPostHandlerRequest;
+import consulo.util.dataholder.Key;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;

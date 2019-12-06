@@ -23,10 +23,10 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.actionSystem.ToggleAction;
-import com.intellij.openapi.util.KeyWithDefaultValue;
 import consulo.ide.projectView.impl.ProjectViewPaneOptionProvider;
 import consulo.ui.annotation.RequiredUIAccess;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
+import consulo.util.dataholder.KeyWithDefaultValue;
 
 import javax.annotation.Nonnull;
 
@@ -36,14 +36,7 @@ import javax.annotation.Nonnull;
  */
 public class Unity3dShowMetaFileProjectViewPaneOptionProvider extends ProjectViewPaneOptionProvider.BoolValue
 {
-	public static final KeyWithDefaultValue<Boolean> KEY = new KeyWithDefaultValue<Boolean>("show-meta-files")
-	{
-		@Override
-		public Boolean getDefaultValue()
-		{
-			return Boolean.FALSE;
-		}
-	};
+	public static final KeyWithDefaultValue<Boolean> KEY = KeyWithDefaultValue.create("show-meta-files", Boolean.FALSE);
 
 	public final class ShowMetaFilesAction extends ToggleAction
 	{
@@ -79,7 +72,7 @@ public class Unity3dShowMetaFileProjectViewPaneOptionProvider extends ProjectVie
 		{
 			super.update(e);
 			final Presentation presentation = e.getPresentation();
-			final ProjectView projectView = ProjectView.getInstance(myPane.getProject());
+			final ProjectView projectView = ProjectView.getInstance(e.getProject());
 			presentation.setVisible(projectView.getCurrentProjectViewPane() == myPane && Unity3dModuleExtensionUtil.getRootModuleExtension(myPane.getProject()) != null);
 		}
 	}

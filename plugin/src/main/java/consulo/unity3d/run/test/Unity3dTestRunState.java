@@ -40,12 +40,12 @@ import com.intellij.execution.testframework.sm.runner.ui.SMTestRunnerResultsForm
 import com.intellij.execution.testframework.sm.runner.ui.statistics.StatisticsPanel;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.util.Key;
-import com.intellij.openapi.util.Ref;
 import com.intellij.xdebugger.DefaultDebugProcessHandler;
 import consulo.ui.annotation.RequiredUIAccess;
 import consulo.unity3d.editor.UnityEditorCommunication;
 import consulo.unity3d.editor.UnityRunTest;
+import consulo.util.dataholder.Key;
+import consulo.util.lang.ref.SimpleReference;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -81,7 +81,7 @@ public class Unity3dTestRunState implements RunProfileState
 
 		final SMTRunnerConsoleView consoleView = new SMTRunnerConsoleView(testConsoleProperties, splitterPropertyName);
 
-		final Ref<UUID> ref = Ref.create();
+		final SimpleReference<UUID> ref = SimpleReference.create();
 
 		consoleView.addAttachToProcessListener(new AttachToProcessListener()
 		{

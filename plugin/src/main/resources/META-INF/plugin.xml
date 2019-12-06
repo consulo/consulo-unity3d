@@ -14,7 +14,7 @@
   - limitations under the License.
   -->
 
-<idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
+<consulo-plugin>
 	<id>consulo.unity3d</id>
 	<name>Unity3D</name>
 	<vendor>consulo.io</vendor>
@@ -28,13 +28,9 @@
 	<depends>consulo.nunit</depends>
 	<depends>org.jetbrains.plugins.yaml</depends>
 
-	<xi:include href="/META-INF/SharderLab.xml" xpointer="xpointer(/idea-plugin/*)">
-		<xi:fallback/>
-	</xi:include>
+	<import path="/META-INF/SharderLab.xml" />
 
-	<xi:include href="/META-INF/CGShader.xml" xpointer="xpointer(/idea-plugin/*)">
-		<xi:fallback/>
-	</xi:include>
+	<import path="/META-INF/CGShader.xml" />
 
 	<actions>
 		<group id="Unity3dProjectGroup">
@@ -218,4 +214,4 @@
 		<projectService serviceImplementation="consulo.unity3d.projectImport.change.Unity3dProjectChangeListener" lazy="false" />
 		<projectService serviceImplementation="consulo.unity3d.Unity3dConsoleToolWindowService" lazy="false" />
 	</extensions>
-</idea-plugin>
+</consulo-plugin>

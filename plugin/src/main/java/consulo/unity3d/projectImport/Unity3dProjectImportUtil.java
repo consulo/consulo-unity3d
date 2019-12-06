@@ -37,7 +37,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.libraries.Library;
-import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.Version;
 import com.intellij.openapi.util.io.FileUtil;
@@ -88,6 +87,7 @@ import consulo.unity3d.packages.orderEntry.Unity3dPackageOrderEntry;
 import consulo.unity3d.run.Unity3dAttachApplicationType;
 import consulo.unity3d.run.Unity3dAttachConfiguration;
 import consulo.unity3d.scene.Unity3dYMLAssetFileType;
+import consulo.util.dataholder.Key;
 import consulo.vfs.util.ArchiveVfsUtil;
 import org.jetbrains.yaml.psi.*;
 

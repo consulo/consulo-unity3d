@@ -16,10 +16,10 @@
 
 package consulo.unity3d.run.before;
 
-import javax.annotation.Nonnull;
-
 import com.intellij.execution.BeforeRunTask;
-import com.intellij.openapi.util.Key;
+import consulo.util.dataholder.Key;
+
+import javax.annotation.Nonnull;
 
 /**
  * @author VISTALL
