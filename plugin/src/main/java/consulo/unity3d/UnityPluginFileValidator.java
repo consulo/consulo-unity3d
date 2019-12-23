@@ -17,7 +17,6 @@
 package consulo.unity3d;
 
 import com.intellij.ide.BrowserUtil;
-import com.intellij.ide.plugins.PluginManager;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationDisplayType;
 import com.intellij.notification.NotificationGroup;
@@ -25,7 +24,6 @@ import com.intellij.notification.NotificationType;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.command.WriteCommandAction;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.progress.Task;
@@ -43,14 +41,20 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.Consumer;
 import com.intellij.util.PathUtil;
 import com.intellij.util.SmartList;
 import consulo.annotation.access.RequiredReadAction;
+import consulo.container.plugin.PluginManager;
 import consulo.dotnet.dll.DotNetModuleFileType;
+import consulo.dotnet.psi.DotNetTypeDeclaration;
+import consulo.dotnet.resolve.DotNetPsiSearcher;
+import consulo.logging.Logger;
 import consulo.roots.ModifiableModuleRootLayer;
 import consulo.roots.ModuleRootLayer;
 import consulo.roots.types.BinariesOrderRootType;
+import consulo.ui.UIAccess;
 import consulo.unity3d.bundle.Unity3dDefineByVersion;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import consulo.unity3d.module.Unity3dRootModuleExtension;
@@ -88,7 +92,7 @@ public class UnityPluginFileValidator
 		application.getMessageBus().connect(project).subscribe(ProjectManager.TOPIC, new ProjectManagerListener()
 		{
 			@Override
-			public void projectOpened(Project target)
+			public void projectOpened(Project target, UIAccess uiAccess)
 			{
 				if(project == target)
 				{
@@ -129,6 +133,12 @@ public class UnityPluginFileValidator
 
 		VirtualFile baseDir = project.getBaseDir();
 		if(baseDir == null)
+		{
+			return;
+		}
+
+		DotNetTypeDeclaration consuloIntegration = DotNetPsiSearcher.getInstance(project).findType("Consulo.Internal.UnityEditor.ConsuloIntegration", GlobalSearchScope.allScope(project));
+		if(consuloIntegration != null)
 		{
 			return;
 		}
