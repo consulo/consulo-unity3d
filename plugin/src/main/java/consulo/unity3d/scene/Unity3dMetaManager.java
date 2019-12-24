@@ -22,7 +22,11 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.LowMemoryWatcher;
-import com.intellij.openapi.vfs.*;
+import com.intellij.openapi.vfs.AsyncFileListener;
+import com.intellij.openapi.vfs.VfsUtilCore;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -66,48 +70,46 @@ public class Unity3dMetaManager implements Disposable
 	private Map<String, MultiMap<VirtualFile, Unity3dYMLAsset>> myAttaches = new ConcurrentHashMap<>();
 
 	@Inject
-	public Unity3dMetaManager(Project project)
+	public Unity3dMetaManager(Project project, VirtualFileManager virtualFileManager)
 	{
 		myProject = project;
 		myProject.getMessageBus().connect().subscribe(PsiModificationTracker.TOPIC, () -> myGUIDs.clear());
-		VirtualFileManager.getInstance().addVirtualFileListener(new VirtualFileListener()
+		virtualFileManager.addAsyncFileListener(new AsyncFileListener()
 		{
+			@Nonnull
 			@Override
-			public void fileMoved(@Nonnull VirtualFileMoveEvent event)
+			public ChangeApplier prepareChange(@Nonnull List<? extends VFileEvent> list)
 			{
-				clearIfNeed(event.getFile());
-			}
-
-			@Override
-			public void fileDeleted(@Nonnull VirtualFileEvent event)
-			{
-				clearIfNeed(event.getFile());
-			}
-
-			@Override
-			public void contentsChanged(@Nonnull VirtualFileEvent event)
-			{
-				clearIfNeed(event.getFile());
-			}
-
-			@Override
-			public void fileCopied(@Nonnull VirtualFileCopyEvent event)
-			{
-				clearIfNeed(event.getFile());
-			}
-
-			@Override
-			public void propertyChanged(@Nonnull VirtualFilePropertyEvent event)
-			{
-				clearIfNeed(event.getFile());
-			}
-
-			private void clearIfNeed(@Nonnull VirtualFile virtualFile)
-			{
-				if(virtualFile.getFileType() == Unity3dMetaFileType.INSTANCE)
+				return new ChangeApplier()
 				{
-					myAttaches.clear();
-				}
+					@Override
+					public void afterVfsChange()
+					{
+						for(VFileEvent vFileEvent : list)
+						{
+							VirtualFile file = vFileEvent.getFile();
+							if(file == null)
+							{
+								continue;
+							}
+
+							if(clearIfNeed(file))
+							{
+								break;
+							}
+						}
+					}
+
+					private boolean clearIfNeed(@Nonnull VirtualFile virtualFile)
+					{
+						if(virtualFile.getFileType() == Unity3dMetaFileType.INSTANCE)
+						{
+							myAttaches.clear();
+							return true;
+						}
+						return false;
+					}
+				};
 			}
 		}, this);
 

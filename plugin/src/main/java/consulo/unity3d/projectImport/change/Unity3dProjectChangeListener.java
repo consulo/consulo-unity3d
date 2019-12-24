@@ -20,7 +20,8 @@ import com.intellij.ProjectTopics;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.application.ApplicationNamesInfo;
+import com.intellij.openapi.application.Application;
+import com.intellij.openapi.application.ApplicationInfo;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
@@ -29,17 +30,25 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootEvent;
 import com.intellij.openapi.roots.ModuleRootListener;
 import com.intellij.openapi.startup.StartupManager;
-import com.intellij.openapi.vfs.*;
+import com.intellij.openapi.vfs.AsyncFileListener;
+import com.intellij.openapi.vfs.StandardFileSystems;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.openapi.vfs.newvfs.events.VFileCreateEvent;
+import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
+import com.intellij.openapi.vfs.newvfs.events.VFileMoveEvent;
 import com.intellij.openapi.vfs.pointers.VirtualFilePointer;
 import com.intellij.openapi.vfs.pointers.VirtualFilePointerManager;
 import com.intellij.util.concurrency.AppExecutorUtil;
 import com.intellij.util.ui.UIUtil;
 import consulo.annotation.access.RequiredReadAction;
+import consulo.ui.UIAccess;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import consulo.unity3d.module.Unity3dRootModuleExtension;
 import consulo.unity3d.projectImport.Unity3dProjectImportUtil;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.ArrayList;
@@ -56,7 +65,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @since 1/11/18
  */
 @Singleton
-public class Unity3dProjectChangeListener implements VirtualFileListener, Disposable
+public class Unity3dProjectChangeListener implements Disposable
 {
 	public static class DataBlock
 	{
@@ -76,7 +85,7 @@ public class Unity3dProjectChangeListener implements VirtualFileListener, Dispos
 	private final Set<FileType> mySourceFileTypes = new HashSet<>();
 
 	@Inject
-	public Unity3dProjectChangeListener(@Nonnull Project project, @Nonnull StartupManager startupManager)
+	public Unity3dProjectChangeListener(@Nonnull Project project, @Nonnull StartupManager startupManager, @Nonnull VirtualFileManager virtualFileManager)
 	{
 		myProject = project;
 
@@ -85,7 +94,7 @@ public class Unity3dProjectChangeListener implements VirtualFileListener, Dispos
 			return;
 		}
 
-		for(Unity3dProjectSourceFileTypeFactory factory : Unity3dProjectSourceFileTypeFactory.EP_NAME.getExtensions())
+		for(Unity3dProjectSourceFileTypeFactory factory : Unity3dProjectSourceFileTypeFactory.EP_NAME.getExtensionList())
 		{
 			factory.registerFileTypes(mySourceFileTypes::add);
 		}
@@ -96,20 +105,51 @@ public class Unity3dProjectChangeListener implements VirtualFileListener, Dispos
 			@RequiredReadAction
 			public void rootsChanged(ModuleRootEvent event)
 			{
-				checkAndRunIfNeed();
+				checkAndRunIfNeed(Application.get().getLastUIAccess());
 			}
 		});
-
-		VirtualFileManager.getInstance().addVirtualFileListener(this, this);
 
 		myAssetsDirPointer = VirtualFilePointerManager.getInstance().create(StandardFileSystems.FILE_PROTOCOL_PREFIX + myProject.getPresentableUrl() + "/" + Unity3dProjectImportUtil
 				.ASSETS_DIRECTORY, this, null);
 
+		virtualFileManager.addAsyncFileListener(new AsyncFileListener()
+		{
+			@Nullable
+			@Override
+			public ChangeApplier prepareChange(@Nonnull List<? extends VFileEvent> list)
+			{
+				List<VFileEvent> addOrMove = new ArrayList<>();
+				for(VFileEvent vFileEvent : list)
+				{
+					if(vFileEvent instanceof VFileCreateEvent || vFileEvent instanceof VFileMoveEvent)
+					{
+						addOrMove.add(vFileEvent);
+					}
+				}
+				if(addOrMove.isEmpty())
+				{
+					return null;
+				}
+				return new ChangeApplier()
+				{
+					@Override
+					public void afterVfsChange()
+					{
+						for(VFileEvent vFileEvent : addOrMove)
+						{
+							VirtualFile file = vFileEvent.getFile();
+
+							handleChange(file);
+						}
+					}
+				};
+			}
+		}, this);
 		startupManager.registerPostStartupActivity(this::checkAndRunIfNeed);
 	}
 
 	@RequiredReadAction
-	private void checkAndRunIfNeed()
+	private void checkAndRunIfNeed(UIAccess uiAccess)
 	{
 		myUpdateCheckTask.cancel(false);
 		myUpdateCheckTask = CompletableFuture.completedFuture(null);
@@ -161,7 +201,7 @@ public class Unity3dProjectChangeListener implements VirtualFileListener, Dispos
 
 			if(needNotification)
 			{
-				new Notification("unity", ApplicationNamesInfo.getInstance().getProductName(), "Project structure changed<br><a href=\"#\">Rebuild project</a>", NotificationType.INFORMATION,
+				new Notification("unity", ApplicationInfo.getInstance().getName(), "Unity project structure changed.<br><a href=\"#\">Rebuild project</a>", NotificationType.INFORMATION,
 						(notification, hyperlinkEvent) ->
 				{
 					notification.hideBalloon();
@@ -178,19 +218,6 @@ public class Unity3dProjectChangeListener implements VirtualFileListener, Dispos
 		});
 	}
 
-	@Override
-	public void fileCreated(@Nonnull VirtualFileEvent event)
-	{
-		handleChange(event.getFile());
-	}
-
-	@Override
-	public void fileMoved(@Nonnull VirtualFileMoveEvent event)
-	{
-		handleChange(event.getFile());
-	}
-
-	@RequiredReadAction
 	private void handleChange(VirtualFile virtualFile)
 	{
 		if(!myActive.get())
