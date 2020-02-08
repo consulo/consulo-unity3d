@@ -16,6 +16,21 @@
 
 package consulo.unity3d.projectImport.change;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+
 import com.intellij.ProjectTopics;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
@@ -46,19 +61,6 @@ import consulo.ui.UIAccess;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import consulo.unity3d.module.Unity3dRootModuleExtension;
 import consulo.unity3d.projectImport.Unity3dProjectImportUtil;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @author VISTALL
@@ -139,7 +141,10 @@ public class Unity3dProjectChangeListener implements Disposable
 						{
 							VirtualFile file = vFileEvent.getFile();
 
-							handleChange(file);
+							if(file != null)
+							{
+								handleChange(file);
+							}
 						}
 					}
 				};
@@ -203,22 +208,22 @@ public class Unity3dProjectChangeListener implements Disposable
 			{
 				new Notification("unity", ApplicationInfo.getInstance().getName(), "Unity project structure changed.<br><a href=\"#\">Rebuild project</a>", NotificationType.INFORMATION,
 						(notification, hyperlinkEvent) ->
-				{
-					notification.hideBalloon();
+						{
+							notification.hideBalloon();
 
-					final Unity3dRootModuleExtension rootModuleExtension = Unity3dModuleExtensionUtil.getRootModuleExtension(myProject);
-					if(rootModuleExtension == null)
-					{
-						return;
-					}
+							final Unity3dRootModuleExtension rootModuleExtension = Unity3dModuleExtensionUtil.getRootModuleExtension(myProject);
+							if(rootModuleExtension == null)
+							{
+								return;
+							}
 
-					Unity3dProjectImportUtil.syncProjectStep1(myProject, rootModuleExtension.getSdk(), null, true);
-				}).notify(myProject);
+							Unity3dProjectImportUtil.syncProjectStep1(myProject, rootModuleExtension.getSdk(), null, true);
+						}).notify(myProject);
 			}
 		});
 	}
 
-	private void handleChange(VirtualFile virtualFile)
+	private void handleChange(@Nonnull VirtualFile virtualFile)
 	{
 		if(!myActive.get())
 		{
