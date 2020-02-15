@@ -27,8 +27,11 @@ import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ui.MessageCategory;
 import com.intellij.xdebugger.XDebugSession;
+import consulo.dotnet.debugger.nodes.logicView.DotNetLogicValueView;
+import consulo.dotnet.debugger.nodes.logicView.EnumerableDotNetLogicValueView;
 import consulo.dotnet.execution.DebugConnectionInfo;
 import consulo.dotnet.mono.debugger.MonoDebugProcess;
+import consulo.unity3d.Unity3dTypes;
 import consulo.unity3d.console.Unity3dConsoleManager;
 import consulo.unity3d.jsonApi.UnityLogPostHandlerRequest;
 
@@ -87,6 +90,21 @@ public class UnityDebugProcess extends MonoDebugProcess
 
 			view.print(builder.toString(), contentType);
 		}
+	}
+
+	@Nonnull
+	@Override
+	protected DotNetLogicValueView[] createLogicValueViews()
+	{
+		DotNetLogicValueView[] views = super.createLogicValueViews();
+		for(DotNetLogicValueView view : views)
+		{
+			if(view instanceof EnumerableDotNetLogicValueView)
+			{
+				((EnumerableDotNetLogicValueView) view).addIgnoredType(Unity3dTypes.UnityEngine.MonoBehaviour);
+			}
+		}
+		return views;
 	}
 
 	@Override

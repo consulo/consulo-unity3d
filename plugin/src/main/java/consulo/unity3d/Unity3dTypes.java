@@ -26,6 +26,7 @@ public interface Unity3dTypes
 	{
 		String Component = "UnityEngine.Component";
 		String MonoBehaviour = "UnityEngine.MonoBehaviour";
+		String Transform = "UnityEngine.Transform";
 		String Color = "UnityEngine.Color";
 		String Color32 = "UnityEngine.Color32";
 	}
