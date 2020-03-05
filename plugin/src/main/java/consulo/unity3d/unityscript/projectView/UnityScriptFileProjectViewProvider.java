@@ -16,10 +16,19 @@
 
 package consulo.unity3d.unityscript.projectView;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import javax.annotation.Nonnull;
+import javax.inject.Inject;
+
+
 import com.intellij.ide.projectView.TreeStructureProvider;
 import com.intellij.ide.projectView.ViewSettings;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.ide.util.treeView.AbstractTreeUi;
+import com.intellij.lang.javascript.JavaScriptFileType;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
@@ -32,12 +41,6 @@ import consulo.annotation.access.RequiredReadAction;
 import consulo.ui.annotation.RequiredUIAccess;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import consulo.unity3d.module.Unity3dRootModuleExtension;
-
-import javax.annotation.Nonnull;
-import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 /**
  * @author VISTALL
@@ -76,7 +79,7 @@ public class UnityScriptFileProjectViewProvider implements TreeStructureProvider
 			ProgressManager.checkCanceled();
 
 			Object value = child.getValue();
-			if(value instanceof JSFile)
+			if(value instanceof JSFile && ((JSFile) value).getFileType() == JavaScriptFileType.INSTANCE)
 			{
 				Module moduleForPsiElement = ModuleUtilCore.findModuleForPsiElement((PsiElement) value);
 				if(moduleForPsiElement != null)
