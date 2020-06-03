@@ -17,7 +17,7 @@
 package consulo.unity3d;
 
 import com.intellij.ProjectTopics;
-import com.intellij.openapi.Disposable;
+import consulo.disposer.Disposable;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;

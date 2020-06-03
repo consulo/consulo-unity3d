@@ -17,7 +17,6 @@
 package consulo.unity3d.run.debugger;
 
 
-import com.intellij.openapi.Disposable;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -25,6 +24,7 @@ import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.ThreeState;
 import com.intellij.util.concurrency.AppExecutorUtil;
+import consulo.disposer.Disposable;
 import consulo.ui.annotation.RequiredUIAccess;
 
 import javax.annotation.Nonnull;

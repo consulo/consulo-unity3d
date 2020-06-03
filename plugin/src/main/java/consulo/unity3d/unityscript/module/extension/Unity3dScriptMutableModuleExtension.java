@@ -16,15 +16,16 @@
 
 package consulo.unity3d.unityscript.module.extension;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.intellij.openapi.projectRoots.Sdk;
+import consulo.disposer.Disposable;
 import consulo.module.extension.MutableModuleExtensionWithSdk;
 import consulo.module.extension.MutableModuleInheritableNamedPointer;
 import consulo.roots.ModuleRootLayer;
+import consulo.ui.Component;
 import consulo.ui.annotation.RequiredUIAccess;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.swing.*;
 
 /**
  * @author VISTALL
@@ -47,7 +48,7 @@ public class Unity3dScriptMutableModuleExtension extends Unity3dScriptModuleExte
 	@RequiredUIAccess
 	@Nullable
 	@Override
-	public JComponent createConfigurablePanel(@Nonnull Runnable updateOnCheck)
+	public Component createConfigurationComponent(@Nonnull Disposable disposable, @Nonnull Runnable runnable)
 	{
 		return null;
 	}

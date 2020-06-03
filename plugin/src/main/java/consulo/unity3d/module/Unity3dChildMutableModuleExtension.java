@@ -16,14 +16,15 @@
 
 package consulo.unity3d.module;
 
-import com.intellij.openapi.projectRoots.Sdk;
-import consulo.module.extension.MutableModuleInheritableNamedPointer;
-import consulo.roots.ModuleRootLayer;
-import consulo.ui.annotation.RequiredUIAccess;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.swing.*;
+
+import com.intellij.openapi.projectRoots.Sdk;
+import consulo.disposer.Disposable;
+import consulo.module.extension.MutableModuleInheritableNamedPointer;
+import consulo.roots.ModuleRootLayer;
+import consulo.ui.Component;
+import consulo.ui.annotation.RequiredUIAccess;
 
 /**
  * @author VISTALL
@@ -46,7 +47,7 @@ public class Unity3dChildMutableModuleExtension extends Unity3dChildModuleExtens
 	@RequiredUIAccess
 	@Nullable
 	@Override
-	public JComponent createConfigurablePanel(@Nonnull Runnable updateOnCheck)
+	public Component createConfigurationComponent(@Nonnull Disposable disposable, @Nonnull Runnable runnable)
 	{
 		return null;
 	}

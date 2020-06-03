@@ -39,7 +39,7 @@ import com.intellij.execution.testframework.sm.runner.ui.SMTRunnerUIActionsHandl
 import com.intellij.execution.testframework.sm.runner.ui.SMTestRunnerResultsForm;
 import com.intellij.execution.testframework.sm.runner.ui.statistics.StatisticsPanel;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.util.Disposer;
+import consulo.disposer.Disposer;
 import com.intellij.xdebugger.DefaultDebugProcessHandler;
 import consulo.ui.annotation.RequiredUIAccess;
 import consulo.unity3d.editor.UnityEditorCommunication;

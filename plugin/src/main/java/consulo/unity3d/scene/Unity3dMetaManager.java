@@ -16,7 +16,16 @@
 
 package consulo.unity3d.scene;
 
-import com.intellij.openapi.Disposable;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+import org.jetbrains.yaml.psi.YAMLFile;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
@@ -36,19 +45,11 @@ import com.intellij.util.ObjectUtil;
 import com.intellij.util.containers.MultiMap;
 import com.intellij.util.indexing.FileBasedIndex;
 import consulo.annotation.access.RequiredReadAction;
+import consulo.disposer.Disposable;
 import consulo.unity3d.Unity3dMetaFileType;
 import consulo.unity3d.scene.index.Unity3dMetaIndexExtension;
 import consulo.unity3d.scene.index.Unity3dYMLAsset;
 import consulo.unity3d.scene.index.Unity3dYMLAssetIndexExtension;
-import org.jetbrains.yaml.psi.YAMLFile;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author VISTALL
