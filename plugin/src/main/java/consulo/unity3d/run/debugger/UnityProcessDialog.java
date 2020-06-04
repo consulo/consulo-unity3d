@@ -31,6 +31,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.concurrency.AppExecutorUtil;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.UIUtil;
 import com.jezhumble.javasysmon.JavaSysMon;
 import com.jezhumble.javasysmon.ProcessInfo;
@@ -87,6 +88,17 @@ public class UnityProcessDialog extends ChooseElementsDialog<UnityProcess>
 			for(ProcessInfo processInfo : processInfos)
 			{
 				String name = processInfo.getName();
+
+				// Unity 2019.3 linux bug - 2020.1 ok
+				if(name.equals("Main"))
+				{
+					List<String> list = StringUtil.split(processInfo.getCommand(), " ");
+					String first = ContainerUtil.getFirstItem(list);
+					if(first != null && first.endsWith("/Editor/Unity"))
+					{
+						items.add(new UnityProcess(processInfo.getPid(), name, "localhost", buildDebuggerPort(processInfo.getPid())));
+					}
+				}
 
 				if(StringUtil.startsWithIgnoreCase(name, "unity") || StringUtil.containsIgnoreCase(name, "Unity.app"))
 				{
