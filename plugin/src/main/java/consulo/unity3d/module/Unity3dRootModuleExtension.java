@@ -188,7 +188,7 @@ public class Unity3dRootModuleExtension extends BaseDotNetSimpleModuleExtension<
 				}
 			}
 		}
-		else if(os.isWindows() || SystemInfo.isLinux)
+		else if(os.isWindows() || os.isLinux())
 		{
 			list.add(homePath + "/Editor/Data/Managed");
 			switch(scriptRuntimeVersion)
