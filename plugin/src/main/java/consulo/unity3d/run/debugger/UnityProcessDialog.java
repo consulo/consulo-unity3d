@@ -87,34 +87,10 @@ public class UnityProcessDialog extends ChooseElementsDialog<UnityProcess>
 			ProcessInfo[] processInfos = javaSysMon.processTable();
 			for(ProcessInfo processInfo : processInfos)
 			{
-				String name = processInfo.getName();
-
-				// Unity 2019.3 linux bug - 2020.1 ok
-				if(name.equals("Main"))
+				UnityProcess process = tryParseIfUnityProcess(processInfo);
+				if(process != null)
 				{
-					List<String> list = StringUtil.split(processInfo.getCommand(), " ");
-					String first = ContainerUtil.getFirstItem(list);
-					if(first != null && first.endsWith("/Editor/Unity"))
-					{
-						items.add(new UnityProcess(processInfo.getPid(), name, "localhost", buildDebuggerPort(processInfo.getPid())));
-					}
-				}
-
-				if(StringUtil.startsWithIgnoreCase(name, "unity") || StringUtil.containsIgnoreCase(name, "Unity.app"))
-				{
-					// ignore 'UnityHelper' and 'Unity Helper'
-					if(StringUtil.containsIgnoreCase(name, "Unity") && StringUtil.containsIgnoreCase(name, "Helper"))
-					{
-						continue;
-					}
-
-					// UnityShader - Package Manager - Hub compiler
-					if(StringUtil.containsIgnoreCase(name, "UnityShader") || StringUtil.containsIgnoreCase(name, "UnityPackageMan") || StringUtil.containsIgnoreCase(name, "unityhub"))
-					{
-						continue;
-					}
-
-					items.add(new UnityProcess(processInfo.getPid(), name, "localhost", buildDebuggerPort(processInfo.getPid())));
+					items.add(process);
 				}
 			}
 		}
@@ -123,6 +99,42 @@ public class UnityProcessDialog extends ChooseElementsDialog<UnityProcess>
 			LOGGER.error(e);
 		}
 		return items;
+	}
+
+	@Nullable
+	public static UnityProcess tryParseIfUnityProcess(ProcessInfo processInfo)
+	{
+		String name = processInfo.getName();
+
+		// Unity 2019.3 linux bug - 2020.1 ok
+		if(name.equals("Main"))
+		{
+			List<String> list = StringUtil.split(processInfo.getCommand(), " ");
+			String first = ContainerUtil.getFirstItem(list);
+			if(first != null && first.endsWith("/Editor/Unity"))
+			{
+				return new UnityProcess(processInfo.getPid(), name, "localhost", buildDebuggerPort(processInfo.getPid()));
+			}
+		}
+
+		if(StringUtil.startsWithIgnoreCase(name, "unity") || StringUtil.containsIgnoreCase(name, "Unity.app"))
+		{
+			// ignore 'UnityHelper' and 'Unity Helper'
+			if(StringUtil.containsIgnoreCase(name, "Unity") && StringUtil.containsIgnoreCase(name, "Helper"))
+			{
+				return null;
+			}
+
+			// UnityShader - Package Manager - Hub compiler
+			if(StringUtil.containsIgnoreCase(name, "UnityShader") || StringUtil.containsIgnoreCase(name, "UnityPackageMan") || StringUtil.containsIgnoreCase(name, "unityhub"))
+			{
+				return null;
+			}
+
+			return new UnityProcess(processInfo.getPid(), name, "localhost", buildDebuggerPort(processInfo.getPid()));
+		}
+
+		return null;
 	}
 
 	public static int buildDebuggerPort(int pid)
