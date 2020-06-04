@@ -20,6 +20,7 @@ import java.io.IOException;
 
 import javax.annotation.Nonnull;
 
+import consulo.logging.Logger;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
@@ -29,7 +30,6 @@ import org.apache.http.util.EntityUtils;
 
 import javax.annotation.Nullable;
 import com.google.gson.Gson;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.text.StringUtil;
@@ -53,18 +53,16 @@ public class UnityEditorCommunication
 		JavaSysMon javaSysMon = new JavaSysMon();
 		ProcessInfo[] processInfos = javaSysMon.processTable();
 
-		UnityProcess unityProcess = null;
 		for(ProcessInfo processInfo : processInfos)
 		{
-			String name = processInfo.getName();
-			if(name.equalsIgnoreCase("unity.exe") || name.equalsIgnoreCase("unity") || name.equalsIgnoreCase("unity.app"))
+			UnityProcess unityProcess = UnityProcessDialog.tryParseIfUnityProcess(processInfo);
+			if(unityProcess != null)
 			{
-				unityProcess = new UnityProcess(processInfo.getPid(), processInfo.getName(), "localhost", UnityProcessDialog.buildDebuggerPort(processInfo.getPid()));
-				break;
+				return unityProcess;
 			}
 		}
 
-		return unityProcess;
+		return null;
 	}
 
 	public static boolean request(@Nonnull Project project, @Nonnull Object postObject, boolean silent)
