@@ -31,6 +31,9 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.projectRoots.SdkType;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.util.SmartList;
+import com.intellij.util.SystemProperties;
+import consulo.dotnet.module.extension.AssemblyInfoCacheService;
+import consulo.internal.dotnet.asm.mbel.AssemblyInfo;
 import consulo.ui.image.Image;
 import consulo.unity3d.Unity3dIcons;
 
@@ -115,6 +118,18 @@ public class Unity3dBundleType extends SdkType
 		else if(SystemInfo.isLinux)
 		{
 			paths.add("/opt/Unity");
+
+			File unityHub = new File(SystemProperties.getUserHome(), "Unity/Hub/Editor/");
+			if(unityHub.exists())
+			{
+				for (File file : unityHub.listFiles())
+				{
+					if(file.isDirectory())
+					{
+						paths.add(file.getAbsolutePath());
+					}
+				}
+			}
 		}
 		return paths;
 	}
@@ -167,6 +182,13 @@ public class Unity3dBundleType extends SdkType
 							return file.getName();
 						}
 					}
+				}
+
+				File modulesFile = new File(sdkHome, "modules.json");
+				if(modulesFile.exists())
+				{
+					File parentFile = modulesFile.getParentFile();
+					return parentFile.getName();
 				}
 			}
 		}
