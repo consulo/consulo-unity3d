@@ -16,16 +16,6 @@
 
 package consulo.unity3d.run.debugger;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.swing.Icon;
-
 import com.intellij.ide.util.ChooseElementsDialog;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
@@ -37,6 +27,15 @@ import com.jezhumble.javasysmon.JavaSysMon;
 import com.jezhumble.javasysmon.ProcessInfo;
 import consulo.awt.TargetAWT;
 import consulo.unity3d.Unity3dIcons;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.swing.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author VISTALL
@@ -125,8 +124,18 @@ public class UnityProcessDialog extends ChooseElementsDialog<UnityProcess>
 				return null;
 			}
 
+			if(StringUtil.containsIgnoreCase(name, "Unity") && StringUtil.containsIgnoreCase(name, "Hub") || StringUtil.containsIgnoreCase(name, "unityhub"))
+			{
+				return null;
+			}
+
+			if(StringUtil.containsIgnoreCase(name, "Unity") && StringUtil.containsIgnoreCase(name, "CrashHandler"))
+			{
+				return null;
+			}
+
 			// UnityShader - Package Manager - Hub compiler
-			if(StringUtil.containsIgnoreCase(name, "UnityShader") || StringUtil.containsIgnoreCase(name, "UnityPackageMan") || StringUtil.containsIgnoreCase(name, "unityhub"))
+			if(StringUtil.containsIgnoreCase(name, "UnityShader") || StringUtil.containsIgnoreCase(name, "UnityPackageMan"))
 			{
 				return null;
 			}
