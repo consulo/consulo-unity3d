@@ -24,7 +24,7 @@ import com.intellij.lang.javascript.JavaScriptFileType;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.application.AccessToken;
-import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationNamesInfo;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.fileTypes.FileType;
@@ -37,7 +37,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.libraries.Library;
-import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.Version;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -45,8 +44,6 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileVisitor;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiManager;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Consumer;
 import com.intellij.util.TimeoutUtil;
@@ -82,14 +79,12 @@ import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import consulo.unity3d.module.Unity3dRootModuleExtension;
 import consulo.unity3d.module.Unity3dRootMutableModuleExtension;
 import consulo.unity3d.nunit.module.extension.Unity3dNUnitMutableModuleExtension;
-import consulo.unity3d.packages.Unity3dManifest;
 import consulo.unity3d.packages.orderEntry.Unity3dPackageOrderEntry;
 import consulo.unity3d.run.Unity3dAttachApplicationType;
 import consulo.unity3d.run.Unity3dAttachConfiguration;
-import consulo.unity3d.scene.Unity3dYMLAssetFileType;
 import consulo.util.dataholder.Key;
+import consulo.util.lang.ref.SimpleReference;
 import consulo.vfs.util.ArchiveVfsUtil;
-import org.jetbrains.yaml.psi.*;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -113,8 +108,6 @@ public class Unity3dProjectImportUtil
 
 
 	private static final String ASSEMBLY_UNITYSCRIPT_FIRSTPASS = "Assembly-UnityScript-firstpass";
-
-	private static final String UNITY_EDITOR = "UNITY_EDITOR";
 
 	private static final String UNITY_EDITOR_ATTACH = "Attach to Unity Editor";
 
@@ -158,7 +151,7 @@ public class Unity3dProjectImportUtil
 		{
 			UnityRequestDefines request = new UnityRequestDefines();
 
-			Ref<Boolean> received = Ref.create(Boolean.FALSE);
+			SimpleReference<Boolean> received = SimpleReference.create(Boolean.FALSE);
 
 			UnityPingPong.Token<UnitySetDefines> token = UnityPingPong.wantReply(request.uuid, o ->
 			{
@@ -270,66 +263,28 @@ public class Unity3dProjectImportUtil
 		VirtualFile baseDir = project.getBaseDir();
 		assert baseDir != null;
 
-		Unity3dManifest manifest = Unity3dManifest.parse(project);
+		UnityProjectImportContext context = UnityProjectImportContext.load(defines, project, baseDir);
 
-		int scriptRuntimeVersion = 0;
-		VirtualFile projectSettingsFile = baseDir.findFileByRelativePath("ProjectSettings/ProjectSettings.asset");
-		if(projectSettingsFile != null && projectSettingsFile.getFileType() == Unity3dYMLAssetFileType.INSTANCE)
-		{
-			Integer version = AccessRule.read(() ->
-			{
-				PsiFile file = PsiManager.getInstance(project).findFile(projectSettingsFile);
-				if(file instanceof YAMLFile)
-				{
-					List<YAMLDocument> documents = ((YAMLFile) file).getDocuments();
-					for(YAMLDocument document : documents)
-					{
-						YAMLValue topLevelValue = document.getTopLevelValue();
-						if(topLevelValue instanceof YAMLMapping)
-						{
-							YAMLKeyValue playerSettings = ((YAMLMapping) topLevelValue).getKeyValueByKey("PlayerSettings");
-							if(playerSettings != null)
-							{
-								YAMLValue value = playerSettings.getValue();
-								if(value instanceof YAMLMapping)
-								{
-									YAMLKeyValue scriptingRuntimeVersion = ((YAMLMapping) value).getKeyValueByKey("scriptingRuntimeVersion");
-									if(scriptingRuntimeVersion != null)
-									{
-										String valueText = scriptingRuntimeVersion.getValueText();
-										return StringUtil.parseInt(valueText, 0);
-									}
-								}
-							}
-						}
-					}
-				}
-
-				return 0;
-			});
-			assert version != null;
-			scriptRuntimeVersion = version;
-		}
-
-		final ModifiableModuleModel newModel = fromProjectStructure ? originalModel : AccessRule.read(() -> ModuleManager.getInstance(project).getModifiableModel());
+		ModifiableModuleModel newModel = fromProjectStructure ? originalModel : AccessRule.read(() -> ModuleManager.getInstance(project).getModifiableModel());
+		assert newModel != null;
 
 		List<Module> modules = new ArrayList<>(5);
 
-		ContainerUtil.addIfNotNull(modules, createRootModule(project, newModel, unitySdk, progressIndicator, defines, scriptRuntimeVersion));
+		ContainerUtil.addIfNotNull(modules, createRootModule(project, newModel, unitySdk, progressIndicator, context));
 		progressIndicator.setFraction(0.1);
 
 		MultiMap<Module, VirtualFile> sourceFilesByModule = MultiMap.create();
 
-		ContainerUtil.addIfNotNull(modules, createAssemblyCSharpModuleFirstPass(project, newModel, unitySdk, sourceFilesByModule, progressIndicator, manifest));
+		ContainerUtil.addIfNotNull(modules, createAssemblyCSharpModuleFirstPass(project, newModel, unitySdk, sourceFilesByModule, progressIndicator, context));
 		progressIndicator.setFraction(0.25);
 
-		ContainerUtil.addIfNotNull(modules, createAssemblyUnityScriptModuleFirstPass(project, newModel, unitySdk, sourceFilesByModule, progressIndicator, manifest));
+		ContainerUtil.addIfNotNull(modules, createAssemblyUnityScriptModuleFirstPass(project, newModel, unitySdk, sourceFilesByModule, progressIndicator, context));
 		progressIndicator.setFraction(0.5);
 
-		ContainerUtil.addIfNotNull(modules, createAssemblyCSharpModuleEditor(project, newModel, unitySdk, sourceFilesByModule, progressIndicator, manifest));
+		ContainerUtil.addIfNotNull(modules, createAssemblyCSharpModuleEditor(project, newModel, unitySdk, sourceFilesByModule, progressIndicator, context));
 		progressIndicator.setFraction(0.75);
 
-		ContainerUtil.addIfNotNull(modules, createAssemblyCSharpModule(project, newModel, unitySdk, sourceFilesByModule, progressIndicator, manifest));
+		ContainerUtil.addIfNotNull(modules, createAssemblyCSharpModule(project, newModel, unitySdk, sourceFilesByModule, progressIndicator, context));
 
 		progressIndicator.setFraction(1);
 		progressIndicator.setText(null);
@@ -346,7 +301,7 @@ public class Unity3dProjectImportUtil
 													 final Sdk unityBundle,
 													 MultiMap<Module, VirtualFile> virtualFilesByModule,
 													 ProgressIndicator progressIndicator,
-													 Unity3dManifest manifest)
+													 UnityProjectImportContext context)
 	{
 		String[] paths = {ASSETS_DIRECTORY};
 		return createAndSetupModule("Assembly-CSharp", project, newModel, paths, unityBundle, layer ->
@@ -357,7 +312,7 @@ public class Unity3dProjectImportUtil
 			}
 
 			layer.addInvalidModuleEntry("Assembly-CSharp-firstpass");
-		}, "unity3d-csharp-child", CSharpFileType.INSTANCE, virtualFilesByModule, progressIndicator, manifest);
+		}, "unity3d-csharp-child", CSharpFileType.INSTANCE, virtualFilesByModule, progressIndicator, context);
 	}
 
 	private static Module createAssemblyUnityScriptModuleFirstPass(Project project,
@@ -365,7 +320,7 @@ public class Unity3dProjectImportUtil
 																   Sdk unityBundle,
 																   MultiMap<Module, VirtualFile> virtualFilesByModule,
 																   ProgressIndicator progressIndicator,
-																   Unity3dManifest manifest)
+																   UnityProjectImportContext context)
 	{
 		if(isVersionHigherOrEqual(unityBundle, "2018.2"))
 		{
@@ -379,7 +334,7 @@ public class Unity3dProjectImportUtil
 		else
 		{
 			return createAndSetupModule(ASSEMBLY_UNITYSCRIPT_FIRSTPASS, project, newModel, FIRST_PASS_PATHS, unityBundle, null, "unity3d-unityscript-child", JavaScriptFileType.INSTANCE,
-					virtualFilesByModule, progressIndicator, manifest);
+					virtualFilesByModule, progressIndicator, context);
 		}
 	}
 
@@ -388,10 +343,10 @@ public class Unity3dProjectImportUtil
 															  Sdk unityBundle,
 															  MultiMap<Module, VirtualFile> virtualFilesByModule,
 															  ProgressIndicator progressIndicator,
-															  Unity3dManifest manifest)
+															  UnityProjectImportContext context)
 	{
 		return createAndSetupModule("Assembly-CSharp-firstpass", project, newModel, FIRST_PASS_PATHS, unityBundle, null, "unity3d-csharp-child", CSharpFileType.INSTANCE, virtualFilesByModule,
-				progressIndicator, manifest);
+				progressIndicator, context);
 	}
 
 	private static Module createAssemblyCSharpModuleEditor(final Project project,
@@ -399,7 +354,7 @@ public class Unity3dProjectImportUtil
 														   final Sdk unityBundle,
 														   MultiMap<Module, VirtualFile> virtualFilesByModule,
 														   ProgressIndicator progressIndicator,
-														   Unity3dManifest manifest)
+														   UnityProjectImportContext context)
 	{
 		final List<String> paths = new ArrayList<>();
 		paths.add("Assets/Standard Assets/Editor");
@@ -462,7 +417,7 @@ public class Unity3dProjectImportUtil
 			{
 				layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "Vuforia.UnityExtensions.Editor"));
 			}
-		}, "unity3d-csharp-child", CSharpFileType.INSTANCE, virtualFilesByModule, progressIndicator, manifest);
+		}, "unity3d-csharp-child", CSharpFileType.INSTANCE, virtualFilesByModule, progressIndicator, context);
 	}
 
 	@Nonnull
@@ -477,7 +432,7 @@ public class Unity3dProjectImportUtil
 											   @Nonnull FileType fileType,
 											   @Nonnull MultiMap<Module, VirtualFile> virtualFilesByModule,
 											   @Nonnull ProgressIndicator progressIndicator,
-											   @Nonnull Unity3dManifest manifest)
+											   @Nonnull UnityProjectImportContext context)
 	{
 		progressIndicator.setText(Unity3dBundle.message("syncing.0.module", moduleName));
 
@@ -498,6 +453,7 @@ public class Unity3dProjectImportUtil
 		}
 
 		final ModifiableRootModel modifiableModel = AccessRule.read(() -> ModuleRootManager.getInstance(module).getModifiableModel());
+		assert modifiableModel != null;
 
 		final List<VirtualFile> toAdd = new ArrayList<>();
 		final List<VirtualFile> libraryFiles = new ArrayList<>();
@@ -557,7 +513,7 @@ public class Unity3dProjectImportUtil
 
 		if(setupConsumer != null)
 		{
-			ApplicationManager.getApplication().runReadAction(() -> setupConsumer.consume(layer));
+			Application.get().runReadAction(() -> setupConsumer.consume(layer));
 		}
 
 		layer.getExtensionWithoutCheck(Unity3dChildMutableModuleExtension.class).setEnabled(true);
@@ -587,7 +543,7 @@ public class Unity3dProjectImportUtil
 		layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEditor"));
 		layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEngine"));
 
-		for(Map.Entry<String, String> entry : manifest.getFilteredDependencies().entrySet())
+		for(Map.Entry<String, String> entry : context.getManifest().getFilteredDependencies().entrySet())
 		{
 			layer.addOrderEntry(new Unity3dPackageOrderEntry(layer, entry.getKey() + "@" + entry.getValue()));
 		}
@@ -727,14 +683,13 @@ public class Unity3dProjectImportUtil
 	}
 
 	@Nonnull
-	private static Module createRootModule(@Nonnull final Project project,
+	private static Module createRootModule(@Nonnull Project project,
 										   @Nonnull ModifiableModuleModel newModel,
 										   @Nullable Sdk unityBundle,
 										   @Nonnull ProgressIndicator progressIndicator,
-										   @Nullable Collection<String> defines,
-										   int scriptRuntimeVersion)
+										   @Nonnull UnityProjectImportContext context)
 	{
-		Ref<String> namespacePrefix = Ref.create();
+		SimpleReference<String> namespacePrefix = SimpleReference.create();
 		Set<String> excludedUrls = new TreeSet<>();
 
 		String projectUrl = project.getBaseDir().getUrl();
@@ -768,7 +723,7 @@ public class Unity3dProjectImportUtil
 
 
 		final ModifiableRootModel modifiableModel = AccessRule.read(() -> ModuleRootManager.getInstance(rootModule).getModifiableModel());
-
+		assert modifiableModel != null;
 		modifiableModel.removeAllLayers(true);
 
 		// return Default layer
@@ -780,31 +735,11 @@ public class Unity3dProjectImportUtil
 		assert extension != null;
 		extension.setEnabled(true);
 		extension.setNamespacePrefix(namespacePrefix.get());
-		extension.setScriptRuntimeVersion(scriptRuntimeVersion);
+		extension.setScriptRuntimeVersion(context.getScriptRuntimeVersion());
 		extension.getInheritableSdk().set(null, unityBundle);
 
 		List<String> variables = extension.getVariables();
-		if(defines != null)
-		{
-			variables.addAll(defines);
-		}
-		// fallback
-		else
-		{
-			variables.add(UNITY_EDITOR);
-			variables.add("DEBUG");
-			variables.add("TRACE");
-
-			Unity3dDefineByVersion unity3dDefineByVersion = getUnity3dDefineByVersion(unityBundle);
-			if(unity3dDefineByVersion != Unity3dDefineByVersion.UNKNOWN)
-			{
-				for(Unity3dDefineByVersion majorVersion : unity3dDefineByVersion.getMajorVersions())
-				{
-					variables.add(majorVersion.name());
-				}
-				variables.add(unity3dDefineByVersion.name());
-			}
-		}
+		variables.addAll(context.calculateDefines(unityBundle));
 
 		// exclude temp dirs
 		for(String excludedUrl : excludedUrls)

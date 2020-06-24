@@ -16,6 +16,15 @@
 
 package consulo.unity3d.packages;
 
+import com.google.gson.Gson;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Comparing;
+import com.intellij.psi.util.CachedValueProvider;
+import com.intellij.psi.util.CachedValuesManager;
+import com.intellij.psi.util.PsiModificationTracker;
+import consulo.logging.Logger;
+
+import javax.annotation.Nonnull;
 import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -24,23 +33,13 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import javax.annotation.Nonnull;
-
-import com.google.gson.Gson;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Comparing;
-import com.intellij.psi.util.CachedValueProvider;
-import com.intellij.psi.util.CachedValuesManager;
-import com.intellij.psi.util.PsiModificationTracker;
-
 /**
  * @author VISTALL
  * @since 2018-09-19
  */
 public class Unity3dManifest
 {
-	private static final Logger LOGGER = Logger.getInstance(Unity3dManifest.class);
+	private static final Logger LOG = Logger.getInstance(Unity3dManifest.class);
 
 	private static final Unity3dManifest EMPTY = new Unity3dManifest();
 
@@ -60,7 +59,7 @@ public class Unity3dManifest
 				}
 				catch(Exception e)
 				{
-					LOGGER.error(e);
+					LOG.error(e);
 				}
 			}
 			return CachedValueProvider.Result.create(EMPTY, PsiModificationTracker.MODIFICATION_COUNT);
