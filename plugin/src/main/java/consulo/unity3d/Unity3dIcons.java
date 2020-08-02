@@ -28,6 +28,6 @@ public interface Unity3dIcons
 	Image GizmosLayer = IconLoader.getIcon("/icons/gizmosLayer.svg");  // 16x16
 	Image EventMethod = IconLoader.getIcon("/icons/eventMethod.png");  // 12x12
 	Image Js = IconLoader.getIcon("/icons/js.PNG");  // 16x16
-	Image Unity3d = IconLoader.getIcon("/icons/unity3d.png");  // 16x16
+	Image Unity3d = IconLoader.getIcon("/icons/unity3d.svg");  // 16x16
 	Image Unity3dLineMarker = IconLoader.getIcon("/icons/unity3dLineMarker.png");  // 12x12
 }
