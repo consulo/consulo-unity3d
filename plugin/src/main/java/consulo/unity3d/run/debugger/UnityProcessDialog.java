@@ -25,12 +25,11 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.UIUtil;
 import com.jezhumble.javasysmon.JavaSysMon;
 import com.jezhumble.javasysmon.ProcessInfo;
-import consulo.awt.TargetAWT;
+import consulo.ui.image.Image;
 import consulo.unity3d.Unity3dIcons;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -176,8 +175,8 @@ public class UnityProcessDialog extends ChooseElementsDialog<UnityProcess>
 
 	@Nullable
 	@Override
-	protected Icon getItemIcon(UnityProcess item)
+	protected Image getItemIcon(UnityProcess item)
 	{
-		return TargetAWT.to(Unity3dIcons.Unity3d);
+		return Unity3dIcons.Unity3d;
 	}
 }
