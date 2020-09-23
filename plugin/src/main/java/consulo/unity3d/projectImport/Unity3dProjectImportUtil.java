@@ -508,7 +508,7 @@ public class Unity3dProjectImportUtil
 
 		for(VirtualFile virtualFile : toAdd)
 		{
-			layer.addContentEntry(virtualFile);
+			layer.addSingleContentEntry(virtualFile);
 		}
 
 		if(setupConsumer != null)
