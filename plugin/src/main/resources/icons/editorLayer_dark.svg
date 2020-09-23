@@ -1,13 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
-	<title>FolderEditor(Gray)</title>
-	<g>
-		<rect width="16" height="16" fill="#ffe3ff" opacity="0"/>
-		<g>
-			<g>
-				<path d="M13,13.535v-1.07L9.5,10.131V10H2a2,2,0,0,0-2,2v2a2,2,0,0,0,2,2H9.5v-.131Z" fill="#d8d8d8"/>
-				<path d="M9,11v4l3-2Zm-.8,0v4H2a1,1,0,0,1-1-1V12a1,1,0,0,1,1-1Z" fill="#71a7c7"/>
-				<rect x="2" y="12" width="6.2" height="1" fill="#d8d8d8"/>
-			</g>
-		</g>
+	<g opacity="0.8">
+		<path d="M13,13.535v-1.07L9.5,10.131V10H2a2,2,0,0,0-2,2v2a2,2,0,0,0,2,2H9.5v-.131Z" fill="#d8d8d8"/>
+		<path d="M9,11v4l3-2Zm-.8,0v4H2a1,1,0,0,1-1-1V12a1,1,0,0,1,1-1Z" fill="#71a7c7"/>
+		<rect x="2" y="12" width="6.2" height="1" fill="#d8d8d8"/>
 	</g>
 </svg>
