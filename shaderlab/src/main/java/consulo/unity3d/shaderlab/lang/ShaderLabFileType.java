@@ -21,7 +21,7 @@ import javax.annotation.Nullable;
 
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import consulo.ui.image.Image;
-import consulo.unity3d.shaderlab.UnityShaderIcons;
+import consulo.unity3d.shaderlab.icon.ShaderLabIconGroup;
 
 /**
  * @author VISTALL
@@ -61,6 +61,6 @@ public class ShaderLabFileType extends LanguageFileType
 	@Override
 	public Image getIcon()
 	{
-		return UnityShaderIcons.Shader;
+		return ShaderLabIconGroup.shader();
 	}
 }

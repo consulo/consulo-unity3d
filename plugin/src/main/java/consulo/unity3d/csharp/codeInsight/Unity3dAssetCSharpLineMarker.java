@@ -55,7 +55,7 @@ import consulo.unity3d.scene.Unity3dMetaManager;
 import consulo.unity3d.scene.index.Unity3dYMLAsset;
 import consulo.unity3d.scene.index.Unity3dYMLAssetIndexExtension;
 import consulo.unity3d.scene.index.Unity3dYMLField;
-import consulo.unity3d.shaderlab.UnityShaderIcons;
+import consulo.unity3d.shaderlab.icon.ShaderLabIconGroup;
 
 import javax.annotation.Nonnull;
 import javax.swing.*;
@@ -108,7 +108,7 @@ public enum Unity3dAssetCSharpLineMarker
 										@Override
 										protected void customizeCellRenderer(@Nonnull JList<? extends UnityAssetWrapper> jList, UnityAssetWrapper unityAssetWrapper, int i, boolean b, boolean b1)
 										{
-											setIcon(UnityShaderIcons.Shader);
+											setIcon(ShaderLabIconGroup.shader());
 
 											append(unityAssetWrapper.getAsset().getGameObjectName());
 										}
@@ -218,7 +218,7 @@ public enum Unity3dAssetCSharpLineMarker
 										@RequiredUIAccess
 										protected void customizeCellRenderer(@Nonnull JList<? extends UnityAssetWrapper> jList, UnityAssetWrapper unityAssetWrapper, int i, boolean b, boolean b1)
 										{
-											setIcon(UnityShaderIcons.Shader);
+											setIcon(ShaderLabIconGroup.shader());
 
 											String prefix = null;
 											TextAttributesKey prefixKey = null;

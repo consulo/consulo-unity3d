@@ -126,14 +126,14 @@
 		<moduleExtensionProvider
 				key="unity3d"
 				name="Unity3D"
-				icon="/icons/unity3d.svg"
+				icon="consulo.unity3d.Unity3dIconGroup@unity3d"
 				immutableClass="consulo.unity3d.module.Unity3dRootModuleExtension"
 				mutableClass="consulo.unity3d.module.Unity3dRootMutableModuleExtension"/>
 
 		<moduleExtensionProvider
 				key="unity3d-child"
 				name="Unity3D (child)"
-				icon="/icons/unity3d.svg"
+				icon="consulo.unity3d.Unity3dIconGroup@unity3d"
 				immutableClass="consulo.unity3d.module.Unity3dChildModuleExtension"
 				mutableClass="consulo.unity3d.module.Unity3dChildMutableModuleExtension"/>
 
@@ -141,7 +141,7 @@
 				key="unity3d-nunit-child"
 				parentKey="unity3d-child"
 				name="NUnit"
-				icon="/icons/nunit.png"
+				icon="consulo.nunit.NUnitIconGroup@nunit"
 				immutableClass="consulo.unity3d.nunit.module.extension.Unity3dNUnitModuleExtension"
 				mutableClass="consulo.unity3d.nunit.module.extension.Unity3dNUnitMutableModuleExtension"/>
 
@@ -149,7 +149,7 @@
 				key="unity3d-csharp-child"
 				parentKey="unity3d-child"
 				name="C#"
-				icon="/icons/unity3d.svg"
+				icon="consulo.unity3d.Unity3dIconGroup@unity3d"
 				immutableClass="consulo.unity3d.csharp.module.extension.Unity3dCSharpModuleExtension"
 				mutableClass="consulo.unity3d.csharp.module.extension.Unity3dCSharpMutableModuleExtension"/>
 
@@ -157,7 +157,7 @@
 				key="unity3d-unityscript-child"
 				parentKey="unity3d-child"
 				name="UnityScript"
-				icon="/icons/unity3d.svg"
+				icon="consulo.unity3d.Unity3dIconGroup@unity3d"
 				immutableClass="consulo.unity3d.unityscript.module.extension.Unity3dScriptModuleExtension"
 				mutableClass="consulo.unity3d.unityscript.module.extension.Unity3dScriptMutableModuleExtension"/>
 

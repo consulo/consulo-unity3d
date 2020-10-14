@@ -68,6 +68,14 @@
 				</configuration>
 				<executions>
 					<execution>
+						<id>gen</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>generate-icon</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>pack</id>
 						<phase>package</phase>
 						<goals>
 							<goal>workspace</goal>

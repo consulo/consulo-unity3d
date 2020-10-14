@@ -16,18 +16,18 @@
 
 package consulo.unity3d;
 
-import com.intellij.openapi.util.IconLoader;
 import consulo.ui.image.Image;
+import consulo.unity3d.icon.Unity3dIconGroup;
 
 // Generated Consulo DevKit plugin 
 public interface Unity3dIcons
 {
-	Image EditorLayer = IconLoader.getIcon("/icons/editorLayer.svg");  // 16x16
-	Image AssetsLayer = IconLoader.getIcon("/icons/assetsLayer.svg");  // 16x16
-	Image PluginsLayer = IconLoader.getIcon("/icons/pluginsLayer.svg");  // 16x16
-	Image GizmosLayer = IconLoader.getIcon("/icons/gizmosLayer.svg");  // 16x16
-	Image EventMethod = IconLoader.getIcon("/icons/lightningBolt.svg");  // 12x12
-	Image Js = IconLoader.getIcon("/icons/js.PNG");  // 16x16
-	Image Unity3d = IconLoader.getIcon("/icons/unity3d.svg");  // 16x16
-	Image Unity3dLineMarker = IconLoader.getIcon("/icons/unity3dLineMarker.png");  // 12x12
+	Image EditorLayer = Unity3dIconGroup.editorLayer();
+	Image AssetsLayer = Unity3dIconGroup.assetsLayer();
+	Image PluginsLayer = Unity3dIconGroup.pluginsLayer();
+	Image GizmosLayer = Unity3dIconGroup.gizmosLayer();
+	Image EventMethod = Unity3dIconGroup.lightningBolt();
+	Image Js = Unity3dIconGroup.js();
+	Image Unity3d = Unity3dIconGroup.unity3d();
+	Image Unity3dLineMarker = Unity3dIconGroup.unity3dLineMarker();
 }

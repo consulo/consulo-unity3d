@@ -19,10 +19,10 @@ package consulo.unity3d.scene;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import consulo.unity3d.shaderlab.icon.ShaderLabIconGroup;
 import org.jetbrains.yaml.YAMLLanguage;
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import consulo.ui.image.Image;
-import consulo.unity3d.shaderlab.UnityShaderIcons;
 
 /**
  * @author VISTALL
@@ -62,6 +62,6 @@ public class Unity3dYMLAssetFileType extends LanguageFileType
 	@Override
 	public Image getIcon()
 	{
-		return UnityShaderIcons.Shader;
+		return ShaderLabIconGroup.shader();
 	}
 }
