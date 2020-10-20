@@ -28,7 +28,7 @@ import consulo.disposer.Disposable;
 import consulo.ui.annotation.RequiredUIAccess;
 
 import javax.annotation.Nonnull;
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.MulticastSocket;

@@ -38,7 +38,7 @@ import consulo.unity3d.module.Unity3dRootModuleExtension;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 /**
  * @author VISTALL

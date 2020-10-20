@@ -16,11 +16,16 @@
 
 package consulo.unity3d.editor;
 
-import java.io.IOException;
-
-import javax.annotation.Nonnull;
-
+import com.google.gson.Gson;
+import com.intellij.execution.process.ProcessInfo;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.CharsetToolkit;
+import consulo.execution.process.OSProcessUtil;
 import consulo.logging.Logger;
+import consulo.unity3d.run.debugger.UnityProcess;
+import consulo.unity3d.run.debugger.UnityProcessDialog;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
@@ -28,16 +33,9 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import com.google.gson.Gson;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.CharsetToolkit;
-import com.jezhumble.javasysmon.JavaSysMon;
-import com.jezhumble.javasysmon.ProcessInfo;
-import consulo.unity3d.run.debugger.UnityProcess;
-import consulo.unity3d.run.debugger.UnityProcessDialog;
+import java.io.IOException;
 
 /**
  * @author VISTALL
@@ -50,10 +48,7 @@ public class UnityEditorCommunication
 	@Nullable
 	public static UnityProcess findEditorProcess()
 	{
-		JavaSysMon javaSysMon = new JavaSysMon();
-		ProcessInfo[] processInfos = javaSysMon.processTable();
-
-		for(ProcessInfo processInfo : processInfos)
+		for(ProcessInfo processInfo : OSProcessUtil.getProcessList())
 		{
 			UnityProcess unityProcess = UnityProcessDialog.tryParseIfUnityProcess(processInfo);
 			if(unityProcess != null)

@@ -28,10 +28,10 @@ import consulo.ui.wizard.WizardStep;
 import consulo.unity3d.Unity3dIcons;
 import consulo.unity3d.jsonApi.UnityOpenFilePostHandlerRequest;
 import consulo.unity3d.projectImport.ui.Unity3dWizardStep;
+import jakarta.inject.Inject;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.inject.Inject;
 import java.io.File;
 import java.util.function.Consumer;
 

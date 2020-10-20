@@ -21,7 +21,7 @@ import java.util.Collection;
 import java.util.List;
 
 import javax.annotation.Nonnull;
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 
 import com.intellij.ide.projectView.TreeStructureProvider;

@@ -31,10 +31,10 @@ import consulo.unity3d.scene.Unity3dAssetFileTypeDetector;
 import consulo.unity3d.scene.Unity3dAssetUtil;
 import consulo.unity3d.scene.Unity3dYMLAssetFileType;
 import consulo.unity3d.scene.index.Unity3dYMLAsset;
+import jakarta.inject.Inject;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.inject.Inject;
 
 /**
  * @author VISTALL

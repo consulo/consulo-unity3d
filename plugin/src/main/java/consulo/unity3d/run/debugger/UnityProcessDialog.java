@@ -16,15 +16,14 @@
 
 package consulo.unity3d.run.debugger;
 
+import com.intellij.execution.process.ProcessInfo;
 import com.intellij.ide.util.ChooseElementsDialog;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.concurrency.AppExecutorUtil;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.UIUtil;
-import com.jezhumble.javasysmon.JavaSysMon;
-import com.jezhumble.javasysmon.ProcessInfo;
+import consulo.execution.process.OSProcessUtil;
 import consulo.ui.image.Image;
 import consulo.unity3d.Unity3dIcons;
 
@@ -81,9 +80,7 @@ public class UnityProcessDialog extends ChooseElementsDialog<UnityProcess>
 					items.add(new UnityProcess((int) player.getGuid(), player.getId(), player.getIp(), player.getDebuggerPort()));
 				}
 			}
-			JavaSysMon javaSysMon = new JavaSysMon();
-			ProcessInfo[] processInfos = javaSysMon.processTable();
-			for(ProcessInfo processInfo : processInfos)
+			for(ProcessInfo processInfo : OSProcessUtil.getProcessList())
 			{
 				UnityProcess process = tryParseIfUnityProcess(processInfo);
 				if(process != null)
@@ -102,13 +99,12 @@ public class UnityProcessDialog extends ChooseElementsDialog<UnityProcess>
 	@Nullable
 	public static UnityProcess tryParseIfUnityProcess(ProcessInfo processInfo)
 	{
-		String name = processInfo.getName();
+		String name = processInfo.getExecutableName();
 
 		// Unity 2019.3 linux bug - 2020.1 ok
 		if(name.equals("Main"))
 		{
-			List<String> list = StringUtil.split(processInfo.getCommand(), " ");
-			String first = ContainerUtil.getFirstItem(list);
+			String first = processInfo.getExecutableCannonicalPath().orElse("");
 			if(first != null && first.endsWith("/Editor/Unity"))
 			{
 				return new UnityProcess(processInfo.getPid(), name, "localhost", buildDebuggerPort(processInfo.getPid()));
