@@ -26,9 +26,6 @@ import com.intellij.openapi.projectRoots.SdkTable;
 import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.util.AsyncResult;
-import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.IdeFrame;
@@ -53,6 +50,8 @@ import consulo.platform.Platform;
 import consulo.ui.UIAccess;
 import consulo.unity3d.bundle.Unity3dBundleType;
 import consulo.unity3d.projectImport.Unity3dModuleImportProvider;
+import consulo.util.concurrent.AsyncResult;
+import consulo.util.lang.Pair;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 
 import javax.annotation.Nonnull;
@@ -202,7 +201,8 @@ public class UnityOpenFilePostHandler extends JsonPostRequestHandler<UnityOpenFi
 			return;
 		}
 
-		if(SystemInfo.isMac)
+		Platform.OperatingSystem os = Platform.current().os();
+		if(os.isMac())
 		{
 			RequestFocusHttpRequestHandler.activateFrame(ideFrame);
 			ID id = MacUtil.findWindowFromJavaWindow(TargetAWT.to(ideFrame.getWindow()));
@@ -211,7 +211,7 @@ public class UnityOpenFilePostHandler extends JsonPostRequestHandler<UnityOpenFi
 				Foundation.invoke(id, "makeKeyAndOrderFront:", ID.NIL);
 			}
 		}
-		else if(SystemInfo.isWindows)
+		else if(os.isWindows())
 		{
 			Pointer windowPointer = Native.getWindowPointer(TargetAWT.to(ideFrame.getWindow()));
 			User32.INSTANCE.SetForegroundWindow(new WinDef.HWND(windowPointer));

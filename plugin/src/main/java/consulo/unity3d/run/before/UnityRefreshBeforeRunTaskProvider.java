@@ -25,7 +25,6 @@ import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.application.ApplicationNamesInfo;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.progress.Task;
-import com.intellij.openapi.util.AsyncResult;
 import com.intellij.util.TimeoutUtil;
 import consulo.ui.UIAccess;
 import consulo.ui.annotation.RequiredUIAccess;
@@ -35,6 +34,7 @@ import consulo.unity3d.editor.UnityEditorCommunication;
 import consulo.unity3d.editor.UnityRefresh;
 import consulo.unity3d.jsonApi.UnityPingPong;
 import consulo.unity3d.run.test.Unity3dTestConfiguration;
+import consulo.util.concurrent.AsyncResult;
 import consulo.util.dataholder.Key;
 
 import javax.annotation.Nonnull;
