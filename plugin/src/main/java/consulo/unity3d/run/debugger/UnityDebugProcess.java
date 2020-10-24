@@ -16,17 +16,15 @@
 
 package consulo.unity3d.run.debugger;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import com.intellij.execution.configurations.RunProfile;
 import com.intellij.execution.filters.TextConsoleBuilderFactory;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.execution.ui.ExecutionConsole;
-import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ui.MessageCategory;
 import com.intellij.xdebugger.XDebugSession;
+import consulo.disposer.Disposable;
 import consulo.dotnet.debugger.nodes.logicView.DotNetLogicValueView;
 import consulo.dotnet.debugger.nodes.logicView.EnumerableDotNetLogicValueView;
 import consulo.dotnet.execution.DebugConnectionInfo;
@@ -34,6 +32,9 @@ import consulo.dotnet.mono.debugger.MonoDebugProcess;
 import consulo.unity3d.Unity3dTypes;
 import consulo.unity3d.console.Unity3dConsoleManager;
 import consulo.unity3d.jsonApi.UnityLogPostHandlerRequest;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * @author VISTALL
@@ -43,7 +44,7 @@ public class UnityDebugProcess extends MonoDebugProcess
 {
 	private ConsoleView myConsoleView;
 	@Nullable
-	private AccessToken myMessageBusConnection;
+	private Disposable myMessageBusConnection;
 
 	public UnityDebugProcess(XDebugSession session, RunProfile runProfile, DebugConnectionInfo debugConnectionInfo, ConsoleView consoleView, boolean insideEditor)
 	{
@@ -112,7 +113,7 @@ public class UnityDebugProcess extends MonoDebugProcess
 	{
 		if(myMessageBusConnection != null)
 		{
-			myMessageBusConnection.finish();
+			myMessageBusConnection.dispose();
 			myMessageBusConnection = null;
 		}
 

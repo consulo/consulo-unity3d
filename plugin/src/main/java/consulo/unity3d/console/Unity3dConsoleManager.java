@@ -16,6 +16,19 @@
 
 package consulo.unity3d.console;
 
+import com.intellij.openapi.application.Application;
+import com.intellij.openapi.project.Project;
+import com.intellij.util.concurrency.AppExecutorUtil;
+import com.intellij.util.containers.ConcurrentMultiMap;
+import com.intellij.util.containers.MultiMap;
+import consulo.disposer.Disposable;
+import consulo.unity3d.jsonApi.UnityLogHandler;
+import consulo.unity3d.jsonApi.UnityLogPostHandlerRequest;
+import consulo.unity3d.util.Unity3dProjectUtil;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
+
+import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Deque;
 import java.util.Map;
@@ -23,21 +36,6 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
-
-import javax.annotation.Nonnull;
-import jakarta.inject.Inject;
-import jakarta.inject.Singleton;
-
-import consulo.disposer.Disposable;
-import com.intellij.openapi.application.AccessToken;
-import com.intellij.openapi.application.Application;
-import com.intellij.openapi.project.Project;
-import com.intellij.util.concurrency.AppExecutorUtil;
-import com.intellij.util.containers.ConcurrentMultiMap;
-import com.intellij.util.containers.MultiMap;
-import consulo.unity3d.jsonApi.UnityLogHandler;
-import consulo.unity3d.jsonApi.UnityLogPostHandlerRequest;
-import consulo.unity3d.util.Unity3dProjectUtil;
 
 /**
  * @author VISTALL
@@ -105,17 +103,10 @@ public class Unity3dConsoleManager implements Disposable
 	}
 
 	@Nonnull
-	public AccessToken registerProcessor(@Nonnull Project project, @Nonnull Consumer<Collection<UnityLogPostHandlerRequest>> consumer)
+	public Disposable registerProcessor(@Nonnull Project project, @Nonnull Consumer<Collection<UnityLogPostHandlerRequest>> consumer)
 	{
 		myMap.putValue(project, consumer);
-		return new AccessToken()
-		{
-			@Override
-			public void finish()
-			{
-				myMap.remove(project, consumer);
-			}
-		};
+		return () -> myMap.remove(project, consumer);
 	}
 
 	@Override

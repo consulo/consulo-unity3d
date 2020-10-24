@@ -16,13 +16,9 @@
 
 package consulo.unity3d.jsonApi;
 
-import javax.annotation.Nonnull;
-
-import com.intellij.openapi.project.Project;
-import com.intellij.util.ui.UIUtil;
 import consulo.builtInServer.json.JsonPostRequestHandler;
-import consulo.unity3d.Unity3dConsoleToolWindowService;
-import consulo.unity3d.util.Unity3dProjectUtil;
+
+import javax.annotation.Nonnull;
 
 /**
  * @author VISTALL
@@ -39,18 +35,7 @@ public class UnityPlayStateHandler extends JsonPostRequestHandler<UnityPlayState
 	@Override
 	public JsonResponse handle(@Nonnull final UnityPlayStateHandlerRequest request)
 	{
-		if(request.isPlaying)
-		{
-			UIUtil.invokeLaterIfNeeded(() ->
-			{
-				Project project = Unity3dProjectUtil.findProjectByPath(request.projectPath);
-				if(project == null)
-				{
-					return;
-				}
-				Unity3dConsoleToolWindowService.getInstance(project).onPlay();
-			});
-		}
+		// nothing?
 		return JsonResponse.asSuccess(null);
 	}
 }

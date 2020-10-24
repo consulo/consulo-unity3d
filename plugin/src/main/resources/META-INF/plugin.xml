@@ -212,6 +212,5 @@
 
 		<projectService serviceImplementation="consulo.unity3d.UnityPluginFileValidator" lazy="false" />
 		<projectService serviceImplementation="consulo.unity3d.projectImport.change.Unity3dProjectChangeListener" lazy="false" />
-		<projectService serviceImplementation="consulo.unity3d.Unity3dConsoleToolWindowService" lazy="false" />
 	</extensions>
 </consulo-plugin>

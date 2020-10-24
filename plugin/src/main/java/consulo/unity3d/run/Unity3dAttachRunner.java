@@ -79,10 +79,10 @@ public class Unity3dAttachRunner extends AsyncProgramRunner
 	@Nonnull
 	@RequiredUIAccess
 	public static RunContentDescriptor runContentDescriptor(ExecutionResult executionResult,
-			@Nonnull final ExecutionEnvironment environment,
-			@Nonnull UnityProcess selected,
-			@Nullable final ConsoleView consoleView,
-			boolean insideEditor) throws ExecutionException
+															@Nonnull final ExecutionEnvironment environment,
+															@Nonnull UnityProcess selected,
+															@Nullable final ConsoleView consoleView,
+															boolean insideEditor) throws ExecutionException
 	{
 		final XDebugSession debugSession = XDebuggerManager.getInstance(environment.getProject()).startSession(environment, session ->
 		{
@@ -184,13 +184,10 @@ public class Unity3dAttachRunner extends AsyncProgramRunner
 					new Task.Backgroundable(environment.getProject(), "Searching process by name: " + runProfile.getProcessName())
 					{
 						private UnityProcess myUnityProcess;
-						private UnityProcess myEditorProcess;
 
 						@Override
 						public void run(@Nonnull ProgressIndicator progressIndicator)
 						{
-							myEditorProcess = UnityEditorCommunication.findEditorProcess();
-
 							for(UnityProcess unityProcess : UnityProcessDialog.collectItems())
 							{
 								if(StringUtil.isEmpty(runProfile.getProcessName()) || Comparing.equal(unityProcess.getName(), runProfile.getProcessName()))
@@ -205,7 +202,7 @@ public class Unity3dAttachRunner extends AsyncProgramRunner
 						@Override
 						public void onFinished()
 						{
-							setRunDescriptor(result, environment, executionResult, myUnityProcess, myEditorProcess);
+							setRunDescriptor(result, environment, executionResult, myUnityProcess);
 						}
 					}.queue();
 				});
@@ -223,7 +220,7 @@ public class Unity3dAttachRunner extends AsyncProgramRunner
 						result.setDone(null);
 						return;
 					}
-					setRunDescriptor(result, environment, executionResult, process, null);
+					setRunDescriptor(result, environment, executionResult, process);
 				});
 				break;
 		}
@@ -232,10 +229,9 @@ public class Unity3dAttachRunner extends AsyncProgramRunner
 
 	@RequiredUIAccess
 	private static void setRunDescriptor(AsyncResult<RunContentDescriptor> result,
-			ExecutionEnvironment environment,
-			ExecutionResult executionResult,
-			@Nullable UnityProcess process,
-			@Nullable UnityProcess editorProcess)
+										 ExecutionEnvironment environment,
+										 ExecutionResult executionResult,
+										 @Nullable UnityProcess process)
 	{
 		if(process == null)
 		{
@@ -243,11 +239,9 @@ public class Unity3dAttachRunner extends AsyncProgramRunner
 			return;
 		}
 
-		boolean isEditor = editorProcess != null && Comparing.equal(editorProcess, process);
-
 		try
 		{
-			result.setDone(runContentDescriptor(executionResult, environment, process, null, isEditor));
+			result.setDone(runContentDescriptor(executionResult, environment, process, null, true));
 		}
 		catch(ExecutionException e)
 		{
