@@ -31,8 +31,8 @@ import consulo.csharp.lang.psi.impl.source.resolve.util.CSharpResolveUtil;
 import consulo.dotnet.psi.DotNetExpression;
 import consulo.dotnet.psi.DotNetType;
 import consulo.language.editor.ElementColorProvider;
-import consulo.ui.shared.ColorValue;
-import consulo.ui.shared.RGBColor;
+import consulo.ui.color.ColorValue;
+import consulo.ui.color.RGBColor;
 import consulo.unity3d.Unity3dTypes;
 
 import javax.annotation.Nonnull;
@@ -136,7 +136,7 @@ public class UnityCSharpStaticElementColor32Provider implements ElementColorProv
 		assert newType != null;
 		StringBuilder builder = new StringBuilder().append("new ").append(newType.getText()).append("(");
 
-		consulo.ui.shared.RGBColor rgbColor = color.toRGB();
+		RGBColor rgbColor = color.toRGB();
 
 		builder.append(rgbColor.getRed()).append(", ");
 		builder.append(rgbColor.getGreen()).append(", ");

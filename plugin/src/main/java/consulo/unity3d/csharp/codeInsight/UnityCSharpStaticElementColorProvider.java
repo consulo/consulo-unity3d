@@ -34,11 +34,10 @@ import consulo.dotnet.psi.DotNetExpression;
 import consulo.dotnet.psi.DotNetType;
 import consulo.dotnet.psi.DotNetVariable;
 import consulo.language.editor.ElementColorProvider;
-import consulo.ui.shared.ColorValue;
-import consulo.ui.shared.RGBColor;
+import consulo.ui.color.ColorValue;
+import consulo.ui.color.RGBColor;
 import consulo.ui.style.StandardColors;
 import consulo.unity3d.Unity3dTypes;
-import gnu.trove.THashMap;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -52,7 +51,7 @@ import java.util.Map;
 @SuppressWarnings("UseJBColor")
 public class UnityCSharpStaticElementColorProvider implements ElementColorProvider
 {
-	private static final Map<String, ColorValue> staticNames = new THashMap<String, ColorValue>()
+	private static final Map<String, ColorValue> staticNames = new HashMap<String, ColorValue>()
 	{
 		{
 			put("red", StandardColors.RED.getStaticValue());
