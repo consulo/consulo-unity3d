@@ -106,7 +106,7 @@ public class Unity3dEventMethodReferenceProvider extends PsiReferenceContributor
 					}
 				}
 
-				if(!CSharpTypeUtil.isInheritable(new CSharpTypeRefByQName(methodCallExpression, Unity3dTypes.UnityEngine.MonoBehaviour), targetTypeRef, methodCallExpression))
+				if(!CSharpTypeUtil.isInheritable(new CSharpTypeRefByQName(methodCallExpression, Unity3dTypes.UnityEngine.MonoBehaviour), targetTypeRef))
 				{
 					return PsiReference.EMPTY_ARRAY;
 				}

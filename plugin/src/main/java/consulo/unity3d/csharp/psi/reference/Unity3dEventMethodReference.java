@@ -104,7 +104,7 @@ public class Unity3dEventMethodReference extends PsiReferenceBase<CSharpConstant
 			}
 		}
 
-		if(!CSharpTypeUtil.isInheritable(new CSharpTypeRefByQName(methodCallExpression, Unity3dTypes.UnityEngine.MonoBehaviour), targetTypeRef, methodCallExpression))
+		if(!CSharpTypeUtil.isInheritable(new CSharpTypeRefByQName(methodCallExpression, Unity3dTypes.UnityEngine.MonoBehaviour), targetTypeRef))
 		{
 			return null;
 		}
@@ -181,7 +181,7 @@ public class Unity3dEventMethodReference extends PsiReferenceBase<CSharpConstant
 			}
 		}
 
-		if(!CSharpTypeUtil.isInheritable(new CSharpTypeRefByQName(methodCallExpression, Unity3dTypes.UnityEngine.MonoBehaviour), targetTypeRef, methodCallExpression))
+		if(!CSharpTypeUtil.isInheritable(new CSharpTypeRefByQName(methodCallExpression, Unity3dTypes.UnityEngine.MonoBehaviour), targetTypeRef))
 		{
 			return ArrayUtil.EMPTY_OBJECT_ARRAY;
 		}

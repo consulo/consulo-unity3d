@@ -23,7 +23,6 @@ import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
-import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -56,6 +55,7 @@ import consulo.unity3d.scene.index.Unity3dYMLAsset;
 import consulo.unity3d.scene.index.Unity3dYMLAssetIndexExtension;
 import consulo.unity3d.scene.index.Unity3dYMLField;
 import consulo.unity3d.shaderlab.icon.ShaderLabIconGroup;
+import consulo.util.lang.Pair;
 
 import javax.annotation.Nonnull;
 import javax.swing.*;

@@ -143,7 +143,7 @@ public class UnityEventCSharpMethodLineMarkerProvider extends LineMarkerProvider
 			DotNetParameter parameter = parameters[i++];
 
 			DotNetTypeRef typeRef = UnityFunctionManager.createTypeRef(parameter, expectedType);
-			if(!CSharpTypeUtil.isTypeEqual(parameter.toTypeRef(true), typeRef, parameter))
+			if(!CSharpTypeUtil.isTypeEqual(parameter.toTypeRef(true), typeRef))
 			{
 				return false;
 			}

@@ -51,7 +51,7 @@ public class UnityScriptToNativeElementTransformer implements ToNativeElementTra
 	{
 		if(psiElement instanceof UnityScriptDotNetTypeDeclaration)
 		{
-			CSharpLightTypeDeclarationBuilder builder = new CSharpLightTypeDeclarationBuilder(psiElement)
+			CSharpLightTypeDeclarationBuilder builder = new CSharpLightTypeDeclarationBuilder(psiElement.getProject(), psiElement.getResolveScope())
 			{
 				@Nonnull
 				@Override

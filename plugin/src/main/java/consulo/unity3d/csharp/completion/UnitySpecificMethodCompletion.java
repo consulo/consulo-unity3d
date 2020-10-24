@@ -112,7 +112,7 @@ public class UnitySpecificMethodCompletion implements CSharpMemberAddByCompletio
 			}
 
 			DotNetTypeRef typeRef = UnityFunctionManager.createTypeRef(scope, entry.getValue());
-			builder.append(CSharpTypeRefPresentationUtil.buildShortText(typeRef, scope));
+			builder.append(CSharpTypeRefPresentationUtil.buildShortText(typeRef));
 			builder.append(" ");
 			builder.append(entry.getKey());
 		}

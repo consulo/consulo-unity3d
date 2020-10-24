@@ -144,7 +144,7 @@ public class UnityFunctionManager
 
 		for(int j = 0; j < count; j++)
 		{
-			typeRef = new CSharpArrayTypeRef(scope, typeRef, 0);
+			typeRef = new CSharpArrayTypeRef(typeRef, 0);
 		}
 		return typeRef;
 	}
