@@ -65,7 +65,7 @@ import consulo.roots.types.BinariesOrderRootType;
 import consulo.roots.types.DocumentationOrderRootType;
 import consulo.unity3d.Unity3dBundle;
 import consulo.unity3d.Unity3dMetaFileType;
-import consulo.unity3d.UnityPluginFileValidator;
+import consulo.unity3d.UnityPluginValidator;
 import consulo.unity3d.bundle.Unity3dBundleType;
 import consulo.unity3d.bundle.Unity3dDefineByVersion;
 import consulo.unity3d.editor.UnityEditorCommunication;
@@ -242,7 +242,7 @@ public class Unity3dProjectImportUtil
 
 		if(runValidator)
 		{
-			UnityPluginFileValidator.runValidation(project);
+			UnityPluginValidator.runValidation(project);
 		}
 
 		if(requestor != null)

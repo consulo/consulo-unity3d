@@ -28,9 +28,9 @@
 	<depends>consulo.nunit</depends>
 	<depends>org.jetbrains.plugins.yaml</depends>
 
-	<import path="/META-INF/SharderLab.xml" />
+	<import path="/META-INF/SharderLab.xml"/>
 
-	<import path="/META-INF/CGShader.xml" />
+	<import path="/META-INF/CGShader.xml"/>
 
 	<actions>
 		<group id="Unity3dProjectGroup">
@@ -112,7 +112,7 @@
 				implementationClass="consulo.unity3d.csharp.codeInsight.inspection.UnityCompareTagInspection"/>
 
 		<usageFilteringRuleProvider implementation="consulo.unity3d.usages.Unity3dAssetUsageFilteringRuleProvider"/>
-		<applicationService serviceImplementation="consulo.unity3d.usages.Unity3dAssetUsageSettings" />
+		<applicationService serviceImplementation="consulo.unity3d.usages.Unity3dAssetUsageSettings"/>
 
 		<colorProvider implementation="consulo.unity3d.csharp.codeInsight.UnityCSharpStaticElementColorProvider"/>
 		<colorProvider implementation="consulo.unity3d.csharp.codeInsight.UnityCSharpStaticElementColor32Provider"/>
@@ -121,7 +121,7 @@
 		<gotoClassContributor implementation="consulo.unity3d.unityscript.navigation.UnityScriptGotoClassContributor"/>
 		<sdkType implementation="consulo.unity3d.bundle.Unity3dBundleType"/>
 
-		<applicationService serviceImplementation="consulo.unity3d.run.debugger.UnityPlayerService" />
+		<applicationService serviceImplementation="consulo.unity3d.run.debugger.UnityPlayerService"/>
 
 		<moduleExtensionProvider
 				key="unity3d"
@@ -190,7 +190,7 @@
 		<psi.referenceContributor language="yaml" implementation="consulo.unity3d.scene.reference.Unity3dSceneFieldReferenceRegister"/>
 
 		<referencesSearch implementation="consulo.unity3d.scene.reference.Unity3dSceneReferenceSearcher"/>
-		<lang.documentationProvider language="C#" implementationClass="consulo.unity3d.documentation.UnityExternalDocumentationProvider" />
+		<lang.documentationProvider language="C#" implementationClass="consulo.unity3d.documentation.UnityExternalDocumentationProvider"/>
 
 		<httpRequestHandler implementation="consulo.unity3d.jsonApi.UnityOpenFilePostHandler"/>
 		<httpRequestHandler implementation="consulo.unity3d.jsonApi.UnityLogPostHandler"/>
@@ -203,14 +203,15 @@
 
 		<psi.referenceContributor language="C#" implementation="consulo.unity3d.csharp.psi.reference.Unity3dEventMethodReferenceProvider"/>
 
-		<applicationService serviceImplementation="consulo.unity3d.packages.Unity3dPackageWatcher" lazy="false" />
-		<applicationService serviceImplementation="consulo.unity3d.Unity3dLocalFileSystemComponent" lazy="false" />
-		<applicationService serviceImplementation="consulo.unity3d.console.Unity3dConsoleManager" lazy="false" />
+		<applicationService serviceImplementation="consulo.unity3d.packages.Unity3dPackageWatcher" lazy="false"/>
+		<applicationService serviceImplementation="consulo.unity3d.Unity3dLocalFileSystemComponent" lazy="false"/>
+		<applicationService serviceImplementation="consulo.unity3d.console.Unity3dConsoleManager" lazy="false"/>
 
-		<orderEntryType implementation="consulo.unity3d.packages.orderEntry.Unity3dPackageOrderEntryType" />
-		<orderEntryTypeEditor key="unity-package" implementationClass="consulo.unity3d.packages.orderEntry.Unity3dPackageOrderEntryTypeEditor" />
+		<orderEntryType implementation="consulo.unity3d.packages.orderEntry.Unity3dPackageOrderEntryType"/>
+		<orderEntryTypeEditor key="unity-package" implementationClass="consulo.unity3d.packages.orderEntry.Unity3dPackageOrderEntryTypeEditor"/>
 
-		<projectService serviceImplementation="consulo.unity3d.UnityPluginFileValidator" lazy="false" />
-		<projectService serviceImplementation="consulo.unity3d.projectImport.change.Unity3dProjectChangeListener" lazy="false" />
+		<backgroundPostStartupActivity implementation="consulo.unity3d.UnityPluginValidator"/>
+
+		<projectService serviceImplementation="consulo.unity3d.projectImport.change.Unity3dProjectChangeListener" lazy="false"/>
 	</extensions>
 </consulo-plugin>

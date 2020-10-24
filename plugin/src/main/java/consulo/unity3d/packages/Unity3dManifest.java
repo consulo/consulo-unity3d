@@ -19,13 +19,17 @@ package consulo.unity3d.packages;
 import com.google.gson.Gson;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
+import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiModificationTracker;
 import consulo.logging.Logger;
 
 import javax.annotation.Nonnull;
+import java.io.IOException;
 import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -37,11 +41,18 @@ import java.util.Map;
  * @author VISTALL
  * @since 2018-09-19
  */
-public class Unity3dManifest
+public class Unity3dManifest implements Cloneable
 {
 	private static final Logger LOG = Logger.getInstance(Unity3dManifest.class);
 
-	private static final Unity3dManifest EMPTY = new Unity3dManifest();
+	public static final Unity3dManifest EMPTY = new Unity3dManifest();
+
+	public static class ScopeRegistry
+	{
+		public String name;
+		public String url;
+		public String [] scopes;
+	}
 
 	@Nonnull
 	public static Unity3dManifest parse(@Nonnull Project project)
@@ -66,7 +77,35 @@ public class Unity3dManifest
 		});
 	}
 
-	private Map<String, String> dependencies = Collections.emptyMap();
+	public static void write(@Nonnull Project project, @Nonnull String text)
+	{
+		Path projectPath = Paths.get(project.getBasePath());
+		Path manifestJson = projectPath.resolve(Paths.get("Packages", "manifest.json"));
+
+		try
+		{
+			VirtualFile file = LocalFileSystem.getInstance().findFileByIoFile(manifestJson.toFile());
+			if(file == null)
+			{
+				Files.write(manifestJson, text.getBytes(StandardCharsets.UTF_8));
+				LocalFileSystem.getInstance().refreshAndFindFileByIoFile(manifestJson.toFile());
+			}
+			else
+			{
+				file.setBinaryContent(text.getBytes(StandardCharsets.UTF_8));
+			}
+		}
+		catch(IOException e)
+		{
+			LOG.error(e);
+		}
+	}
+
+	public ScopeRegistry[] scopedRegistries;
+
+	public Map<String, String> dependencies = Map.of();
+
+	public String registry;
 
 	public boolean isExcluded(@Nonnull String id)
 	{
@@ -90,5 +129,18 @@ public class Unity3dManifest
 			map.put(entry.getKey(), entry.getValue());
 		}
 		return map;
+	}
+
+	@Override
+	public Unity3dManifest clone()
+	{
+		try
+		{
+			return (Unity3dManifest) super.clone();
+		}
+		catch(CloneNotSupportedException e)
+		{
+			throw new Error(e);
+		}
 	}
 }

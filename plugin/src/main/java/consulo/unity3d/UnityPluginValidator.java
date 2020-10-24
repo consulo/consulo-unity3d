@@ -16,12 +16,12 @@
 
 package consulo.unity3d;
 
-import com.intellij.ide.BrowserUtil;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationDisplayType;
 import com.intellij.notification.NotificationGroup;
 import com.intellij.notification.NotificationType;
-import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.module.Module;
@@ -29,45 +29,33 @@ import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ProjectManager;
-import com.intellij.openapi.project.ProjectManagerListener;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTable;
+import com.intellij.openapi.startup.StartupActivity;
 import com.intellij.openapi.util.ThrowableComputable;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.Consumer;
 import com.intellij.util.PathUtil;
 import com.intellij.util.SmartList;
 import consulo.annotation.access.RequiredReadAction;
-import consulo.container.plugin.PluginManager;
 import consulo.dotnet.dll.DotNetModuleFileType;
-import consulo.dotnet.psi.DotNetTypeDeclaration;
-import consulo.dotnet.resolve.DotNetPsiSearcher;
 import consulo.logging.Logger;
 import consulo.roots.ModifiableModuleRootLayer;
 import consulo.roots.ModuleRootLayer;
 import consulo.roots.types.BinariesOrderRootType;
 import consulo.ui.UIAccess;
-import consulo.unity3d.bundle.Unity3dDefineByVersion;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import consulo.unity3d.module.Unity3dRootModuleExtension;
-import consulo.unity3d.projectImport.Unity3dProjectImportUtil;
-import consulo.vfs.util.ArchiveVfsUtil;
-import jakarta.inject.Inject;
+import consulo.unity3d.packages.Unity3dManifest;
+import consulo.util.collection.ArrayUtil;
+import jakarta.inject.Singleton;
 
 import javax.annotation.Nonnull;
-
-import jakarta.inject.Singleton;
-import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
@@ -75,32 +63,20 @@ import java.util.List;
  * @since 26-Jul-16
  */
 @Singleton
-public class UnityPluginFileValidator
+public class UnityPluginValidator implements StartupActivity.Background
 {
-	private static final Logger LOGGER = Logger.getInstance(UnityPluginFileValidator.class);
+	private static final Logger LOG = Logger.getInstance(UnityPluginValidator.class);
+
+	public static final String PLUGIN_ID = "com.consulo.ide";
+	public static final String PLUGIN_VERSION = "2.2.0";
 
 	private static final String ourPath = "Assets/Editor/Plugins";
 	private static final NotificationGroup ourGroup = new NotificationGroup("consulo.unity", NotificationDisplayType.STICKY_BALLOON, true);
 
-	@Inject
-	public UnityPluginFileValidator(Application application, Project project)
+	@Override
+	public void runActivity(@Nonnull UIAccess uiAccess, @Nonnull Project project)
 	{
-		if(project.isDefault())
-		{
-			return;
-		}
-
-		application.getMessageBus().connect(project).subscribe(ProjectManager.TOPIC, new ProjectManagerListener()
-		{
-			@Override
-			public void projectOpened(Project target, UIAccess uiAccess)
-			{
-				if(project == target)
-				{
-					runValidation(project);
-				}
-			}
-		});
+		uiAccess.give(() -> notifyAboutPluginFile(project));
 	}
 
 	public static void runValidation(@Nonnull final Project project)
@@ -117,90 +93,57 @@ public class UnityPluginFileValidator
 			return;
 		}
 
-		Unity3dDefineByVersion unity3dDefineByVersion = Unity3dProjectImportUtil.getUnity3dDefineByVersion(moduleExtension.getSdk());
-		final String pluginFileName = unity3dDefineByVersion.getPluginFileName();
-		if(pluginFileName == null)
+		Unity3dManifest manifest = Unity3dManifest.parse(project);
+		// no files - not supported
+		if(manifest == Unity3dManifest.EMPTY)
 		{
 			return;
 		}
 
-		File pluginPath = PluginManager.getPluginPath(UnityPluginFileValidator.class);
+		String ver = manifest.dependencies.get(PLUGIN_ID);
 
-		final File unityPluginFile = new File(pluginPath, "UnityEditorConsuloPlugin/" + pluginFileName);
-		if(!unityPluginFile.exists())
+		// custom path
+		if(ver != null && (ver.startsWith("file") || ver.startsWith("git")))
 		{
 			return;
 		}
 
-		VirtualFile baseDir = project.getBaseDir();
-		if(baseDir == null)
+		// same version
+		if(PLUGIN_VERSION.equals(ver))
 		{
 			return;
 		}
 
-		DotNetTypeDeclaration consuloIntegration = DotNetPsiSearcher.getInstance(project).findType("Consulo.Internal.UnityEditor.ConsuloIntegration", GlobalSearchScope.allScope(project));
-		if(consuloIntegration != null)
+		if(ver == null)
 		{
-			return;
-		}
-
-		List<VirtualFile> targetFiles = new SmartList<>();
-
-		VirtualFile fileByRelativePath = baseDir.findFileByRelativePath(ourPath);
-		if(fileByRelativePath != null)
-		{
-			VirtualFile[] children = fileByRelativePath.getChildren();
-			for(VirtualFile child : children)
-			{
-				CharSequence nameSequence = child.getNameSequence();
-				if(StringUtil.startsWith(nameSequence, "UnityEditorConsuloPlugin") && child.getFileType() == DotNetModuleFileType.INSTANCE)
-				{
-					targetFiles.add(child);
-				}
-			}
-		}
-
-		if(targetFiles.isEmpty())
-		{
-			showNotify(project, pluginFileName, unityPluginFile, "Consulo plugin for UnityEditor is missing<br><a href=\"update\">Install</a>", Collections.emptyList());
+			showNotify(project, "Consulo plugin for UnityEditor is missing.<br><a href=\"update\">Install via manifest</a>", false);
 		}
 		else
 		{
-			VirtualFile firstItem = targetFiles.size() == 1 ? targetFiles.get(0) : null;
-			if(firstItem != null && VfsUtilCore.virtualToIoFile(firstItem).lastModified() == unityPluginFile.lastModified())
-			{
-				return;
-			}
-
-			String title = "Outdated Consulo plugin(s) for UnityEditor can create <a href=\"info\">issues</a>. <a href=\"update\">Update</a> are recommended";
-
-			showNotify(project, pluginFileName, unityPluginFile, title, targetFiles);
+			showNotify(project, "Outdated Consulo plugin for UnityEditor.<br><a href=\"update\">Update via manifest</a>", true);
 		}
 	}
 
-	private static void showNotify(final Project project, final String pluginFileName, final File unityPluginFile, @Nonnull String title, @Nonnull List<VirtualFile> oldPluginFiles)
+	private static void showNotify(final Project project, @Nonnull String text, boolean update)
 	{
-		Notification notification = new Notification(ourGroup.getDisplayId(), "Unity3D Plugin", title, !oldPluginFiles.isEmpty() ? NotificationType.ERROR : NotificationType.INFORMATION);
+		Notification notification = new Notification(ourGroup.getDisplayId(), "Unity3D Plugin", text, update ? NotificationType.WARNING : NotificationType.INFORMATION);
 		notification.setListener((thisNotification, hyperlinkEvent) ->
 		{
 			thisNotification.hideBalloon();
 
 			switch(hyperlinkEvent.getDescription())
 			{
-				case "info":
-					BrowserUtil.browse("https://github.com/consulo/consulo/issues/250");
-					break;
 				case "update":
-					updatePlugin(project, pluginFileName, unityPluginFile, oldPluginFiles);
+					updatePlugin(project);
 					break;
 			}
 		});
 		notification.notify(project);
 	}
 
-	private static void updatePlugin(@Nonnull final Project project, @Nonnull final String pluginFileName, @Nonnull final File unityPluginFile, @Nonnull List<VirtualFile> oldPluginFiles)
+	private static void updatePlugin(@Nonnull final Project project)
 	{
-		Task.Backgroundable.queue(project, "Installing plugin", (progressIndicator) ->
+		Task.Backgroundable.queue(project, "Changing manifest.json", (progressIndicator) ->
 		{
 			// drop old libraries
 			modifyModules(project, modifiableModel ->
@@ -224,6 +167,22 @@ public class UnityPluginFileValidator
 				}
 			});
 
+			List<VirtualFile> oldPluginFiles = new SmartList<>();
+
+			VirtualFile fileByRelativePath = project.getBaseDir().findFileByRelativePath(ourPath);
+			if(fileByRelativePath != null)
+			{
+				VirtualFile[] children = fileByRelativePath.getChildren();
+				for(VirtualFile child : children)
+				{
+					CharSequence nameSequence = child.getNameSequence();
+					if(StringUtil.startsWith(nameSequence, "UnityEditorConsuloPlugin") && child.getFileType() == DotNetModuleFileType.INSTANCE)
+					{
+						oldPluginFiles.add(child);
+					}
+				}
+			}
+
 			// drop old plugins
 			for(VirtualFile oldPluginFile : oldPluginFiles)
 			{
@@ -239,45 +198,33 @@ public class UnityPluginFileValidator
 				}
 				catch(Throwable e)
 				{
-					LOGGER.error(e);
+					LOG.error(e);
 					return;
 				}
 			}
 
-			VirtualFile targetArchiveFile;
-			File targetFile = new File(project.getBasePath(), ourPath + "/" + pluginFileName);
-			try
-			{
-				targetFile.setLastModified(unityPluginFile.lastModified());
-				FileUtil.copy(unityPluginFile, targetFile);
+			Unity3dManifest manifest = Unity3dManifest.parse(project);
 
-				VirtualFile value = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(targetFile);
-				targetArchiveFile = value == null ? null : ArchiveVfsUtil.getArchiveRootForLocalFile(value);
-			}
-			catch(Throwable e)
-			{
-				LOGGER.error(e);
-				return;
-			}
+			Unity3dManifest newManifest = manifest.clone();
 
-			// if target file is not found, no need change module roots
-			if(targetArchiveFile == null)
+			String oldVer = newManifest.dependencies.get(PLUGIN_ID);
+			if(oldVer == null)
 			{
-				return;
+				Unity3dManifest.ScopeRegistry registry = new Unity3dManifest.ScopeRegistry();
+				registry.name = "consulo.io";
+				registry.url = "https://upm.consulo.io/";
+				registry.scopes = new String[]{"com.consulo"};
+
+				newManifest.scopedRegistries = newManifest.scopedRegistries == null ? new Unity3dManifest.ScopeRegistry[]{registry} : ArrayUtil.append(newManifest.scopedRegistries, registry);
+
+				newManifest.dependencies = new LinkedHashMap<>(newManifest.dependencies);
 			}
 
-			modifyModules(project, modifiableRootModel ->
-			{
-				for(ModuleRootLayer layer : modifiableRootModel.getLayers().values())
-				{
-					LibraryTable moduleLibraryTable = ((ModifiableModuleRootLayer) layer).getModuleLibraryTable();
+			newManifest.dependencies.put(PLUGIN_ID, PLUGIN_VERSION);
 
-					Library library = moduleLibraryTable.createLibrary();
-					Library.ModifiableModel libraryModifiableModel = library.getModifiableModel();
-					libraryModifiableModel.addRoot(targetArchiveFile, BinariesOrderRootType.getInstance());
-					libraryModifiableModel.commit();
-				}
-			});
+			Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
+			WriteCommandAction.runWriteCommandAction(project, () -> Unity3dManifest.write(project, gson.toJson(newManifest)));
 		});
 	}
 
