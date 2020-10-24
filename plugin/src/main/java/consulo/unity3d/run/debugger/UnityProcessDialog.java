@@ -18,12 +18,12 @@ package consulo.unity3d.run.debugger;
 
 import com.intellij.execution.process.ProcessInfo;
 import com.intellij.ide.util.ChooseElementsDialog;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.concurrency.AppExecutorUtil;
 import com.intellij.util.ui.UIUtil;
 import consulo.execution.process.OSProcessUtil;
+import consulo.logging.Logger;
 import consulo.ui.image.Image;
 import consulo.unity3d.Unity3dIcons;
 
@@ -41,7 +41,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class UnityProcessDialog extends ChooseElementsDialog<UnityProcess>
 {
-	private static final Logger LOGGER = Logger.getInstance(UnityProcessDialog.class);
+	private static final Logger LOG = Logger.getInstance(UnityProcessDialog.class);
 
 	private Future<?> myTask;
 
@@ -91,7 +91,7 @@ public class UnityProcessDialog extends ChooseElementsDialog<UnityProcess>
 		}
 		catch(Exception e)
 		{
-			LOGGER.error(e);
+			LOG.error(e);
 		}
 		return items;
 	}
@@ -125,6 +125,11 @@ public class UnityProcessDialog extends ChooseElementsDialog<UnityProcess>
 			}
 
 			if(StringUtil.containsIgnoreCase(name, "Unity") && StringUtil.containsIgnoreCase(name, "CrashHandler"))
+			{
+				return null;
+			}
+
+			if(StringUtil.containsIgnoreCase(name, "licensing"))
 			{
 				return null;
 			}
