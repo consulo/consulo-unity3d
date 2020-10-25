@@ -16,11 +16,17 @@
 
 package consulo.unity3d.unityscript.index;
 
-import javax.annotation.Nonnull;
+import com.intellij.lang.javascript.JavaScriptFileType;
+import com.intellij.lang.javascript.psi.JSFile;
+import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.psi.stubs.IndexSink;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.javascript.index.JavaScriptIndexer;
 import consulo.javascript.psi.stubs.JSFileStub;
+import consulo.unity3d.unityscript.module.extension.Unity3dScriptModuleExtension;
+
+import javax.annotation.Nonnull;
 
 /**
  * @author VISTALL
@@ -29,8 +35,21 @@ import consulo.javascript.psi.stubs.JSFileStub;
 public class UnityScriptIndexer extends JavaScriptIndexer
 {
 	@Override
+	@RequiredReadAction
 	public void indexFile(@Nonnull JSFileStub fileStub, @Nonnull IndexSink sink)
 	{
+		JSFile psi = fileStub.getPsi();
+		assert psi != null;
+		if(psi.getFileType() != JavaScriptFileType.INSTANCE)
+		{
+			return;
+		}
+
+		Unity3dScriptModuleExtension extension = ModuleUtil.getExtension(psi, Unity3dScriptModuleExtension.class);
+		if(extension == null)
+		{
+			return;
+		}
 		String nameWithoutExtension = FileUtilRt.getNameWithoutExtension(fileStub.getName());
 		sink.occurrence(UnityScriptIndexKeys.FILE_BY_NAME_INDEX, nameWithoutExtension);
 	}
@@ -38,6 +57,6 @@ public class UnityScriptIndexer extends JavaScriptIndexer
 	@Override
 	public int getVersion()
 	{
-		return 1;
+		return 2;
 	}
 }

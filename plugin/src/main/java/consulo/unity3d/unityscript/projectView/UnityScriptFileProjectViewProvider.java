@@ -16,21 +16,12 @@
 
 package consulo.unity3d.unityscript.projectView;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
-import javax.annotation.Nonnull;
-import jakarta.inject.Inject;
-
-
 import com.intellij.ide.projectView.TreeStructureProvider;
 import com.intellij.ide.projectView.ViewSettings;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.ide.util.treeView.AbstractTreeUi;
 import com.intellij.lang.javascript.JavaScriptFileType;
 import com.intellij.lang.javascript.psi.JSFile;
-import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.DumbAware;
@@ -41,6 +32,13 @@ import consulo.annotation.access.RequiredReadAction;
 import consulo.ui.annotation.RequiredUIAccess;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import consulo.unity3d.module.Unity3dRootModuleExtension;
+import consulo.unity3d.unityscript.module.extension.Unity3dScriptModuleExtension;
+import jakarta.inject.Inject;
+
+import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * @author VISTALL
@@ -81,8 +79,8 @@ public class UnityScriptFileProjectViewProvider implements TreeStructureProvider
 			Object value = child.getValue();
 			if(value instanceof JSFile && ((JSFile) value).getFileType() == JavaScriptFileType.INSTANCE)
 			{
-				Module moduleForPsiElement = ModuleUtilCore.findModuleForPsiElement((PsiElement) value);
-				if(moduleForPsiElement != null)
+				Unity3dScriptModuleExtension extension = ModuleUtilCore.getExtension((PsiElement) value, Unity3dScriptModuleExtension.class);
+				if(extension != null)
 				{
 					nodes.add(new UnityScriptFileNode(myProject, (PsiFile) value, settings));
 					continue;
