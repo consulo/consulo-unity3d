@@ -70,7 +70,7 @@ public class Unity3dManifest implements Cloneable
 				}
 				catch(Exception e)
 				{
-					LOG.error(e);
+					LOG.warn(e);
 				}
 			}
 			return CachedValueProvider.Result.create(EMPTY, PsiModificationTracker.MODIFICATION_COUNT);
