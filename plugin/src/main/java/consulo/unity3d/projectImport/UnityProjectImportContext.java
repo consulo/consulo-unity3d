@@ -16,6 +16,7 @@
 
 package consulo.unity3d.projectImport;
 
+import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.text.StringUtil;
@@ -46,7 +47,8 @@ public class UnityProjectImportContext
 	private static final Logger LOG = Logger.getInstance(UnityProjectImportContext.class);
 	private static final String UNITY_EDITOR = "UNITY_EDITOR";
 
-	public static UnityProjectImportContext load(@Nullable Collection<String> rootDefines, @Nonnull Project project, @Nonnull VirtualFile baseDir)
+	public static UnityProjectImportContext load(@Nonnull Project project, @Nullable Collection<String> rootDefines, @Nonnull VirtualFile baseDir, ProgressIndicator progressIndicator, Sdk
+			unityBundle)
 	{
 		int scriptRuntimeVersion = 0;
 
@@ -89,10 +91,10 @@ public class UnityProjectImportContext
 			scriptRuntimeVersion = version;
 		}
 
-		VirtualFile argumentsFile = baseDir.findFileByRelativePath(Unity3dProjectImportUtil.ASSETS_DIRECTORY + "/csc.rsp");
+		VirtualFile argumentsFile = baseDir.findFileByRelativePath(Unity3dProjectImporter.ASSETS_DIRECTORY + "/csc.rsp");
 		if(argumentsFile == null)
 		{
-			argumentsFile = baseDir.findFileByRelativePath(Unity3dProjectImportUtil.ASSETS_DIRECTORY + "/mcs.rsp");
+			argumentsFile = baseDir.findFileByRelativePath(Unity3dProjectImporter.ASSETS_DIRECTORY + "/mcs.rsp");
 		}
 
 		List<String> additionalDefines = new ArrayList<>();
@@ -127,11 +129,12 @@ public class UnityProjectImportContext
 			}
 		}
 
-		return new UnityProjectImportContext(rootDefines, additionalDefines, scriptRuntimeVersion, Unity3dManifest.parse(project));
+		return new UnityProjectImportContext(project, rootDefines, additionalDefines, scriptRuntimeVersion, Unity3dManifest.parse(project), progressIndicator, unityBundle);
 	}
 
 	private final int myScriptRuntimeVersion;
 
+	private final Project myProject;
 	/**
 	 * Main defines. If null - will fallback to default
 	 */
@@ -140,13 +143,46 @@ public class UnityProjectImportContext
 	private final Collection<String> myAdditionalDefines;
 
 	private final Unity3dManifest myManifest;
+	@Nonnull
+	private final ProgressIndicator myProgressIndicator;
+	@Nullable
+	private final Sdk myUnityBundle;
 
-	private UnityProjectImportContext(Collection<String> rootDefines, @Nonnull Collection<String> additionalDefines, int scriptRuntimeVersion, Unity3dManifest manifest)
+	private final List<String> myPackageModules = new ArrayList<>();
+
+	private UnityProjectImportContext(@Nonnull Project project,
+									  @Nullable Collection<String> rootDefines,
+									  @Nonnull Collection<String> additionalDefines,
+									  int scriptRuntimeVersion,
+									  @Nonnull Unity3dManifest manifest,
+									  @Nonnull ProgressIndicator progressIndicator,
+									  @Nullable Sdk unityBundle)
 	{
+		myProject = project;
 		myRootDefines = rootDefines;
 		myAdditionalDefines = additionalDefines;
 		myScriptRuntimeVersion = scriptRuntimeVersion;
 		myManifest = manifest;
+		myProgressIndicator = progressIndicator;
+		myUnityBundle = unityBundle;
+	}
+
+	@Nonnull
+	public ProgressIndicator getProgressIndicator()
+	{
+		return myProgressIndicator;
+	}
+
+	@Nullable
+	public Sdk getUnityBundle()
+	{
+		return myUnityBundle;
+	}
+
+	@Nonnull
+	public Project getProject()
+	{
+		return myProject;
 	}
 
 	public int getScriptRuntimeVersion()
@@ -172,6 +208,16 @@ public class UnityProjectImportContext
 		return myManifest;
 	}
 
+	public void addPackageModule(@Nonnull String moduleName)
+	{
+		myPackageModules.add(moduleName);
+	}
+
+	public List<String> getPackageModules()
+	{
+		return myPackageModules;
+	}
+
 	@Nonnull
 	public Collection<String> calculateDefines(@Nullable Sdk unityBundle)
 	{
@@ -189,7 +235,7 @@ public class UnityProjectImportContext
 			variables.add("DEBUG");
 			variables.add("TRACE");
 
-			Unity3dDefineByVersion unity3dDefineByVersion = Unity3dProjectImportUtil.getUnity3dDefineByVersion(unityBundle);
+			Unity3dDefineByVersion unity3dDefineByVersion = Unity3dProjectImporter.getUnity3dDefineByVersion(unityBundle);
 			if(unity3dDefineByVersion != Unity3dDefineByVersion.UNKNOWN)
 			{
 				for(Unity3dDefineByVersion majorVersion : unity3dDefineByVersion.getMajorVersions())

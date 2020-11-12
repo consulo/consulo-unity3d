@@ -99,7 +99,7 @@ public class Unity3dModuleImportProvider implements ModuleImportProvider<UnityMo
 
 		newModuleConsumer.accept(rootModule);
 
-		StartupManager.getInstance(project).registerPostStartupActivity(() -> Unity3dProjectImportUtil.syncProjectStep1(project, unitySdk, requestor, true));
+		StartupManager.getInstance(project).registerPostStartupActivity(() -> Unity3dProjectImporter.syncProjectStep1(project, unitySdk, requestor, true));
 
 	}
 

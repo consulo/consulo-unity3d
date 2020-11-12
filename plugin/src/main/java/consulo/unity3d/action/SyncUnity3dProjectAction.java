@@ -26,7 +26,7 @@ import consulo.ui.annotation.RequiredUIAccess;
 import consulo.unity3d.Unity3dIcons;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import consulo.unity3d.module.Unity3dRootModuleExtension;
-import consulo.unity3d.projectImport.Unity3dProjectImportUtil;
+import consulo.unity3d.projectImport.Unity3dProjectImporter;
 
 import javax.annotation.Nonnull;
 
@@ -56,7 +56,7 @@ public class SyncUnity3dProjectAction extends AnAction
 			return;
 		}
 
-		Unity3dProjectImportUtil.syncProjectStep1(project, rootModuleExtension.getSdk(), null, true);
+		Unity3dProjectImporter.syncProjectStep1(project, rootModuleExtension.getSdk(), null, true);
 	}
 
 	@RequiredUIAccess
@@ -78,7 +78,7 @@ public class SyncUnity3dProjectAction extends AnAction
 			return;
 		}
 
-		if(project.getUserData(Unity3dProjectImportUtil.ourInProgressFlag) == Boolean.TRUE)
+		if(project.getUserData(Unity3dProjectImporter.ourInProgressFlag) == Boolean.TRUE)
 		{
 			presentation.setEnabled(false);
 			presentation.setVisible(true);

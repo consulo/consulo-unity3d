@@ -60,7 +60,7 @@ import consulo.disposer.Disposable;
 import consulo.ui.UIAccess;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import consulo.unity3d.module.Unity3dRootModuleExtension;
-import consulo.unity3d.projectImport.Unity3dProjectImportUtil;
+import consulo.unity3d.projectImport.Unity3dProjectImporter;
 
 /**
  * @author VISTALL
@@ -111,7 +111,7 @@ public class Unity3dProjectChangeListener implements Disposable
 			}
 		});
 
-		myAssetsDirPointer = VirtualFilePointerManager.getInstance().create(StandardFileSystems.FILE_PROTOCOL_PREFIX + myProject.getPresentableUrl() + "/" + Unity3dProjectImportUtil
+		myAssetsDirPointer = VirtualFilePointerManager.getInstance().create(StandardFileSystems.FILE_PROTOCOL_PREFIX + myProject.getPresentableUrl() + "/" + Unity3dProjectImporter
 				.ASSETS_DIRECTORY, this, null);
 
 		virtualFileManager.addAsyncFileListener(new AsyncFileListener()
@@ -217,7 +217,7 @@ public class Unity3dProjectChangeListener implements Disposable
 								return;
 							}
 
-							Unity3dProjectImportUtil.syncProjectStep1(myProject, rootModuleExtension.getSdk(), null, true);
+							Unity3dProjectImporter.syncProjectStep1(myProject, rootModuleExtension.getSdk(), null, true);
 						}).notify(myProject);
 			}
 		});

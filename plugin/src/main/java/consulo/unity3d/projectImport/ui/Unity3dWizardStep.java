@@ -20,7 +20,7 @@ import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBLabel;
 import consulo.ide.newProject.ui.ProjectOrModuleNameStep;
 import consulo.unity3d.Unity3dBundle;
-import consulo.unity3d.projectImport.Unity3dProjectImportUtil;
+import consulo.unity3d.projectImport.Unity3dProjectImporter;
 import consulo.unity3d.projectImport.UnityModuleImportContext;
 
 import java.awt.*;
@@ -35,7 +35,7 @@ public class Unity3dWizardStep extends ProjectOrModuleNameStep<UnityModuleImport
 	{
 		super(context);
 
-		String version = Unity3dProjectImportUtil.loadVersionFromProject(context.getPath());
+		String version = Unity3dProjectImporter.loadVersionFromProject(context.getPath());
 		Unity3SdkPanel sdkPanel = new Unity3SdkPanel(context, version);
 		myAdditionalContentPanel.add(sdkPanel.getPanel(), BorderLayout.NORTH);
 

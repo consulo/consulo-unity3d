@@ -97,7 +97,7 @@ public class Unity3dModuleResolver implements CreateFileFromTemplateAction.Modul
 			parent = parent.getParent();
 		}
 
-		for(String path : Unity3dProjectImportUtil.FIRST_PASS_PATHS)
+		for(String path : Unity3dProjectImporter.FIRST_PASS_PATHS)
 		{
 			VirtualFile pathFile = baseDir.findFileByRelativePath(path);
 			if(pathFile != null && VfsUtil.isAncestor(pathFile, parent, true))

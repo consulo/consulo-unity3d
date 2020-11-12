@@ -28,7 +28,7 @@ import consulo.ide.IconDescriptor;
 import consulo.ide.IconDescriptorUpdater;
 import consulo.ui.image.Image;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
-import consulo.unity3d.projectImport.Unity3dProjectImportUtil;
+import consulo.unity3d.projectImport.Unity3dProjectImporter;
 import gnu.trove.THashMap;
 
 import javax.annotation.Nonnull;
@@ -76,7 +76,7 @@ public class UnityDirectoryIconDescriptorUpdater implements IconDescriptorUpdate
 
 		VirtualFile baseDir = project.getBaseDir();
 		assert baseDir != null;
-		VirtualFile assetsDirectory = baseDir.findChild(Unity3dProjectImportUtil.ASSETS_DIRECTORY);
+		VirtualFile assetsDirectory = baseDir.findChild(Unity3dProjectImporter.ASSETS_DIRECTORY);
 		if(assetsDirectory == null)
 		{
 			return;

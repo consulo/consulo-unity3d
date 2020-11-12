@@ -34,7 +34,7 @@ import consulo.module.extension.ModuleExtension;
 import consulo.msil.representation.MsilFileRepresentationVirtualFile;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import consulo.unity3d.module.Unity3dRootModuleExtension;
-import consulo.unity3d.projectImport.Unity3dProjectImportUtil;
+import consulo.unity3d.projectImport.Unity3dProjectImporter;
 import jakarta.inject.Inject;
 
 import javax.annotation.Nonnull;
@@ -92,7 +92,7 @@ public class FileIsNotAttachedProvider implements EditorNotificationProvider<Edi
 			panel.text("File is not attached to project. Some features are unavailable (code analysis, debugging, etc)");
 			panel.createActionLabel("Re-import Unity Project", () ->
 			{
-				Unity3dProjectImportUtil.syncProjectStep1(myProject, rootModuleExtension.getSdk(), null, true);
+				Unity3dProjectImporter.syncProjectStep1(myProject, rootModuleExtension.getSdk(), null, true);
 			});
 			return panel;
 		}

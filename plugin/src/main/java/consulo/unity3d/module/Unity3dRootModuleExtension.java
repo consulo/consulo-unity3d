@@ -18,7 +18,6 @@ package consulo.unity3d.module;
 
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkType;
-import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.Version;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -30,7 +29,7 @@ import consulo.dotnet.module.extension.BaseDotNetSimpleModuleExtension;
 import consulo.platform.Platform;
 import consulo.roots.ModuleRootLayer;
 import consulo.unity3d.bundle.Unity3dBundleType;
-import consulo.unity3d.projectImport.Unity3dProjectImportUtil;
+import consulo.unity3d.projectImport.Unity3dProjectImporter;
 import org.jdom.Element;
 
 import javax.annotation.Nonnull;
@@ -143,7 +142,7 @@ public class Unity3dRootModuleExtension extends BaseDotNetSimpleModuleExtension<
 	@Nonnull
 	private List<String> getPathsForLibraries(String homePath, @Nonnull Sdk sdk)
 	{
-		Version version = Unity3dProjectImportUtil.parseVersion(sdk.getVersionString());
+		Version version = Unity3dProjectImporter.parseVersion(sdk.getVersionString());
 
 		Platform.OperatingSystem os = Platform.current().os();
 
