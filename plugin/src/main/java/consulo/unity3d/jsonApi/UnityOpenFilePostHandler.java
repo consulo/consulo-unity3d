@@ -43,7 +43,6 @@ import com.sun.jna.platform.win32.WinDef;
 import consulo.awt.TargetAWT;
 import consulo.builtInServer.impl.net.json.RequestFocusHttpRequestHandler;
 import consulo.builtInServer.json.JsonPostRequestHandler;
-import consulo.logging.Logger;
 import consulo.moduleImport.ModuleImportContext;
 import consulo.moduleImport.ModuleImportProvider;
 import consulo.moduleImport.ui.ModuleImportProcessor;
@@ -199,10 +198,11 @@ public class UnityOpenFilePostHandler extends JsonPostRequestHandler<UnityOpenFi
 			return;
 		}
 
+		RequestFocusHttpRequestHandler.activateFrame(ideFrame);
+
 		Platform.OperatingSystem os = Platform.current().os();
 		if(os.isMac())
 		{
-			RequestFocusHttpRequestHandler.activateFrame(ideFrame);
 			ID id = MacUtil.findWindowFromJavaWindow(TargetAWT.to(ideFrame.getWindow()));
 			if(id != null)
 			{
@@ -213,10 +213,6 @@ public class UnityOpenFilePostHandler extends JsonPostRequestHandler<UnityOpenFi
 		{
 			Pointer windowPointer = Native.getWindowPointer(TargetAWT.to(ideFrame.getWindow()));
 			User32.INSTANCE.SetForegroundWindow(new WinDef.HWND(windowPointer));
-		}
-		else
-		{
-			RequestFocusHttpRequestHandler.activateFrame(ideFrame);
 		}
 	}
 
