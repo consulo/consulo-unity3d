@@ -33,9 +33,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.openapi.wm.IdeFrame;
 import com.intellij.openapi.wm.WindowManager;
-import com.intellij.ui.mac.foundation.Foundation;
-import com.intellij.ui.mac.foundation.ID;
-import com.intellij.ui.mac.foundation.MacUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.UIUtil;
 import com.sun.jna.Native;
@@ -205,11 +202,7 @@ public class UnityOpenFilePostHandler extends JsonPostRequestHandler<UnityOpenFi
 		Platform.OperatingSystem os = Platform.current().os();
 		if(os.isMac())
 		{
-			ID id = MacUtil.findWindowFromJavaWindow(TargetAWT.to(ideFrame.getWindow()));
-			if(id != null)
-			{
-				Foundation.invoke(id, "makeKeyAndOrderFront:", ID.NIL);
-			}
+			// something?
 		}
 		else if(os.isWindows())
 		{
