@@ -52,7 +52,6 @@ import consulo.unity3d.bundle.Unity3dBundleType;
 import consulo.unity3d.projectImport.Unity3dModuleImportProvider;
 import consulo.util.concurrent.AsyncResult;
 import consulo.util.lang.Pair;
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -80,8 +79,8 @@ public class UnityOpenFilePostHandler extends JsonPostRequestHandler<UnityOpenFi
 	@Override
 	public JsonResponse handle(@Nonnull final UnityOpenFilePostHandlerRequest body)
 	{
-		LOG.info("unityOpenFile: " + ReflectionToStringBuilder.toString(body));
 		String contentType = body.contentType;
+
 		if(!ourSupportedContentTypes.contains(contentType))
 		{
 			return JsonResponse.asError("unsupported-content-type");
@@ -89,6 +88,8 @@ public class UnityOpenFilePostHandler extends JsonPostRequestHandler<UnityOpenFi
 
 		UIUtil.invokeLaterIfNeeded(() ->
 		{
+			UIAccess uiAccess = UIAccess.current();
+
 			VirtualFile projectVirtualFile = LocalFileSystem.getInstance().findFileByPath(body.projectPath);
 			if(projectVirtualFile != null)
 			{
@@ -141,7 +142,6 @@ public class UnityOpenFilePostHandler extends JsonPostRequestHandler<UnityOpenFi
 							return;
 						}
 
-						UIAccess uiAccess = UIAccess.current();
 
 						Unity3dModuleImportProvider importProvider = new Unity3dModuleImportProvider(targetSdk, body);
 
@@ -156,36 +156,31 @@ public class UnityOpenFilePostHandler extends JsonPostRequestHandler<UnityOpenFi
 
 							AsyncResult<Project> importProjectAsync = NewOrImportModuleUtil.importProject(context, provider);
 
-							importProjectAsync.doWhenDone((newProject) -> ProjectManager.getInstance().openProjectAsync(newProject, uiAccess).doWhenDone((project) -> activateFrame(project, body)));
+							importProjectAsync.doWhenDone((newProject) -> ProjectManager.getInstance().openProjectAsync(newProject, uiAccess).doWhenDone((project) -> postOpenFileRequest(project, body)));
 						});
 					}
 					else
 					{
-						try
-						{
-							openedProject = ProjectManager.getInstance().loadAndOpenProject(projectVirtualFile.getPath());
-						}
-						catch(Exception e)
-						{
-							Messages.showErrorDialog("Fail to open project by path: " + projectVirtualFile.getPath(), "Consulo");
-						}
+						AsyncResult<Project> result = ProjectManager.getInstance().openProjectAsync(projectVirtualFile, uiAccess);
 
-						activateFrame(openedProject, body);
-						openFile(openedProject, body);
+						result.doWhenDone((project) -> postOpenFileRequest(project, body));
 					}
 				}
 				else
 				{
 					final Project project = openedProject;
-					StartupManager.getInstance(project).runWhenProjectIsInitialized(() ->
-					{
-						activateFrame(project, body);
-						openFile(project, body);
-					});
+					StartupManager.getInstance(project).runWhenProjectIsInitialized(() -> postOpenFileRequest(project, body));
 				}
 			}
 		});
 		return JsonResponse.asSuccess(null);
+	}
+
+	private void postOpenFileRequest(@Nullable Project project, @Nonnull UnityOpenFilePostHandlerRequest body)
+	{
+		activateFrame(project, body);
+
+		openFile(project, body);
 	}
 
 	private void activateFrame(@Nullable Project openedProject, @Nonnull UnityOpenFilePostHandlerRequest body)
