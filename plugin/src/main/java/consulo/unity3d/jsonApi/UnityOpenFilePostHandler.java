@@ -16,6 +16,7 @@
 
 package consulo.unity3d.jsonApi;
 
+import com.intellij.ide.impl.ProjectUtil;
 import com.intellij.ide.impl.util.NewOrImportModuleUtil;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
@@ -66,8 +67,6 @@ import java.util.Set;
  */
 public class UnityOpenFilePostHandler extends JsonPostRequestHandler<UnityOpenFilePostHandlerRequest>
 {
-	private static final Logger LOG = Logger.getInstance(UnityOpenFilePostHandler.class);
-
 	private static final Set<String> ourSupportedContentTypes = ContainerUtil.newHashSet("UnityEditor.MonoScript", "UnityEngine.Shader");
 
 	public UnityOpenFilePostHandler()
@@ -93,18 +92,18 @@ public class UnityOpenFilePostHandler extends JsonPostRequestHandler<UnityOpenFi
 			VirtualFile projectVirtualFile = LocalFileSystem.getInstance().findFileByPath(body.projectPath);
 			if(projectVirtualFile != null)
 			{
-				Project openedProject = null;
+				Project targetProject = null;
 				Project[] openProjects = ProjectManager.getInstance().getOpenProjects();
 				for(Project openProject : openProjects)
 				{
-					if(projectVirtualFile.equals(openProject.getBaseDir()))
+					if(ProjectUtil.isSameProject(body.projectPath, openProject))
 					{
-						openedProject = openProject;
+						targetProject = openProject;
 						break;
 					}
 				}
 
-				if(openedProject == null)
+				if(targetProject == null)
 				{
 					if(!new File(projectVirtualFile.getPath(), Project.DIRECTORY_STORE_FOLDER).exists())
 					{
@@ -156,34 +155,38 @@ public class UnityOpenFilePostHandler extends JsonPostRequestHandler<UnityOpenFi
 
 							AsyncResult<Project> importProjectAsync = NewOrImportModuleUtil.importProject(context, provider);
 
-							importProjectAsync.doWhenDone((newProject) -> ProjectManager.getInstance().openProjectAsync(newProject, uiAccess).doWhenDone((project) -> postOpenFileRequest(project, body)));
+							importProjectAsync.doWhenDone((newProject) -> ProjectManager.getInstance().openProjectAsync(newProject, uiAccess).doWhenDone((project) -> postOpenFileRequest(project,
+									uiAccess, body)));
 						});
 					}
 					else
 					{
 						AsyncResult<Project> result = ProjectManager.getInstance().openProjectAsync(projectVirtualFile, uiAccess);
 
-						result.doWhenDone((project) -> postOpenFileRequest(project, body));
+						result.doWhenDone((project) -> postOpenFileRequest(project, uiAccess, body));
 					}
 				}
 				else
 				{
-					final Project project = openedProject;
-					StartupManager.getInstance(project).runWhenProjectIsInitialized(() -> postOpenFileRequest(project, body));
+					final Project project = targetProject;
+					StartupManager.getInstance(project).runWhenProjectIsInitialized(() -> postOpenFileRequest(project, uiAccess, body));
 				}
 			}
 		});
 		return JsonResponse.asSuccess(null);
 	}
 
-	private void postOpenFileRequest(@Nullable Project project, @Nonnull UnityOpenFilePostHandlerRequest body)
+	private void postOpenFileRequest(@Nullable Project project, @Nonnull UIAccess uiAccess, @Nonnull UnityOpenFilePostHandlerRequest body)
 	{
-		activateFrame(project, body);
+		uiAccess.give(() ->
+		{
+			activateFrame(project, body);
 
-		openFile(project, body);
+			openFile(project, body);
+		});
 	}
 
-	private void activateFrame(@Nullable Project openedProject, @Nonnull UnityOpenFilePostHandlerRequest body)
+	private static void activateFrame(@Nullable Project openedProject, @Nonnull UnityOpenFilePostHandlerRequest body)
 	{
 		if(openedProject == null)
 		{
