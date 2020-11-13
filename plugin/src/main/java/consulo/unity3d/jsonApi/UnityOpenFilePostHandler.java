@@ -18,6 +18,7 @@ package consulo.unity3d.jsonApi;
 
 import com.intellij.ide.impl.ProjectUtil;
 import com.intellij.ide.impl.util.NewOrImportModuleUtil;
+import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
@@ -29,6 +30,7 @@ import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.openapi.wm.IdeFrame;
 import com.intellij.openapi.wm.WindowManager;
 import com.intellij.ui.mac.foundation.Foundation;
@@ -227,7 +229,12 @@ public class UnityOpenFilePostHandler extends JsonPostRequestHandler<UnityOpenFi
 		if(fileByPath != null)
 		{
 			OpenFileDescriptor descriptor = new OpenFileDescriptor(openedProject, fileByPath, body.line - 1, -1);
-			FileEditorManager.getInstance(openedProject).openTextEditor(descriptor, true);
+			Editor editor = FileEditorManager.getInstance(openedProject).openTextEditor(descriptor, true);
+
+			if(editor != null)
+			{
+				IdeFocusManager.getGlobalInstance().doWhenFocusSettlesDown(() -> editor.getComponent().grabFocus());
+			}
 		}
 	}
 }
