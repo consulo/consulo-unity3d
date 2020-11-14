@@ -263,7 +263,7 @@ public enum Unity3dAssetCSharpLineMarker
 													if(declaration != null)
 													{
 														prefix = typeDeclaration.getPresentableQName() + ".";
-														key = CSharpHighlightKey.STATIC_FIELD_OR_PROPERTY;
+														key = CSharpHighlightKey.CONSTANT;
 													}
 												}
 
