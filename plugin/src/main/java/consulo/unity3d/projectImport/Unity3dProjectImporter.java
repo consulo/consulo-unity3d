@@ -44,7 +44,6 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileVisitor;
-import com.intellij.util.ArrayUtil;
 import com.intellij.util.Consumer;
 import com.intellij.util.TimeoutUtil;
 import com.intellij.util.containers.ContainerUtil;
@@ -329,9 +328,7 @@ public class Unity3dProjectImporter
 		final ModifiableRootModel modifiableModel = AccessRule.read(() -> ModuleRootManager.getInstance(module).getModifiableModel());
 		assert modifiableModel != null;
 
-		String[] paths = new String[]{packageDir.getPresentableUrl()};
-
-		fillModuleDependencies(module, modifiableModel, paths, it ->
+		fillModuleDependencies(module, modifiableModel, List.of(packageDir), it ->
 		{
 			ContentEntry entry = it.addContentEntry(packageDir);
 
@@ -348,8 +345,9 @@ public class Unity3dProjectImporter
 													 MultiMap<Module, VirtualFile> virtualFilesByModule,
 													 UnityProjectImportContext context)
 	{
-		String[] paths = {ASSETS_DIRECTORY};
-		return createAndSetupModule("Assembly-CSharp", newModel, paths, layer ->
+		VirtualFile mainDir = context.getProject().getBaseDir().findFileByRelativePath(ASSETS_DIRECTORY);
+		List<VirtualFile> moduleDirs = mainDir == null ? List.of() : List.of(mainDir);
+		return createAndSetupModule("Assembly-CSharp", newModel, moduleDirs, layer ->
 		{
 			if(!isVersionHigherOrEqual(unityBundle, "2018.2"))
 			{
@@ -373,25 +371,42 @@ public class Unity3dProjectImporter
 		}
 		else
 		{
-			return createAndSetupModule(ASSEMBLY_UNITYSCRIPT_FIRSTPASS, newModel, FIRST_PASS_PATHS, null, "unity3d-unityscript-child", JavaScriptFileType.INSTANCE,
+			VirtualFile baseDir = context.getProject().getBaseDir();
+			List<VirtualFile> moduleDirs = new ArrayList<>();
+			for(String passPath : FIRST_PASS_PATHS)
+			{
+				VirtualFile file = baseDir.findFileByRelativePath(passPath);
+				if(file != null)
+				{
+					moduleDirs.add(file);
+				}
+			}
+
+			return createAndSetupModule(ASSEMBLY_UNITYSCRIPT_FIRSTPASS, newModel, moduleDirs, null, "unity3d-unityscript-child", JavaScriptFileType.INSTANCE,
 					virtualFilesByModule, context);
 		}
 	}
 
 	private static Module createAssemblyCSharpModuleFirstPass(ModifiableModuleModel newModel, MultiMap<Module, VirtualFile> virtualFilesByModule, UnityProjectImportContext context)
 	{
-		return createAndSetupModule("Assembly-CSharp-firstpass", newModel, FIRST_PASS_PATHS, null, "unity3d-csharp-child", CSharpFileType.INSTANCE, virtualFilesByModule,
-				context);
+		VirtualFile baseDir = context.getProject().getBaseDir();
+		List<VirtualFile> moduleDirs = new ArrayList<>();
+		for(String passPath : FIRST_PASS_PATHS)
+		{
+			VirtualFile file = baseDir.findFileByRelativePath(passPath);
+			if(file != null)
+			{
+				moduleDirs.add(file);
+			}
+		}
+		return createAndSetupModule("Assembly-CSharp-firstpass", newModel, moduleDirs, null, "unity3d-csharp-child", CSharpFileType.INSTANCE, virtualFilesByModule, context);
 	}
 
 	private static Module createAssemblyCSharpModuleEditor(ModifiableModuleModel newModel, MultiMap<Module, VirtualFile> virtualFilesByModule, UnityProjectImportContext context)
 	{
 		Project project = context.getProject();
 
-		final List<String> paths = new ArrayList<>();
-		paths.add("Assets/Standard Assets/Editor");
-		paths.add("Assets/Pro Standard Assets/Editor");
-		paths.add("Assets/Plugins/Editor");
+		final List<VirtualFile> moduleDirs = new ArrayList<>();
 
 		final VirtualFile baseDir = project.getBaseDir();
 
@@ -403,17 +418,16 @@ public class Unity3dProjectImporter
 				@Override
 				public boolean visitFile(@Nonnull VirtualFile file)
 				{
-					if(file.isDirectory() && "Editor".equals(file.getName()))
+					if(file.isDirectory() && StringUtil.equalsIgnoreCase("Editor", file.getNameSequence()))
 					{
-						paths.add(VfsUtil.getRelativePath(file, baseDir, '/'));
+						moduleDirs.add(file);
 					}
 					return true;
 				}
 			});
 		}
 
-		final String[] pathsAsArray = ArrayUtil.toStringArray(paths);
-		return createAndSetupModule("Assembly-CSharp-Editor", newModel, pathsAsArray, layer ->
+		return createAndSetupModule("Assembly-CSharp-Editor", newModel, moduleDirs, layer ->
 		{
 			Sdk unityBundle = context.getUnityBundle();
 			if(!isVersionHigherOrEqual(unityBundle, "2018.2"))
@@ -457,7 +471,7 @@ public class Unity3dProjectImporter
 	@SuppressWarnings("unchecked")
 	private static Module createAndSetupModule(@Nonnull String moduleName,
 											   @Nonnull ModifiableModuleModel modifiableModuleModels,
-											   @Nonnull String[] paths,
+											   @Nonnull Collection<VirtualFile> moduleDirs,
 											   @Nullable Consumer<ModuleRootLayerImpl> setupConsumer,
 											   @Nonnull String moduleExtensionId,
 											   @Nonnull FileType fileType,
@@ -468,11 +482,6 @@ public class Unity3dProjectImporter
 		ProgressIndicator progressIndicator = context.getProgressIndicator();
 
 		progressIndicator.setText(Unity3dBundle.message("syncing.0.module", moduleName));
-
-		for(int i = 0; i < paths.length; i++)
-		{
-			paths[i] = project.getBasePath() + "/" + paths[i];
-		}
 
 		Module temp = modifiableModuleModels.findModuleByName(moduleName);
 		final Module module;
@@ -488,7 +497,7 @@ public class Unity3dProjectImporter
 		final ModifiableRootModel modifiableModel = AccessRule.read(() -> ModuleRootManager.getInstance(module).getModifiableModel());
 		assert modifiableModel != null;
 
-		fillModuleDependencies(module, modifiableModel, paths, setupConsumer, moduleExtensionId, fileType, virtualFilesByModule, context, true);
+		fillModuleDependencies(module, modifiableModel, moduleDirs, setupConsumer, moduleExtensionId, fileType, virtualFilesByModule, context, true);
 
 		RunManager runManager = RunManager.getInstance(project);
 		List<RunConfiguration> allConfigurationsList = runManager.getAllConfigurationsList();
@@ -513,7 +522,7 @@ public class Unity3dProjectImporter
 
 	private static void fillModuleDependencies(@Nonnull Module module,
 											   @Nonnull ModifiableRootModel modifiableRootModel,
-											   @Nonnull String[] paths,
+											   @Nonnull Collection<VirtualFile> moduleSources,
 											   @Nullable Consumer<ModuleRootLayerImpl> setupConsumer,
 											   @Nonnull String moduleExtensionId,
 											   @Nonnull FileType fileType,
@@ -528,45 +537,40 @@ public class Unity3dProjectImporter
 		final List<VirtualFile> libraryFiles = new ArrayList<>();
 
 		final double fraction = progressIndicator.getFraction();
-		for(int i = 0; i < paths.length; i++)
+		int i = 0;
+		for(VirtualFile dir : moduleSources)
 		{
-			String path = paths[i];
-
-			VirtualFile fileByPath = LocalFileSystem.getInstance().findFileByPath(path);
-			if(fileByPath != null)
+			VfsUtil.visitChildrenRecursively(dir, new VirtualFileVisitor()
 			{
-				VfsUtil.visitChildrenRecursively(fileByPath, new VirtualFileVisitor()
+				@Override
+				public boolean visitFile(@Nonnull VirtualFile file)
 				{
-					@Override
-					public boolean visitFile(@Nonnull VirtualFile file)
+					if(isUnityModule && file.getFileType() == fileType)
 					{
-						if(isUnityModule && file.getFileType() == fileType)
+						if(virtualFilesByModule.containsScalarValue(file))
 						{
-							if(virtualFilesByModule.containsScalarValue(file))
-							{
-								return true;
-							}
-
-							virtualFilesByModule.putValue(module, file);
-							toAdd.add(file);
-
-							VirtualFile parent = file.getParent();
-							VirtualFile metaFile = parent.findChild(file.getName() + "." + Unity3dMetaFileType.INSTANCE.getDefaultExtension());
-							if(metaFile != null)
-							{
-								toAdd.add(metaFile);
-							}
+							return true;
 						}
-						else if(file.getFileType() == DotNetModuleFileType.INSTANCE)
+
+						virtualFilesByModule.putValue(module, file);
+						toAdd.add(file);
+
+						VirtualFile parent = file.getParent();
+						VirtualFile metaFile = parent.findChild(file.getName() + "." + Unity3dMetaFileType.INSTANCE.getDefaultExtension());
+						if(metaFile != null)
 						{
-							libraryFiles.add(file);
+							toAdd.add(metaFile);
 						}
-						return true;
 					}
-				});
-			}
+					else if(file.getFileType() == DotNetModuleFileType.INSTANCE)
+					{
+						libraryFiles.add(file);
+					}
+					return true;
+				}
+			});
 
-			final double newFraction = fraction + 0.25f * (i / (float) paths.length);
+			final double newFraction = fraction + 0.25f * (i / (float) moduleSources.size());
 			UIUtil.invokeLaterIfNeeded(() -> progressIndicator.setFraction(newFraction));
 		}
 
