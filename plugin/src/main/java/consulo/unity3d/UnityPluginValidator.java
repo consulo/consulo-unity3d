@@ -68,7 +68,7 @@ public class UnityPluginValidator implements StartupActivity.Background
 	private static final Logger LOG = Logger.getInstance(UnityPluginValidator.class);
 
 	public static final String PLUGIN_ID = "com.consulo.ide";
-	public static final String PLUGIN_VERSION = "2.2.0";
+	public static final String PLUGIN_VERSION = "2.4.0";
 
 	private static final String ourPath = "Assets/Editor/Plugins";
 	private static final NotificationGroup ourGroup = new NotificationGroup("consulo.unity", NotificationDisplayType.STICKY_BALLOON, true);
