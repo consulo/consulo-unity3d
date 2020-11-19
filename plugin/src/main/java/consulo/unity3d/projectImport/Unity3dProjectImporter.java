@@ -40,10 +40,7 @@ import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.util.Version;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VfsUtil;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileVisitor;
+import com.intellij.openapi.vfs.*;
 import com.intellij.util.Consumer;
 import com.intellij.util.TimeoutUtil;
 import com.intellij.util.containers.ContainerUtil;
@@ -56,6 +53,7 @@ import consulo.csharp.module.extension.CSharpLanguageVersion;
 import consulo.csharp.module.extension.CSharpSimpleMutableModuleExtension;
 import consulo.dotnet.dll.DotNetModuleFileType;
 import consulo.dotnet.roots.orderEntry.DotNetLibraryOrderEntryImpl;
+import consulo.logging.Logger;
 import consulo.module.extension.MutableModuleExtension;
 import consulo.roots.ContentFolderScopes;
 import consulo.roots.impl.ExcludedContentFolderTypeProvider;
@@ -90,6 +88,10 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 /**
@@ -98,6 +100,8 @@ import java.util.*;
  */
 public class Unity3dProjectImporter
 {
+	private static final Logger LOG = Logger.getInstance(Unity3dProjectImporter.class);
+
 	public static final String ASSETS_DIRECTORY = "Assets";
 
 	public static final String[] FIRST_PASS_PATHS = new String[]{
@@ -105,7 +109,6 @@ public class Unity3dProjectImporter
 			"Assets/Pro Standard Assets",
 			"Assets/Plugins"
 	};
-
 
 	private static final String ASSEMBLY_UNITYSCRIPT_FIRSTPASS = "Assembly-UnityScript-firstpass";
 
@@ -620,9 +623,51 @@ public class Unity3dProjectImporter
 
 		if(isUnityModule)
 		{
-			for(Map.Entry<String, String> entry : context.getManifest().getFilteredDependencies().entrySet())
+			for(Map.Entry<String, String> entry : context.getManifest().dependencies.entrySet())
 			{
-				layer.addOrderEntry(new Unity3dPackageOrderEntry(layer, entry.getKey() + "@" + entry.getValue()));
+				String name = entry.getKey();
+				String value = entry.getValue();
+				if(value.startsWith("file"))
+				{
+					try
+					{
+						URL url = new URL(value);
+						File targetDirectory = new File(url.getFile());
+						String ideaUrl = VfsUtilCore.pathToUrl(targetDirectory.getPath());
+						layer.addOrderEntry(new Unity3dPackageOrderEntry(layer, name, null, ideaUrl));
+					}
+					catch(Exception e)
+					{
+						LOG.warn(e);
+					}
+				}
+				// git url
+				// we can't calculate without unity. try guest from Library dir
+				else if(value.startsWith("git") || value.endsWith(".git"))
+				{
+					Path path = Paths.get(project.getBasePath(), "Library", "PackageCache");
+					if(Files.exists(path))
+					{
+						try
+						{
+							Optional<Path> firstDir = Files.walk(path, 1).filter(it -> it.getFileName().toString().startsWith(name)).findFirst();
+							if(firstDir.isPresent())
+							{
+								Path libraryHome = firstDir.get();
+								String ideaUrl = VfsUtilCore.pathToUrl(libraryHome.toString());
+								layer.addOrderEntry(new Unity3dPackageOrderEntry(layer, name, null, ideaUrl));
+							}
+						}
+						catch(IOException e)
+						{
+							LOG.warn(e);
+						}
+					}
+				}
+				else
+				{
+					layer.addOrderEntry(new Unity3dPackageOrderEntry(layer, name, value, null));
+				}
 			}
 
 			for(String moduleName : context.getPackageModules())

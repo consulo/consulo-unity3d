@@ -25,16 +25,13 @@ import com.intellij.openapi.roots.impl.ClonableOrderEntry;
 import com.intellij.openapi.roots.impl.LibraryOrderEntryBaseImpl;
 import com.intellij.openapi.roots.impl.ProjectRootManagerImpl;
 import com.intellij.openapi.roots.impl.RootProviderBaseImpl;
-import com.intellij.openapi.util.Comparing;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.ArrayUtil;
+import com.intellij.openapi.vfs.pointers.VirtualFilePointer;
+import com.intellij.openapi.vfs.pointers.VirtualFilePointerManager;
 import com.intellij.util.ObjectUtil;
-import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import consulo.annotation.access.RequiredReadAction;
 import consulo.dotnet.dll.DotNetModuleFileType;
@@ -53,7 +50,9 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author VISTALL
@@ -68,45 +67,8 @@ public class Unity3dPackageOrderEntry extends LibraryOrderEntryBaseImpl implemen
 		@RequiredReadAction
 		public String[] getUrls(@Nonnull OrderRootType rootType)
 		{
-			List<String> urls = new SmartList<>();
-
-			if(rootType == BinariesOrderRootType.getInstance() || rootType == SourcesOrderRootType.getInstance())
-			{
-				// moved to project files
-				String projectPackageCache = getProjectPackageCache();
-				if(new File(projectPackageCache, myNameWithVersion).exists())
-				{
-					urls.add(StandardFileSystems.FILE_PROTOCOL_PREFIX + FileUtil.toSystemIndependentName(projectPackageCache + "/" + myNameWithVersion));
-				}
-
-				if(urls.isEmpty())
-				{
-					Unity3dPackageWatcher watcher = Unity3dPackageWatcher.getInstance();
-					for(String path : watcher.getPackageDirPaths())
-					{
-						if(new File(path, myNameWithVersion).exists())
-						{
-							urls.add(StandardFileSystems.FILE_PROTOCOL_PREFIX + FileUtil.toSystemIndependentName(path + "/" + myNameWithVersion));
-						}
-					}
-				}
-			}
-
-			if(urls.isEmpty())
-			{
-				Sdk sdk = getSdk();
-				if(sdk != null)
-				{
-					String builtInPath = sdk.getHomePath() + "/" + getBuiltInPackagesRelativePath();
-					String packageName = getPackageName();
-					if(new File(builtInPath, packageName).exists())
-					{
-						urls.add(StandardFileSystems.FILE_PROTOCOL_PREFIX + FileUtil.toSystemIndependentName(builtInPath + "/" + packageName));
-					}
-				}
-			}
-
-			return ArrayUtil.toStringArray(urls);
+			VirtualFile[] files = getFiles(rootType);
+			return Arrays.stream(files).map(VirtualFile::getUrl).toArray(String[]::new);
 		}
 
 		@Nonnull
@@ -116,23 +78,37 @@ public class Unity3dPackageOrderEntry extends LibraryOrderEntryBaseImpl implemen
 		{
 			List<VirtualFile> files = new ArrayList<>();
 
-			if(rootType == BinariesOrderRootType.getInstance() || rootType == SourcesOrderRootType.getInstance())
+			if(myVersion != null)
 			{
-				LocalFileSystem localFileSystem = LocalFileSystem.getInstance();
+				String nameWithVersion = myName + "@" + myVersion;
 
-				// moved to project files
-				String projectPackageCache = getProjectPackageCache();
-				VirtualFile localFile = localFileSystem.findFileByIoFile(new File(projectPackageCache, myNameWithVersion));
-				addDotNetModulesInsideLibrary(files, localFile);
-
-				if(files.isEmpty())
+				if(rootType == BinariesOrderRootType.getInstance() || rootType == SourcesOrderRootType.getInstance())
 				{
-					Unity3dPackageWatcher watcher = Unity3dPackageWatcher.getInstance();
-					for(String path : watcher.getPackageDirPaths())
+					LocalFileSystem localFileSystem = LocalFileSystem.getInstance();
+
+					// moved to project files
+					String projectPackageCache = getProjectPackageCache();
+					VirtualFile localFile = localFileSystem.findFileByIoFile(new File(projectPackageCache, nameWithVersion));
+					addDotNetModulesInsideLibrary(files, localFile);
+
+					if(files.isEmpty())
 					{
-						VirtualFile file = localFileSystem.findFileByIoFile(new File(path, myNameWithVersion));
-						addDotNetModulesInsideLibrary(files, file);
+						Unity3dPackageWatcher watcher = Unity3dPackageWatcher.getInstance();
+						for(String path : watcher.getPackageDirPaths())
+						{
+							VirtualFile file = localFileSystem.findFileByIoFile(new File(path, nameWithVersion));
+							addDotNetModulesInsideLibrary(files, file);
+						}
 					}
+				}
+			}
+
+			if(myFilePointer != null)
+			{
+				VirtualFile file = myFilePointer.getFile();
+				if(file != null)
+				{
+					files.add(file);
 				}
 			}
 
@@ -147,7 +123,7 @@ public class Unity3dPackageOrderEntry extends LibraryOrderEntryBaseImpl implemen
 						VirtualFile builtInDirectory = homeDirectory.findFileByRelativePath(getBuiltInPackagesRelativePath());
 						if(builtInDirectory != null)
 						{
-							VirtualFile packageDirectory = builtInDirectory.findChild(getPackageName());
+							VirtualFile packageDirectory = builtInDirectory.findChild(myName);
 							ContainerUtil.addIfNotNull(files, packageDirectory);
 						}
 					}
@@ -225,30 +201,26 @@ public class Unity3dPackageOrderEntry extends LibraryOrderEntryBaseImpl implemen
 			}
 			return extension.getSdk();
 		}
-
-		@Nonnull
-		private String getPackageName()
-		{
-			List<String> values = StringUtil.split(myNameWithVersion, "@");
-			if(values.size() != 2)
-			{
-				return myNameWithVersion;
-			}
-			return values.get(0);
-		}
 	};
 
-	private String myNameWithVersion;
+	private String myName;
+	@Nullable
+	private String myVersion;
+	@Nullable
+	private VirtualFilePointer myFilePointer;
 
-	public Unity3dPackageOrderEntry(@Nonnull ModuleRootLayerImpl rootLayer, String nameWithVersion)
+	public Unity3dPackageOrderEntry(@Nonnull ModuleRootLayerImpl rootLayer, String name, @Nullable String version, @Nullable String url)
 	{
-		this(rootLayer, nameWithVersion, true);
+		this(rootLayer, name, version, url, true);
 	}
 
-	public Unity3dPackageOrderEntry(@Nonnull ModuleRootLayerImpl rootLayer, String nameWithVersion, boolean init)
+	public Unity3dPackageOrderEntry(@Nonnull ModuleRootLayerImpl rootLayer, String name, @Nullable String version, @Nullable String url, boolean init)
 	{
 		super(Unity3dPackageOrderEntryType.getInstance(), rootLayer, ProjectRootManagerImpl.getInstanceImpl(rootLayer.getProject()));
-		myNameWithVersion = nameWithVersion;
+		myName = name;
+		myVersion = version;
+		myFilePointer = url == null ? null : VirtualFilePointerManager.getInstance().create(url, this, null);
+
 		if(init)
 		{
 			init();
@@ -280,7 +252,19 @@ public class Unity3dPackageOrderEntry extends LibraryOrderEntryBaseImpl implemen
 	@Override
 	public String getPresentableName()
 	{
-		return myNameWithVersion;
+		return myName;
+	}
+
+	@Nullable
+	public String getFileUrl()
+	{
+		return myFilePointer == null ? null : myFilePointer.getUrl();
+	}
+
+	@Nullable
+	public String getVersion()
+	{
+		return myVersion;
 	}
 
 	@Override
@@ -298,7 +282,9 @@ public class Unity3dPackageOrderEntry extends LibraryOrderEntryBaseImpl implemen
 	@Override
 	public boolean isEquivalentTo(@Nonnull OrderEntry entry)
 	{
-		return entry instanceof Unity3dPackageOrderEntry && Comparing.equal(myNameWithVersion, entry.getPresentableName());
+		return entry instanceof Unity3dPackageOrderEntry && Objects.equals(myName, entry.getPresentableName()) &&
+				Objects.equals(myVersion, ((Unity3dPackageOrderEntry) entry).getVersion()) &&
+				Objects.equals(getFileUrl(), ((Unity3dPackageOrderEntry) entry).getFileUrl());
 	}
 
 	@Override
@@ -310,6 +296,6 @@ public class Unity3dPackageOrderEntry extends LibraryOrderEntryBaseImpl implemen
 	@Override
 	public OrderEntry cloneEntry(ModuleRootLayerImpl layer)
 	{
-		return new Unity3dPackageOrderEntry(layer, getPresentableName());
+		return new Unity3dPackageOrderEntry(layer, myName, myVersion, getFileUrl());
 	}
 }

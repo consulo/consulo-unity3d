@@ -16,13 +16,15 @@
 
 package consulo.unity3d.packages.orderEntry;
 
-import javax.annotation.Nonnull;
-
-import org.jdom.Element;
 import com.intellij.openapi.util.InvalidDataException;
+import com.intellij.openapi.util.text.StringUtil;
 import consulo.roots.ModuleRootLayer;
 import consulo.roots.impl.ModuleRootLayerImpl;
 import consulo.roots.orderEntry.OrderEntryType;
+import org.jdom.Element;
+
+import javax.annotation.Nonnull;
+import java.util.List;
 
 /**
  * @author VISTALL
@@ -33,7 +35,7 @@ public class Unity3dPackageOrderEntryType implements OrderEntryType<Unity3dPacka
 	@Nonnull
 	public static Unity3dPackageOrderEntryType getInstance()
 	{
-		return EP_NAME.findExtension(Unity3dPackageOrderEntryType.class);
+		return EP_NAME.findExtensionOrFail(Unity3dPackageOrderEntryType.class);
 	}
 
 	@Nonnull
@@ -48,12 +50,32 @@ public class Unity3dPackageOrderEntryType implements OrderEntryType<Unity3dPacka
 	public Unity3dPackageOrderEntry loadOrderEntry(@Nonnull Element element, @Nonnull ModuleRootLayer moduleRootLayer) throws InvalidDataException
 	{
 		String name = element.getAttributeValue("name");
-		return new Unity3dPackageOrderEntry((ModuleRootLayerImpl) moduleRootLayer, name);
+		String version = element.getAttributeValue("version");
+
+		if(name.contains("@"))
+		{
+			List<String> values = StringUtil.split(name, "@");
+			name = values.get(0);
+			version = values.get(1);
+		}
+		String url = element.getAttributeValue("fileUrl");
+		return new Unity3dPackageOrderEntry((ModuleRootLayerImpl) moduleRootLayer, name, version, url);
 	}
 
 	@Override
-	public void storeOrderEntry(@Nonnull Element element, @Nonnull Unity3dPackageOrderEntry dotNetLibraryOrderEntry)
+	public void storeOrderEntry(@Nonnull Element element, @Nonnull Unity3dPackageOrderEntry orderEntry)
 	{
-		element.setAttribute("name", dotNetLibraryOrderEntry.getPresentableName());
+		element.setAttribute("name", orderEntry.getPresentableName());
+		String version = orderEntry.getVersion();
+		if(version != null)
+		{
+			element.setAttribute("version", version);
+		}
+
+		String fileUrl = orderEntry.getFileUrl();
+		if(fileUrl != null)
+		{
+			element.setAttribute("fileUrl", fileUrl);
+		}
 	}
 }

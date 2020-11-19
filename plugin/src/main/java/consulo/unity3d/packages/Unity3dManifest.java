@@ -33,8 +33,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -106,30 +104,6 @@ public class Unity3dManifest implements Cloneable
 	public Map<String, String> dependencies = Map.of();
 
 	public String registry;
-
-	public boolean isExcluded(@Nonnull String id)
-	{
-		return Comparing.equal(dependencies.get(id), "excluded");
-	}
-
-	@Nonnull
-	public Map<String, String> getFilteredDependencies()
-	{
-		if(dependencies.isEmpty())
-		{
-			return Collections.emptyMap();
-		}
-		Map<String, String> map = new LinkedHashMap<>();
-		for(Map.Entry<String, String> entry : dependencies.entrySet())
-		{
-			if("excluded".equals(entry.getValue()))
-			{
-				continue;
-			}
-			map.put(entry.getKey(), entry.getValue());
-		}
-		return map;
-	}
 
 	@Override
 	public Unity3dManifest clone()
