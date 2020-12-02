@@ -92,6 +92,12 @@ public enum Unity3dAssetCSharpLineMarker
 							{
 								for(Unity3dYMLAsset asset : entry.getValue())
 								{
+									String gameObjectName = asset.getGameObjectName();
+									if(gameObjectName == null)
+									{
+										continue;
+									}
+
 									list.add(new UnityAssetWrapper(entry.getKey(), asset, asset.getStartOffset(), null, type.getProject()));
 								}
 							}
