@@ -643,7 +643,7 @@ public class Unity3dProjectImporter
 				}
 				// git url
 				// we can't calculate without unity. try guest from Library dir
-				else if(value.startsWith("git") || value.endsWith(".git"))
+				else if(value.startsWith("git") || value.startsWith("https") || value.endsWith(".git"))
 				{
 					Path path = Paths.get(project.getBasePath(), "Library", "PackageCache");
 					if(Files.exists(path))
