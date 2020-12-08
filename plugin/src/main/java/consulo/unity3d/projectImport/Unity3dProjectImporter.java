@@ -336,7 +336,7 @@ public class Unity3dProjectImporter
 			ContentEntry entry = it.addContentEntry(packageDir);
 
 			entry.addFolder(packageDir, ProductionContentFolderTypeProvider.getInstance());
-		}, "unity3d-csharp-child", CSharpFileType.INSTANCE, new MultiMap<>(), context, false);
+		}, "unity3d-csharp-child", CSharpFileType.INSTANCE, new MultiMap<>(), context, moduleName);
 
 		context.addPackageModule(packageDir.getName());
 
@@ -500,7 +500,7 @@ public class Unity3dProjectImporter
 		final ModifiableRootModel modifiableModel = AccessRule.read(() -> ModuleRootManager.getInstance(module).getModifiableModel());
 		assert modifiableModel != null;
 
-		fillModuleDependencies(module, modifiableModel, moduleDirs, setupConsumer, moduleExtensionId, fileType, virtualFilesByModule, context, true);
+		fillModuleDependencies(module, modifiableModel, moduleDirs, setupConsumer, moduleExtensionId, fileType, virtualFilesByModule, context, null);
 
 		RunManager runManager = RunManager.getInstance(project);
 		List<RunConfiguration> allConfigurationsList = runManager.getAllConfigurationsList();
@@ -531,11 +531,12 @@ public class Unity3dProjectImporter
 											   @Nonnull FileType fileType,
 											   @Nonnull MultiMap<Module, VirtualFile> virtualFilesByModule,
 											   @Nonnull UnityProjectImportContext context,
-											   boolean isUnityModule)
+											   @Nullable String currentPackageName)
 	{
 		Project project = context.getProject();
 		ProgressIndicator progressIndicator = context.getProgressIndicator();
 
+		final boolean isUnityModule = currentPackageName == null;
 		final List<VirtualFile> toAdd = new ArrayList<>();
 		final List<VirtualFile> libraryFiles = new ArrayList<>();
 
@@ -621,59 +622,64 @@ public class Unity3dProjectImporter
 		layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEditor"));
 		layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEngine"));
 
-		if(isUnityModule)
+		for(Map.Entry<String, String> entry : context.getManifest().dependencies.entrySet())
 		{
-			for(Map.Entry<String, String> entry : context.getManifest().dependencies.entrySet())
+			String name = entry.getKey();
+
+
+			String value = entry.getValue();
+			if(value.startsWith("file"))
 			{
-				String name = entry.getKey();
-				String value = entry.getValue();
-				if(value.startsWith("file"))
+				try
+				{
+					URL url = new URL(value);
+					File targetDirectory = new File(url.getFile());
+					String ideaUrl = VfsUtilCore.pathToUrl(targetDirectory.getPath());
+					layer.addOrderEntry(new Unity3dPackageOrderEntry(layer, name, null, ideaUrl));
+				}
+				catch(Exception e)
+				{
+					LOG.warn(e);
+				}
+			}
+			// git url
+			// we can't calculate without unity. try guest from Library dir
+			else if(value.startsWith("git") || value.startsWith("https") || value.endsWith(".git"))
+			{
+				Path path = Paths.get(project.getBasePath(), "Library", "PackageCache");
+				if(Files.exists(path))
 				{
 					try
 					{
-						URL url = new URL(value);
-						File targetDirectory = new File(url.getFile());
-						String ideaUrl = VfsUtilCore.pathToUrl(targetDirectory.getPath());
-						layer.addOrderEntry(new Unity3dPackageOrderEntry(layer, name, null, ideaUrl));
+						Optional<Path> firstDir = Files.walk(path, 1).filter(it -> it.getFileName().toString().startsWith(name)).findFirst();
+						if(firstDir.isPresent())
+						{
+							Path libraryHome = firstDir.get();
+							String ideaUrl = VfsUtilCore.pathToUrl(libraryHome.toString());
+							layer.addOrderEntry(new Unity3dPackageOrderEntry(layer, name, null, ideaUrl));
+						}
 					}
-					catch(Exception e)
+					catch(IOException e)
 					{
 						LOG.warn(e);
 					}
 				}
-				// git url
-				// we can't calculate without unity. try guest from Library dir
-				else if(value.startsWith("git") || value.startsWith("https") || value.endsWith(".git"))
-				{
-					Path path = Paths.get(project.getBasePath(), "Library", "PackageCache");
-					if(Files.exists(path))
-					{
-						try
-						{
-							Optional<Path> firstDir = Files.walk(path, 1).filter(it -> it.getFileName().toString().startsWith(name)).findFirst();
-							if(firstDir.isPresent())
-							{
-								Path libraryHome = firstDir.get();
-								String ideaUrl = VfsUtilCore.pathToUrl(libraryHome.toString());
-								layer.addOrderEntry(new Unity3dPackageOrderEntry(layer, name, null, ideaUrl));
-							}
-						}
-						catch(IOException e)
-						{
-							LOG.warn(e);
-						}
-					}
-				}
-				else
-				{
-					layer.addOrderEntry(new Unity3dPackageOrderEntry(layer, name, value, null));
-				}
+			}
+			else
+			{
+				layer.addOrderEntry(new Unity3dPackageOrderEntry(layer, name, value, null));
+			}
+		}
+
+		for(String moduleName : context.getPackageModules())
+		{
+			if(Objects.equals(moduleName, currentPackageName))
+			{
+				// skip self package reference
+				continue;
 			}
 
-			for(String moduleName : context.getPackageModules())
-			{
-				AccessRule.read(() -> layer.addInvalidModuleEntry(moduleName));
-			}
+			AccessRule.read(() -> layer.addInvalidModuleEntry(moduleName));
 		}
 
 		if(isVersionHigherOrEqual(unityBundle, "4.6.0"))
