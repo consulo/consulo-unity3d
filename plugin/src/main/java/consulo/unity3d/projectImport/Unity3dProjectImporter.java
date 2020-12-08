@@ -331,7 +331,7 @@ public class Unity3dProjectImporter
 		final ModifiableRootModel modifiableModel = AccessRule.read(() -> ModuleRootManager.getInstance(module).getModifiableModel());
 		assert modifiableModel != null;
 
-		fillModuleDependencies(module, modifiableModel, List.of(packageDir), it ->
+		fillModuleDependencies(module, modifiableModel, List.of(packageDir, context.getProject().getBaseDir().findChild(ASSETS_DIRECTORY)), it ->
 		{
 			ContentEntry entry = it.addContentEntry(packageDir);
 
@@ -711,6 +711,7 @@ public class Unity3dProjectImporter
 		layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "System.Runtime.Serialization"));
 		layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "System.Xml"));
 		layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "System.Xml.Linq"));
+		layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "System.Net.Http"));
 
 		for(VirtualFile virtualFile : libraryFiles)
 		{
