@@ -31,7 +31,7 @@ import consulo.annotation.access.RequiredReadAction;
 import consulo.csharp.lang.CSharpFileType;
 import consulo.editor.notifications.EditorNotificationProvider;
 import consulo.module.extension.ModuleExtension;
-import consulo.msil.representation.MsilFileRepresentationVirtualFile;
+import consulo.msil.representation.fileSystem.MsilFileRepresentationVirtualFile;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import consulo.unity3d.module.Unity3dRootModuleExtension;
 import consulo.unity3d.projectImport.Unity3dProjectImporter;
