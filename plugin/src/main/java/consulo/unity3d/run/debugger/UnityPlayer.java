@@ -16,10 +16,11 @@
 
 package consulo.unity3d.run.debugger;
 
-import java.util.regex.Matcher;
+import com.intellij.openapi.util.text.StringUtil;
 
 import javax.annotation.Nonnull;
-import com.intellij.openapi.util.text.StringUtil;
+import java.net.InetAddress;
+import java.util.Map;
 
 /**
  * @author VISTALL
@@ -37,15 +38,16 @@ public class UnityPlayer
 
 	private long myLastUpdateTime;
 
-	public UnityPlayer(@Nonnull Matcher matcher)
+	public UnityPlayer(@Nonnull InetAddress address, @Nonnull Map<String, String> map)
 	{
-		myIp = matcher.group("ip");
-		myId = matcher.group("id");
-		myGuid = Long.parseLong(matcher.group("guid"));
-		mySupportDebugging = "1".equals(StringUtil.notNullize(matcher.group("debug")).trim());
+		// ip + port is not target for connect
+		myIp = address.getHostAddress();
+		myId = map.get("id");
+		myGuid = Long.parseLong(map.get("guid"));
+		mySupportDebugging = "1".equals(StringUtil.notNullize(map.get("debug")).trim());
 		if(mySupportDebugging)
 		{
-			String debuggerPort = matcher.group("debuggerPort");
+			String debuggerPort = map.get("debuggerPort");
 			if(debuggerPort == null)
 			{
 				myDebuggerPort = 56000 + (int) (myGuid % 1000);

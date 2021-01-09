@@ -16,12 +16,12 @@
 
 package consulo.unity3d.run.debugger;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.MulticastSocket;
 import java.net.NetworkInterface;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.*;
 
 /**
  * @author VISTALL
@@ -29,10 +29,6 @@ import java.util.regex.Pattern;
  */
 public class UnityUdpThread extends Thread
 {
-	private static final Pattern ourPacketPattern = Pattern.compile("\\[IP\\] (?<ip>.*) \\[Port\\] (?<port>.*) \\[Flags\\] (?<flags>.*)" +
-			" \\[Guid\\] (?<guid>.*) \\[EditorId\\] (?<editorid>.*) \\[Version\\] (?<version>.*)" +
-			" \\[Id\\] (?<id>[^:]+)(:(?<debuggerPort>\\d+))? \\[Debug\\] (?<debug>.*)");
-
 	private static final ThreadGroup ourThreadGroup = new ThreadGroup("Unity Player Service Thread Group");
 	private final UnityPlayerService myService;
 	private final MulticastSocket myServerSocket;
@@ -55,15 +51,23 @@ public class UnityUdpThread extends Thread
 			try
 			{
 				DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
-				myServerSocket.receive(receivePacket);
-				String sentence = new String(receivePacket.getData());
 
-				Matcher matcher = ourPacketPattern.matcher(sentence);
-				if(!matcher.find())
+				myServerSocket.receive(receivePacket);
+
+				byte[] data = new byte[receivePacket.getLength()];
+
+				System.arraycopy(receivePacket.getData(), receivePacket.getOffset(), data, 0, data.length);
+
+				String sentence = new String(data);
+
+				Map<String, String> map = parseValues(sentence);
+				if(map.isEmpty())
 				{
-					continue;
+					return;
 				}
-				UnityPlayer player = new UnityPlayer(matcher);
+
+				UnityPlayer player = new UnityPlayer(receivePacket.getAddress(), map);
+
 				myService.addPlayer(player);
 			}
 			catch(IOException ignored)
@@ -80,6 +84,62 @@ public class UnityUdpThread extends Thread
 				}
 			}
 		}
+	}
+
+	@Nonnull
+	private Map<String, String> parseValues(String playerString)
+	{
+		if(playerString.length() == 0)
+		{
+			return Map.of();
+		}
+
+		if(playerString.charAt(playerString.length() - 1) == '\u0000')
+		{
+			playerString = playerString.substring(0, playerString.length() - 1);
+		}
+
+		int partStart = 0;
+		int partLen = 0;
+		List<String> strings = new ArrayList<>();
+		for(int i = 0; i < playerString.length(); i++)
+		{
+			char c = playerString.charAt(i);
+			if(c == '[')
+			{
+				partLen = i - partStart;
+				if(partLen > 0)
+				{
+					strings.add(playerString.substring(partStart, partStart + partLen));
+				}
+
+				partStart = i + 1;
+			}
+			else if(c == ']')
+			{
+				partLen = i - partStart;
+				if(partLen > 0)
+				{
+					strings.add(playerString.substring(partStart, partStart + partLen));
+				}
+
+				partStart = i + 1;
+			}
+		}
+
+		partLen = playerString.length() - partStart;
+		if(partLen > 0)
+		{
+			strings.add(playerString.substring(partStart, playerString.length()));
+		}
+
+		Map<String, String> map = new HashMap<>();
+
+		for(int i = 0; i < strings.size(); i += 2)
+		{
+			map.put(strings.get(i).toLowerCase(Locale.US), strings.get(i + 1).trim());
+		}
+		return map;
 	}
 
 	public void dispose()
