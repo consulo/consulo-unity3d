@@ -137,11 +137,18 @@ public class Unity3dAttachRunner extends AsyncProgramRunner
 	{
 		FileDocumentManager.getInstance().saveAllDocuments();
 
-		AsyncResult<RunContentDescriptor> result = new AsyncResult<>();
+		AsyncResult<RunContentDescriptor> result = AsyncResult.undefined();
 
 		Unity3dAttachConfiguration runProfile = (Unity3dAttachConfiguration) environment.getRunProfile();
 
 		ExecutionResult executionResult = state.execute(environment.getExecutor(), this);
+
+		UnityProcess forceUnityProcess = runProfile.getForceUnityProcess();
+		if(forceUnityProcess != null)
+		{
+			setRunDescriptor(result, environment, executionResult, forceUnityProcess);
+			return result;
+		}
 
 		switch(runProfile.getAttachTarget())
 		{

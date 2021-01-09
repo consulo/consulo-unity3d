@@ -213,5 +213,7 @@
 		<backgroundPostStartupActivity implementation="consulo.unity3d.UnityPluginValidator"/>
 
 		<projectService serviceImplementation="consulo.unity3d.projectImport.change.Unity3dProjectChangeListener" lazy="false"/>
+
+		<xdebugger.attachDebuggerProvider implementation="consulo.unity3d.run.debugger.UnityAttachDebuggerProvider" />
 	</extensions>
 </consulo-plugin>

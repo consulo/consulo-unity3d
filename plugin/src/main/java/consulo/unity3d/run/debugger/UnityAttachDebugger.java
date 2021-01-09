@@ -1,0 +1,67 @@
+/*
+ * Copyright 2013-2021 consulo.io
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package consulo.unity3d.run.debugger;
+
+import com.intellij.execution.ExecutionException;
+import com.intellij.execution.ProgramRunnerUtil;
+import com.intellij.execution.RunManager;
+import com.intellij.execution.RunnerAndConfigurationSettings;
+import com.intellij.execution.configurations.ConfigurationFactory;
+import com.intellij.execution.executors.DefaultDebugExecutor;
+import com.intellij.execution.process.ProcessInfo;
+import com.intellij.openapi.project.Project;
+import com.intellij.xdebugger.attach.XAttachDebugger;
+import com.intellij.xdebugger.attach.XAttachHost;
+import consulo.unity3d.run.Unity3dAttachApplicationType;
+import consulo.unity3d.run.Unity3dAttachConfiguration;
+
+import javax.annotation.Nonnull;
+
+/**
+ * @author VISTALL
+ * @since 09/01/2021
+ */
+public class UnityAttachDebugger implements XAttachDebugger
+{
+	public static final UnityAttachDebugger INSTANCE = new UnityAttachDebugger();
+
+	@Nonnull
+	@Override
+	public String getDebuggerDisplayName()
+	{
+		return "Unity Debugger";
+	}
+
+	@Override
+	public void attachDebugSession(@Nonnull Project project, @Nonnull XAttachHost hostInfo, @Nonnull ProcessInfo info) throws ExecutionException
+	{
+		UnityProcess unityProcess = UnityProcessDialog.tryParseIfUnityProcess(info);
+		if(unityProcess == null)
+		{
+			throw new ExecutionException("Target not found");
+		}
+
+		ConfigurationFactory factory = Unity3dAttachApplicationType.getInstance().getConfigurationFactories()[0];
+
+		Unity3dAttachConfiguration configuration = new Unity3dAttachConfiguration(project, unityProcess.getName(), factory);
+		configuration.setForceUnityProcess(unityProcess);
+
+		RunnerAndConfigurationSettings runSettings = RunManager.getInstance(project).createConfiguration(configuration, factory);
+
+		ProgramRunnerUtil.executeConfiguration(project, runSettings, DefaultDebugExecutor.getDebugExecutorInstance());
+	}
+}
