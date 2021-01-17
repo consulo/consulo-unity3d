@@ -20,7 +20,7 @@
 	<vendor>consulo.io</vendor>
 	<version>SNAPSHOT</version>
 	<category>Game Frameworks</category>
-	<resource-bundle>messages.Unity3dBundle</resource-bundle>
+	<localize>consulo.unity3d.Unity3dLocalize</localize>
 
 	<depends>consulo.dotnet.mono</depends>
 	<depends>consulo.csharp</depends>

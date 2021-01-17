@@ -16,14 +16,15 @@
 
 package consulo.unity3d;
 
-import org.jetbrains.annotations.PropertyKey;
 import com.intellij.AbstractBundle;
+import org.jetbrains.annotations.PropertyKey;
 
 /**
  * @author VISTALL
  * @since 24.07.2015
  */
-public class Unity3dBundle  extends AbstractBundle
+@Deprecated
+public class Unity3dBundle extends AbstractBundle
 {
 	private static final Unity3dBundle ourInstance = new Unity3dBundle();
 

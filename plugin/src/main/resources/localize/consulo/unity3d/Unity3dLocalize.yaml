@@ -1,0 +1,22 @@
+action.SyncUnity3dProject.text:
+  text: Re-import Unity Project
+action.Unity3Attach.text:
+  text: Unity3D Attach
+unity.sdk.is.not.defiled:
+  text: Unity SDK is not defined
+unity.0.sdk.is.not.defined:
+  text: Unity SDK ''{0}'' is not defined
+required.unity.version.is.0:
+  text: 'NOTE: Target project require Unity ''''{0}'''''
+attach.to.single.process.without.dialog.box:
+  text: Attach to single process without dialog
+syncing.0.module:
+  text: Syncing ''{0}'' module
+new.mono.behaviour.inspection.message:
+  text: Creating MonoBehaviour's using the 'new' keyword is not allowed. MonoBehaviours can only be added using AddComponent(). Alternatively, your script can inherit from ScriptableObject or no base class at all
+empty.magic.method.inspection.message:
+  text: Empty MonoBehaviour methods are executed and incur a small overhead
+ongui.method.inspection.message:
+  text: Using OnGUI causes allocations and GC spikes
+unity.name:
+  text: Unity
