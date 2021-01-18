@@ -82,7 +82,9 @@ public class Unity3dWizardStep extends UnifiedProjectOrModuleNameStep<UnityModul
 		DockLayout dock = DockLayout.create();
 		dock.center(comboBox);
 		dock.right(Button.create(LocalizeValue.localizeTODO("Select..."), clickEvent -> {
-			showAddSdk(sdk -> {
+			JComponent awtComponent = (JComponent) TargetAWT.to(myBundleBox.getComponent());
+
+			showAddSdk(awtComponent, sdk -> {
 				WriteAction.run(() -> SdkTable.getInstance().addSdk(sdk));
 
 				MutableListModel<BundleBox.BundleBoxItem> listModel = (MutableListModel<BundleBox.BundleBoxItem>) comboBox.getListModel();
@@ -129,10 +131,8 @@ public class Unity3dWizardStep extends UnifiedProjectOrModuleNameStep<UnityModul
 	}
 
 	@RequiredUIAccess
-	private void showAddSdk(@RequiredUIAccess Consumer<Sdk> sdkConsumer)
+	public static void showAddSdk(@Nonnull JComponent awtComponent, @RequiredUIAccess Consumer<Sdk> sdkConsumer)
 	{
-		JComponent awtComponent = (JComponent) TargetAWT.to(myBundleBox.getComponent());
-
 		ShowSdksSettingsUtil sdksSettingsUtil = (ShowSdksSettingsUtil) ShowSettingsUtil.getInstance();
 
 		Unity3dBundleType type = Unity3dBundleType.getInstance();
