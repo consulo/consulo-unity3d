@@ -123,10 +123,7 @@ public class Unity3dWizardStep extends UnifiedProjectOrModuleNameStep<UnityModul
 
 		if(requiredVersion != null)
 		{
-			Label versionLabel = Label.create(Unity3dLocalize.requiredUnityVersionIs0(requiredVersion));
-			versionLabel.setForeground(StandardColors.GRAY);
-
-			builder.addBottom(versionLabel);
+			builder.addBottom(Label.create(Unity3dLocalize.requiredUnityVersionIs0(requiredVersion)).withForegroundColor(StandardColors.GRAY));
 		}
 	}
 
