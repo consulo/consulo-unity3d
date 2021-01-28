@@ -128,6 +128,7 @@ public class UnityDebugProcess extends MonoDebugProcess
 		{
 			return myConsoleView;
 		}
+		
 		ConsoleView consoleView = TextConsoleBuilderFactory.getInstance().createBuilder(getSession().getProject()).getConsole();
 		consoleView.attachToProcess(getProcessHandler());
 		return consoleView;

@@ -31,7 +31,7 @@ import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.util.xmlb.XmlSerializer;
 import consulo.annotation.access.RequiredReadAction;
-import consulo.unity3d.run.debugger.UnityProcess;
+import consulo.unity3d.run.debugger.UnityDebugProcessInfo;
 import org.jdom.Element;
 
 import javax.annotation.Nonnull;
@@ -55,7 +55,7 @@ public class Unity3dAttachConfiguration extends LocatableConfigurationBase imple
 
 	// for attaching from attach action
 	@Nullable
-	private UnityProcess myForceUnityProcess;
+	private UnityDebugProcessInfo myForceUnityProcess;
 
 	public Unity3dAttachConfiguration(Project project, ConfigurationFactory factory)
 	{
@@ -125,12 +125,12 @@ public class Unity3dAttachConfiguration extends LocatableConfigurationBase imple
 		return ModuleManager.getInstance(getProject()).getModules();
 	}
 
-	public UnityProcess getForceUnityProcess()
+	public UnityDebugProcessInfo getForceUnityProcess()
 	{
 		return myForceUnityProcess;
 	}
 
-	public void setForceUnityProcess(UnityProcess forceUnityProcess)
+	public void setForceUnityProcess(UnityDebugProcessInfo forceUnityProcess)
 	{
 		myForceUnityProcess = forceUnityProcess;
 	}

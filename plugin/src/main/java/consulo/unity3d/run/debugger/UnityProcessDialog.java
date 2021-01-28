@@ -26,6 +26,7 @@ import consulo.execution.process.OSProcessUtil;
 import consulo.logging.Logger;
 import consulo.ui.image.Image;
 import consulo.unity3d.Unity3dIcons;
+import consulo.util.collection.ContainerUtil;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -39,7 +40,7 @@ import java.util.concurrent.TimeUnit;
  * @author VISTALL
  * @since 18.11.14
  */
-public class UnityProcessDialog extends ChooseElementsDialog<UnityProcess>
+public class UnityProcessDialog extends ChooseElementsDialog<UnityDebugProcessInfo>
 {
 	private static final Logger LOG = Logger.getInstance(UnityProcessDialog.class);
 
@@ -55,11 +56,11 @@ public class UnityProcessDialog extends ChooseElementsDialog<UnityProcess>
 	{
 		myTask = AppExecutorUtil.getAppScheduledExecutorService().scheduleWithFixedDelay((Runnable) () ->
 		{
-			List<UnityProcess> elements = collectItems();
+			List<UnityDebugProcessInfo> elements = collectItems();
 
 			UIUtil.invokeLaterIfNeeded(() ->
 			{
-				List<UnityProcess> selectedElements = myChooser.getSelectedElements();
+				List<UnityDebugProcessInfo> selectedElements = myChooser.getSelectedElements();
 				setElements(elements, selectedElements);
 			});
 		}, 0, 1, TimeUnit.SECONDS);
@@ -67,22 +68,20 @@ public class UnityProcessDialog extends ChooseElementsDialog<UnityProcess>
 	}
 
 	@Nonnull
-	public static List<UnityProcess> collectItems()
+	public static List<UnityDebugProcessInfo> collectItems()
 	{
-		Collection<UnityPlayer> players = UnityPlayerService.getInstance().getPlayers();
-		List<UnityProcess> items = new ArrayList<>(players.size() + 1);
+		Collection<UnityExternalDevice> devices = UnityExternalDeviceManager.getInstance().getDevices();
+		List<UnityDebugProcessInfo> items = new ArrayList<>(devices.size() + 1);
 		try
 		{
-			for(UnityPlayer player : players)
+			for(UnityExternalDevice device : devices)
 			{
-				if(player.isSupportDebugging())
-				{
-					items.add(new UnityProcess((int) player.getGuid(), player.getId(), player.getIp(), player.getDebuggerPort()));
-				}
+				ContainerUtil.addIfNotNull(items, device.mapToDebuggerProcess());
 			}
+
 			for(ProcessInfo processInfo : OSProcessUtil.getProcessList())
 			{
-				UnityProcess process = tryParseIfUnityProcess(processInfo);
+				UnityDebugProcessInfo process = tryParseIfUnityProcess(processInfo);
 				if(process != null)
 				{
 					items.add(process);
@@ -97,7 +96,7 @@ public class UnityProcessDialog extends ChooseElementsDialog<UnityProcess>
 	}
 
 	@Nullable
-	public static UnityProcess tryParseIfUnityProcess(ProcessInfo processInfo)
+	public static UnityDebugProcessInfo tryParseIfUnityProcess(ProcessInfo processInfo)
 	{
 		String name = processInfo.getExecutableName();
 
@@ -107,7 +106,7 @@ public class UnityProcessDialog extends ChooseElementsDialog<UnityProcess>
 			String first = processInfo.getExecutableCannonicalPath().orElse("");
 			if(first != null && first.endsWith("/Editor/Unity"))
 			{
-				return new UnityProcess(processInfo.getPid(), name, "localhost", buildDebuggerPort(processInfo.getPid()));
+				return new UnityDebugProcessInfo(processInfo.getPid(), name, "localhost", buildDebuggerPort(processInfo.getPid()));
 			}
 		}
 
@@ -140,7 +139,7 @@ public class UnityProcessDialog extends ChooseElementsDialog<UnityProcess>
 				return null;
 			}
 
-			return new UnityProcess(processInfo.getPid(), name, "localhost", buildDebuggerPort(processInfo.getPid()));
+			return new UnityDebugProcessInfo(processInfo.getPid(), name, "localhost", buildDebuggerPort(processInfo.getPid()));
 		}
 
 		return null;
@@ -169,14 +168,14 @@ public class UnityProcessDialog extends ChooseElementsDialog<UnityProcess>
 	}
 
 	@Override
-	protected String getItemText(UnityProcess item)
+	protected String getItemText(UnityDebugProcessInfo item)
 	{
 		return item.getName() + " (" + item.getHost() + ":" + item.getPort() + ")";
 	}
 
 	@Nullable
 	@Override
-	protected Image getItemIcon(UnityProcess item)
+	protected Image getItemIcon(UnityDebugProcessInfo item)
 	{
 		return Unity3dIcons.Unity3d;
 	}

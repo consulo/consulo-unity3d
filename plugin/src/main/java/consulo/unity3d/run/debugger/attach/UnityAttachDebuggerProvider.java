@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package consulo.unity3d.run.debugger;
+package consulo.unity3d.run.debugger.attach;
 
 import com.intellij.execution.process.ProcessInfo;
 import com.intellij.openapi.project.Project;
@@ -22,6 +22,9 @@ import com.intellij.xdebugger.attach.LocalAttachHost;
 import com.intellij.xdebugger.attach.XAttachDebugger;
 import com.intellij.xdebugger.attach.XAttachDebuggerProvider;
 import com.intellij.xdebugger.attach.XAttachHost;
+import consulo.unity3d.run.debugger.UnityDebugProcessInfo;
+import consulo.unity3d.run.debugger.UnityProcessDialog;
+import consulo.unity3d.run.debugger.attach.UnityAttachDebugger;
 import consulo.util.dataholder.UserDataHolder;
 
 import javax.annotation.Nonnull;
@@ -43,7 +46,7 @@ public class UnityAttachDebuggerProvider implements XAttachDebuggerProvider
 	@Override
 	public List<XAttachDebugger> getAvailableDebuggers(@Nonnull Project project, @Nonnull XAttachHost hostInfo, @Nonnull ProcessInfo process, @Nonnull UserDataHolder contextHolder)
 	{
-		UnityProcess unityProcess = UnityProcessDialog.tryParseIfUnityProcess(process);
+		UnityDebugProcessInfo unityProcess = UnityProcessDialog.tryParseIfUnityProcess(process);
 		if(unityProcess != null)
 		{
 			return List.of(UnityAttachDebugger.INSTANCE);

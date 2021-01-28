@@ -17,6 +17,7 @@
 package consulo.unity3d.bundle;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -27,13 +28,11 @@ import com.dd.plist.NSDictionary;
 import com.dd.plist.NSObject;
 import com.dd.plist.NSString;
 import com.dd.plist.PropertyListParser;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.projectRoots.SdkType;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.util.SmartList;
 import com.intellij.util.SystemProperties;
-import consulo.dotnet.module.extension.AssemblyInfoCacheService;
-import consulo.internal.dotnet.asm.mbel.AssemblyInfo;
+import consulo.logging.Logger;
 import consulo.ui.image.Image;
 import consulo.unity3d.Unity3dIcons;
 
@@ -43,7 +42,7 @@ import consulo.unity3d.Unity3dIcons;
  */
 public class Unity3dBundleType extends SdkType
 {
-	private static final Logger LOGGER = Logger.getInstance(Unity3dBundleType.class);
+	private static final Logger LOG = Logger.getInstance(Unity3dBundleType.class);
 
 	public static final String UNKNOWN_VERSION = "0.0.0";
 
@@ -72,7 +71,7 @@ public class Unity3dBundleType extends SdkType
 	@Nonnull
 	public static Unity3dBundleType getInstance()
 	{
-		return EP_NAME.findExtension(Unity3dBundleType.class);
+		return EP_NAME.findExtensionOrFail(Unity3dBundleType.class);
 	}
 
 	public Unity3dBundleType()
@@ -91,7 +90,7 @@ public class Unity3dBundleType extends SdkType
 	@Override
 	public Collection<String> suggestHomePaths()
 	{
-		List<String> paths = new SmartList<>();
+		List<String> paths = new ArrayList<>();
 		if(SystemInfo.isMac)
 		{
 			paths.add("/Applications/Unity/Unity.app");
@@ -194,7 +193,7 @@ public class Unity3dBundleType extends SdkType
 		}
 		catch(Exception e)
 		{
-			LOGGER.error(e);
+			LOG.error(e);
 		}
 		return UNKNOWN_VERSION;
 	}

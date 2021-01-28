@@ -43,8 +43,8 @@ import consulo.dotnet.mono.debugger.MonoVirtualMachineListener;
 import consulo.ui.annotation.RequiredUIAccess;
 import consulo.unity3d.editor.UnityEditorCommunication;
 import consulo.unity3d.run.debugger.UnityDebugProcess;
-import consulo.unity3d.run.debugger.UnityPlayerService;
-import consulo.unity3d.run.debugger.UnityProcess;
+import consulo.unity3d.run.debugger.UnityExternalDeviceManager;
+import consulo.unity3d.run.debugger.UnityDebugProcessInfo;
 import consulo.unity3d.run.debugger.UnityProcessDialog;
 import mono.debugger.VirtualMachine;
 
@@ -80,7 +80,7 @@ public class Unity3dAttachRunner extends AsyncProgramRunner
 	@RequiredUIAccess
 	public static RunContentDescriptor runContentDescriptor(ExecutionResult executionResult,
 															@Nonnull final ExecutionEnvironment environment,
-															@Nonnull UnityProcess selected,
+															@Nonnull UnityDebugProcessInfo selected,
 															@Nullable final ConsoleView consoleView,
 															boolean insideEditor) throws ExecutionException
 	{
@@ -143,7 +143,7 @@ public class Unity3dAttachRunner extends AsyncProgramRunner
 
 		ExecutionResult executionResult = state.execute(environment.getExecutor(), this);
 
-		UnityProcess forceUnityProcess = runProfile.getForceUnityProcess();
+		UnityDebugProcessInfo forceUnityProcess = runProfile.getForceUnityProcess();
 		if(forceUnityProcess != null)
 		{
 			setRunDescriptor(result, environment, executionResult, forceUnityProcess);
@@ -155,7 +155,7 @@ public class Unity3dAttachRunner extends AsyncProgramRunner
 			case UNITY_EDITOR:
 				new Task.Backgroundable(environment.getProject(), "Searching Unity Editor...", false)
 				{
-					private UnityProcess myUnityProcess;
+					private UnityDebugProcessInfo myUnityProcess;
 
 					@Override
 					public void run(@Nonnull ProgressIndicator progressIndicator)
@@ -186,16 +186,16 @@ public class Unity3dAttachRunner extends AsyncProgramRunner
 				}.queue();
 				return result;
 			case BY_NAME:
-				UnityPlayerService.getInstance().bindAndRun(environment.getProject(), () ->
+				UnityExternalDeviceManager.getInstance().bindAndRun(environment.getProject(), () ->
 				{
 					new Task.Backgroundable(environment.getProject(), "Searching process by name: " + runProfile.getProcessName())
 					{
-						private UnityProcess myUnityProcess;
+						private UnityDebugProcessInfo myUnityProcess;
 
 						@Override
 						public void run(@Nonnull ProgressIndicator progressIndicator)
 						{
-							for(UnityProcess unityProcess : UnityProcessDialog.collectItems())
+							for(UnityDebugProcessInfo unityProcess : UnityProcessDialog.collectItems())
 							{
 								if(StringUtil.isEmpty(runProfile.getProcessName()) || Comparing.equal(unityProcess.getName(), runProfile.getProcessName()))
 								{
@@ -215,13 +215,13 @@ public class Unity3dAttachRunner extends AsyncProgramRunner
 				});
 				break;
 			case FROM_DIALOG:
-				UnityPlayerService.getInstance().bindAndRun(environment.getProject(), () ->
+				UnityExternalDeviceManager.getInstance().bindAndRun(environment.getProject(), () ->
 				{
 					UnityProcessDialog dialog = new UnityProcessDialog(environment.getProject());
 
-					List<UnityProcess> unityProcesses = dialog.showAndGetResult();
+					List<UnityDebugProcessInfo> unityProcesses = dialog.showAndGetResult();
 
-					UnityProcess process = ContainerUtil.getFirstItem(unityProcesses);
+					UnityDebugProcessInfo process = ContainerUtil.getFirstItem(unityProcesses);
 					if(process == null)
 					{
 						result.setDone(null);
@@ -238,7 +238,7 @@ public class Unity3dAttachRunner extends AsyncProgramRunner
 	private static void setRunDescriptor(AsyncResult<RunContentDescriptor> result,
 										 ExecutionEnvironment environment,
 										 ExecutionResult executionResult,
-										 @Nullable UnityProcess process)
+										 @Nullable UnityDebugProcessInfo process)
 	{
 		if(process == null)
 		{

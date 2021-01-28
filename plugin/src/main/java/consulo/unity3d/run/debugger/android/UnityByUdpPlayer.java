@@ -14,11 +14,14 @@
  * limitations under the License.
  */
 
-package consulo.unity3d.run.debugger;
+package consulo.unity3d.run.debugger.android;
 
-import com.intellij.openapi.util.text.StringUtil;
+import consulo.unity3d.run.debugger.BaseUnityExternalDevice;
+import consulo.unity3d.run.debugger.UnityDebugProcessInfo;
+import consulo.util.lang.StringUtil;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.net.InetAddress;
 import java.util.Map;
 
@@ -26,19 +29,15 @@ import java.util.Map;
  * @author VISTALL
  * @since 10.11.14
  */
-public class UnityPlayer
+public class UnityByUdpPlayer extends BaseUnityExternalDevice
 {
-	private static final long UPDATE_TIME = 5000L;
-
 	private final String myIp;
 	private final long myGuid;
 	private final String myId;
 	private final boolean mySupportDebugging;
 	private int myDebuggerPort;
 
-	private long myLastUpdateTime;
-
-	public UnityPlayer(@Nonnull InetAddress address, @Nonnull Map<String, String> map)
+	public UnityByUdpPlayer(@Nonnull InetAddress address, @Nonnull Map<String, String> map)
 	{
 		// ip + port is not target for connect
 		myIp = address.getHostAddress();
@@ -47,32 +46,43 @@ public class UnityPlayer
 		mySupportDebugging = "1".equals(StringUtil.notNullize(map.get("debug")).trim());
 		if(mySupportDebugging)
 		{
-			String debuggerPort = map.get("debuggerPort");
-			if(debuggerPort == null)
+			String packagename = StringUtil.notNullize(map.get("packagename"));
+
+			if("iPhonePlayer".equals(packagename))
 			{
-				myDebuggerPort = 56000 + (int) (myGuid % 1000);
+				myDebuggerPort = 56000;
 			}
 			else
 			{
-				myDebuggerPort = Integer.parseInt(debuggerPort);
+				String debuggerPort = map.get("debuggerPort");
+				if(debuggerPort == null)
+				{
+					myDebuggerPort = 56000 + (int) (myGuid % 1000);
+				}
+				else
+				{
+					myDebuggerPort = Integer.parseInt(debuggerPort);
+				}
 			}
 		}
 		update();
 	}
 
-	public boolean isAvailable()
+	@Nullable
+	@Override
+	public UnityDebugProcessInfo mapToDebuggerProcess()
 	{
-		return myLastUpdateTime > System.currentTimeMillis();
+		if(isSupportDebugging())
+		{
+			return new UnityDebugProcessInfo((int) getGuid(), getId(), getIp(), getDebuggerPort());
+		}
+
+		return null;
 	}
 
 	public String getId()
 	{
 		return myId;
-	}
-
-	public void update()
-	{
-		myLastUpdateTime = System.currentTimeMillis() + UPDATE_TIME;
 	}
 
 	public String getIp()
@@ -120,7 +130,7 @@ public class UnityPlayer
 			return false;
 		}
 
-		UnityPlayer player = (UnityPlayer) o;
+		UnityByUdpPlayer player = (UnityByUdpPlayer) o;
 
 		if(myGuid != player.myGuid)
 		{

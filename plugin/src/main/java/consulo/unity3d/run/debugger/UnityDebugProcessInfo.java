@@ -20,14 +20,14 @@ package consulo.unity3d.run.debugger;
  * @author VISTALL
  * @since 15.04.2015
  */
-public class UnityProcess
+public class UnityDebugProcessInfo
 {
 	private int myPid;
 	private String myName;
 	private String myHost;
 	private int myPort;
 
-	public UnityProcess(int pid, String name, String host, int port)
+	public UnityDebugProcessInfo(int pid, String name, String host, int port)
 	{
 		myPid = pid;
 		myName = name;
@@ -59,6 +59,6 @@ public class UnityProcess
 	@Override
 	public boolean equals(Object obj)
 	{
-		return obj instanceof UnityProcess && ((UnityProcess) obj).myPid == myPid;
+		return obj instanceof UnityDebugProcessInfo && ((UnityDebugProcessInfo) obj).myPid == myPid;
 	}
 }

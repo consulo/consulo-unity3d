@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package consulo.unity3d.run.debugger;
+package consulo.unity3d.run.debugger.attach;
 
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ProgramRunnerUtil;
@@ -28,6 +28,8 @@ import com.intellij.xdebugger.attach.XAttachDebugger;
 import com.intellij.xdebugger.attach.XAttachHost;
 import consulo.unity3d.run.Unity3dAttachApplicationType;
 import consulo.unity3d.run.Unity3dAttachConfiguration;
+import consulo.unity3d.run.debugger.UnityDebugProcessInfo;
+import consulo.unity3d.run.debugger.UnityProcessDialog;
 
 import javax.annotation.Nonnull;
 
@@ -49,7 +51,7 @@ public class UnityAttachDebugger implements XAttachDebugger
 	@Override
 	public void attachDebugSession(@Nonnull Project project, @Nonnull XAttachHost hostInfo, @Nonnull ProcessInfo info) throws ExecutionException
 	{
-		UnityProcess unityProcess = UnityProcessDialog.tryParseIfUnityProcess(info);
+		UnityDebugProcessInfo unityProcess = UnityProcessDialog.tryParseIfUnityProcess(info);
 		if(unityProcess == null)
 		{
 			throw new ExecutionException("Target not found");

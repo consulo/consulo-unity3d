@@ -29,7 +29,7 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import consulo.ui.annotation.RequiredUIAccess;
 import consulo.unity3d.editor.UnityEditorCommunication;
 import consulo.unity3d.run.Unity3dAttachRunner;
-import consulo.unity3d.run.debugger.UnityProcess;
+import consulo.unity3d.run.debugger.UnityDebugProcessInfo;
 
 import javax.annotation.Nonnull;
 
@@ -50,7 +50,7 @@ public class Unity3dTestDebuggerRunner extends DefaultProgramRunner
 	@RequiredUIAccess
 	protected RunContentDescriptor doExecute(@Nonnull RunProfileState state, @Nonnull ExecutionEnvironment env) throws ExecutionException
 	{
-		UnityProcess editorProcess = UnityEditorCommunication.findEditorProcess();
+		UnityDebugProcessInfo editorProcess = UnityEditorCommunication.findEditorProcess();
 		if(editorProcess == null)
 		{
 			throw new ExecutionException("Editor is not responding");

@@ -121,7 +121,7 @@
 		<gotoClassContributor implementation="consulo.unity3d.unityscript.navigation.UnityScriptGotoClassContributor"/>
 		<sdkType implementation="consulo.unity3d.bundle.Unity3dBundleType"/>
 
-		<applicationService serviceImplementation="consulo.unity3d.run.debugger.UnityPlayerService"/>
+		<applicationService serviceImplementation="consulo.unity3d.run.debugger.UnityExternalDeviceManager"/>
 
 		<moduleExtensionProvider
 				key="unity3d"
@@ -214,6 +214,6 @@
 
 		<projectService serviceImplementation="consulo.unity3d.projectImport.change.Unity3dProjectChangeListener" lazy="false"/>
 
-		<xdebugger.attachDebuggerProvider implementation="consulo.unity3d.run.debugger.UnityAttachDebuggerProvider" />
+		<xdebugger.attachDebuggerProvider implementation="consulo.unity3d.run.debugger.attach.UnityAttachDebuggerProvider" />
 	</extensions>
 </consulo-plugin>

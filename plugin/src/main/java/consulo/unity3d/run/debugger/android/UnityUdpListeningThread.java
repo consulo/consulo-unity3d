@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-package consulo.unity3d.run.debugger;
+package consulo.unity3d.run.debugger.android;
+
+import consulo.unity3d.run.debugger.UnityExternalDevice;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -22,24 +24,25 @@ import java.net.DatagramPacket;
 import java.net.MulticastSocket;
 import java.net.NetworkInterface;
 import java.util.*;
+import java.util.function.Consumer;
 
 /**
  * @author VISTALL
  * @since 10.11.14
  */
-public class UnityUdpThread extends Thread
+public class UnityUdpListeningThread extends Thread
 {
 	private static final ThreadGroup ourThreadGroup = new ThreadGroup("Unity Player Service Thread Group");
-	private final UnityPlayerService myService;
+	private final Consumer<UnityExternalDevice> myPlayerConsumer;
 	private final MulticastSocket myServerSocket;
 	private boolean myFinished;
 
-	public UnityUdpThread(UnityPlayerService service, MulticastSocket serverSocket, int port, NetworkInterface networkInterface)
+	public UnityUdpListeningThread(Consumer<UnityExternalDevice> playerConsumer, MulticastSocket serverSocket, int port, NetworkInterface networkInterface)
 	{
 		super(ourThreadGroup, String.format("Port: %d, NetworkInterface: %s", port, networkInterface.getDisplayName()));
 		myServerSocket = serverSocket;
 		setPriority(MIN_PRIORITY);
-		myService = service;
+		myPlayerConsumer = playerConsumer;
 	}
 
 	@Override
@@ -66,9 +69,9 @@ public class UnityUdpThread extends Thread
 					return;
 				}
 
-				UnityPlayer player = new UnityPlayer(receivePacket.getAddress(), map);
+				UnityByUdpPlayer player = new UnityByUdpPlayer(receivePacket.getAddress(), map);
 
-				myService.addPlayer(player);
+				myPlayerConsumer.accept(player);
 			}
 			catch(IOException ignored)
 			{

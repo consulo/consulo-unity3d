@@ -24,7 +24,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.CharsetToolkit;
 import consulo.execution.process.OSProcessUtil;
 import consulo.logging.Logger;
-import consulo.unity3d.run.debugger.UnityProcess;
+import consulo.unity3d.run.debugger.UnityDebugProcessInfo;
 import consulo.unity3d.run.debugger.UnityProcessDialog;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpPost;
@@ -46,11 +46,11 @@ public class UnityEditorCommunication
 	private static final Logger LOGGER = Logger.getInstance(UnityEditorCommunication.class);
 
 	@Nullable
-	public static UnityProcess findEditorProcess()
+	public static UnityDebugProcessInfo findEditorProcess()
 	{
 		for(ProcessInfo processInfo : OSProcessUtil.getProcessList())
 		{
-			UnityProcess unityProcess = UnityProcessDialog.tryParseIfUnityProcess(processInfo);
+			UnityDebugProcessInfo unityProcess = UnityProcessDialog.tryParseIfUnityProcess(processInfo);
 			if(unityProcess != null)
 			{
 				return unityProcess;
@@ -62,7 +62,7 @@ public class UnityEditorCommunication
 
 	public static boolean request(@Nonnull Project project, @Nonnull Object postObject, boolean silent)
 	{
-		UnityProcess editorProcess = findEditorProcess();
+		UnityDebugProcessInfo editorProcess = findEditorProcess();
 
 		if(editorProcess == null)
 		{
