@@ -56,6 +56,8 @@ import jakarta.inject.Inject;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * @author VISTALL
@@ -65,12 +67,14 @@ public class SetupUnitySDKProvider implements EditorNotificationProvider<EditorN
 {
 	private final Project myProject;
 	private final EditorNotifications myNotifications;
+	private final SdkTable mySdkTable;
 
 	@Inject
-	public SetupUnitySDKProvider(Project project, final EditorNotifications notifications)
+	public SetupUnitySDKProvider(Project project, EditorNotifications notifications, SdkTable sdkTable)
 	{
 		myProject = project;
 		myNotifications = notifications;
+		mySdkTable = sdkTable;
 		myProject.getMessageBus().connect().subscribe(ProjectTopics.PROJECT_ROOTS, new ModuleRootListener()
 		{
 			@Override
@@ -102,22 +106,42 @@ public class SetupUnitySDKProvider implements EditorNotificationProvider<EditorN
 		{
 			return null;
 		}
-		if(rootModuleExtension.getSdk() == null)
+
+		Sdk sdk = rootModuleExtension.getSdk();
+		if(!isValidSdk(sdk))
 		{
-			return createPanel(rootModuleExtension.getInheritableSdk().isNull() ? null : rootModuleExtension.getInheritableSdk().getName());
+			if(rootModuleExtension.getInheritableSdk().isNull())
+			{
+				return createPanel(null, null);
+			}
+			return createPanel(rootModuleExtension.getInheritableSdk().getName(), rootModuleExtension.getInheritableSdk().get());
 		}
 		return null;
 	}
 
+	private boolean isValidSdk(@Nullable Sdk sdk)
+	{
+		if(sdk == null)
+		{
+			return false;
+		}
+
+		return sdk.getHomeDirectory() != null;
+	}
+
 	@Nonnull
-	private EditorNotificationPanel createPanel(@Nullable String name)
+	private EditorNotificationPanel createPanel(@Nullable String name, @Nullable Sdk targetSdk)
 	{
 		EditorNotificationPanel panel = new EditorNotificationPanel();
 		String requiredVersion = Unity3dProjectImporter.loadVersionFromProject(myProject.getBasePath());
 
 		if(requiredVersion != null)
 		{
-			if(name == null)
+			if(targetSdk != null)
+			{
+				panel.setText(Unity3dLocalize.unity0SdkIsBrokenRequiredVersion(targetSdk.getName(), requiredVersion).getValue());
+			}
+			else if(name == null)
 			{
 				panel.setText(Unity3dLocalize.unitySdkIsNotDefinedRequiredVersion(requiredVersion).getValue());
 			}
@@ -128,7 +152,11 @@ public class SetupUnitySDKProvider implements EditorNotificationProvider<EditorN
 		}
 		else
 		{
-			if(name == null)
+			if(targetSdk != null)
+			{
+				panel.setText(Unity3dLocalize.unity0SdkIsBroken(targetSdk.getName()).getValue());
+			}
+			else if(name == null)
 			{
 				panel.setText(Unity3dLocalize.unitySdkIsNotDefined().getValue());
 			}
@@ -138,11 +166,29 @@ public class SetupUnitySDKProvider implements EditorNotificationProvider<EditorN
 			}
 		}
 
+		boolean[] requiredVersionFound = new boolean[1];
+		if(requiredVersion != null)
+		{
+			Optional<Sdk> requiredSdk = mySdkTable.getSdksOfType(Unity3dBundleType.getInstance()).stream().filter(sdk -> Objects.equals(sdk.getVersionString(), requiredVersion)).findAny();
+
+			requiredSdk.ifPresent(sdk ->
+			{
+				requiredVersionFound[0] = true;
+
+				panel.createActionLabel("Select '" + sdk.getName() + "'", () ->
+				{
+					Unity3dProjectImporter.syncProjectStep1(myProject, sdk, null, true);
+
+					myNotifications.updateAllNotifications();
+				});
+			});
+		}
+
 		SimpleReference<HyperlinkLabel> ref = SimpleReference.create();
 		Runnable action = () -> {
 			final DataContext dataContext = DataManager.getInstance().getDataContext();
 			ActionGroup.Builder builder = ActionGroup.newImmutableBuilder();
-			List<Sdk> sdksOfType = SdkTable.getInstance().getSdksOfType(Unity3dBundleType.getInstance());
+			List<Sdk> sdksOfType = mySdkTable.getSdksOfType(Unity3dBundleType.getInstance());
 			for(Sdk sdk : sdksOfType)
 			{
 				builder.add(new DumbAwareAction(LocalizeValue.of(sdk.getName()), LocalizeValue.empty(), SdkUtil.getIcon(sdk))
@@ -166,7 +212,7 @@ public class SetupUnitySDKProvider implements EditorNotificationProvider<EditorN
 				public void actionPerformed(@Nonnull AnActionEvent e)
 				{
 					Unity3dWizardStep.showAddSdk(ref.get(), sdk -> {
-						WriteAction.run(() -> SdkTable.getInstance().addSdk(sdk));
+						WriteAction.run(() -> mySdkTable.addSdk(sdk));
 
 						Unity3dProjectImporter.syncProjectStep1(myProject, sdk, null, true);
 
@@ -175,11 +221,11 @@ public class SetupUnitySDKProvider implements EditorNotificationProvider<EditorN
 				}
 			});
 
-			JBPopupFactory.getInstance().createActionGroupPopup("Select Unity", builder.build(), dataContext,
+			JBPopupFactory.getInstance().createActionGroupPopup(requiredVersionFound[0] ? "Select Another Unity" : "Select Unity", builder.build(), dataContext,
 					JBPopupFactory.ActionSelectionAid.MNEMONICS, false)
 					.showUnderneathOf(ref.get());
 		};
-		HyperlinkLabel actionLabel = panel.createActionLabel("Select Unity...", action);
+		HyperlinkLabel actionLabel = panel.createActionLabel(requiredVersionFound[0] ? "Select Another Unity..." : "Select Unity...", action);
 		ref.set(actionLabel);
 		return panel;
 	}

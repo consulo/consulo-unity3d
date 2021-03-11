@@ -7,9 +7,9 @@ unity.sdk.is.not.defined:
 unity.sdk.is.not.defined.required.version:
   text: 'Unity is not selected. Required version: ''''{0}'''''
 unity.0.sdk.is.not.defined:
-  text: 'Unity by name ''''{0}'''' is not found.'
+  text: 'Unity by name ''''{0}'''' is missed.'
 unity.0.sdk.is.not.defined.required.version:
-  text: 'Unity by name ''''{0}'''' is not found. Required version: ''''{1}'''''
+  text: 'Unity by name ''''{0}'''' is missed. Required version: ''''{1}'''''
 required.unity.version.is.0:
   text: 'NOTE: Target project require Unity ''''{0}'''''
 attach.to.single.process.without.dialog.box:
@@ -24,3 +24,7 @@ ongui.method.inspection.message:
   text: Using OnGUI causes allocations and GC spikes
 unity.name:
   text: Unity
+unity.0.sdk.is.broken:
+  text: 'Unity by name ''''{0}'''' is broken.'
+unity.0.sdk.is.broken.required.version:
+  text: 'Unity by name ''''{0}'''' is broken. Required version: ''''{1}'''''
