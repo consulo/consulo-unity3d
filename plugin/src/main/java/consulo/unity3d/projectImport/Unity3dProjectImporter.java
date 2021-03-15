@@ -28,6 +28,7 @@ import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationNamesInfo;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.fileTypes.FileType;
+import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.module.ModifiableModuleModel;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
@@ -549,6 +550,11 @@ public class Unity3dProjectImporter
 				@Override
 				public boolean visitFile(@Nonnull VirtualFile file)
 				{
+					if(FileTypeManager.getInstance().isFileIgnored(file))
+					{
+						return false;
+					}
+
 					if(isUnityModule && file.getFileType() == fileType)
 					{
 						if(virtualFilesByModule.containsScalarValue(file))
