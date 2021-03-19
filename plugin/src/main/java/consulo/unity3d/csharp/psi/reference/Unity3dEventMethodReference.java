@@ -49,6 +49,7 @@ import consulo.dotnet.psi.DotNetMethodDeclaration;
 import consulo.dotnet.resolve.DotNetGenericExtractor;
 import consulo.dotnet.resolve.DotNetTypeRef;
 import consulo.dotnet.resolve.DotNetTypeResolveResult;
+import consulo.localize.LocalizeValue;
 import consulo.ui.image.Image;
 import consulo.unity3d.Unity3dTypes;
 
@@ -71,9 +72,10 @@ public class Unity3dEventMethodReference extends PsiReferenceBase<CSharpConstant
 	@RequiredReadAction
 	@Nonnull
 	@Override
-	public String getErrorMessage(@Nonnull PsiElement element)
+	public LocalizeValue getErrorMessage(@Nonnull PsiElement element)
 	{
-		return StringUtil.SINGLE_QUOTER.fun((String) ((CSharpConstantExpressionImpl) element).getValue()) + " is not resolved";
+		String value = (String) ((CSharpConstantExpressionImpl) element).getValue();
+		return LocalizeValue.localizeTODO(StringUtil.SINGLE_QUOTER.fun(value) + " is not resolved");
 	}
 
 	@RequiredReadAction
