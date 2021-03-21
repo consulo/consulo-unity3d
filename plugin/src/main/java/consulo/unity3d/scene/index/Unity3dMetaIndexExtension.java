@@ -16,31 +16,25 @@
 
 package consulo.unity3d.scene.index;
 
-import java.util.Collections;
-import java.util.List;
-
-import javax.annotation.Nonnull;
-
-import org.jetbrains.yaml.psi.YAMLDocument;
-import org.jetbrains.yaml.psi.YAMLFile;
-import org.jetbrains.yaml.psi.YAMLKeyValue;
-import org.jetbrains.yaml.psi.YAMLMapping;
-import org.jetbrains.yaml.psi.YAMLValue;
+import com.intellij.lang.LighterAST;
+import com.intellij.lang.LighterASTNode;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiFile;
-import com.intellij.util.indexing.DataIndexer;
-import com.intellij.util.indexing.DefaultFileTypeSpecificInputFilter;
-import com.intellij.util.indexing.FileBasedIndex;
-import com.intellij.util.indexing.FileBasedIndexExtension;
-import com.intellij.util.indexing.FileContent;
-import com.intellij.util.indexing.ID;
+import com.intellij.util.indexing.*;
 import com.intellij.util.io.DataExternalizer;
 import com.intellij.util.io.EnumeratorIntegerDescriptor;
 import com.intellij.util.io.EnumeratorStringDescriptor;
 import com.intellij.util.io.KeyDescriptor;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.unity3d.Unity3dMetaFileType;
 import consulo.unity3d.scene.Unity3dMetaManager;
+import consulo.util.lang.Pair;
+import org.jetbrains.yaml.YAMLElementTypes;
+import org.jetbrains.yaml.psi.*;
+
+import javax.annotation.Nonnull;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author VISTALL
@@ -50,21 +44,48 @@ public class Unity3dMetaIndexExtension extends FileBasedIndexExtension<String, I
 {
 	public static final ID<String, Integer> KEY = ID.create("unity3d.meta.index");
 
-	private static final int ourVersion = 4;
+	private static final int ourVersion = 5;
 
 	private DataIndexer<String, Integer, FileContent> myIndexer = fileContent ->
 	{
-		PsiFile psiFile = fileContent.getPsiFile();
-		if(!(psiFile instanceof YAMLFile))
+		PsiDependentFileContent dependentFileContent = (PsiDependentFileContent) fileContent;
+
+		LighterAST ast = dependentFileContent.getLighterAST();
+
+		LighterASTNode fileAst = ast.getRoot();
+
+		if(fileAst.getTokenType() != YAMLElementTypes.FILE)
 		{
-			return Collections.emptyMap();
+			return Map.of();
 		}
 
-		String guid = findGUIDFromFile((YAMLFile) psiFile);
+		CharSequence fileText = fileContent.getContentAsText();
+
+		String guid = null;
+		for(LighterASTNode documentAst : ast.getChildren(fileAst))
+		{
+			if(documentAst.getTokenType() != YAMLElementTypes.DOCUMENT)
+			{
+				continue;
+			}
+
+			LighterASTNode mapping = Unity3dYMLAssetIndexExtension.findNode(documentAst, ast, Unity3dYMLAssetIndexExtension.YAML_MAPPING_SET);
+			if(mapping == null)
+			{
+				continue;
+			}
+
+			Pair<String, LighterASTNode> guidFieldValue = Unity3dYMLAssetIndexExtension.findGUIDFieldValue(mapping, ast, fileText);
+			if(guidFieldValue != null)
+			{
+				guid = guidFieldValue.getFirst();
+				break;
+			}
+		}
 
 		if(guid == null)
 		{
-			return Collections.emptyMap();
+			return Map.of();
 		}
 
 		VirtualFile file = fileContent.getFile();
@@ -75,13 +96,14 @@ public class Unity3dMetaIndexExtension extends FileBasedIndexExtension<String, I
 		VirtualFile owner = parent.findChild(ownerFileName);
 		if(owner == null)
 		{
-			return Collections.emptyMap();
+			return Map.of();
 		}
 
 		int fileId = FileBasedIndex.getFileId(owner);
-		return Collections.singletonMap(guid, fileId);
+		return Map.of(guid, fileId);
 	};
 
+	@RequiredReadAction
 	public static String findGUIDFromFile(@Nonnull YAMLFile psiFile)
 	{
 		String guid = null;

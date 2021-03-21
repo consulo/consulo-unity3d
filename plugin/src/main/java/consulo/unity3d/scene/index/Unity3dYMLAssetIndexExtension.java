@@ -16,41 +16,33 @@
 
 package consulo.unity3d.scene.index;
 
-import gnu.trove.THashMap;
-
-import java.io.DataInput;
-import java.io.DataOutput;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.annotation.Nonnull;
-
-import org.jetbrains.yaml.psi.YAMLDocument;
-import org.jetbrains.yaml.psi.YAMLFile;
-import org.jetbrains.yaml.psi.YAMLKeyValue;
-import org.jetbrains.yaml.psi.YAMLMapping;
-import org.jetbrains.yaml.psi.YAMLScalar;
-import org.jetbrains.yaml.psi.YAMLValue;
+import com.intellij.lang.LighterAST;
+import com.intellij.lang.LighterASTNode;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.tree.TokenSet;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.indexing.DataIndexer;
-import com.intellij.util.indexing.DefaultFileTypeSpecificInputFilter;
-import com.intellij.util.indexing.FileBasedIndex;
-import com.intellij.util.indexing.FileBasedIndexExtension;
-import com.intellij.util.indexing.FileContent;
-import com.intellij.util.indexing.ID;
+import com.intellij.util.indexing.*;
 import com.intellij.util.io.DataExternalizer;
 import com.intellij.util.io.DataInputOutputUtil;
 import com.intellij.util.io.ExternalIntegerKeyDescriptor;
 import com.intellij.util.io.KeyDescriptor;
+import consulo.annotation.DeprecationInfo;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.unity3d.scene.Unity3dMetaManager;
 import consulo.unity3d.scene.Unity3dYMLAssetFileType;
+import consulo.util.lang.Pair;
+import org.jetbrains.yaml.YAMLElementTypes;
+import org.jetbrains.yaml.YAMLTokenTypes;
+import org.jetbrains.yaml.psi.*;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * @author VISTALL
@@ -75,7 +67,7 @@ public class Unity3dYMLAssetIndexExtension extends FileBasedIndexExtension<Integ
 	public static final ID<Integer, List<Unity3dYMLAsset>> KEY = ID.create("unity3d.yml.asset.new.index");
 	public static final String ourCustomGUIDPrefix = "__guid:";
 
-	private static final int ourVersion = 12;
+	private static final int ourVersion = 13;
 	private static final String ourGameObject = "GameObject";
 	private static final Set<String> ourAcceptKeys = ContainerUtil.newTroveSet("MonoBehaviour", "Prefab", "Transform", ourGameObject, "TrailRenderer");
 	private static final Set<String> ourGuidKeys = ContainerUtil.newTroveSet("m_PrefabParentObject", "m_Script", "m_ParentPrefab");
@@ -85,27 +77,27 @@ public class Unity3dYMLAssetIndexExtension extends FileBasedIndexExtension<Integ
 	private final DefaultFileTypeSpecificInputFilter myInputFilter = new DefaultFileTypeSpecificInputFilter(Unity3dYMLAssetFileType.INSTANCE);
 	private final ExternalIntegerKeyDescriptor myKeyDescriptor = new ExternalIntegerKeyDescriptor();
 
-	private final DataExternalizer<List<Unity3dYMLAsset>> myExternalizer = new DataExternalizer<List<Unity3dYMLAsset>>()
+	private final DataExternalizer<List<Unity3dYMLAsset>> myExternalizer = new DataExternalizer<>()
 	{
 		@Override
 		public void save(DataOutput dataOutput, List<Unity3dYMLAsset> list) throws IOException
 		{
 			DataInputOutputUtil.writeSeq(dataOutput, list, asset ->
 			{
-				dataOutput.writeUTF(asset.getGuild());
-				dataOutput.writeInt(asset.getStartOffset());
-				String gameObjectName = asset.getGameObjectName();
+				dataOutput.writeUTF(asset.guild());
+				dataOutput.writeInt(asset.startOffset());
+				String gameObjectName = asset.gameObjectName();
 				dataOutput.writeBoolean(gameObjectName != null);
 				if(gameObjectName != null)
 				{
 					dataOutput.writeUTF(gameObjectName);
 				}
 
-				DataInputOutputUtil.writeSeq(dataOutput, asset.getValues(), it ->
+				DataInputOutputUtil.writeSeq(dataOutput, asset.values(), it ->
 				{
-					dataOutput.writeUTF(it.getName());
-					dataOutput.writeUTF(it.getValue());
-					dataOutput.writeInt(it.getOffset());
+					dataOutput.writeUTF(it.name());
+					dataOutput.writeUTF(it.value());
+					dataOutput.writeInt(it.offset());
 				});
 			});
 		}
@@ -135,15 +127,232 @@ public class Unity3dYMLAssetIndexExtension extends FileBasedIndexExtension<Integ
 		}
 	};
 
-	public final DataIndexer<Integer, List<Unity3dYMLAsset>, FileContent> myIndexer = fileContent ->
+	private static final TokenSet ourYamlValuesSet = TokenSet.create(YAMLElementTypes.MAPPING,
+			YAMLElementTypes.SCALAR_PLAIN_VALUE,
+			YAMLElementTypes.SCALAR_TEXT_VALUE,
+			YAMLElementTypes.SCALAR_LIST_VALUE,
+			YAMLElementTypes.HASH,
+			YAMLElementTypes.ARRAY,
+			YAMLElementTypes.SEQUENCE,
+			YAMLElementTypes.SEQUENCE_ITEM,
+			YAMLElementTypes.COMPOUND_VALUE,
+			YAMLElementTypes.SCALAR_QUOTED_STRING);
+
+	public static final TokenSet YAML_MAPPING_SET = TokenSet.create(YAMLElementTypes.MAPPING, YAMLElementTypes.HASH);
+
+	private final DataIndexer<Integer, List<Unity3dYMLAsset>, FileContent> myIndexer = Unity3dYMLAssetIndexExtension::indexViaLightAst;
+
+	private static Map<Integer, List<Unity3dYMLAsset>> indexViaLightAst(FileContent fileContent)
+	{
+		PsiDependentFileContent dependentFileContent = (PsiDependentFileContent) fileContent;
+
+		LighterAST ast = dependentFileContent.getLighterAST();
+
+		LighterASTNode fileAst = ast.getRoot();
+
+		if(fileAst.getTokenType() != YAMLElementTypes.FILE)
+		{
+			return Map.of();
+		}
+
+		CharSequence fileText = fileContent.getContentAsText();
+
+		Map<Integer, List<Unity3dYMLAsset>> map = new HashMap<>();
+
+		String currentGameObjectName = null;
+
+		for(LighterASTNode documentAst : ast.getChildren(fileAst))
+		{
+			if(documentAst.getTokenType() != YAMLElementTypes.DOCUMENT)
+			{
+				continue;
+			}
+
+			LighterASTNode mapping = findNode(documentAst, ast, YAML_MAPPING_SET);
+			if(mapping == null)
+			{
+				continue;
+			}
+
+			List<LighterASTNode> keyValues = ast.getChildren(mapping);
+
+			for(LighterASTNode keyValue : keyValues)
+			{
+				if(keyValue.getTokenType() != YAMLElementTypes.KEY_VALUE_PAIR)
+				{
+					continue;
+				}
+
+				List<LighterASTNode> keyValueChildren = ast.getChildren(keyValue);
+
+				if(keyValueChildren.size() < 2)
+				{
+					continue;
+				}
+
+				LighterASTNode nameNode = ContainerUtil.find(keyValueChildren, it -> it.getTokenType() == YAMLTokenTypes.SCALAR_KEY);
+				LighterASTNode valueNode = ContainerUtil.find(keyValueChildren, it -> YAML_MAPPING_SET.contains(it.getTokenType()));
+
+				if(nameNode == null || valueNode == null)
+				{
+					continue;
+				}
+
+				// key, must be ends with ':' cut semicolon
+				String keyText = fileText.subSequence(nameNode.getStartOffset(), nameNode.getEndOffset() - 1).toString();
+				if(!ourAcceptKeys.contains(keyText))
+				{
+					continue;
+				}
+
+				String scriptGuid = null;
+				int startOffset = 0;
+				List<Unity3dYMLField> values = null;
+
+				List<LighterASTNode> fieldsNodes = ast.getChildren(valueNode);
+
+				for(LighterASTNode fieldNode : fieldsNodes)
+				{
+					if(fieldNode.getTokenType() != YAMLElementTypes.KEY_VALUE_PAIR)
+					{
+						continue;
+					}
+
+					List<LighterASTNode> fieldNodes = ast.getChildren(fieldNode);
+
+					LighterASTNode fieldNameNode = ContainerUtil.find(fieldNodes, it -> it.getTokenType() == YAMLTokenTypes.SCALAR_KEY);
+					LighterASTNode fieldValueNode = ContainerUtil.find(fieldNodes, it -> ourYamlValuesSet.contains(it.getTokenType()));
+
+					if(fieldNameNode == null || fieldValueNode == null)
+					{
+						continue;
+					}
+
+					String fieldName = fileText.subSequence(fieldNameNode.getStartOffset(), fieldNameNode.getEndOffset() - 1).toString();
+					if(fieldName.length() == 0)
+					{
+						continue;
+					}
+
+					if(ourGameObject.equals(keyText) && ourGameObjectNameField.equals(fieldName))
+					{
+						if(fieldValueNode.getTokenType() == YAMLElementTypes.SCALAR_PLAIN_VALUE)
+						{
+							currentGameObjectName = fileText.subSequence(fieldValueNode.getStartOffset(), fieldValueNode.getEndOffset()).toString();
+						}
+						else if(fieldValueNode.getTokenType() == YAMLElementTypes.SCALAR_QUOTED_STRING)
+						{
+							CharSequence quotedString = fileText.subSequence(fieldValueNode.getStartOffset(), fieldValueNode.getEndOffset());
+							currentGameObjectName = StringUtil.unquoteString(quotedString.toString());
+						}
+					}
+
+					if(ourGuidKeys.contains(fieldName) && YAML_MAPPING_SET.contains(fieldValueNode.getTokenType()))
+					{
+						Pair<String, LighterASTNode> guidFieldValue = findGUIDFieldValue(fieldValueNode, ast, fileText);
+						if(guidFieldValue != null)
+						{
+							scriptGuid = guidFieldValue.getFirst();
+							startOffset = guidFieldValue.getSecond().getStartOffset();
+							values = new ArrayList<>();
+						}
+					}
+
+					if(values != null)
+					{
+						String fieldValueText = null;
+						if(YAML_MAPPING_SET.contains(fieldValueNode.getTokenType()))
+						{
+							Pair<String, LighterASTNode> guidFieldValue = findGUIDFieldValue(fieldValueNode, ast, fileText);
+							if(guidFieldValue != null)
+							{
+								fieldValueText = ourCustomGUIDPrefix + guidFieldValue.getFirst();
+							}
+						}
+						else if(fieldValueNode.getTokenType() == YAMLElementTypes.SCALAR_QUOTED_STRING)
+						{
+							String quoted = fileText.subSequence(fieldValueNode.getStartOffset(), fieldValueNode.getEndOffset()).toString();
+
+							fieldValueText = StringUtil.unquoteString(quoted);
+						}
+
+						if(fieldValueText == null)
+						{
+							fieldValueText = fileText.subSequence(fieldValueNode.getStartOffset(), fieldValueNode.getEndOffset()).toString();
+						}
+						values.add(new Unity3dYMLField(fieldName, StringUtil.first(fieldValueText, 50, true), fieldValueNode.getStartOffset()));
+					}
+				}
+
+				if(scriptGuid != null)
+				{
+					final int key = Math.abs(FileBasedIndex.getFileId(fileContent.getFile()));
+					Unity3dYMLAsset unity3DYMLAsset = new Unity3dYMLAsset(scriptGuid, currentGameObjectName, startOffset, values);
+
+					List<Unity3dYMLAsset> list = map.get(key);
+					if(list != null)
+					{
+						list.add(unity3DYMLAsset);
+					}
+					else
+					{
+						list = new ArrayList<>();
+						list.add(unity3DYMLAsset);
+						map.put(key, list);
+					}
+				}
+			}
+		}
+		return map;
+	}
+
+	@Nullable
+	public static Pair<String, LighterASTNode> findGUIDFieldValue(LighterASTNode fieldValueNode, LighterAST ast, CharSequence fileText)
+	{
+		List<LighterASTNode> possibleGuidsNodes = ast.getChildren(fieldValueNode);
+		for(LighterASTNode possibleGuidNode : possibleGuidsNodes)
+		{
+			List<LighterASTNode> possibleGuidNodes = ast.getChildren(possibleGuidNode);
+
+			LighterASTNode possibleGuidKey = ContainerUtil.find(possibleGuidNodes, it -> it.getTokenType() == YAMLTokenTypes.SCALAR_KEY);
+			LighterASTNode possibleGuidValue = ContainerUtil.find(possibleGuidNodes, it -> ourYamlValuesSet.contains(it.getTokenType()));
+
+			if(possibleGuidKey == null || possibleGuidValue == null)
+			{
+				continue;
+			}
+
+			CharSequence possibleGuidText = fileText.subSequence(possibleGuidKey.getStartOffset(), possibleGuidKey.getEndOffset() - 1);
+
+			if(StringUtil.equals(possibleGuidText, Unity3dMetaManager.GUID_KEY))
+			{
+				CharSequence guidValue = fileText.subSequence(possibleGuidValue.getStartOffset(), possibleGuidValue.getEndOffset());
+				return Pair.create(guidValue.toString(), possibleGuidValue);
+			}
+		}
+
+		return null;
+	}
+
+	@Nullable
+	public static LighterASTNode findNode(LighterASTNode node, LighterAST ast, TokenSet tokenSet)
+	{
+		List<LighterASTNode> children = ast.getChildren(node);
+		return ContainerUtil.find(children, it -> tokenSet.contains(it.getTokenType()));
+	}
+
+	@RequiredReadAction
+	@Deprecated
+	@DeprecationInfo("Slow version of indexing")
+	private static Map<Integer, List<Unity3dYMLAsset>> indexViaPsi(FileContent fileContent)
 	{
 		PsiFile psiFile = fileContent.getPsiFile();
 		if(!(psiFile instanceof YAMLFile))
 		{
-			return Collections.emptyMap();
+			return Map.of();
 		}
 
-		Map<Integer, List<Unity3dYMLAsset>> map = new THashMap<>();
+		Map<Integer, List<Unity3dYMLAsset>> map = new HashMap<>();
 
 		String currentGameObjectName = null;
 
@@ -219,16 +428,16 @@ public class Unity3dYMLAssetIndexExtension extends FileBasedIndexExtension<Integ
 
 							if(values != null)
 							{
-								String text = fieldValue.getText();
+								String fieldText = fieldValue.getText();
 								if(fieldValue instanceof YAMLMapping)
 								{
 									YAMLKeyValue keyValueByKey = ((YAMLMapping) fieldValue).getKeyValueByKey(Unity3dMetaManager.GUID_KEY);
 									if(keyValueByKey != null)
 									{
-										text = ourCustomGUIDPrefix + keyValueByKey.getValueText();
+										fieldText = ourCustomGUIDPrefix + keyValueByKey.getValueText();
 									}
 								}
-								values.add(new Unity3dYMLField(fieldName, StringUtil.first(text, 50, true), fieldValue.getTextOffset()));
+								values.add(new Unity3dYMLField(fieldName, StringUtil.first(fieldText, 50, true), fieldValue.getTextOffset()));
 							}
 						}
 
@@ -255,7 +464,7 @@ public class Unity3dYMLAssetIndexExtension extends FileBasedIndexExtension<Integ
 		}
 
 		return map;
-	};
+	}
 
 	@Override
 	public boolean keyIsUniqueForIndexedFile()

@@ -23,11 +23,9 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.ui.EditorNotificationPanel;
-import com.intellij.util.ArrayUtil;
 import com.intellij.util.containers.MultiMap;
 import consulo.annotation.access.RequiredReadAction;
 import consulo.editor.notifications.EditorNotificationProvider;
-import consulo.unity3d.scene.Unity3dAssetFileTypeDetector;
 import consulo.unity3d.scene.Unity3dAssetUtil;
 import consulo.unity3d.scene.Unity3dYMLAssetFileType;
 import consulo.unity3d.scene.index.Unity3dYMLAsset;
@@ -55,7 +53,7 @@ public class Unity3dAssetEditorNotificationProvider implements EditorNotificatio
 	@Override
 	public EditorNotificationPanel createNotificationPanel(@Nonnull VirtualFile file, @Nonnull FileEditor fileEditor)
 	{
-		if(file.getFileType() != Unity3dYMLAssetFileType.INSTANCE || !ArrayUtil.contains(file.getExtension(), Unity3dAssetFileTypeDetector.ourAssetExtensions))
+		if(file.getFileType() != Unity3dYMLAssetFileType.INSTANCE)
 		{
 			return null;
 		}

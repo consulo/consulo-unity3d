@@ -20,70 +20,23 @@ package consulo.unity3d.scene.index;
  * @author VISTALL
  * @since 04-Sep-17
  */
-public class Unity3dYMLField
+public record Unity3dYMLField(String name,String value,int offset)
 {
-	private final String myName;
-	private final String myValue;
-	private final int myOffset;
-
-	public Unity3dYMLField(String name, String value, int offset)
-	{
-		myName = name;
-		myValue = value;
-		myOffset = offset;
-	}
-
+	@Deprecated
 	public String getName()
 	{
-		return myName;
+		return name();
 	}
 
+	@Deprecated
 	public String getValue()
 	{
-		return myValue;
+		return value();
 	}
 
+	@Deprecated
 	public int getOffset()
 	{
-		return myOffset;
-	}
-
-	@Override
-	public boolean equals(Object o)
-	{
-		if(this == o)
-		{
-			return true;
-		}
-		if(o == null || getClass() != o.getClass())
-		{
-			return false;
-		}
-
-		Unity3dYMLField that = (Unity3dYMLField) o;
-
-		if(myOffset != that.myOffset)
-		{
-			return false;
-		}
-		if(myName != null ? !myName.equals(that.myName) : that.myName != null)
-		{
-			return false;
-		}
-		if(myValue != null ? !myValue.equals(that.myValue) : that.myValue != null)
-		{
-			return false;
-		}
-
-		return true;
-	}
-
-	@Override
-	public int hashCode()
-	{
-		int result = myName != null ? myName.hashCode() : 0;
-		result = 31 * result + (myValue != null ? myValue.hashCode() : 0);
-		result = 31 * result + myOffset;
-		return result;
+		return offset();
 	}
 }

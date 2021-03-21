@@ -23,7 +23,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.PsiRecursiveElementWalkingVisitor;
-import com.intellij.util.ArrayUtil;
 import com.intellij.util.containers.ContainerUtil;
 import consulo.annotation.access.RequiredReadAction;
 import consulo.csharp.lang.psi.CSharpTypeDeclaration;
@@ -85,7 +84,7 @@ public class Unity3dAssetUtil
 
 	private static int weight(VirtualFile virtualFile)
 	{
-		int i = ArrayUtil.indexOf(Unity3dAssetFileTypeDetector.ourAssetExtensionsArray, virtualFile.getExtension());
+		int i = Unity3dAssetFileTypeDetector.ourAssetExtensions.indexOf(virtualFile.getExtension());
 		if(i == -1)
 		{
 			return 1000;

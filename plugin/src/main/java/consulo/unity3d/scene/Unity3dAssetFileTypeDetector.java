@@ -19,14 +19,13 @@ package consulo.unity3d.scene;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.FileTypeRegistry;
 import com.intellij.openapi.util.io.ByteSequence;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.text.CharSequenceSubSequence;
-import gnu.trove.TIntHashSet;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * @author VISTALL
@@ -34,63 +33,47 @@ import javax.annotation.Nullable;
  */
 public class Unity3dAssetFileTypeDetector implements FileTypeRegistry.FileTypeDetector
 {
-	public static final String[] ourAssetExtensionsArray = {
-			"unity",
-			"prefab",
-			"physicsMaterial2D",
-			"mat",
-			"asset"
-	};
-
-	public static final TIntHashSet ourAssetExtensions = new TIntHashSet();
-
-	static
-	{
-		for(String extension : ourAssetExtensionsArray)
-		{
-			ourAssetExtensions.add(StringUtil.hashCode(extension));
-
-			if(!ourAssetExtensions.contains(StringUtil.hashCode(new CharSequenceSubSequence(extension))))
-			{
-				throw new IllegalArgumentException("HashCode is not equals from StringUtil#hashCode() to String#hashCode");
-			}
-		}
-	}
+	public static final List<String> ourAssetExtensions = List.of("unity", "prefab", "physicsMaterial2D", "mat", "asset", "anim", "controller", "spriteatlas", "mesh", "physicMaterial", "preset");
 
 	@Nullable
 	@Override
 	public FileType detect(@Nonnull VirtualFile file, @Nonnull ByteSequence firstBytes, @Nullable CharSequence firstCharsIfText)
 	{
-		CharSequence extension = FileUtil.getExtension(file.getNameSequence());
-
-		if(ourAssetExtensions.contains(StringUtil.hashCode(extension)))
+		if(firstCharsIfText == null || firstCharsIfText.length() < 5)
 		{
-			if(firstCharsIfText == null)
-			{
-				return Unity3dBinaryAssetFileType.INSTANCE;
-			}
-			if(firstCharsIfText.length() > 5)
-			{
-				if(StringUtil.startsWith(firstCharsIfText, "%YAML"))
-				{
-					return Unity3dYMLAssetFileType.INSTANCE;
-				}
-			}
-
-			return Unity3dBinaryAssetFileType.INSTANCE;
+			return null;
 		}
+
+		String extension = file.getExtension();
+		if(extension == null || !ourAssetExtensions.contains(extension))
+		{
+			return null;
+		}
+
+		if(StringUtil.startsWith(firstCharsIfText, "%YAML"))
+		{
+			return Unity3dYMLAssetFileType.INSTANCE;
+		}
+
 		return null;
+	}
+
+	@Nullable
+	@Override
+	public Collection<? extends FileType> getDetectedFileTypes()
+	{
+		return List.of(Unity3dYMLAssetFileType.INSTANCE);
 	}
 
 	@Override
 	public int getDesiredContentPrefixLength()
 	{
-		return 24;
+		return 20;
 	}
 
 	@Override
 	public int getVersion()
 	{
-		return 6;
+		return 10;
 	}
 }

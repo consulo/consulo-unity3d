@@ -16,18 +16,21 @@
 
 package consulo.unity3d.scene;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import com.intellij.openapi.fileTypes.FileType;
+import com.intellij.openapi.fileTypes.PlainTextLikeFileType;
 import consulo.ui.image.Image;
 import consulo.unity3d.Unity3dIcons;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * @author VISTALL
  * @since 09.08.2015
+ *
+ * Implement {@link PlainTextLikeFileType} for fileTypeDetecting override
  */
-public class Unity3dBinaryAssetFileType implements FileType
+public class Unity3dBinaryAssetFileType implements FileType, PlainTextLikeFileType
 {
 	public static final Unity3dBinaryAssetFileType INSTANCE = new Unity3dBinaryAssetFileType();
 

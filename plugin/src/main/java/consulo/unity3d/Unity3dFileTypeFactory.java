@@ -18,6 +18,9 @@ package consulo.unity3d;
 
 import com.intellij.openapi.fileTypes.FileTypeConsumer;
 import com.intellij.openapi.fileTypes.FileTypeFactory;
+import com.intellij.openapi.util.text.StringUtil;
+import consulo.json.JsonFileType;
+import consulo.unity3d.scene.Unity3dAssetFileTypeDetector;
 import consulo.unity3d.scene.Unity3dBinaryAssetFileType;
 import consulo.unity3d.scene.Unity3dYMLAssetFileType;
 
@@ -33,9 +36,13 @@ public class Unity3dFileTypeFactory extends FileTypeFactory
 	public void createFileTypes(@Nonnull FileTypeConsumer consumer)
 	{
 		consumer.consume(Unity3dMetaFileType.INSTANCE);
-		consumer.consume(Unity3dBinaryAssetFileType.INSTANCE);
+		consumer.consume(Unity3dBinaryAssetFileType.INSTANCE, StringUtil.join(Unity3dAssetFileTypeDetector.ourAssetExtensions, ";"));
 		consumer.consume(Unity3dYMLAssetFileType.INSTANCE);
 
 		consumer.consume(Unity3dBinaryFileType.INSTANCE, "fbx");
+
+		consumer.consume(JsonFileType.INSTANCE, "asmdef");
+
+		// TODO uxml - XML, .uss - CSS
 	}
 }
