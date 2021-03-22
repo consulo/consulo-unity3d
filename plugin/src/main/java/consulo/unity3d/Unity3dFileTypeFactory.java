@@ -42,7 +42,5 @@ public class Unity3dFileTypeFactory extends FileTypeFactory
 		consumer.consume(Unity3dBinaryFileType.INSTANCE, "fbx");
 
 		consumer.consume(JsonFileType.INSTANCE, "asmdef");
-
-		// TODO uxml - XML, .uss - CSS
 	}
 }

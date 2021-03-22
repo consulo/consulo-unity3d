@@ -28,6 +28,9 @@
 	<depends>consulo.nunit</depends>
 	<depends>org.jetbrains.plugins.yaml</depends>
 
+	<depends config-file="com.intellij.xml.xml" optional="true">com.intellij.xml</depends>
+	<depends config-file="consulo.css.xml" optional="true">consulo.css</depends>
+
 	<import path="/META-INF/SharderLab.xml"/>
 
 	<import path="/META-INF/CGShader.xml"/>
