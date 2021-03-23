@@ -56,7 +56,7 @@ public class SyncUnity3dProjectAction extends AnAction
 			return;
 		}
 
-		Unity3dProjectImporter.syncProjectStep1(project, rootModuleExtension.getSdk(), null, true);
+		Unity3dProjectImporter.syncProjectStep(project, rootModuleExtension.getSdk(), null, true);
 	}
 
 	@RequiredUIAccess

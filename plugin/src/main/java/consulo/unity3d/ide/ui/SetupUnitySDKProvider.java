@@ -177,7 +177,7 @@ public class SetupUnitySDKProvider implements EditorNotificationProvider<EditorN
 
 				panel.createActionLabel("Select '" + sdk.getName() + "'", () ->
 				{
-					Unity3dProjectImporter.syncProjectStep1(myProject, sdk, null, true);
+					Unity3dProjectImporter.syncProjectStep(myProject, sdk, null, true);
 
 					myNotifications.updateAllNotifications();
 				});
@@ -197,7 +197,7 @@ public class SetupUnitySDKProvider implements EditorNotificationProvider<EditorN
 					@Override
 					public void actionPerformed(@Nonnull AnActionEvent anActionEvent)
 					{
-						Unity3dProjectImporter.syncProjectStep1(myProject, sdk, null, true);
+						Unity3dProjectImporter.syncProjectStep(myProject, sdk, null, true);
 
 						myNotifications.updateAllNotifications();
 					}
@@ -214,7 +214,7 @@ public class SetupUnitySDKProvider implements EditorNotificationProvider<EditorN
 					Unity3dWizardStep.showAddSdk(ref.get(), sdk -> {
 						WriteAction.run(() -> mySdkTable.addSdk(sdk));
 
-						Unity3dProjectImporter.syncProjectStep1(myProject, sdk, null, true);
+						Unity3dProjectImporter.syncProjectStep(myProject, sdk, null, true);
 
 						myNotifications.updateAllNotifications();
 					});

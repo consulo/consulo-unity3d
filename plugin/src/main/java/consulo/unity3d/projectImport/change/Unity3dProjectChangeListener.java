@@ -217,7 +217,7 @@ public class Unity3dProjectChangeListener implements Disposable
 								return;
 							}
 
-							Unity3dProjectImporter.syncProjectStep1(myProject, rootModuleExtension.getSdk(), null, true);
+							Unity3dProjectImporter.syncProjectStep(myProject, rootModuleExtension.getSdk(), null, true);
 						}).notify(myProject);
 			}
 		});

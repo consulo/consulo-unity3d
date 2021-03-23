@@ -69,6 +69,10 @@
 		<psiSearcher implementation="consulo.unity3d.unityscript.lang.impl.UnityScriptPsiSearcher"/>
 	</extensions>
 
+	<extensions defaultExtensionNs="consulo.javascript">
+		<jomFileDescriptor implementation="consulo.unity3d.asmdef.AsmDefFileDescriptor"/>
+	</extensions>
+
 	<extensions defaultExtensionNs="com.intellij">
 		<stubIndex implementation="consulo.unity3d.unityscript.index.UnityScriptFileByNameIndex"/>
 		<xdebugger.lineBreakpointTypeResolver filetype="JavaScript"
@@ -217,6 +221,8 @@
 
 		<projectService serviceImplementation="consulo.unity3d.projectImport.change.Unity3dProjectChangeListener" lazy="false"/>
 
-		<xdebugger.attachDebuggerProvider implementation="consulo.unity3d.run.debugger.attach.UnityAttachDebuggerProvider" />
+		<xdebugger.attachDebuggerProvider implementation="consulo.unity3d.run.debugger.attach.UnityAttachDebuggerProvider"/>
+
+		<eapDescriptor implementation="consulo.unity3d.projectImport.UnityAsmDefImportEapDescriptor"/>
 	</extensions>
 </consulo-plugin>

@@ -25,7 +25,6 @@ import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.Application;
-import com.intellij.openapi.application.ApplicationNamesInfo;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.FileTypeManager;
@@ -54,6 +53,7 @@ import consulo.csharp.module.extension.CSharpLanguageVersion;
 import consulo.csharp.module.extension.CSharpSimpleMutableModuleExtension;
 import consulo.dotnet.dll.DotNetModuleFileType;
 import consulo.dotnet.roots.orderEntry.DotNetLibraryOrderEntryImpl;
+import consulo.ide.eap.EarlyAccessProgramManager;
 import consulo.logging.Logger;
 import consulo.module.extension.MutableModuleExtension;
 import consulo.roots.ContentFolderScopes;
@@ -73,12 +73,14 @@ import consulo.unity3d.jsonApi.UnityOpenFilePostHandler;
 import consulo.unity3d.jsonApi.UnityOpenFilePostHandlerRequest;
 import consulo.unity3d.jsonApi.UnityPingPong;
 import consulo.unity3d.jsonApi.UnitySetDefines;
+import consulo.unity3d.localize.Unity3dLocalize;
 import consulo.unity3d.module.Unity3dChildMutableModuleExtension;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import consulo.unity3d.module.Unity3dRootModuleExtension;
 import consulo.unity3d.module.Unity3dRootMutableModuleExtension;
 import consulo.unity3d.nunit.module.extension.Unity3dNUnitMutableModuleExtension;
 import consulo.unity3d.packages.orderEntry.Unity3dPackageOrderEntry;
+import consulo.unity3d.projectImport.newImport.UnityProjectImporterWithAsmDef;
 import consulo.unity3d.run.Unity3dAttachApplicationType;
 import consulo.unity3d.run.Unity3dAttachConfiguration;
 import consulo.util.dataholder.Key;
@@ -146,7 +148,7 @@ public class Unity3dProjectImporter
 		return null;
 	}
 
-	public static void syncProjectStep1(@Nonnull final Project project, @Nullable final Sdk sdk, @Nullable UnityOpenFilePostHandlerRequest requestor, final boolean runValidator)
+	public static void syncProjectStep(@Nonnull final Project project, @Nullable final Sdk sdk, @Nullable UnityOpenFilePostHandlerRequest requestor, final boolean runValidator)
 	{
 		// set flag
 		project.putUserData(ourInProgressFlag, Boolean.TRUE);
@@ -161,7 +163,7 @@ public class Unity3dProjectImporter
 			{
 				received.set(Boolean.TRUE);
 
-				syncProjectStep2(project, sdk, requestor, runValidator, o);
+				importAfterDefinesInBackground(project, sdk, requestor, runValidator, o);
 			});
 
 			if(!UnityEditorCommunication.request(project, request, true))
@@ -191,18 +193,18 @@ public class Unity3dProjectImporter
 
 	private static void notifyAboutUnityEditorProblem(Project project)
 	{
-		UIUtil.invokeLaterIfNeeded(() -> new Notification("unity", ApplicationNamesInfo.getInstance().getProductName(), "UnityEditor is not responding.<br>Defines is not resolved.", NotificationType
+		UIUtil.invokeLaterIfNeeded(() -> new Notification("unity", project.getApplication().getName().get(), "UnityEditor is not responding.<br>Defines is not resolved.", NotificationType
 				.INFORMATION).notify(project));
 	}
 
 	/**
 	 * this method will called from webservice thread
 	 */
-	private static void syncProjectStep2(@Nonnull final Project project,
-										 @Nullable final Sdk sdk,
-										 @Nullable UnityOpenFilePostHandlerRequest requestor,
-										 final boolean runValidator,
-										 UnitySetDefines unitySetDefines)
+	private static void importAfterDefinesInBackground(@Nonnull final Project project,
+													   @Nullable final Sdk sdk,
+													   @Nullable UnityOpenFilePostHandlerRequest requestor,
+													   final boolean runValidator,
+													   UnitySetDefines unitySetDefines)
 	{
 		Task.Backgroundable.queue(project, "Sync Project", indicator ->
 		{
@@ -237,7 +239,14 @@ public class Unity3dProjectImporter
 				}
 			}
 
-			importOrUpdate(project, sdk, null, indicator, defines);
+			if(EarlyAccessProgramManager.is(UnityAsmDefImportEapDescriptor.class))
+			{
+				UnityProjectImporterWithAsmDef.importOrUpdate(project, sdk, null, indicator, defines);
+			}
+			else
+			{
+				importOrUpdateOld(project, sdk, null, indicator, defines);
+			}
 		}
 		finally
 		{
@@ -256,11 +265,11 @@ public class Unity3dProjectImporter
 	}
 
 	@Nonnull
-	private static List<Module> importOrUpdate(@Nonnull Project project,
-											   @Nullable Sdk unitySdk,
-											   @Nullable ModifiableModuleModel originalModel,
-											   @Nonnull ProgressIndicator progressIndicator,
-											   @Nullable Collection<String> defines)
+	private static List<Module> importOrUpdateOld(@Nonnull Project project,
+												  @Nullable Sdk unitySdk,
+												  @Nullable ModifiableModuleModel originalModel,
+												  @Nonnull ProgressIndicator progressIndicator,
+												  @Nullable Collection<String> defines)
 	{
 		boolean fromProjectStructure = originalModel != null;
 
@@ -804,7 +813,7 @@ public class Unity3dProjectImporter
 	}
 
 	@Nonnull
-	private static Module createRootModule(@Nonnull Project project,
+	public static Module createRootModule(@Nonnull Project project,
 										   @Nonnull ModifiableModuleModel newModel,
 										   @Nullable Sdk unityBundle,
 										   @Nonnull ProgressIndicator progressIndicator,
@@ -840,7 +849,7 @@ public class Unity3dProjectImporter
 			rootModule = newModel.newModule(project.getName(), project.getBasePath());
 		}
 
-		progressIndicator.setText(Unity3dBundle.message("syncing.0.module", rootModule.getName()));
+		progressIndicator.setText(Unity3dLocalize.syncing0Module(rootModule.getName()).get());
 
 
 		final ModifiableRootModel modifiableModel = AccessRule.read(() -> ModuleRootManager.getInstance(rootModule).getModifiableModel());

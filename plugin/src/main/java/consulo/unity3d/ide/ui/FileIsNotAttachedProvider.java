@@ -92,7 +92,7 @@ public class FileIsNotAttachedProvider implements EditorNotificationProvider<Edi
 			panel.text("File is not attached to project. Some features are unavailable (code analysis, debugging, etc)");
 			panel.createActionLabel("Re-import Unity Project", () ->
 			{
-				Unity3dProjectImporter.syncProjectStep1(myProject, rootModuleExtension.getSdk(), null, true);
+				Unity3dProjectImporter.syncProjectStep(myProject, rootModuleExtension.getSdk(), null, true);
 			});
 			return panel;
 		}
