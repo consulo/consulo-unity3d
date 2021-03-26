@@ -18,13 +18,13 @@ package consulo.unity3d.packages;
 
 import com.google.gson.Gson;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiModificationTracker;
 import consulo.logging.Logger;
+import consulo.unity3d.projectImport.Unity3dProjectImporter;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -58,7 +58,7 @@ public class Unity3dManifest implements Cloneable
 		return CachedValuesManager.getManager(project).getCachedValue(project, () ->
 		{
 			Path projectPath = Paths.get(project.getBasePath());
-			Path manifestJson = projectPath.resolve(Paths.get("Packages", "manifest.json"));
+			Path manifestJson = projectPath.resolve(Paths.get(Unity3dProjectImporter.PACKAGES_DIRECTORY, "manifest.json"));
 			if(Files.exists(manifestJson))
 			{
 				Gson gson = new Gson();
@@ -78,7 +78,7 @@ public class Unity3dManifest implements Cloneable
 	public static void write(@Nonnull Project project, @Nonnull String text)
 	{
 		Path projectPath = Paths.get(project.getBasePath());
-		Path manifestJson = projectPath.resolve(Paths.get("Packages", "manifest.json"));
+		Path manifestJson = projectPath.resolve(Paths.get(Unity3dProjectImporter.PACKAGES_DIRECTORY, "manifest.json"));
 
 		try
 		{

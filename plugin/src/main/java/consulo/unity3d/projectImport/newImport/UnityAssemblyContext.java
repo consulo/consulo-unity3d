@@ -64,4 +64,10 @@ public class UnityAssemblyContext
 	{
 		return myAsmdefFile;
 	}
+
+	@Nonnull
+	public Set<VirtualFile> getSourceFiles()
+	{
+		return mySourceFiles;
+	}
 }

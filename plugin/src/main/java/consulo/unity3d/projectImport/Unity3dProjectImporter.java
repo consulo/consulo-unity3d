@@ -106,6 +106,7 @@ public class Unity3dProjectImporter
 	private static final Logger LOG = Logger.getInstance(Unity3dProjectImporter.class);
 
 	public static final String ASSETS_DIRECTORY = "Assets";
+	public static final String PACKAGES_DIRECTORY = "Packages";
 
 	public static final String[] FIRST_PASS_PATHS = new String[]{
 			"Assets/Standard Assets",
@@ -247,6 +248,8 @@ public class Unity3dProjectImporter
 			{
 				importOrUpdateOld(project, sdk, null, indicator, defines);
 			}
+
+			createRunConfiguration(project);
 		}
 		finally
 		{
@@ -491,7 +494,6 @@ public class Unity3dProjectImporter
 											   @Nonnull MultiMap<Module, VirtualFile> virtualFilesByModule,
 											   @Nonnull UnityProjectImportContext context)
 	{
-		Project project = context.getProject();
 		ProgressIndicator progressIndicator = context.getProgressIndicator();
 
 		progressIndicator.setText(Unity3dBundle.message("syncing.0.module", moduleName));
@@ -512,6 +514,11 @@ public class Unity3dProjectImporter
 
 		fillModuleDependencies(module, modifiableModel, moduleDirs, setupConsumer, moduleExtensionId, fileType, virtualFilesByModule, context, null);
 
+		return module;
+	}
+
+	private static void createRunConfiguration(Project project)
+	{
 		RunManager runManager = RunManager.getInstance(project);
 		List<RunConfiguration> allConfigurationsList = runManager.getAllConfigurationsList();
 
@@ -530,7 +537,6 @@ public class Unity3dProjectImporter
 
 			AccessRule.read(() -> runManager.setSelectedConfiguration(configurationSettings));
 		}
-		return module;
 	}
 
 	private static void fillModuleDependencies(@Nonnull Module module,

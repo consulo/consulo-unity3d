@@ -19,8 +19,8 @@ package consulo.unity3d.asmdef;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.PsiFile;
 import consulo.json.jom.JomFileDescriptor;
-import consulo.platform.base.icon.PlatformIconGroup;
 import consulo.ui.image.Image;
+import consulo.unity3d.icon.Unity3dIconGroup;
 
 import javax.annotation.Nonnull;
 
@@ -41,7 +41,7 @@ public class AsmDefFileDescriptor extends JomFileDescriptor<AsmDefElement>
 	@Override
 	public Image getIcon()
 	{
-		return PlatformIconGroup.nodesPpLib();
+		return Unity3dIconGroup.module();
 	}
 
 	@Override

@@ -25,24 +25,20 @@ import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.roots.ModifiableRootModel;
+import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileVisitor;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiManager;
-import consulo.annotation.access.RequiredReadAction;
 import consulo.application.AccessRule;
 import consulo.csharp.lang.CSharpFileType;
-import consulo.json.JsonFileType;
-import consulo.json.jom.JomElement;
-import consulo.json.jom.JomFileElement;
-import consulo.json.jom.JomManager;
-import consulo.unity3d.asmdef.AsmDefElement;
-import consulo.unity3d.asmdef.AsmDefFileDescriptor;
+import consulo.roots.impl.ProductionContentFolderTypeProvider;
 import consulo.unity3d.projectImport.Unity3dProjectImporter;
 import consulo.unity3d.projectImport.UnityProjectImportContext;
-import consulo.util.collection.ContainerUtil;
-import consulo.util.lang.StringUtil;
+import consulo.unity3d.projectImport.newImport.standardImporter.AssemblyCSharp;
+import consulo.unity3d.projectImport.newImport.standardImporter.AssemblyCSharpEditor;
+import consulo.unity3d.projectImport.newImport.standardImporter.AssemblyCSharpFirstPass;
+import consulo.unity3d.projectImport.newImport.standardImporter.StandardModuleImporter;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -58,6 +54,12 @@ public class UnityProjectImporterWithAsmDef
 	// not ignored case
 	public static final String EDITOR_PLATFORM = "Editor";
 
+	private static StandardModuleImporter[] ourStandardModuleImporters = {
+			new AssemblyCSharpFirstPass(),
+			new AssemblyCSharpEditor(),
+			new AssemblyCSharp(),
+	};
+
 	@Nonnull
 	public static List<Module> importOrUpdate(@Nonnull Project project,
 											  @Nullable Sdk unitySdk,
@@ -67,79 +69,58 @@ public class UnityProjectImporterWithAsmDef
 	{
 		boolean fromProjectStructure = originalModel != null;
 
+		progressIndicator.setIndeterminate(true);
+
 		VirtualFile baseDir = project.getBaseDir();
 		assert baseDir != null;
 
 		UnityProjectImportContext context = UnityProjectImportContext.load(project, defines, baseDir, progressIndicator, unitySdk);
 
-		ModifiableModuleModel newModel = fromProjectStructure ? originalModel : AccessRule.read(() -> ModuleManager.getInstance(project).getModifiableModel());
-		assert newModel != null;
+		ModifiableModuleModel newModulesModel = fromProjectStructure ? originalModel : AccessRule.read(() -> ModuleManager.getInstance(project).getModifiableModel());
+		assert newModulesModel != null;
 
 		List<Module> modules = new ArrayList<>();
 
-		ContainerUtil.addIfNotNull(modules, Unity3dProjectImporter.createRootModule(project, newModel, unitySdk, progressIndicator, context));
-		progressIndicator.setFraction(0.1);
+		modules.add(Unity3dProjectImporter.createRootModule(project, newModulesModel, unitySdk, progressIndicator, context));
 
 		VirtualFile assetsDir = baseDir.findChild(Unity3dProjectImporter.ASSETS_DIRECTORY);
 		if(assetsDir == null)
 		{
-			progressIndicator.setFraction(1);
 			progressIndicator.setText(null);
 
 			if(!fromProjectStructure)
 			{
-				WriteAction.runAndWait(newModel::commit);
+				WriteAction.runAndWait(newModulesModel::commit);
 			}
 
 			return modules;
 		}
 
 		Map<String, UnityAssemblyContext> asmdefs = new TreeMap<>();
-		// default defines
-		asmdefs.put("Assembly-CSharp-firstpass", new UnityAssemblyContext("Assembly-CSharp-firstpass", null, null));
-		asmdefs.put("Assembly-CSharp", new UnityAssemblyContext("Assembly-CSharp", null, null));
-		asmdefs.put("Assembly-CSharp-Editor", new UnityAssemblyContext("Assembly-CSharp-Editor", null, null));
-
-		JomManager jomManager = JomManager.getInstance(project);
-		PsiManager psiManager = PsiManager.getInstance(project);
-
-		VfsUtil.visitChildrenRecursively(assetsDir, new VirtualFileVisitor()
+		// standard modules
+		for(StandardModuleImporter importer : ourStandardModuleImporters)
 		{
-			@Override
-			@RequiredReadAction
-			public boolean visitFile(@Nonnull VirtualFile file)
-			{
-				if(FileTypeManager.getInstance().isFileIgnored(file))
-				{
-					return false;
-				}
+			asmdefs.put(importer.getName(), new UnityAssemblyContext(importer.getName(), null, null));
+		}
 
-				if(file.getFileType() == JsonFileType.INSTANCE && AsmDefFileDescriptor.EXTENSION.equals(file.getExtension()))
+		VfsUtil.visitChildrenRecursively(assetsDir, new AssemblyFileVisitor(project, asmdefs));
+
+		VirtualFile packagesDir = baseDir.findChild(Unity3dProjectImporter.PACKAGES_DIRECTORY);
+		if(packagesDir != null && packagesDir.isDirectory())
+		{
+			for(VirtualFile packageDirectory : packagesDir.getChildren())
+			{
+				if(packageDirectory.isDirectory() && packageDirectory.findChild("package.json") != null)
 				{
-					ReadAction.run(() -> {
-						PsiFile maybeJsonFile = psiManager.findFile(file);
-						if(maybeJsonFile != null)
-						{
-							JomFileElement<JomElement> fileElement = jomManager.getFileElement(maybeJsonFile);
-							if(fileElement != null && fileElement.getRootElement() instanceof AsmDefElement def)
-							{
-								String name = def.getName();
-								if(!StringUtil.isEmptyOrSpaces(name))
-								{
-									asmdefs.put(name, new UnityAssemblyContext(name, file, def));
-								}
-							}
-						}
-					});
+					VfsUtil.visitChildrenRecursively(packageDirectory, new AssemblyFileVisitor(project, asmdefs));
 				}
-				return super.visitFile(file);
 			}
-		});
+		}
 
 		// set of registered file urls
 		Set<String> registeredFiles = new HashSet<>();
-		// todo
 
+		// analyze first of all assemby defs
 		for(UnityAssemblyContext assemblyContext : asmdefs.values())
 		{
 			VirtualFile asmdefFile = assemblyContext.getAsmdefFile();
@@ -147,6 +128,8 @@ public class UnityProjectImporterWithAsmDef
 			{
 				continue;
 			}
+
+			progressIndicator.setText("Analyzing " + assemblyContext.getName());
 
 			//boolean isAllowEditorDir = assemblyContext.getAsmDefElement().getIncludePlatforms().contains(EDITOR_PLATFORM);
 
@@ -178,12 +161,79 @@ public class UnityProjectImporterWithAsmDef
 			});
 		}
 
+		for(StandardModuleImporter importer : ourStandardModuleImporters)
+		{
+			UnityAssemblyContext assemblyContext = asmdefs.get(importer.getName());
+
+			assert assemblyContext != null;
+
+			importer.analyzeSourceFiles(project, assemblyContext, registeredFiles);
+		}
+
+		// first asmdefs
+		for(UnityAssemblyContext assemblyContext : asmdefs.values())
+		{
+			VirtualFile asmdefFile = assemblyContext.getAsmdefFile();
+			if(asmdefFile == null)
+			{
+				continue;
+			}
+
+			Module assembyModule = newModulesModel.findModuleByName(assemblyContext.getName());
+			if(assembyModule != null)
+			{
+				newModulesModel.disposeModule(assembyModule);
+			}
+
+			assembyModule = newModulesModel.newModule(assemblyContext.getName(), asmdefFile.getParent().getPath());
+			modules.add(assembyModule);
+			final Module finalAssembyModule = assembyModule;
+
+			ModifiableRootModel rootModel = ReadAction.compute(() -> ModuleRootManager.getInstance(finalAssembyModule).getModifiableModel());
+
+			rootModel.addContentEntry(asmdefFile.getParent()).addFolder(asmdefFile.getParent(), ProductionContentFolderTypeProvider.getInstance());
+
+			WriteAction.runAndWait(rootModel::commit);
+		}
+
+		for(StandardModuleImporter importer : ourStandardModuleImporters)
+		{
+			UnityAssemblyContext assemblyContext = asmdefs.get(importer.getName());
+
+			assert assemblyContext != null;
+
+			Module assembyModule = newModulesModel.findModuleByName(assemblyContext.getName());
+			if(assembyModule != null)
+			{
+				newModulesModel.disposeModule(assembyModule);
+			}
+
+			assembyModule = newModulesModel.newModule(assemblyContext.getName(), null);
+			modules.add(assembyModule);
+			final Module finalAssembyModule = assembyModule;
+
+			ModifiableRootModel rootModel = ReadAction.compute(() -> ModuleRootManager.getInstance(finalAssembyModule).getModifiableModel());
+
+			for(VirtualFile file : assemblyContext.getSourceFiles())
+			{
+				rootModel.addSingleContentEntry(file);
+			}
+
+			WriteAction.runAndWait(rootModel::commit);
+		}
+
+
+
+		// todo
+
+
+		progressIndicator.setIndeterminate(false);
 		progressIndicator.setFraction(1);
 		progressIndicator.setText(null);
 
 		if(!fromProjectStructure)
 		{
-			WriteAction.runAndWait(newModel::commit);
+			WriteAction.runAndWait(newModulesModel::commit);
 		}
 		return modules;
 	}

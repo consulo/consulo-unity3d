@@ -24,6 +24,7 @@ import com.intellij.psi.PsiDirectory;
 import consulo.annotation.access.RequiredReadAction;
 import consulo.dotnet.module.DotNetNamespaceGeneratePolicy;
 import consulo.unity3d.projectImport.Unity3dProjectImporter;
+import consulo.unity3d.projectImport.newImport.standardImporter.AssemblyCSharpFirstPass;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -100,7 +101,7 @@ public class UnityNamespaceGeneratePolicy extends DotNetNamespaceGeneratePolicy
 			// if path is not changed
 			if(targetDirectory.equals(assetsDirectory))
 			{
-				for(String path : Unity3dProjectImporter.FIRST_PASS_PATHS)
+				for(String path : AssemblyCSharpFirstPass.FIRST_PASS_PATHS)
 				{
 					VirtualFile child = baseDir.findFileByRelativePath(path);
 					if(child != null && VfsUtil.isAncestor(child, currentDirectory, false))

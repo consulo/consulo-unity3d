@@ -28,6 +28,7 @@ import com.intellij.psi.PsiDirectory;
 import consulo.annotation.access.RequiredReadAction;
 import consulo.csharp.lang.CSharpFileType;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
+import consulo.unity3d.projectImport.newImport.standardImporter.AssemblyCSharpFirstPass;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -97,7 +98,7 @@ public class Unity3dModuleResolver implements CreateFileFromTemplateAction.Modul
 			parent = parent.getParent();
 		}
 
-		for(String path : Unity3dProjectImporter.FIRST_PASS_PATHS)
+		for(String path : AssemblyCSharpFirstPass.FIRST_PASS_PATHS)
 		{
 			VirtualFile pathFile = baseDir.findFileByRelativePath(path);
 			if(pathFile != null && VfsUtil.isAncestor(pathFile, parent, true))
