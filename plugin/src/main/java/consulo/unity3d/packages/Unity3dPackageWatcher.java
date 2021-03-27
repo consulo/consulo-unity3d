@@ -16,29 +16,24 @@
 
 package consulo.unity3d.packages;
 
+import com.intellij.openapi.application.Application;
+import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.util.SystemProperties;
+import com.sun.jna.platform.win32.*;
+import com.sun.jna.ptr.PointerByReference;
+import consulo.disposer.Disposable;
+import consulo.platform.Platform;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
+
+import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import javax.annotation.Nonnull;
-import jakarta.inject.Inject;
-import jakarta.inject.Singleton;
-
-import consulo.disposer.Disposable;
-import com.intellij.openapi.application.Application;
-import com.intellij.openapi.util.SystemInfo;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VirtualFileManager;
-import com.intellij.util.SmartList;
-import com.intellij.util.SystemProperties;
-import com.sun.jna.platform.win32.Guid;
-import com.sun.jna.platform.win32.Shell32;
-import com.sun.jna.platform.win32.Shell32Util;
-import com.sun.jna.platform.win32.ShlObj;
-import com.sun.jna.platform.win32.WinNT;
-import com.sun.jna.ptr.PointerByReference;
 
 /**
  * @author VISTALL
@@ -95,8 +90,13 @@ public class Unity3dPackageWatcher implements Disposable
 	@Nonnull
 	private static List<String> getUnityUserPaths()
 	{
-		List<String> paths = new SmartList<>();
-		if(SystemInfo.isWinVistaOrNewer)
+		List<String> paths = new ArrayList<>();
+
+		Platform platform = Platform.current();
+		Platform.OperatingSystem os = platform.os();
+		Platform.User user = platform.user();
+
+		if(os.isWindowsVistaOrNewer())
 		{
 			paths.add(Shell32Util.getFolderPath(ShlObj.CSIDL_LOCAL_APPDATA) + "\\Unity");
 
@@ -109,13 +109,13 @@ public class Unity3dPackageWatcher implements Disposable
 				paths.add(pointerByReference.getValue().getWideString(0) + "\\Unity");
 			}
 		}
-		else if(SystemInfo.isMac)
+		else if(os.isMac())
 		{
-			paths.add(SystemProperties.getUserHome() + "/Library/Unity");
+			paths.add(user.getHomePath() + "/Library/Unity");
 		}
-		else if(SystemInfo.isLinux)
+		else if(os.isLinux())
 		{
-			paths.add(SystemProperties.getUserHome() + "/.config/unity3d");
+			paths.add(user.getHomePath() + "/.config/unity3d");
 		}
 
 		return paths;
