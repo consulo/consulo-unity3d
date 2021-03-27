@@ -20,7 +20,6 @@ import com.intellij.openapi.application.Application;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFileManager;
-import com.intellij.util.SystemProperties;
 import com.sun.jna.platform.win32.*;
 import com.sun.jna.ptr.PointerByReference;
 import consulo.disposer.Disposable;
