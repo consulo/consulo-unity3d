@@ -30,7 +30,7 @@ public class UnityAsmDefImportEapDescriptor extends EarlyAccessProgramDescriptor
 	@Override
 	public String getName()
 	{
-		return "*.asmdef Unity Importing";
+		return "New Unity Importing (with asmdef support)";
 	}
 
 	@Nonnull
