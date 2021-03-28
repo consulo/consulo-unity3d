@@ -195,7 +195,14 @@ public class UnityProjectImporterWithAsmDef
 			importer.analyzeSourceFiles(project, assemblyContext, registeredFiles);
 		}
 
-		initializePackageLibraries(context, asmdefs, writeCommits);
+
+		LibraryTableBase libraryTable = (LibraryTableBase) ProjectLibraryTable.getInstance(context.getProject());
+
+		LibraryTableBase.ModifiableModelEx librariesModModel = (LibraryTableBase.ModifiableModelEx) ReadAction.compute(libraryTable::getModifiableModel);
+
+		initializePackageLibraries(context, asmdefs, writeCommits, librariesModModel);
+
+		writeCommits.add(librariesModModel::commit);
 
 		// first asmdefs
 		for(UnityAssemblyContext assemblyContext : asmdefs.values())
@@ -250,8 +257,24 @@ public class UnityProjectImporterWithAsmDef
 				rootModel.addSingleContentEntry(file);
 			}
 
-			initializeModuleExtension((ModifiableModuleRootLayer) rootModel.getCurrentLayer());
-			
+			ModifiableModuleRootLayer layer = (ModifiableModuleRootLayer) rootModel.getCurrentLayer();
+
+			initializeModuleExtension(layer);
+
+			for(UnityAssemblyContext asmContext : asmdefs.values())
+			{
+				if(asmContext.getType() == UnityAssemblyType.FROM_EMBEDDED_PACKAGE)
+				{
+					ReadAction.run(() -> layer.addInvalidModuleEntry(asmContext.getName()));
+				}
+				else if(asmContext.getType() == UnityAssemblyType.FROM_EXTERNAL_PACKAGE)
+				{
+					Library library = Objects.requireNonNull(asmContext.getLibrary());
+
+					layer.addLibraryEntry(library);
+				}
+			}
+
 			writeCommits.add(rootModel::commit);
 		}
 
@@ -299,7 +322,10 @@ public class UnityProjectImporterWithAsmDef
 		layer.addOrderEntry(new DotNetLibraryOrderEntryImpl((ModuleRootLayerImpl) layer, "UnityEngine"));
 	}
 
-	private static void initializePackageLibraries(UnityProjectImportContext context, Map<String, UnityAssemblyContext> asmdefs, List<Runnable> writeCommits)
+	private static void initializePackageLibraries(UnityProjectImportContext context,
+												   Map<String, UnityAssemblyContext> asmdefs,
+												   List<Runnable> writeCommits,
+												   LibraryTableBase.ModifiableModelEx librariesModModel)
 	{
 		Project project = context.getProject();
 
@@ -315,7 +341,7 @@ public class UnityProjectImporterWithAsmDef
 					URL url = new URL(packageVersion);
 					File targetDirectory = new File(url.getFile());
 
-					initializePackageLibraryFileUrl(context, targetDirectory, packageVersion, writeCommits);
+					initializePackageLibraryFileUrl(context, targetDirectory, packageVersion, writeCommits, asmdefs, librariesModModel);
 				}
 				catch(Exception e)
 				{
@@ -336,7 +362,7 @@ public class UnityProjectImporterWithAsmDef
 						{
 							Path libraryHome = firstDir.get();
 
-							initializePackageLibraryGit(context, libraryHome.toFile(), writeCommits);
+							initializePackageLibraryGit(context, libraryHome.toFile(), writeCommits, asmdefs, librariesModModel);
 						}
 					}
 					catch(IOException e)
@@ -349,22 +375,35 @@ public class UnityProjectImporterWithAsmDef
 			{
 				String packageId = entry.getKey();
 
-				initializePackageLibraryExternal(context, packageId, packageVersion, writeCommits);
+				initializePackageLibraryExternal(context, packageId, packageVersion, writeCommits, asmdefs, librariesModModel);
 			}
 		}
 	}
 
-	private static void initializePackageLibraryFileUrl(UnityProjectImportContext context, File packageDir, String url, List<Runnable> writeCommits)
+	private static void initializePackageLibraryFileUrl(UnityProjectImportContext context,
+														File packageDir,
+														String url,
+														List<Runnable> writeCommits,
+														Map<String, UnityAssemblyContext> asmdefs,
+														LibraryTableBase.ModifiableModelEx librariesModModel)
 	{
-		initializePackageLibrary(context, packageDir, packageDir + "@" + url.hashCode(), writeCommits);
+		initializePackageLibrary(context, packageDir, packageDir + "@" + url.hashCode(), writeCommits, asmdefs, librariesModModel);
 	}
 
-	private static void initializePackageLibraryGit(UnityProjectImportContext context, File packageDir, List<Runnable> writeCommits)
+	private static void initializePackageLibraryGit(UnityProjectImportContext context,
+													File packageDir,
+													List<Runnable> writeCommits,
+													Map<String, UnityAssemblyContext> asmdefs,
+													LibraryTableBase.ModifiableModelEx librariesModModel)
 	{
-		initializePackageLibrary(context, packageDir, packageDir.getName(), writeCommits);
+		initializePackageLibrary(context, packageDir, packageDir.getName(), writeCommits, asmdefs, librariesModModel);
 	}
 
-	private static void initializePackageLibraryExternal(UnityProjectImportContext context, String packageId, String packageVersion, List<Runnable> writeCommits)
+	private static void initializePackageLibraryExternal(UnityProjectImportContext context,
+														 String packageId,
+														 String packageVersion,
+														 List<Runnable> writeCommits,
+														 Map<String, UnityAssemblyContext> asmdefs, LibraryTableBase.ModifiableModelEx librariesModModel)
 	{
 		List<String> packageDirPaths = Unity3dPackageWatcher.getInstance().getPackageDirPaths();
 
@@ -387,10 +426,15 @@ public class UnityProjectImporterWithAsmDef
 			return;
 		}
 
-		initializePackageLibrary(context, packageDir, packageWithVersion, writeCommits);
+		initializePackageLibrary(context, packageDir, packageWithVersion, writeCommits, asmdefs, librariesModModel);
 	}
 
-	private static void initializePackageLibrary(UnityProjectImportContext context, File packageDir, String packageName, List<Runnable> writeCommits)
+	private static void initializePackageLibrary(UnityProjectImportContext context,
+												 File packageDir,
+												 String packageName,
+												 List<Runnable> writeCommits,
+												 Map<String, UnityAssemblyContext> asmdefs,
+												 LibraryTableBase.ModifiableModelEx librariesModModel)
 	{
 		VirtualFile packageVDir = LocalFileSystem.getInstance().findFileByIoFile(packageDir);
 		if(packageVDir == null)
@@ -402,15 +446,11 @@ public class UnityProjectImporterWithAsmDef
 
 		VfsUtil.visitChildrenRecursively(packageVDir, new AssemblyFileVisitor(context.getProject(), UnityAssemblyType.FROM_EXTERNAL_PACKAGE, assemblies));
 
-		LibraryTableBase libraryTable = (LibraryTableBase) ProjectLibraryTable.getInstance(context.getProject());
-
-		LibraryTableBase.ModifiableModelEx librariesModModel = (LibraryTableBase.ModifiableModelEx) ReadAction.compute(libraryTable::getModifiableModel);
+		asmdefs.putAll(assemblies);
 
 		for(UnityAssemblyContext unityAssemblyContext : assemblies.values())
 		{
 			String libraryName = "Unity: " + packageName + " [" + unityAssemblyContext.getName() + "]";
-
-			unityAssemblyContext.setLibraryName(libraryName);
 
 			VirtualFile asmDirectory = unityAssemblyContext.getAsmDirectory();
 
@@ -428,6 +468,8 @@ public class UnityProjectImporterWithAsmDef
 
 			LibraryEx library = (LibraryEx) librariesModModel.createLibrary(libraryName, UnityPackageLibraryType.ID);
 			LibraryEx.ModifiableModelEx modifiableModel = library.getModifiableModel();
+
+			unityAssemblyContext.setLibrary(library);
 
 			modifiableModel.addRoot(asmDirectory, BinariesOrderRootType.getInstance());
 			modifiableModel.addRoot(asmDirectory, SourcesOrderRootType.getInstance());
@@ -449,9 +491,7 @@ public class UnityProjectImporterWithAsmDef
 				}
 			}
 
-			WriteAction.runAndWait(modifiableModel::commit);
+			writeCommits.add(modifiableModel::commit);
 		}
-
-		WriteAction.runAndWait(librariesModModel::commit);
 	}
 }

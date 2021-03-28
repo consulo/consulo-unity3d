@@ -16,6 +16,7 @@
 
 package consulo.unity3d.projectImport.newImport;
 
+import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.vfs.VirtualFile;
 import consulo.unity3d.asmdef.AsmDefElement;
 
@@ -32,7 +33,7 @@ public class UnityAssemblyContext
 {
 	@Nonnull
 	private final UnityAssemblyType myType;
-	@Nullable
+	@Nonnull
 	private final String myName;
 	private final VirtualFile myAsmdefFile;
 	@Nullable
@@ -41,9 +42,9 @@ public class UnityAssemblyContext
 
 	private Set<VirtualFile> mySourceFiles = new HashSet<>();
 
-	private String myLibraryName;
+	private Library myLibrary;
 
-	public UnityAssemblyContext(@Nonnull UnityAssemblyType type, @Nullable String name, @Nullable VirtualFile asmdefFile, AsmDefElement asmDefElement)
+	public UnityAssemblyContext(@Nonnull UnityAssemblyType type, @Nonnull String name, @Nullable VirtualFile asmdefFile, AsmDefElement asmDefElement)
 	{
 		myType = type;
 		myName = name;
@@ -70,7 +71,7 @@ public class UnityAssemblyContext
 		return myAsmDefElement;
 	}
 
-	@Nullable
+	@Nonnull
 	public String getName()
 	{
 		return myName;
@@ -94,14 +95,14 @@ public class UnityAssemblyContext
 		return myAsmDirectory;
 	}
 
-	public void setLibraryName(String libraryName)
+	public void setLibrary(Library library)
 	{
-		myLibraryName = libraryName;
+		myLibrary = library;
 	}
 
 	@Nullable
-	public String getLibraryName()
+	public Library getLibrary()
 	{
-		return myLibraryName;
+		return myLibrary;
 	}
 }
