@@ -47,8 +47,7 @@ public class UnityProjectImportContext
 	private static final Logger LOG = Logger.getInstance(UnityProjectImportContext.class);
 	private static final String UNITY_EDITOR = "UNITY_EDITOR";
 
-	public static UnityProjectImportContext load(@Nonnull Project project, @Nullable Collection<String> rootDefines, @Nonnull VirtualFile baseDir, ProgressIndicator progressIndicator, Sdk
-			unityBundle)
+	public static UnityProjectImportContext load(@Nonnull Project project, @Nullable Collection<String> rootDefines, @Nonnull VirtualFile baseDir, ProgressIndicator progressIndicator, Sdk unityBundle)
 	{
 		int scriptRuntimeVersion = 0;
 

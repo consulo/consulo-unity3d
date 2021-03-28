@@ -44,10 +44,12 @@ class AssemblyFileVisitor extends VirtualFileVisitor
 	private final PsiManager myPsiManager;
 	private final JomManager myJomManager;
 	private final FileTypeManager myFileTypeManager;
+	private final UnityAssemblyType myType;
 	private final Map<String, UnityAssemblyContext> myAssemblies;
 
-	public AssemblyFileVisitor(Project project, Map<String, UnityAssemblyContext> assemblies)
+	public AssemblyFileVisitor(Project project, UnityAssemblyType type, Map<String, UnityAssemblyContext> assemblies)
 	{
+		myType = type;
 		myAssemblies = assemblies;
 		myFileTypeManager = FileTypeManager.getInstance();
 		myPsiManager = PsiManager.getInstance(project);
@@ -75,7 +77,7 @@ class AssemblyFileVisitor extends VirtualFileVisitor
 						String name = def.getName();
 						if(!StringUtil.isEmptyOrSpaces(name))
 						{
-							myAssemblies.put(name, new UnityAssemblyContext(name, file, def));
+							myAssemblies.put(name, new UnityAssemblyContext(myType, name, file, def));
 						}
 					}
 				}

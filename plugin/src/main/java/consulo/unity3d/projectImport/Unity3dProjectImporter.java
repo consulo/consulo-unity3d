@@ -20,7 +20,6 @@ import com.intellij.execution.RunManager;
 import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.RunConfiguration;
-import com.intellij.lang.javascript.JavaScriptFileType;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.application.AccessToken;
@@ -113,8 +112,6 @@ public class Unity3dProjectImporter
 			"Assets/Pro Standard Assets",
 			"Assets/Plugins"
 	};
-
-	private static final String ASSEMBLY_UNITYSCRIPT_FIRSTPASS = "Assembly-UnityScript-firstpass";
 
 	private static final String UNITY_EDITOR_ATTACH = "Attach to Unity Editor";
 
@@ -306,11 +303,8 @@ public class Unity3dProjectImporter
 		ContainerUtil.addIfNotNull(modules, createAssemblyCSharpModuleFirstPass(newModel, sourceFilesByModule, context));
 		progressIndicator.setFraction(0.25);
 
-		ContainerUtil.addIfNotNull(modules, createAssemblyUnityScriptModuleFirstPass(newModel, sourceFilesByModule, context));
-		progressIndicator.setFraction(0.5);
-
 		ContainerUtil.addIfNotNull(modules, createAssemblyCSharpModuleEditor(newModel, sourceFilesByModule, context));
-		progressIndicator.setFraction(0.75);
+		progressIndicator.setFraction(0.50);
 
 		ContainerUtil.addIfNotNull(modules, createAssemblyCSharpModule(newModel, unitySdk, sourceFilesByModule, context));
 
@@ -365,42 +359,8 @@ public class Unity3dProjectImporter
 		List<VirtualFile> moduleDirs = mainDir == null ? List.of() : List.of(mainDir);
 		return createAndSetupModule("Assembly-CSharp", newModel, moduleDirs, layer ->
 		{
-			if(!isVersionHigherOrEqual(unityBundle, "2018.2"))
-			{
-				layer.addInvalidModuleEntry(ASSEMBLY_UNITYSCRIPT_FIRSTPASS);
-			}
-
 			layer.addInvalidModuleEntry("Assembly-CSharp-firstpass");
 		}, "unity3d-csharp-child", CSharpFileType.INSTANCE, virtualFilesByModule, context);
-	}
-
-	private static Module createAssemblyUnityScriptModuleFirstPass(ModifiableModuleModel newModel, MultiMap<Module, VirtualFile> virtualFilesByModule, UnityProjectImportContext context)
-	{
-		if(isVersionHigherOrEqual(context.getUnityBundle(), "2018.2"))
-		{
-			Module module = newModel.findModuleByName(ASSEMBLY_UNITYSCRIPT_FIRSTPASS);
-			if(module != null)
-			{
-				newModel.disposeModule(module);
-			}
-			return null;
-		}
-		else
-		{
-			VirtualFile baseDir = context.getProject().getBaseDir();
-			List<VirtualFile> moduleDirs = new ArrayList<>();
-			for(String passPath : FIRST_PASS_PATHS)
-			{
-				VirtualFile file = baseDir.findFileByRelativePath(passPath);
-				if(file != null)
-				{
-					moduleDirs.add(file);
-				}
-			}
-
-			return createAndSetupModule(ASSEMBLY_UNITYSCRIPT_FIRSTPASS, newModel, moduleDirs, null, "unity3d-unityscript-child", JavaScriptFileType.INSTANCE,
-					virtualFilesByModule, context);
-		}
 	}
 
 	private static Module createAssemblyCSharpModuleFirstPass(ModifiableModuleModel newModel, MultiMap<Module, VirtualFile> virtualFilesByModule, UnityProjectImportContext context)
@@ -446,10 +406,6 @@ public class Unity3dProjectImporter
 		return createAndSetupModule("Assembly-CSharp-Editor", newModel, moduleDirs, layer ->
 		{
 			Sdk unityBundle = context.getUnityBundle();
-			if(!isVersionHigherOrEqual(unityBundle, "2018.2"))
-			{
-				layer.addInvalidModuleEntry(ASSEMBLY_UNITYSCRIPT_FIRSTPASS);
-			}
 
 			layer.addInvalidModuleEntry("Assembly-CSharp-firstpass");
 			layer.addInvalidModuleEntry("Assembly-CSharp");

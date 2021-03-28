@@ -27,12 +27,27 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
+import com.intellij.openapi.roots.impl.libraries.LibraryEx;
+import com.intellij.openapi.roots.impl.libraries.LibraryTableBase;
+import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable;
+import com.intellij.openapi.roots.libraries.Library;
+import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileVisitor;
 import consulo.application.AccessRule;
 import consulo.csharp.lang.CSharpFileType;
+import consulo.csharp.module.extension.CSharpSimpleMutableModuleExtension;
+import consulo.dotnet.roots.orderEntry.DotNetLibraryOrderEntryImpl;
+import consulo.logging.Logger;
+import consulo.roots.ModifiableModuleRootLayer;
+import consulo.roots.impl.ModuleRootLayerImpl;
 import consulo.roots.impl.ProductionContentFolderTypeProvider;
+import consulo.roots.types.BinariesOrderRootType;
+import consulo.roots.types.SourcesOrderRootType;
+import consulo.unity3d.module.Unity3dChildMutableModuleExtension;
+import consulo.unity3d.packages.Unity3dPackageWatcher;
+import consulo.unity3d.packages.library.UnityPackageLibraryType;
 import consulo.unity3d.projectImport.Unity3dProjectImporter;
 import consulo.unity3d.projectImport.UnityProjectImportContext;
 import consulo.unity3d.projectImport.newImport.standardImporter.AssemblyCSharp;
@@ -42,6 +57,12 @@ import consulo.unity3d.projectImport.newImport.standardImporter.StandardModuleIm
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 /**
@@ -50,6 +71,8 @@ import java.util.*;
  */
 public class UnityProjectImporterWithAsmDef
 {
+	private static final Logger LOG = Logger.getInstance(UnityProjectImporterWithAsmDef.class);
+
 	public static final String EDITOR_DIRECTORY = "Editor";
 	// not ignored case
 	public static final String EDITOR_PLATFORM = "Editor";
@@ -96,14 +119,16 @@ public class UnityProjectImporterWithAsmDef
 			return modules;
 		}
 
+		List<Runnable> writeCommits = new ArrayList<>();
+
 		Map<String, UnityAssemblyContext> asmdefs = new TreeMap<>();
 		// standard modules
 		for(StandardModuleImporter importer : ourStandardModuleImporters)
 		{
-			asmdefs.put(importer.getName(), new UnityAssemblyContext(importer.getName(), null, null));
+			asmdefs.put(importer.getName(), new UnityAssemblyContext(UnityAssemblyType.STANDARD, importer.getName(), null, null));
 		}
 
-		VfsUtil.visitChildrenRecursively(assetsDir, new AssemblyFileVisitor(project, asmdefs));
+		VfsUtil.visitChildrenRecursively(assetsDir, new AssemblyFileVisitor(project, UnityAssemblyType.FROM_SOURCE, asmdefs));
 
 		VirtualFile packagesDir = baseDir.findChild(Unity3dProjectImporter.PACKAGES_DIRECTORY);
 		if(packagesDir != null && packagesDir.isDirectory())
@@ -112,7 +137,7 @@ public class UnityProjectImporterWithAsmDef
 			{
 				if(packageDirectory.isDirectory() && packageDirectory.findChild("package.json") != null)
 				{
-					VfsUtil.visitChildrenRecursively(packageDirectory, new AssemblyFileVisitor(project, asmdefs));
+					VfsUtil.visitChildrenRecursively(packageDirectory, new AssemblyFileVisitor(project, UnityAssemblyType.FROM_EMBEDDED_PACKAGE, asmdefs));
 				}
 			}
 		}
@@ -170,16 +195,20 @@ public class UnityProjectImporterWithAsmDef
 			importer.analyzeSourceFiles(project, assemblyContext, registeredFiles);
 		}
 
+		initializePackageLibraries(context, asmdefs, writeCommits);
+
 		// first asmdefs
 		for(UnityAssemblyContext assemblyContext : asmdefs.values())
 		{
-			VirtualFile asmdefFile = assemblyContext.getAsmdefFile();
-			if(asmdefFile == null)
+			UnityAssemblyType type = assemblyContext.getType();
+			if(type != UnityAssemblyType.FROM_SOURCE && type != UnityAssemblyType.FROM_EMBEDDED_PACKAGE)
 			{
 				continue;
 			}
 
-			Module assembyModule = newModulesModel.findModuleByName(assemblyContext.getName());
+			VirtualFile asmdefFile = Objects.requireNonNull(assemblyContext.getAsmdefFile());
+
+			Module assembyModule = newModulesModel.findModuleByName(Objects.requireNonNull(assemblyContext.getName()));
 			if(assembyModule != null)
 			{
 				newModulesModel.disposeModule(assembyModule);
@@ -193,7 +222,9 @@ public class UnityProjectImporterWithAsmDef
 
 			rootModel.addContentEntry(asmdefFile.getParent()).addFolder(asmdefFile.getParent(), ProductionContentFolderTypeProvider.getInstance());
 
-			WriteAction.runAndWait(rootModel::commit);
+			initializeModuleExtension((ModifiableModuleRootLayer) rootModel.getCurrentLayer());
+
+			writeCommits.add(rootModel::commit);
 		}
 
 		for(StandardModuleImporter importer : ourStandardModuleImporters)
@@ -202,7 +233,7 @@ public class UnityProjectImporterWithAsmDef
 
 			assert assemblyContext != null;
 
-			Module assembyModule = newModulesModel.findModuleByName(assemblyContext.getName());
+			Module assembyModule = newModulesModel.findModuleByName(Objects.requireNonNull(assemblyContext.getName()));
 			if(assembyModule != null)
 			{
 				newModulesModel.disposeModule(assembyModule);
@@ -219,9 +250,10 @@ public class UnityProjectImporterWithAsmDef
 				rootModel.addSingleContentEntry(file);
 			}
 
-			WriteAction.runAndWait(rootModel::commit);
+			initializeModuleExtension((ModifiableModuleRootLayer) rootModel.getCurrentLayer());
+			
+			writeCommits.add(rootModel::commit);
 		}
-
 
 
 		// todo
@@ -233,8 +265,193 @@ public class UnityProjectImporterWithAsmDef
 
 		if(!fromProjectStructure)
 		{
-			WriteAction.runAndWait(newModulesModel::commit);
+			writeCommits.add(newModulesModel::commit);
 		}
+
+		WriteAction.runAndWait(() -> {
+			for(Runnable writeCommit : writeCommits)
+			{
+				writeCommit.run();
+			}
+		});
+
 		return modules;
+	}
+
+	private static void initializeModuleExtension(ModifiableModuleRootLayer layer)
+	{
+		layer.getExtensionWithoutCheck(Unity3dChildMutableModuleExtension.class).setEnabled(true);
+
+		CSharpSimpleMutableModuleExtension<?> extension = layer.getExtensionWithoutCheck("unity3d-csharp-child");
+		assert extension != null;
+		extension.setEnabled(true);
+
+		layer.addOrderEntry(new DotNetLibraryOrderEntryImpl((ModuleRootLayerImpl) layer, "mscorlib"));
+		layer.addOrderEntry(new DotNetLibraryOrderEntryImpl((ModuleRootLayerImpl) layer, "UnityEditor"));
+		layer.addOrderEntry(new DotNetLibraryOrderEntryImpl((ModuleRootLayerImpl) layer, "UnityEngine"));
+		layer.addOrderEntry(new DotNetLibraryOrderEntryImpl((ModuleRootLayerImpl) layer, "System"));
+		layer.addOrderEntry(new DotNetLibraryOrderEntryImpl((ModuleRootLayerImpl) layer, "System.Core"));
+		layer.addOrderEntry(new DotNetLibraryOrderEntryImpl((ModuleRootLayerImpl) layer, "System.Runtime.Serialization"));
+		layer.addOrderEntry(new DotNetLibraryOrderEntryImpl((ModuleRootLayerImpl) layer, "System.Xml"));
+		layer.addOrderEntry(new DotNetLibraryOrderEntryImpl((ModuleRootLayerImpl) layer, "System.Xml.Linq"));
+		layer.addOrderEntry(new DotNetLibraryOrderEntryImpl((ModuleRootLayerImpl) layer, "System.Net.Http"));
+
+		layer.addOrderEntry(new DotNetLibraryOrderEntryImpl((ModuleRootLayerImpl) layer, "UnityEngine"));
+	}
+
+	private static void initializePackageLibraries(UnityProjectImportContext context, Map<String, UnityAssemblyContext> asmdefs, List<Runnable> writeCommits)
+	{
+		Project project = context.getProject();
+
+		for(Map.Entry<String, String> entry : context.getManifest().dependencies.entrySet())
+		{
+			String name = entry.getKey();
+
+			String packageVersion = entry.getValue();
+			if(packageVersion.startsWith("file"))
+			{
+				try
+				{
+					URL url = new URL(packageVersion);
+					File targetDirectory = new File(url.getFile());
+
+					initializePackageLibraryFileUrl(context, targetDirectory, packageVersion, writeCommits);
+				}
+				catch(Exception e)
+				{
+					LOG.warn(e);
+				}
+			}
+			// git url
+			// we can't calculate without unity. try guest from Library dir
+			else if(packageVersion.startsWith("git") || packageVersion.startsWith("https") || packageVersion.endsWith(".git"))
+			{
+				Path path = Paths.get(project.getBasePath(), "Library", "PackageCache");
+				if(Files.exists(path))
+				{
+					try
+					{
+						Optional<Path> firstDir = Files.walk(path, 1).filter(it -> it.getFileName().toString().startsWith(name)).findFirst();
+						if(firstDir.isPresent())
+						{
+							Path libraryHome = firstDir.get();
+
+							initializePackageLibraryGit(context, libraryHome.toFile(), writeCommits);
+						}
+					}
+					catch(IOException e)
+					{
+						LOG.warn(e);
+					}
+				}
+			}
+			else
+			{
+				String packageId = entry.getKey();
+
+				initializePackageLibraryExternal(context, packageId, packageVersion, writeCommits);
+			}
+		}
+	}
+
+	private static void initializePackageLibraryFileUrl(UnityProjectImportContext context, File packageDir, String url, List<Runnable> writeCommits)
+	{
+		initializePackageLibrary(context, packageDir, packageDir + "@" + url.hashCode(), writeCommits);
+	}
+
+	private static void initializePackageLibraryGit(UnityProjectImportContext context, File packageDir, List<Runnable> writeCommits)
+	{
+		initializePackageLibrary(context, packageDir, packageDir.getName(), writeCommits);
+	}
+
+	private static void initializePackageLibraryExternal(UnityProjectImportContext context, String packageId, String packageVersion, List<Runnable> writeCommits)
+	{
+		List<String> packageDirPaths = Unity3dPackageWatcher.getInstance().getPackageDirPaths();
+
+		String packageWithVersion = packageId + "@" + packageVersion;
+
+		File packageDir = null;
+		for(String packageDirPath : packageDirPaths)
+		{
+			File temp = new File(packageDirPath, packageWithVersion);
+
+			if(temp.exists())
+			{
+				packageDir = temp;
+				break;
+			}
+		}
+
+		if(packageDir == null)
+		{
+			return;
+		}
+
+		initializePackageLibrary(context, packageDir, packageWithVersion, writeCommits);
+	}
+
+	private static void initializePackageLibrary(UnityProjectImportContext context, File packageDir, String packageName, List<Runnable> writeCommits)
+	{
+		VirtualFile packageVDir = LocalFileSystem.getInstance().findFileByIoFile(packageDir);
+		if(packageVDir == null)
+		{
+			return;
+		}
+
+		Map<String, UnityAssemblyContext> assemblies = new HashMap<>();
+
+		VfsUtil.visitChildrenRecursively(packageVDir, new AssemblyFileVisitor(context.getProject(), UnityAssemblyType.FROM_EXTERNAL_PACKAGE, assemblies));
+
+		LibraryTableBase libraryTable = (LibraryTableBase) ProjectLibraryTable.getInstance(context.getProject());
+
+		LibraryTableBase.ModifiableModelEx librariesModModel = (LibraryTableBase.ModifiableModelEx) ReadAction.compute(libraryTable::getModifiableModel);
+
+		for(UnityAssemblyContext unityAssemblyContext : assemblies.values())
+		{
+			String libraryName = "Unity: " + packageName + " [" + unityAssemblyContext.getName() + "]";
+
+			unityAssemblyContext.setLibraryName(libraryName);
+
+			VirtualFile asmDirectory = unityAssemblyContext.getAsmDirectory();
+
+			// something strange happens
+			if(asmDirectory == null)
+			{
+				continue;
+			}
+
+			Library oldLibrary = librariesModModel.getLibraryByName(libraryName);
+			if(oldLibrary != null)
+			{
+				librariesModModel.removeLibrary(oldLibrary);
+			}
+
+			LibraryEx library = (LibraryEx) librariesModModel.createLibrary(libraryName, UnityPackageLibraryType.ID);
+			LibraryEx.ModifiableModelEx modifiableModel = library.getModifiableModel();
+
+			modifiableModel.addRoot(asmDirectory, BinariesOrderRootType.getInstance());
+			modifiableModel.addRoot(asmDirectory, SourcesOrderRootType.getInstance());
+
+			// we need add exclude roots to skip directories with another asmdefs in same package
+			for(UnityAssemblyContext anotherAssembly : assemblies.values())
+			{
+				// ignored self
+				if(unityAssemblyContext == anotherAssembly || anotherAssembly.getAsmDirectory() == null)
+				{
+					continue;
+				}
+
+				VirtualFile anotherDirectory = anotherAssembly.getAsmDirectory();
+
+				if(VfsUtil.isAncestor(asmDirectory, anotherDirectory, false))
+				{
+					modifiableModel.addExcludedRoot(anotherDirectory.getUrl());
+				}
+			}
+
+			WriteAction.runAndWait(modifiableModel::commit);
+		}
+
+		WriteAction.runAndWait(librariesModModel::commit);
 	}
 }

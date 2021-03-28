@@ -43,18 +43,8 @@
 		</group>
 	</actions>
 
-	<extensions defaultExtensionNs="consulo.javascript">
-		<indexer implementation="consulo.unity3d.unityscript.index.UnityScriptIndexer"/>
-	</extensions>
-
 	<extensions defaultExtensionNs="consulo.csharp">
-		<toNativeElementTransformer implementation="consulo.unity3d.unityscript.lang.impl.csharp.UnityScriptToNativeElementTransformer"/>
 		<memberAddByCompletionContributor implementation="consulo.unity3d.csharp.completion.UnitySpecificMethodCompletion"/>
-	</extensions>
-
-	<extensions defaultExtensionNs="consulo.dotnet">
-		<debuggerProvider implementation="consulo.unity3d.unityscript.debugger.UnityScriptDebuggerProvider"/>
-		<debuggerSourceLineResolver language="JavaScript" implementationClass="consulo.unity3d.unityscript.debugger.UnityScriptSourceLineResolver"/>
 	</extensions>
 
 	<extensionPoints>
@@ -65,25 +55,15 @@
 		<projectSourceFileTypeFactory implementation="consulo.unity3d.projectImport.change.DefaultUnity3dProjectSourceFileTypeFactory"/>
 	</extensions>
 
-	<extensions defaultExtensionNs="consulo.dotnet">
-		<psiSearcher implementation="consulo.unity3d.unityscript.lang.impl.UnityScriptPsiSearcher"/>
-	</extensions>
-
 	<extensions defaultExtensionNs="consulo.javascript">
 		<jomFileDescriptor implementation="consulo.unity3d.asmdef.AsmDefFileDescriptor"/>
 	</extensions>
 
 	<extensions defaultExtensionNs="com.intellij">
-		<stubIndex implementation="consulo.unity3d.unityscript.index.UnityScriptFileByNameIndex"/>
-		<xdebugger.lineBreakpointTypeResolver filetype="JavaScript"
-											  implementationClass="consulo.unity3d.unityscript.debugger.UnityScriptLineBreakpointTypeResolver"
-											  order="before javascript"/>
 		<codeInsight.lineMarkerProvider language="C#"
 										implementationClass="consulo.unity3d.csharp.codeInsight.UnityEventCSharpMethodLineMarkerProvider"/>
 		<codeInsight.lineMarkerProvider language="C#"
 										implementationClass="consulo.unity3d.csharp.codeInsight.UnitySceneCSharpTypeLineMarkerProvider"/>
-		<codeInsight.lineMarkerProvider language="JavaScript"
-										implementationClass="consulo.unity3d.unityscript.codeInsight.UnityScriptEventFunctionLineMarkerProvider"/>
 		<localInspection
 				enabledByDefault="true"
 				level="WARNING"
@@ -123,9 +103,7 @@
 
 		<colorProvider implementation="consulo.unity3d.csharp.codeInsight.UnityCSharpStaticElementColorProvider"/>
 		<colorProvider implementation="consulo.unity3d.csharp.codeInsight.UnityCSharpStaticElementColor32Provider"/>
-		<iconDescriptorUpdater implementation="consulo.unity3d.unityscript.UnityScriptIconDescriptorUpdater"/>
 		<iconDescriptorUpdater implementation="consulo.unity3d.UnityDirectoryIconDescriptorUpdater"/>
-		<gotoClassContributor implementation="consulo.unity3d.unityscript.navigation.UnityScriptGotoClassContributor"/>
 		<sdkType implementation="consulo.unity3d.bundle.Unity3dBundleType"/>
 
 		<applicationService serviceImplementation="consulo.unity3d.run.debugger.UnityExternalDeviceManager"/>
@@ -160,16 +138,6 @@
 				immutableClass="consulo.unity3d.csharp.module.extension.Unity3dCSharpModuleExtension"
 				mutableClass="consulo.unity3d.csharp.module.extension.Unity3dCSharpMutableModuleExtension"/>
 
-		<moduleExtensionProvider
-				key="unity3d-unityscript-child"
-				parentKey="unity3d-child"
-				name="UnityScript"
-				icon="consulo.unity3d.Unity3dIconGroup@unity3d"
-				immutableClass="consulo.unity3d.unityscript.module.extension.Unity3dScriptModuleExtension"
-				mutableClass="consulo.unity3d.unityscript.module.extension.Unity3dScriptMutableModuleExtension"/>
-
-		<lang.defineVersion language="JavaScript" implementationClass="consulo.unity3d.unityscript.lang.UnityScriptLanguageVersion"/>
-
 		<configurationType implementation="consulo.unity3d.run.test.Unity3dTestConfigurationType"/>
 		<configurationType implementation="consulo.unity3d.run.Unity3dAttachApplicationType"/>
 		<stepsBeforeRunProvider implementation="consulo.unity3d.run.before.UnityRefreshBeforeRunTaskProvider"/>
@@ -186,7 +154,6 @@
 
 		<fileTypeFactory implementation="consulo.unity3d.Unity3dFileTypeFactory"/>
 		<treeStructureProvider implementation="consulo.unity3d.ide.projectView.Unity3dMetaFileProjectViewProvider"/>
-		<treeStructureProvider implementation="consulo.unity3d.unityscript.projectView.UnityScriptFileProjectViewProvider"/>
 		<projectViewOptionProvider implementation="consulo.unity3d.ide.projectView.Unity3dShowMetaFileProjectViewPaneOptionProvider"/>
 		<projectViewNodeDecorator implementation="consulo.unity3d.ide.projectView.Unity3dProjectViewNodeDecorator"/>
 		<createFromTemplateActionModuleResolver implementation="consulo.unity3d.projectImport.Unity3dModuleResolver"/>
@@ -224,5 +191,7 @@
 		<xdebugger.attachDebuggerProvider implementation="consulo.unity3d.run.debugger.attach.UnityAttachDebuggerProvider"/>
 
 		<eapDescriptor implementation="consulo.unity3d.projectImport.UnityAsmDefImportEapDescriptor"/>
+
+		<library.type implementation="consulo.unity3d.packages.library.UnityPackageLibraryType"/>
 	</extensions>
 </consulo-plugin>

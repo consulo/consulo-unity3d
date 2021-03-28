@@ -30,17 +30,27 @@ import java.util.Set;
  */
 public class UnityAssemblyContext
 {
+	@Nonnull
+	private final UnityAssemblyType myType;
+	@Nullable
 	private final String myName;
 	private final VirtualFile myAsmdefFile;
+	@Nullable
+	private final VirtualFile myAsmDirectory;
 	private final AsmDefElement myAsmDefElement;
 
 	private Set<VirtualFile> mySourceFiles = new HashSet<>();
 
-	public UnityAssemblyContext(String name, @Nullable VirtualFile asmdefFile, AsmDefElement asmDefElement)
+	private String myLibraryName;
+
+	public UnityAssemblyContext(@Nonnull UnityAssemblyType type, @Nullable String name, @Nullable VirtualFile asmdefFile, AsmDefElement asmDefElement)
 	{
+		myType = type;
 		myName = name;
 		myAsmdefFile = asmdefFile;
 		myAsmDefElement = asmDefElement;
+
+		myAsmDirectory = asmdefFile != null ? asmdefFile.getParent() : null;
 	}
 
 	public void addSourceFile(@Nonnull VirtualFile virtualFile)
@@ -48,12 +58,19 @@ public class UnityAssemblyContext
 		mySourceFiles.add(virtualFile);
 	}
 
+	@Nonnull
+	public UnityAssemblyType getType()
+	{
+		return myType;
+	}
+
+	@Nullable
 	public AsmDefElement getAsmDefElement()
 	{
 		return myAsmDefElement;
 	}
 
-	@Nonnull
+	@Nullable
 	public String getName()
 	{
 		return myName;
@@ -69,5 +86,22 @@ public class UnityAssemblyContext
 	public Set<VirtualFile> getSourceFiles()
 	{
 		return mySourceFiles;
+	}
+
+	@Nullable
+	public VirtualFile getAsmDirectory()
+	{
+		return myAsmDirectory;
+	}
+
+	public void setLibraryName(String libraryName)
+	{
+		myLibraryName = libraryName;
+	}
+
+	@Nullable
+	public String getLibraryName()
+	{
+		return myLibraryName;
 	}
 }
