@@ -23,7 +23,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileVisitor;
 import consulo.csharp.lang.CSharpFileType;
 import consulo.unity3d.projectImport.Unity3dProjectImporter;
-import consulo.unity3d.projectImport.newImport.UnityAssemblyContext;
 import consulo.unity3d.projectImport.newImport.UnityProjectImporterWithAsmDef;
 
 import javax.annotation.Nonnull;
@@ -39,6 +38,12 @@ public class AssemblyCSharpEditor extends StandardModuleImporter
 	public AssemblyCSharpEditor()
 	{
 		super("Assembly-CSharp-Editor", CSharpFileType.INSTANCE);
+	}
+
+	@Override
+	public boolean isEditorModule()
+	{
+		return true;
 	}
 
 	@Nonnull

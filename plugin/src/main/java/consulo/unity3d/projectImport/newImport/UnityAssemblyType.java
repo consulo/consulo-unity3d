@@ -20,7 +20,7 @@ package consulo.unity3d.projectImport.newImport;
  * @author VISTALL
  * @since 28/03/2021
  */
-public enum UnityAssemblyType
+enum UnityAssemblyType
 {
 	STANDARD,
 	FROM_SOURCE,

@@ -39,7 +39,7 @@ import java.util.Map;
  * @author VISTALL
  * @since 26/03/2021
  */
-class AssemblyFileVisitor extends VirtualFileVisitor
+class AsmDefFileVisitor extends VirtualFileVisitor
 {
 	private final PsiManager myPsiManager;
 	private final JomManager myJomManager;
@@ -47,7 +47,7 @@ class AssemblyFileVisitor extends VirtualFileVisitor
 	private final UnityAssemblyType myType;
 	private final Map<String, UnityAssemblyContext> myAssemblies;
 
-	public AssemblyFileVisitor(Project project, UnityAssemblyType type, Map<String, UnityAssemblyContext> assemblies)
+	AsmDefFileVisitor(Project project, UnityAssemblyType type, Map<String, UnityAssemblyContext> assemblies)
 	{
 		myType = type;
 		myAssemblies = assemblies;

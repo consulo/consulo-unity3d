@@ -38,13 +38,16 @@ import com.intellij.openapi.vfs.VirtualFileVisitor;
 import consulo.application.AccessRule;
 import consulo.csharp.lang.CSharpFileType;
 import consulo.csharp.module.extension.CSharpSimpleMutableModuleExtension;
+import consulo.dotnet.dll.DotNetModuleFileType;
 import consulo.dotnet.roots.orderEntry.DotNetLibraryOrderEntryImpl;
+import consulo.localize.LocalizeValue;
 import consulo.logging.Logger;
 import consulo.roots.ModifiableModuleRootLayer;
 import consulo.roots.impl.ModuleRootLayerImpl;
 import consulo.roots.impl.ProductionContentFolderTypeProvider;
 import consulo.roots.types.BinariesOrderRootType;
 import consulo.roots.types.SourcesOrderRootType;
+import consulo.unity3d.asmdef.AsmDefElement;
 import consulo.unity3d.module.Unity3dChildMutableModuleExtension;
 import consulo.unity3d.packages.Unity3dPackageWatcher;
 import consulo.unity3d.packages.library.UnityPackageLibraryType;
@@ -109,7 +112,7 @@ public class UnityProjectImporterWithAsmDef
 		VirtualFile assetsDir = baseDir.findChild(Unity3dProjectImporter.ASSETS_DIRECTORY);
 		if(assetsDir == null)
 		{
-			progressIndicator.setText(null);
+			progressIndicator.setTextValue(LocalizeValue.empty());
 
 			if(!fromProjectStructure)
 			{
@@ -128,7 +131,7 @@ public class UnityProjectImporterWithAsmDef
 			asmdefs.put(importer.getName(), new UnityAssemblyContext(UnityAssemblyType.STANDARD, importer.getName(), null, null));
 		}
 
-		VfsUtil.visitChildrenRecursively(assetsDir, new AssemblyFileVisitor(project, UnityAssemblyType.FROM_SOURCE, asmdefs));
+		VfsUtil.visitChildrenRecursively(assetsDir, new AsmDefFileVisitor(project, UnityAssemblyType.FROM_SOURCE, asmdefs));
 
 		VirtualFile packagesDir = baseDir.findChild(Unity3dProjectImporter.PACKAGES_DIRECTORY);
 		if(packagesDir != null && packagesDir.isDirectory())
@@ -137,7 +140,7 @@ public class UnityProjectImporterWithAsmDef
 			{
 				if(packageDirectory.isDirectory() && packageDirectory.findChild("package.json") != null)
 				{
-					VfsUtil.visitChildrenRecursively(packageDirectory, new AssemblyFileVisitor(project, UnityAssemblyType.FROM_EMBEDDED_PACKAGE, asmdefs));
+					VfsUtil.visitChildrenRecursively(packageDirectory, new AsmDefFileVisitor(project, UnityAssemblyType.FROM_EMBEDDED_PACKAGE, asmdefs));
 				}
 			}
 		}
@@ -154,7 +157,7 @@ public class UnityProjectImporterWithAsmDef
 				continue;
 			}
 
-			progressIndicator.setText("Analyzing " + assemblyContext.getName());
+			progressIndicator.setTextValue(LocalizeValue.localizeTODO("Analyzing " + assemblyContext.getName()));
 
 			//boolean isAllowEditorDir = assemblyContext.getAsmDefElement().getIncludePlatforms().contains(EDITOR_PLATFORM);
 
@@ -180,6 +183,10 @@ public class UnityProjectImporterWithAsmDef
 
 						registeredFiles.add(file.getUrl());
 					}
+					else if(file.getFileType() == DotNetModuleFileType.INSTANCE)
+					{
+						assemblyContext.addAssembly(file);
+					}
 
 					return super.visitFile(file);
 				}
@@ -195,7 +202,6 @@ public class UnityProjectImporterWithAsmDef
 			importer.analyzeSourceFiles(project, assemblyContext, registeredFiles);
 		}
 
-
 		LibraryTableBase libraryTable = (LibraryTableBase) ProjectLibraryTable.getInstance(context.getProject());
 
 		LibraryTableBase.ModifiableModelEx librariesModModel = (LibraryTableBase.ModifiableModelEx) ReadAction.compute(libraryTable::getModifiableModel);
@@ -203,6 +209,8 @@ public class UnityProjectImporterWithAsmDef
 		initializePackageLibraries(context, asmdefs, writeCommits, librariesModModel);
 
 		writeCommits.add(librariesModModel::commit);
+
+		Map<UnityAssemblyContext, ModifiableModuleRootLayer> moduleLayers = new HashMap<>();
 
 		// first asmdefs
 		for(UnityAssemblyContext assemblyContext : asmdefs.values())
@@ -221,15 +229,24 @@ public class UnityProjectImporterWithAsmDef
 				newModulesModel.disposeModule(assembyModule);
 			}
 
-			assembyModule = newModulesModel.newModule(assemblyContext.getName(), asmdefFile.getParent().getPath());
+			VirtualFile parent = asmdefFile.getParent();
+			assembyModule = newModulesModel.newModule(assemblyContext.getName(), parent.getPath());
 			modules.add(assembyModule);
 			final Module finalAssembyModule = assembyModule;
 
 			ModifiableRootModel rootModel = ReadAction.compute(() -> ModuleRootManager.getInstance(finalAssembyModule).getModifiableModel());
 
-			rootModel.addContentEntry(asmdefFile.getParent()).addFolder(asmdefFile.getParent(), ProductionContentFolderTypeProvider.getInstance());
+			rootModel.addContentEntry(parent).addFolder(parent, ProductionContentFolderTypeProvider.getInstance());
 
-			initializeModuleExtension((ModifiableModuleRootLayer) rootModel.getCurrentLayer());
+			ModifiableModuleRootLayer layer = (ModifiableModuleRootLayer) rootModel.getCurrentLayer();
+
+			boolean isEditor = ReadAction.compute(() -> assemblyContext.getAsmDefElement().getIncludePlatforms().contains(EDITOR_PLATFORM));
+
+			initializeModuleExtension(layer, isEditor);
+
+			analyzeAndAddDependencyTree(assemblyContext, asmdefs);
+
+			moduleLayers.put(assemblyContext, layer);
 
 			writeCommits.add(rootModel::commit);
 		}
@@ -259,32 +276,57 @@ public class UnityProjectImporterWithAsmDef
 
 			ModifiableModuleRootLayer layer = (ModifiableModuleRootLayer) rootModel.getCurrentLayer();
 
-			initializeModuleExtension(layer);
+			initializeModuleExtension(layer, importer.isEditorModule());
 
-			for(UnityAssemblyContext asmContext : asmdefs.values())
+			for(UnityAssemblyContext maybeDepContext : asmdefs.values())
 			{
-				if(asmContext.getType() == UnityAssemblyType.FROM_EMBEDDED_PACKAGE)
+				// skip standard modules
+				if(maybeDepContext.getType() == UnityAssemblyType.STANDARD)
 				{
-					ReadAction.run(() -> layer.addInvalidModuleEntry(asmContext.getName()));
+					continue;
 				}
-				else if(asmContext.getType() == UnityAssemblyType.FROM_EXTERNAL_PACKAGE)
-				{
-					Library library = Objects.requireNonNull(asmContext.getLibrary());
 
-					layer.addLibraryEntry(library);
-				}
+				processDependencies(assemblyContext, maybeDepContext, asmdefs, new HashSet<>());
 			}
+
+			moduleLayers.put(assemblyContext, layer);
 
 			writeCommits.add(rootModel::commit);
 		}
 
+		for(UnityAssemblyContext assemblyContext : asmdefs.values())
+		{
+			UnityAssemblyType type = assemblyContext.getType();
+			if(type == UnityAssemblyType.FROM_EXTERNAL_PACKAGE || type == UnityAssemblyType.STANDARD)
+			{
+				// it's library not module or non asm module
+				continue;
+			}
+
+			analyzeAndAddDependencyTree(assemblyContext, asmdefs);
+		}
+
+		for(UnityAssemblyContext assemblyContext : asmdefs.values())
+		{
+			ModifiableModuleRootLayer rootLayer = moduleLayers.get(assemblyContext);
+
+			for(UnityAssemblyContext dependency : assemblyContext.getDependencies())
+			{
+				addAsDependency(dependency, rootLayer);
+			}
+
+			for(VirtualFile libFile : assemblyContext.getAssemblies())
+			{
+				Unity3dProjectImporter.addAsLibrary(libFile, (ModuleRootLayerImpl) rootLayer);
+			}
+		}
 
 		// todo
 
 
 		progressIndicator.setIndeterminate(false);
 		progressIndicator.setFraction(1);
-		progressIndicator.setText(null);
+		progressIndicator.setTextValue(LocalizeValue.empty());
 
 		if(!fromProjectStructure)
 		{
@@ -301,7 +343,72 @@ public class UnityProjectImporterWithAsmDef
 		return modules;
 	}
 
-	private static void initializeModuleExtension(ModifiableModuleRootLayer layer)
+	private static void analyzeAndAddDependencyTree(UnityAssemblyContext target, Map<String, UnityAssemblyContext> asmdefs)
+	{
+		AsmDefElement defElement = Objects.requireNonNull(target.getAsmDefElement());
+
+		Set<String> processed = new HashSet<>();
+
+		Set<String> references = ReadAction.compute(defElement::getReferences);
+		for(String reference : references)
+		{
+			UnityAssemblyContext depContext = asmdefs.get(reference);
+			if(depContext != null)
+			{
+				processDependencies(target, depContext, asmdefs, processed);
+			}
+		}
+
+		// TODO [VISTALL] handle it? Set<String> optionalUnityReferences = defElement.getOptionalUnityReferences();
+	}
+
+	private static void processDependencies(UnityAssemblyContext target, UnityAssemblyContext dep, Map<String, UnityAssemblyContext> asmdefs, Set<String> processed)
+	{
+		if(!processed.add(dep.getName()))
+		{
+			return;
+		}
+
+		target.addDependency(dep);
+
+		AsmDefElement def = dep.getAsmDefElement();
+		if(def == null)
+		{
+			return;
+		}
+
+		Set<String> references = ReadAction.compute(def::getReferences);
+		for(String reference : references)
+		{
+			UnityAssemblyContext depContext = asmdefs.get(reference);
+			if(depContext != null)
+			{
+				processDependencies(target, depContext, asmdefs, processed);
+			}
+		}
+
+		// TODO [VISTALL] handle it? Set<String> optionalUnityReferences = defElement.getOptionalUnityReferences();
+	}
+
+	private static void addAsDependency(UnityAssemblyContext asmContext, ModifiableModuleRootLayer layer)
+	{
+		if(asmContext.getType() == UnityAssemblyType.FROM_EMBEDDED_PACKAGE || asmContext.getType() == UnityAssemblyType.FROM_SOURCE)
+		{
+			ReadAction.run(() -> layer.addInvalidModuleEntry(asmContext.getName()));
+		}
+		else if(asmContext.getType() == UnityAssemblyType.FROM_EXTERNAL_PACKAGE)
+		{
+			Library library = Objects.requireNonNull(asmContext.getLibrary());
+
+			layer.addLibraryEntry(library);
+		}
+		else
+		{
+			throw new UnsupportedOperationException("unsupported dependency: " + asmContext.getType());
+		}
+	}
+
+	private static void initializeModuleExtension(ModifiableModuleRootLayer layer, boolean editor)
 	{
 		layer.getExtensionWithoutCheck(Unity3dChildMutableModuleExtension.class).setEnabled(true);
 
@@ -320,6 +427,11 @@ public class UnityProjectImporterWithAsmDef
 		layer.addOrderEntry(new DotNetLibraryOrderEntryImpl((ModuleRootLayerImpl) layer, "System.Net.Http"));
 
 		layer.addOrderEntry(new DotNetLibraryOrderEntryImpl((ModuleRootLayerImpl) layer, "UnityEngine"));
+
+		if(editor)
+		{
+			layer.addOrderEntry(new DotNetLibraryOrderEntryImpl((ModuleRootLayerImpl) layer, "UnityEditor"));
+		}
 	}
 
 	private static void initializePackageLibraries(UnityProjectImportContext context,
@@ -444,7 +556,7 @@ public class UnityProjectImporterWithAsmDef
 
 		Map<String, UnityAssemblyContext> assemblies = new HashMap<>();
 
-		VfsUtil.visitChildrenRecursively(packageVDir, new AssemblyFileVisitor(context.getProject(), UnityAssemblyType.FROM_EXTERNAL_PACKAGE, assemblies));
+		VfsUtil.visitChildrenRecursively(packageVDir, new AsmDefFileVisitor(context.getProject(), UnityAssemblyType.FROM_EXTERNAL_PACKAGE, assemblies));
 
 		asmdefs.putAll(assemblies);
 

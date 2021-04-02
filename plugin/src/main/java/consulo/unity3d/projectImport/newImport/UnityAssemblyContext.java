@@ -23,6 +23,8 @@ import consulo.unity3d.asmdef.AsmDefElement;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -41,10 +43,13 @@ public class UnityAssemblyContext
 	private final AsmDefElement myAsmDefElement;
 
 	private Set<VirtualFile> mySourceFiles = new HashSet<>();
+	private final Set<VirtualFile> myAssemblies = new LinkedHashSet<>();
 
 	private Library myLibrary;
 
-	public UnityAssemblyContext(@Nonnull UnityAssemblyType type, @Nonnull String name, @Nullable VirtualFile asmdefFile, AsmDefElement asmDefElement)
+	private Set<UnityAssemblyContext> myDependencies = new HashSet<>();
+
+	UnityAssemblyContext(@Nonnull UnityAssemblyType type, @Nonnull String name, @Nullable VirtualFile asmdefFile, AsmDefElement asmDefElement)
 	{
 		myType = type;
 		myName = name;
@@ -57,6 +62,17 @@ public class UnityAssemblyContext
 	public void addSourceFile(@Nonnull VirtualFile virtualFile)
 	{
 		mySourceFiles.add(virtualFile);
+	}
+
+	public void addAssembly(@Nonnull VirtualFile virtualFile)
+	{
+		myAssemblies.add(virtualFile);
+	}
+
+	@Nonnull
+	public Set<VirtualFile> getAssemblies()
+	{
+		return myAssemblies;
 	}
 
 	@Nonnull
@@ -104,5 +120,45 @@ public class UnityAssemblyContext
 	public Library getLibrary()
 	{
 		return myLibrary;
+	}
+
+	public Set<UnityAssemblyContext> getDependencies()
+	{
+		return myDependencies;
+	}
+
+	public void addDependency(UnityAssemblyContext context)
+	{
+		myDependencies.add(context);
+	}
+
+	@Override
+	public String toString()
+	{
+		return "UnityAssemblyContext{" +
+				"myName='" + myName + '\'' +
+				", myType=" + myType +
+				'}';
+	}
+
+	@Override
+	public boolean equals(Object o)
+	{
+		if(this == o)
+		{
+			return true;
+		}
+		if(o == null || getClass() != o.getClass())
+		{
+			return false;
+		}
+		UnityAssemblyContext that = (UnityAssemblyContext) o;
+		return Objects.equals(myName, that.myName);
+	}
+
+	@Override
+	public int hashCode()
+	{
+		return Objects.hash(myName);
 	}
 }

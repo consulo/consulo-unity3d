@@ -22,6 +22,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileVisitor;
+import consulo.dotnet.dll.DotNetModuleFileType;
 import consulo.unity3d.projectImport.newImport.UnityAssemblyContext;
 import consulo.unity3d.projectImport.newImport.UnityProjectImporterWithAsmDef;
 
@@ -51,6 +52,11 @@ public abstract class StandardModuleImporter
 
 	@Nonnull
 	protected abstract Set<VirtualFile> getDirectoriesForAnalyze(@Nonnull Project project);
+
+	public boolean isEditorModule()
+	{
+		return false;
+	}
 
 	public void analyzeSourceFiles(@Nonnull Project project, UnityAssemblyContext assemblyContext, Set<String> registeredFiles)
 	{
@@ -84,7 +90,11 @@ public abstract class StandardModuleImporter
 
 						assemblyContext.addSourceFile(file);
 					}
-					
+					else if(file.getFileType() == DotNetModuleFileType.INSTANCE)
+					{
+						assemblyContext.addAssembly(file);
+					}
+
 					return true;
 				}
 			});

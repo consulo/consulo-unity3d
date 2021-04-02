@@ -750,7 +750,7 @@ public class Unity3dProjectImporter
 		return new Version(0, 0, 0);
 	}
 
-	private static void addAsLibrary(VirtualFile virtualFile, ModuleRootLayerImpl layer)
+	public static void addAsLibrary(VirtualFile virtualFile, ModuleRootLayerImpl layer)
 	{
 		if(virtualFile.getFileType() == DotNetModuleFileType.INSTANCE)
 		{
@@ -811,7 +811,7 @@ public class Unity3dProjectImporter
 			rootModule = newModel.newModule(project.getName(), project.getBasePath());
 		}
 
-		progressIndicator.setText(Unity3dLocalize.syncing0Module(rootModule.getName()).get());
+		progressIndicator.setTextValue(Unity3dLocalize.syncing0Module(rootModule.getName()));
 
 
 		final ModifiableRootModel modifiableModel = AccessRule.read(() -> ModuleRootManager.getInstance(rootModule).getModifiableModel());
