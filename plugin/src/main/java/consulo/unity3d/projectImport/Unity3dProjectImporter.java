@@ -61,7 +61,6 @@ import consulo.roots.impl.ModuleRootLayerImpl;
 import consulo.roots.impl.ProductionContentFolderTypeProvider;
 import consulo.roots.types.BinariesOrderRootType;
 import consulo.roots.types.DocumentationOrderRootType;
-import consulo.unity3d.Unity3dBundle;
 import consulo.unity3d.Unity3dMetaFileType;
 import consulo.unity3d.UnityPluginValidator;
 import consulo.unity3d.bundle.Unity3dBundleType;
@@ -322,7 +321,7 @@ public class Unity3dProjectImporter
 	{
 		String moduleName = packageDir.getName();
 
-		context.getProgressIndicator().setText(Unity3dBundle.message("syncing.0.module", moduleName));
+		context.getProgressIndicator().setTextValue(Unity3dLocalize.syncing0Module(moduleName));
 
 		Module temp = modifiableModuleModels.findModuleByName(moduleName);
 		final Module module;
@@ -452,7 +451,7 @@ public class Unity3dProjectImporter
 	{
 		ProgressIndicator progressIndicator = context.getProgressIndicator();
 
-		progressIndicator.setText(Unity3dBundle.message("syncing.0.module", moduleName));
+		progressIndicator.setTextValue(Unity3dLocalize.syncing0Module(moduleName));
 
 		Module temp = modifiableModuleModels.findModuleByName(moduleName);
 		final Module module;
@@ -776,10 +775,10 @@ public class Unity3dProjectImporter
 
 	@Nonnull
 	public static Module createRootModule(@Nonnull Project project,
-										   @Nonnull ModifiableModuleModel newModel,
-										   @Nullable Sdk unityBundle,
-										   @Nonnull ProgressIndicator progressIndicator,
-										   @Nonnull UnityProjectImportContext context)
+										  @Nonnull ModifiableModuleModel newModel,
+										  @Nullable Sdk unityBundle,
+										  @Nonnull ProgressIndicator progressIndicator,
+										  @Nonnull UnityProjectImportContext context)
 	{
 		SimpleReference<String> namespacePrefix = SimpleReference.create();
 		Set<String> excludedUrls = new TreeSet<>();

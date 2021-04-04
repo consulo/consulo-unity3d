@@ -23,9 +23,9 @@ import com.intellij.psi.PsiElementVisitor;
 import consulo.annotation.access.RequiredReadAction;
 import consulo.csharp.lang.psi.CSharpElementVisitor;
 import consulo.csharp.lang.psi.CSharpMethodDeclaration;
-import consulo.unity3d.Unity3dBundle;
 import consulo.unity3d.csharp.UnityFunctionManager;
 import consulo.unity3d.csharp.codeInsight.UnityEventCSharpMethodLineMarkerProvider;
+import consulo.unity3d.localize.Unity3dLocalize;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 
 import javax.annotation.Nonnull;
@@ -59,7 +59,7 @@ public class UnityOnGUIMethodInspection extends LocalInspectionTool
 					{
 						PsiElement nameIdentifier = declaration.getNameIdentifier();
 						assert nameIdentifier != null;
-						holder.registerProblem(nameIdentifier, Unity3dBundle.message("ongui.method.inspection.message"), new UnityEmptyMagicMethodInspection.RemoveMethodFix(declaration));
+						holder.registerProblem(nameIdentifier, Unity3dLocalize.onguiMethodInspectionMessage().get(), new UnityEmptyMagicMethodInspection.RemoveMethodFix(declaration));
 					}
 				}
 			}

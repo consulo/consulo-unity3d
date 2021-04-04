@@ -26,8 +26,8 @@ import consulo.csharp.lang.psi.impl.CSharpTypeUtil;
 import consulo.csharp.lang.psi.impl.source.resolve.type.CSharpTypeRefByQName;
 import consulo.dotnet.psi.DotNetType;
 import consulo.dotnet.resolve.DotNetTypeRef;
-import consulo.unity3d.Unity3dBundle;
 import consulo.unity3d.Unity3dTypes;
+import consulo.unity3d.localize.Unity3dLocalize;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 
 import javax.annotation.Nonnull;
@@ -61,7 +61,7 @@ public class UnityNewMonoBehaviourInspection extends LocalInspectionTool
 				DotNetTypeRef typeRef = expression.toTypeRef(true);
 				if(CSharpTypeUtil.isInheritable(new CSharpTypeRefByQName(expression, Unity3dTypes.UnityEngine.MonoBehaviour), typeRef))
 				{
-					holder.registerProblem(newType, Unity3dBundle.message("new.mono.behaviour.inspection.message"));
+					holder.registerProblem(newType, Unity3dLocalize.newMonoBehaviourInspectionMessage().getValue());
 				}
 			}
 		};

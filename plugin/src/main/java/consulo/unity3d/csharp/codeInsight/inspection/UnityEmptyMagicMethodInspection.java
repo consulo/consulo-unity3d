@@ -28,9 +28,9 @@ import consulo.annotation.access.RequiredReadAction;
 import consulo.csharp.lang.psi.CSharpElementVisitor;
 import consulo.csharp.lang.psi.CSharpMethodDeclaration;
 import consulo.csharp.lang.psi.impl.source.CSharpBlockStatementImpl;
-import consulo.unity3d.Unity3dBundle;
 import consulo.unity3d.csharp.UnityFunctionManager;
 import consulo.unity3d.csharp.codeInsight.UnityEventCSharpMethodLineMarkerProvider;
+import consulo.unity3d.localize.Unity3dLocalize;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import org.jetbrains.annotations.Nls;
 
@@ -94,7 +94,7 @@ public class UnityEmptyMagicMethodInspection extends LocalInspectionTool
 					{
 						PsiElement nameIdentifier = declaration.getNameIdentifier();
 						assert nameIdentifier != null;
-						holder.registerProblem(nameIdentifier, Unity3dBundle.message("empty.magic.method.inspection.message"), new RemoveMethodFix(declaration));
+						holder.registerProblem(nameIdentifier, Unity3dLocalize.emptyMagicMethodInspectionMessage().getValue(), new RemoveMethodFix(declaration));
 					}
 				}
 			}
