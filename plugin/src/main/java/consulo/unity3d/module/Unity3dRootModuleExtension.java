@@ -22,7 +22,6 @@ import com.intellij.openapi.util.Version;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.SmartList;
 import consulo.annotation.access.RequiredReadAction;
 import consulo.dotnet.module.DotNetNamespaceGeneratePolicy;
 import consulo.dotnet.module.extension.BaseDotNetSimpleModuleExtension;
@@ -35,7 +34,8 @@ import org.jdom.Element;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.File;
-import java.util.List;
+import java.util.*;
+import java.util.function.Consumer;
 
 /**
  * @author VISTALL
@@ -121,7 +121,7 @@ public class Unity3dRootModuleExtension extends BaseDotNetSimpleModuleExtension<
 			return EMPTY_FILE_ARRAY;
 		}
 
-		List<String> pathsForLibraries = getPathsForLibraries(homePath, sdk);
+		Collection<String> pathsForLibraries = getPathsForLibraries(homePath, sdk);
 
 		File[] array = EMPTY_FILE_ARRAY;
 		for(String pathsForLibrary : pathsForLibraries)
@@ -139,39 +139,65 @@ public class Unity3dRootModuleExtension extends BaseDotNetSimpleModuleExtension<
 		return array;
 	}
 
+	public static void collectManagedDirectories(@Nonnull Sdk sdk, @Nonnull Platform.OperatingSystem os, @Nonnull Consumer<String> consumer)
+	{
+		String sdkHomePath = sdk.getHomePath();
+		if(sdkHomePath == null)
+		{
+			return;
+		}
+
+		if(os.isMac())
+		{
+			consumer.accept(sdkHomePath + "/Contents/Frameworks/Managed");
+		}
+		else if(os.isWindows() || os.isLinux())
+		{
+			consumer.accept(sdkHomePath + "/Editor/Data/Managed");
+		}
+	}
+
 	@Nonnull
-	private List<String> getPathsForLibraries(String homePath, @Nonnull Sdk sdk)
+	private Collection<String> getPathsForLibraries(String sdkHomePath, @Nonnull Sdk sdk)
 	{
 		Version version = Unity3dProjectImporter.parseVersion(sdk.getVersionString());
 
 		Platform.OperatingSystem os = Platform.current().os();
 
-		List<String> list = new SmartList<>();
+		Set<String> paths = new LinkedHashSet<>();
+
+		collectManagedDirectories(sdk, os, path ->
+		{
+			paths.add(path);
+
+			// Unity Modules directory
+			paths.add(path + "/UnityEngine");
+		});
+
 		if(os.isMac())
 		{
-			list.add(homePath + "/Contents/Frameworks/Managed");
 			switch(scriptRuntimeVersion)
 			{
 				case NET_2_TO_3_5:
-					list.add(homePath + "/Contents/Frameworks/Mono/lib/mono/2.0");
+					paths.add(sdkHomePath + "/Contents/Frameworks/Mono/lib/mono/2.0");
 					// actual at unity5.4 beta
-					list.add(homePath + "/Contents/Mono/lib/mono/2.0");
+					paths.add(sdkHomePath + "/Contents/Mono/lib/mono/2.0");
 					break;
 				case NET_4_6:
-					list.add(homePath + "/Contents/MonoBleedingEdge/lib/mono/4.5");
+					paths.add(sdkHomePath + "/Contents/MonoBleedingEdge/lib/mono/4.5");
 					break;
 			}
 
 			// actual at unity5.4 beta
-			list.add(homePath + "/Contents/Managed");
+			paths.add(sdkHomePath + "/Contents/Managed");
 
 			// dead path?
-			addUnityExtensions(list, version, homePath + "/Contents/Frameworks/UnityExtensions/Unity");
+			addUnityExtensions(paths, version, sdkHomePath + "/Contents/Frameworks/UnityExtensions/Unity");
 			// actual mac path
-			addUnityExtensions(list, version, homePath + "/Contents/UnityExtensions/Unity");
+			addUnityExtensions(paths, version, sdkHomePath + "/Contents/UnityExtensions/Unity");
 
 			// try to resolve external PlaybackEngines
-			File homeFile = new File(homePath);
+			File homeFile = new File(sdkHomePath);
 			if(homeFile.exists())
 			{
 				File parentFile = homeFile.getParentFile();
@@ -181,41 +207,40 @@ public class Unity3dRootModuleExtension extends BaseDotNetSimpleModuleExtension<
 					File playbackEngines = new File(parentFile, "PlaybackEngines/VuforiaSupport/Managed");
 					if(playbackEngines.exists())
 					{
-						list.add(playbackEngines.getPath() + "/Runtime");
-						list.add(playbackEngines.getPath() + "/Editor");
+						paths.add(playbackEngines.getPath() + "/Runtime");
+						paths.add(playbackEngines.getPath() + "/Editor");
 					}
 				}
 			}
 		}
 		else if(os.isWindows() || os.isLinux())
 		{
-			list.add(homePath + "/Editor/Data/Managed");
 			switch(scriptRuntimeVersion)
 			{
 				case NET_2_TO_3_5:
-					list.add(homePath + "/Editor/Data/Mono/lib/mono/2.0");
+					paths.add(sdkHomePath + "/Editor/Data/Mono/lib/mono/2.0");
 					break;
 				case NET_4_6:
-					list.add(homePath + "/Editor/Data/MonoBleedingEdge/lib/mono/4.5");
+					paths.add(sdkHomePath + "/Editor/Data/MonoBleedingEdge/lib/mono/4.5");
 					break;
 			}
 
-			addUnityExtensions(list, version, homePath + "/Editor/Data/UnityExtensions/Unity");
+			addUnityExtensions(paths, version, sdkHomePath + "/Editor/Data/UnityExtensions/Unity");
 		}
 
 		if(version.isOrGreaterThan(2017, 2))
 		{
-			File vuforiaSpport = new File(homePath, "/Editor/Data/PlaybackEngines/VuforiaSupport");
+			File vuforiaSpport = new File(sdkHomePath, "/Editor/Data/PlaybackEngines/VuforiaSupport");
 			if(vuforiaSpport.exists())
 			{
-				list.add(homePath + "/Editor/Data/PlaybackEngines/VuforiaSupport/Managed/Runtime");
-				list.add(homePath + "/Editor/Data/PlaybackEngines/VuforiaSupport/Managed/Editor");
+				paths.add(sdkHomePath + "/Editor/Data/PlaybackEngines/VuforiaSupport/Managed/Runtime");
+				paths.add(sdkHomePath + "/Editor/Data/PlaybackEngines/VuforiaSupport/Managed/Editor");
 			}
 		}
-		return list;
+		return paths;
 	}
 
-	private static void addUnityExtensions(List<String> list, @Nonnull Version version, String baseDir)
+	private static void addUnityExtensions(Collection<String> list, @Nonnull Version version, String baseDir)
 	{
 		VirtualFile dir = LocalFileSystem.getInstance().findFileByPath(baseDir);
 		if(dir == null)
@@ -232,7 +257,7 @@ public class Unity3dRootModuleExtension extends BaseDotNetSimpleModuleExtension<
 		}
 	}
 
-	private static void addUnityExtension(List<String> list, @Nonnull VirtualFile dir, @Nonnull Version version)
+	private static void addUnityExtension(Collection<String> list, @Nonnull VirtualFile dir, @Nonnull Version version)
 	{
 		// UnityUI 4.6.X specific
 		// {EXTENSION_NAME}/{VERSION}/{LIBRARY}

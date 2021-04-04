@@ -31,6 +31,7 @@ import com.intellij.openapi.roots.impl.libraries.LibraryEx;
 import com.intellij.openapi.roots.impl.libraries.LibraryTableBase;
 import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable;
 import com.intellij.openapi.roots.libraries.Library;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -42,6 +43,7 @@ import consulo.dotnet.dll.DotNetModuleFileType;
 import consulo.dotnet.roots.orderEntry.DotNetLibraryOrderEntryImpl;
 import consulo.localize.LocalizeValue;
 import consulo.logging.Logger;
+import consulo.platform.Platform;
 import consulo.roots.ModifiableModuleRootLayer;
 import consulo.roots.impl.ModuleRootLayerImpl;
 import consulo.roots.impl.ProductionContentFolderTypeProvider;
@@ -49,6 +51,7 @@ import consulo.roots.types.BinariesOrderRootType;
 import consulo.roots.types.SourcesOrderRootType;
 import consulo.unity3d.asmdef.AsmDefElement;
 import consulo.unity3d.module.Unity3dChildMutableModuleExtension;
+import consulo.unity3d.module.Unity3dRootModuleExtension;
 import consulo.unity3d.packages.Unity3dPackageWatcher;
 import consulo.unity3d.packages.library.UnityPackageLibraryType;
 import consulo.unity3d.projectImport.Unity3dProjectImporter;
@@ -143,6 +146,41 @@ public class UnityProjectImporterWithAsmDef
 					VfsUtil.visitChildrenRecursively(packageDirectory, new AsmDefFileVisitor(project, UnityAssemblyType.FROM_EMBEDDED_PACKAGE, asmdefs));
 				}
 			}
+		}
+
+		Set<String> unityModules = new LinkedHashSet<>();
+		if(unitySdk != null)
+		{
+			Set<String> managedDirectories = new HashSet<>();
+
+			Unity3dRootModuleExtension.collectManagedDirectories(unitySdk, Platform.current().os(), managedDirectories::add);
+
+			for(String dir : managedDirectories)
+			{
+				Path path = Path.of(dir, "UnityEngine");
+				if(Files.exists(path))
+				{
+					try
+					{
+						Files.walk(path).forEach(maybeDll -> {
+							String fileName = maybeDll.getFileName().toString();
+
+							if(DotNetModuleFileType.isDllFile(maybeDll.getFileName().toString()))
+							{
+								unityModules.add(FileUtil.getNameWithoutExtension(fileName));
+							}
+						});
+					}
+					catch(IOException e)
+					{
+						LOG.warn(e);
+					}
+				}
+			}
+
+			// remove default libraries
+			unityModules.remove("UnityEngine");
+			unityModules.remove("UnityEditor");
 		}
 
 		// set of registered file urls
@@ -242,7 +280,7 @@ public class UnityProjectImporterWithAsmDef
 
 			boolean isEditor = ReadAction.compute(() -> assemblyContext.getAsmDefElement().getIncludePlatforms().contains(EDITOR_PLATFORM));
 
-			initializeModuleExtension(layer, isEditor);
+			initializeModuleExtension(layer, unityModules, isEditor);
 
 			analyzeAndAddDependencyTree(assemblyContext, asmdefs);
 
@@ -276,7 +314,7 @@ public class UnityProjectImporterWithAsmDef
 
 			ModifiableModuleRootLayer layer = (ModifiableModuleRootLayer) rootModel.getCurrentLayer();
 
-			initializeModuleExtension(layer, importer.isEditorModule());
+			initializeModuleExtension(layer, unityModules, importer.isEditorModule());
 
 			for(UnityAssemblyContext maybeDepContext : asmdefs.values())
 			{
@@ -408,7 +446,7 @@ public class UnityProjectImporterWithAsmDef
 		}
 	}
 
-	private static void initializeModuleExtension(ModifiableModuleRootLayer layer, boolean editor)
+	private static void initializeModuleExtension(ModifiableModuleRootLayer layer, Set<String> unityModules, boolean editor)
 	{
 		layer.getExtensionWithoutCheck(Unity3dChildMutableModuleExtension.class).setEnabled(true);
 
@@ -431,6 +469,11 @@ public class UnityProjectImporterWithAsmDef
 		if(editor)
 		{
 			layer.addOrderEntry(new DotNetLibraryOrderEntryImpl((ModuleRootLayerImpl) layer, "UnityEditor"));
+		}
+
+		for(String unityModule : unityModules)
+		{
+			layer.addOrderEntry(new DotNetLibraryOrderEntryImpl((ModuleRootLayerImpl) layer, unityModule));
 		}
 	}
 
