@@ -117,15 +117,12 @@ public class Unity3dPackageOrderEntry extends LibraryOrderEntryBaseImpl implemen
 				Sdk sdk = getSdk();
 				if(sdk != null)
 				{
-					VirtualFile homeDirectory = sdk.getHomeDirectory();
-					if(homeDirectory != null)
+					String path = Unity3dPackageWatcher.getInstance().getBuiltInPackagesPath(sdk);
+					VirtualFile builtInPackageDir = LocalFileSystem.getInstance().findFileByPath(path);
+					if(builtInPackageDir != null)
 					{
-						VirtualFile builtInDirectory = homeDirectory.findFileByRelativePath(getBuiltInPackagesRelativePath());
-						if(builtInDirectory != null)
-						{
-							VirtualFile packageDirectory = builtInDirectory.findChild(myName);
-							ContainerUtil.addIfNotNull(files, packageDirectory);
-						}
+						VirtualFile packageDirectory = builtInPackageDir.findChild(myName);
+						ContainerUtil.addIfNotNull(files, packageDirectory);
 					}
 				}
 			}

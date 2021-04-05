@@ -17,6 +17,7 @@
 package consulo.unity3d.packages;
 
 import com.intellij.openapi.application.Application;
+import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFileManager;
@@ -87,6 +88,16 @@ public class Unity3dPackageWatcher implements Disposable
 	}
 
 	@Nonnull
+	public String getBuiltInPackagesPath(@Nonnull Sdk sdk)
+	{
+		if(Platform.current().os().isMac())
+		{
+			return sdk.getHomePath() + "/Contents/Resources/PackageManager/BuiltInPackages";
+		}
+		return sdk.getHomePath() + "/Editor/Data/Resources/PackageManager/BuiltInPackages";
+	}
+
+	@Nonnull
 	private static List<String> getUnityUserPaths()
 	{
 		List<String> paths = new ArrayList<>();
@@ -110,11 +121,11 @@ public class Unity3dPackageWatcher implements Disposable
 		}
 		else if(os.isMac())
 		{
-			paths.add(user.getHomePath() + "/Library/Unity");
+			paths.add(user.homePath() + "/Library/Unity");
 		}
 		else if(os.isLinux())
 		{
-			paths.add(user.getHomePath() + "/.config/unity3d");
+			paths.add(user.homePath() + "/.config/unity3d");
 		}
 
 		return paths;

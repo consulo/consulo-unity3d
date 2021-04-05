@@ -560,19 +560,34 @@ public class UnityProjectImporterWithAsmDef
 														 List<Runnable> writeCommits,
 														 Map<String, UnityAssemblyContext> asmdefs, LibraryTableBase.ModifiableModelEx librariesModModel)
 	{
-		List<String> packageDirPaths = Unity3dPackageWatcher.getInstance().getPackageDirPaths();
-
-		String packageWithVersion = packageId + "@" + packageVersion;
+		Unity3dPackageWatcher unity3dPackageWatcher = Unity3dPackageWatcher.getInstance();
 
 		File packageDir = null;
-		for(String packageDirPath : packageDirPaths)
-		{
-			File temp = new File(packageDirPath, packageWithVersion);
 
+		Sdk unityBundle = context.getUnityBundle();
+		if(unityBundle != null)
+		{
+			File temp = new File(unity3dPackageWatcher.getBuiltInPackagesPath(unityBundle), packageId);
 			if(temp.exists())
 			{
 				packageDir = temp;
-				break;
+			}
+		}
+
+		String packageWithVersion = packageId + "@" + packageVersion;
+
+		if(packageDir == null)
+		{
+
+			for(String packageDirPath : unity3dPackageWatcher.getPackageDirPaths())
+			{
+				File temp = new File(packageDirPath, packageWithVersion);
+
+				if(temp.exists())
+				{
+					packageDir = temp;
+					break;
+				}
 			}
 		}
 
