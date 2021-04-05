@@ -176,16 +176,6 @@ public class Unity3dPackageOrderEntry extends LibraryOrderEntryBaseImpl implemen
 			return myModuleRootLayer.getProject().getBasePath() + "/Library/PackageCache";
 		}
 
-		@Nonnull
-		private String getBuiltInPackagesRelativePath()
-		{
-			if(Platform.current().os().isMac())
-			{
-				return "Contents/Resources/PackageManager/BuiltInPackages";
-			}
-			return "Editor/Data/Resources/PackageManager/BuiltInPackages";
-		}
-
 		@Nullable
 		@RequiredReadAction
 		private Sdk getSdk()
