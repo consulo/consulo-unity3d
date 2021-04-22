@@ -27,7 +27,7 @@ import consulo.bundle.ui.BundleBox;
 import consulo.bundle.ui.BundleBoxBuilder;
 import consulo.disposer.Disposable;
 import consulo.ide.newProject.ui.UnifiedProjectOrModuleNameStep;
-import consulo.ide.settings.impl.ShowSdksSettingsUtil;
+import consulo.ide.settings.impl.ProjectStructureSettingsUtil;
 import consulo.localize.LocalizeValue;
 import consulo.ui.Button;
 import consulo.ui.ComboBox;
@@ -130,18 +130,18 @@ public class Unity3dWizardStep extends UnifiedProjectOrModuleNameStep<UnityModul
 	@RequiredUIAccess
 	public static void showAddSdk(@Nonnull JComponent awtComponent, @RequiredUIAccess Consumer<Sdk> sdkConsumer)
 	{
-		ShowSdksSettingsUtil sdksSettingsUtil = (ShowSdksSettingsUtil) ShowSettingsUtil.getInstance();
+		ProjectStructureSettingsUtil settingsUtil = (ProjectStructureSettingsUtil) ShowSettingsUtil.getInstance();
 
 		Unity3dBundleType type = Unity3dBundleType.getInstance();
 
 		if(type.supportsCustomCreateUI())
 		{
-			type.showCustomCreateUI(sdksSettingsUtil.getSdksModel(), awtComponent, sdkConsumer::accept);
+			type.showCustomCreateUI(settingsUtil.getSdksModel(), awtComponent, sdkConsumer::accept);
 		}
 		else
 		{
 			SdkConfigurationUtil.selectSdkHome(type, home -> {
-				String newSdkName = SdkConfigurationUtil.createUniqueSdkName(type, home, sdksSettingsUtil.getSdksModel().getBundles());
+				String newSdkName = SdkConfigurationUtil.createUniqueSdkName(type, home, settingsUtil.getSdksModel().getBundles());
 				final SdkImpl newSdk = new SdkImpl(SdkTable.getInstance(), newSdkName, type);
 				newSdk.setHomePath(home);
 
