@@ -20,7 +20,6 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
@@ -34,6 +33,8 @@ import org.jetbrains.yaml.psi.*;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -90,45 +91,48 @@ public class UnityProjectImportContext
 			scriptRuntimeVersion = version;
 		}
 
-		VirtualFile argumentsFile = baseDir.findFileByRelativePath(Unity3dProjectImporter.ASSETS_DIRECTORY + "/csc.rsp");
-		if(argumentsFile == null)
+		List<String> additionalDefines = new ArrayList<>();
+
+		readDefines(project, "csc.rsp", additionalDefines);
+		readDefines(project, "mcs.rsp", additionalDefines);
+		readDefines(project, "consulo.rsp", additionalDefines);
+
+		return new UnityProjectImportContext(project, rootDefines, additionalDefines, scriptRuntimeVersion, Unity3dManifest.parse(project), progressIndicator, unityBundle);
+	}
+
+	private static void readDefines(@Nonnull Project project, @Nonnull String fileName, @Nonnull List<String> additionalDefines)
+	{
+		Path argFile = Path.of(project.getBasePath(), Unity3dProjectImporter.ASSETS_DIRECTORY, fileName);
+		if(!Files.exists(argFile))
 		{
-			argumentsFile = baseDir.findFileByRelativePath(Unity3dProjectImporter.ASSETS_DIRECTORY + "/mcs.rsp");
+			return;
 		}
 
-		List<String> additionalDefines = new ArrayList<>();
-		if(argumentsFile != null)
+		try
 		{
-			try
+			for(String line : Files.readAllLines(argFile))
 			{
-				String text = VfsUtil.loadText(argumentsFile);
-				String[] lines = StringUtil.splitByLines(text);
-				for(String line : lines)
+				String prefix = "-define:";
+				if(line.startsWith(prefix))
 				{
-					String prefix = "-define:";
-					if(line.startsWith(prefix))
+					String def = line.substring(prefix.length(), line.length());
+					String[] values = def.split(",");
+					for(String value : values)
 					{
-						String def = line.substring(prefix.length(), line.length());
-						String[] values = def.split(",");
-						for(String value : values)
+						if(StringUtil.isEmptyOrSpaces(value))
 						{
-							if(StringUtil.isEmptyOrSpaces(value))
-							{
-								continue;
-							}
-
-							additionalDefines.add(value.trim());
+							continue;
 						}
+
+						additionalDefines.add(value.trim());
 					}
 				}
 			}
-			catch(IOException e)
-			{
-				LOG.warn(e);
-			}
 		}
-
-		return new UnityProjectImportContext(project, rootDefines, additionalDefines, scriptRuntimeVersion, Unity3dManifest.parse(project), progressIndicator, unityBundle);
+		catch(IOException e)
+		{
+			LOG.warn(e);
+		}
 	}
 
 	private final int myScriptRuntimeVersion;

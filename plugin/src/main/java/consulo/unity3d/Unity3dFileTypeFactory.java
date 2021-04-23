@@ -18,6 +18,7 @@ package consulo.unity3d;
 
 import com.intellij.openapi.fileTypes.FileTypeConsumer;
 import com.intellij.openapi.fileTypes.FileTypeFactory;
+import com.intellij.openapi.fileTypes.PlainTextFileType;
 import com.intellij.openapi.util.text.StringUtil;
 import consulo.json.JsonFileType;
 import consulo.unity3d.asmdef.AsmDefFileDescriptor;
@@ -41,6 +42,8 @@ public class Unity3dFileTypeFactory extends FileTypeFactory
 		consumer.consume(Unity3dYMLAssetFileType.INSTANCE);
 
 		consumer.consume(Unity3dBinaryFileType.INSTANCE, "fbx");
+
+		consumer.consume(PlainTextFileType.INSTANCE, "rsp");
 
 		consumer.consume(JsonFileType.INSTANCE, AsmDefFileDescriptor.EXTENSION);
 	}
