@@ -56,8 +56,6 @@ public class Unity3dWizardStep extends UnifiedProjectOrModuleNameStep<UnityModul
 {
 	private final UnityModuleImportContext myContext;
 
-	private Disposable myUiDisposable;
-
 	private BundleBox myBundleBox;
 
 	public Unity3dWizardStep(UnityModuleImportContext context)
@@ -68,14 +66,13 @@ public class Unity3dWizardStep extends UnifiedProjectOrModuleNameStep<UnityModul
 
 	@RequiredUIAccess
 	@Override
-	protected void extend(@Nonnull FormBuilder builder)
+	protected void extend(@Nonnull FormBuilder builder, @Nonnull Disposable uiDisposable)
 	{
-		super.extend(builder);
+		super.extend(builder, uiDisposable);
 
 		String requiredVersion = Unity3dProjectImporter.loadVersionFromProject(myContext.getPath());
 
-		myUiDisposable = Disposable.newDisposable();
-		BundleBoxBuilder boxBuilder = BundleBoxBuilder.create(myUiDisposable);
+		BundleBoxBuilder boxBuilder = BundleBoxBuilder.create(uiDisposable);
 		boxBuilder.withSdkTypeFilterByType(Unity3dBundleType.getInstance());
 
 		ComboBox<BundleBox.BundleBoxItem> comboBox = (myBundleBox = boxBuilder.build()).getComponent();
@@ -162,18 +159,6 @@ public class Unity3dWizardStep extends UnifiedProjectOrModuleNameStep<UnityModul
 			{
 				context.setSdk(SdkTable.getInstance().findSdk(selectedBundleName));
 			}
-		}
-	}
-
-	@Override
-	public void disposeUIResources()
-	{
-		super.disposeUIResources();
-
-		if(myUiDisposable != null)
-		{
-			myUiDisposable.disposeWithTree();
-			myUiDisposable = null;
 		}
 	}
 }
