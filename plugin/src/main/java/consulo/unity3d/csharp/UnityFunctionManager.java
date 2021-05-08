@@ -16,20 +16,20 @@
 
 package consulo.unity3d.csharp;
 
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.psi.PsiElement;
 import consulo.annotation.access.RequiredReadAction;
 import consulo.csharp.lang.psi.impl.source.resolve.type.CSharpArrayTypeRef;
 import consulo.csharp.lang.psi.impl.source.resolve.type.CSharpTypeRefByQName;
 import consulo.dotnet.resolve.DotNetTypeRef;
-import gnu.trove.THashMap;
+import consulo.logging.Logger;
+import consulo.util.jdom.JDOMUtil;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -94,9 +94,9 @@ public class UnityFunctionManager
 		}
 	}
 
-	private static final Logger LOGGER = Logger.getInstance(UnityFunctionManager.class);
+	private static final Logger LOG = Logger.getInstance(UnityFunctionManager.class);
 
-	private Map<String, Map<String, FunctionInfo>> myFunctionsByType = new THashMap<>();
+	private Map<String, Map<String, FunctionInfo>> myFunctionsByType = new HashMap<>();
 
 	private static UnityFunctionManager ourInstance = new UnityFunctionManager();
 
@@ -114,7 +114,7 @@ public class UnityFunctionManager
 			for(Element typeElement : document.getRootElement().getChildren())
 			{
 				String typeName = typeElement.getAttributeValue("name");
-				Map<String, FunctionInfo> value = new THashMap<>();
+				Map<String, FunctionInfo> value = new HashMap<>();
 				myFunctionsByType.put(typeName, value);
 				for(Element element : typeElement.getChildren())
 				{
@@ -125,7 +125,7 @@ public class UnityFunctionManager
 		}
 		catch(JDOMException | IOException e)
 		{
-			LOGGER.error(e);
+			LOG.error(e);
 		}
 	}
 
