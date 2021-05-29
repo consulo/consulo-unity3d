@@ -17,7 +17,6 @@
 package consulo.unity3d;
 
 import com.intellij.ProjectTopics;
-import consulo.disposer.Disposable;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
@@ -28,12 +27,13 @@ import com.intellij.openapi.roots.ModuleRootListener;
 import com.intellij.openapi.util.ClearableLazyValue;
 import com.intellij.openapi.vfs.VirtualFile;
 import consulo.annotation.access.RequiredReadAction;
+import consulo.disposer.Disposable;
 import consulo.unity3d.module.Unity3dRootModuleExtension;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import jakarta.inject.Inject;
-import jakarta.inject.Singleton;
 
 /**
  * @author VISTALL
@@ -60,7 +60,7 @@ public class Unity3dProjectService implements Disposable
 		return ServiceManager.getService(project, Unity3dProjectService.class);
 	}
 
-	private ClearableLazyValue<CacheValue> myValue = new ClearableLazyValue<CacheValue>()
+	private ClearableLazyValue<CacheValue> myValue = new ClearableLazyValue<>()
 	{
 		@Nonnull
 		@Override

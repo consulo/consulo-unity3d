@@ -33,7 +33,6 @@ import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTable;
-import com.intellij.openapi.startup.StartupActivity;
 import com.intellij.openapi.util.ThrowableComputable;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -43,6 +42,7 @@ import com.intellij.util.SmartList;
 import consulo.annotation.access.RequiredReadAction;
 import consulo.dotnet.dll.DotNetModuleFileType;
 import consulo.logging.Logger;
+import consulo.project.startup.StartupActivity;
 import consulo.roots.ModifiableModuleRootLayer;
 import consulo.roots.ModuleRootLayer;
 import consulo.roots.types.BinariesOrderRootType;
@@ -55,7 +55,6 @@ import jakarta.inject.Singleton;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
@@ -68,13 +67,13 @@ public class UnityPluginValidator implements StartupActivity.Background
 	private static final Logger LOG = Logger.getInstance(UnityPluginValidator.class);
 
 	public static final String PLUGIN_ID = "com.consulo.ide";
-	public static final String PLUGIN_VERSION = "2.6.0";
+	public static final String PLUGIN_LINK = "https://github.com/consulo/UnityEditorConsuloPlugin.git#2.6.0";
 
 	private static final String ourPath = "Assets/Editor/Plugins";
 	private static final NotificationGroup ourGroup = new NotificationGroup("consulo.unity", NotificationDisplayType.STICKY_BALLOON, true);
 
 	@Override
-	public void runActivity(@Nonnull UIAccess uiAccess, @Nonnull Project project)
+	public void runActivity(@Nonnull Project project, @Nonnull UIAccess uiAccess)
 	{
 		uiAccess.give(() -> notifyAboutPluginFile(project));
 	}
@@ -102,14 +101,8 @@ public class UnityPluginValidator implements StartupActivity.Background
 
 		String ver = manifest.dependencies.get(PLUGIN_ID);
 
-		// custom path
-		if(ver != null && (ver.startsWith("file") || ver.startsWith("git")))
-		{
-			return;
-		}
-
 		// same version
-		if(PLUGIN_VERSION.equals(ver))
+		if(PLUGIN_LINK.equals(ver))
 		{
 			return;
 		}
@@ -207,20 +200,28 @@ public class UnityPluginValidator implements StartupActivity.Background
 
 			Unity3dManifest newManifest = manifest.clone();
 
-			String oldVer = newManifest.dependencies.get(PLUGIN_ID);
-			if(oldVer == null)
+			Unity3dManifest.ScopeRegistry[] scopedRegistries = newManifest.scopedRegistries;
+			if(scopedRegistries != null)
 			{
-				Unity3dManifest.ScopeRegistry registry = new Unity3dManifest.ScopeRegistry();
-				registry.name = "consulo.io";
-				registry.url = "https://upm.consulo.io/";
-				registry.scopes = new String[]{"com.consulo"};
+				for(Unity3dManifest.ScopeRegistry registry : List.of(scopedRegistries))
+				{
+					if("https://upm.consulo.io/".equals(registry.url))
+					{
+						scopedRegistries = ArrayUtil.remove(scopedRegistries, registry);
+					}
+				}
 
-				newManifest.scopedRegistries = newManifest.scopedRegistries == null ? new Unity3dManifest.ScopeRegistry[]{registry} : ArrayUtil.append(newManifest.scopedRegistries, registry);
-
-				newManifest.dependencies = new LinkedHashMap<>(newManifest.dependencies);
+				if(scopedRegistries.length == 0)
+				{
+					newManifest.scopedRegistries = null;
+				}
+				else
+				{
+					newManifest.scopedRegistries = scopedRegistries;
+				}
 			}
 
-			newManifest.dependencies.put(PLUGIN_ID, PLUGIN_VERSION);
+			newManifest.dependencies.put(PLUGIN_ID, PLUGIN_LINK);
 
 			Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
