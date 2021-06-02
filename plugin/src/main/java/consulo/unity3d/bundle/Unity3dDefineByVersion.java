@@ -65,6 +65,10 @@ public enum Unity3dDefineByVersion
 	UNITY_2019_2("2019.2.\\d"),
 	UNITY_2019_3("2019.3.\\d"),
 	UNITY_2020_1("2020.1.\\d"),
+	UNITY_2020_2("2020.2.\\d"),
+	UNITY_2020_3("2020.3.\\d"),
+	UNITY_2021_1("2021.1.\\d"),
+	UNITY_2021_2("2021.2.\\d"),
 	UNKNOWN("\\d.\\d.\\d");
 
 	private final Pattern myVersionPattern;
