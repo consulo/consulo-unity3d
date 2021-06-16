@@ -29,7 +29,7 @@ import consulo.ide.IconDescriptorUpdater;
 import consulo.ui.image.Image;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import consulo.unity3d.projectImport.Unity3dProjectImporter;
-import gnu.trove.THashMap;
+import consulo.util.collection.Maps;
 
 import javax.annotation.Nonnull;
 import java.util.Map;
@@ -40,7 +40,7 @@ import java.util.Map;
  */
 public class UnityDirectoryIconDescriptorUpdater implements IconDescriptorUpdater
 {
-	private final Map<String, Image> myFolderIcons = new THashMap<>(CaseInsensitiveStringHashingStrategy.INSTANCE);
+	private final Map<String, Image> myFolderIcons = Maps.newHashMap(CaseInsensitiveStringHashingStrategy.INSTANCE);
 
 	public UnityDirectoryIconDescriptorUpdater()
 	{
