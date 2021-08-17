@@ -22,6 +22,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.concurrency.AppExecutorUtil;
 import com.intellij.util.ui.UIUtil;
+import consulo.execution.process.OSProcessUtil;
 import consulo.logging.Logger;
 import consulo.ui.image.Image;
 import consulo.unity3d.Unity3dIcons;
@@ -79,7 +80,7 @@ public class UnityProcessDialog extends ChooseElementsDialog<UnityDebugProcessIn
 				ContainerUtil.addIfNotNull(items, device.mapToDebuggerProcess());
 			}
 
-			for(ProcessInfo processInfo : UnityEditorCommunication.getProcessList())
+			for(ProcessInfo processInfo : OSProcessUtil.getProcessList())
 			{
 				UnityDebugProcessInfo process = tryParseIfUnityProcess(processInfo);
 				if(process != null)

@@ -48,7 +48,7 @@ public class UnityEditorCommunication
 	@Nullable
 	public static UnityDebugProcessInfo findEditorProcess()
 	{
-		for(ProcessInfo processInfo : getProcessList())
+		for(ProcessInfo processInfo : OSProcessUtil.getProcessList())
 		{
 			UnityDebugProcessInfo unityProcess = UnityProcessDialog.tryParseIfUnityProcess(processInfo);
 			if(unityProcess != null)
@@ -58,21 +58,6 @@ public class UnityEditorCommunication
 		}
 
 		return null;
-	}
-
-	/**
-	 * Temp method, due rose2 emulation throw error
-	 */
-	public static ProcessInfo[] getProcessList()
-	{
-		try
-		{
-			return OSProcessUtil.getProcessList();
-		}
-		catch(Throwable ignored)
-		{
-		}
-		return new ProcessInfo[0];
 	}
 
 	public static boolean request(@Nonnull Project project, @Nonnull Object postObject, boolean silent)
