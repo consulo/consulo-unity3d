@@ -46,5 +46,8 @@ public class Unity3dFileTypeFactory extends FileTypeFactory
 		consumer.consume(PlainTextFileType.INSTANCE, "rsp");
 
 		consumer.consume(JsonFileType.INSTANCE, AsmDefFileDescriptor.EXTENSION);
+
+		// register exr file type as 
+		consumer.consume(ExrImageFileType.INSTANCE);
 	}
 }
