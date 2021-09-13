@@ -32,6 +32,13 @@ public class ExrImageFileType implements FileType
 
 	@Nonnull
 	@Override
+	public String getId()
+	{
+		return "EXR_IMAGE";
+	}
+
+	@Nonnull
+	@Override
 	public String getDescription()
 	{
 		return "EXR image files";
