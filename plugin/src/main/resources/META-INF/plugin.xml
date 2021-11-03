@@ -20,6 +20,9 @@
 	<vendor>consulo.io</vendor>
 	<version>SNAPSHOT</version>
 	<category>Game Frameworks</category>
+	<tags>
+		<tag>game.framework</tag>
+	</tags>
 	<localize>consulo.unity3d.Unity3dLocalize</localize>
 
 	<depends>consulo.dotnet.mono</depends>
