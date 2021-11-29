@@ -18,10 +18,8 @@ package consulo.unity3d;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.intellij.notification.Notification;
-import com.intellij.notification.NotificationDisplayType;
-import com.intellij.notification.NotificationGroup;
-import com.intellij.notification.NotificationType;
+import com.intellij.notification.*;
+import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.module.Module;
@@ -47,6 +45,7 @@ import consulo.roots.ModifiableModuleRootLayer;
 import consulo.roots.ModuleRootLayer;
 import consulo.roots.types.BinariesOrderRootType;
 import consulo.ui.UIAccess;
+import consulo.ui.annotation.RequiredUIAccess;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import consulo.unity3d.module.Unity3dRootModuleExtension;
 import consulo.unity3d.packages.Unity3dManifest;
@@ -109,26 +108,26 @@ public class UnityPluginValidator implements StartupActivity.Background
 
 		if(ver == null)
 		{
-			showNotify(project, "Consulo plugin for UnityEditor is missing.<br><a href=\"update\">Install via manifest</a>", false);
+			showNotify(project, "Consulo plugin for UnityEditor is missing", "Install via manifest", false);
 		}
 		else
 		{
-			showNotify(project, "Outdated Consulo plugin for UnityEditor.<br><a href=\"update\">Update via manifest</a>", true);
+			showNotify(project, "Outdated Consulo plugin for UnityEditor", "Update via manifest", true);
 		}
 	}
 
-	private static void showNotify(final Project project, @Nonnull String text, boolean update)
+	private static void showNotify(final Project project, @Nonnull String text, @Nonnull String actionName, boolean update)
 	{
 		Notification notification = new Notification(ourGroup.getDisplayId(), "Unity3D Plugin", text, update ? NotificationType.WARNING : NotificationType.INFORMATION);
-		notification.setListener((thisNotification, hyperlinkEvent) ->
+		notification.addAction(new NotificationAction(actionName)
 		{
-			thisNotification.hideBalloon();
-
-			switch(hyperlinkEvent.getDescription())
+			@RequiredUIAccess
+			@Override
+			public void actionPerformed(@Nonnull AnActionEvent anActionEvent, @Nonnull Notification notification)
 			{
-				case "update":
-					updatePlugin(project);
-					break;
+				notification.expire();
+				updatePlugin(project);
+
 			}
 		});
 		notification.notify(project);

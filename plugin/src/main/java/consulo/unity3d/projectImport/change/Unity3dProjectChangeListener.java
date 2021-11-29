@@ -16,24 +16,11 @@
 
 package consulo.unity3d.projectImport.change;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import jakarta.inject.Inject;
-import jakarta.inject.Singleton;
-
-
 import com.intellij.ProjectTopics;
 import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationAction;
 import com.intellij.notification.NotificationType;
+import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationInfo;
 import com.intellij.openapi.fileTypes.FileType;
@@ -58,9 +45,23 @@ import com.intellij.util.ui.UIUtil;
 import consulo.annotation.access.RequiredReadAction;
 import consulo.disposer.Disposable;
 import consulo.ui.UIAccess;
+import consulo.ui.annotation.RequiredUIAccess;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import consulo.unity3d.module.Unity3dRootModuleExtension;
 import consulo.unity3d.projectImport.Unity3dProjectImporter;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @author VISTALL
@@ -206,19 +207,23 @@ public class Unity3dProjectChangeListener implements Disposable
 
 			if(needNotification)
 			{
-				new Notification("unity", ApplicationInfo.getInstance().getName(), "Unity project structure changed.<br><a href=\"#\">Rebuild project</a>", NotificationType.INFORMATION,
-						(notification, hyperlinkEvent) ->
+				Notification notification = new Notification("unity", ApplicationInfo.getInstance().getName(), "Unity project structure changed", NotificationType.INFORMATION);
+				notification.addAction(new NotificationAction("Rebuild project")
+				{
+					@RequiredUIAccess
+					@Override
+					public void actionPerformed(@Nonnull AnActionEvent anActionEvent, @Nonnull Notification notification)
+					{
+						final Unity3dRootModuleExtension rootModuleExtension = Unity3dModuleExtensionUtil.getRootModuleExtension(myProject);
+						if(rootModuleExtension == null)
 						{
-							notification.hideBalloon();
+							return;
+						}
 
-							final Unity3dRootModuleExtension rootModuleExtension = Unity3dModuleExtensionUtil.getRootModuleExtension(myProject);
-							if(rootModuleExtension == null)
-							{
-								return;
-							}
-
-							Unity3dProjectImporter.syncProjectStep(myProject, rootModuleExtension.getSdk(), null, true);
-						}).notify(myProject);
+						Unity3dProjectImporter.syncProjectStep(myProject, rootModuleExtension.getSdk(), null, true);
+					}
+				});
+				notification.notify(myProject);
 			}
 		});
 	}
