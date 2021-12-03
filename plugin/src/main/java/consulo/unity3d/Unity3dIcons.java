@@ -16,10 +16,13 @@
 
 package consulo.unity3d;
 
+import consulo.annotation.DeprecationInfo;
 import consulo.ui.image.Image;
 import consulo.unity3d.icon.Unity3dIconGroup;
 
-// Generated Consulo DevKit plugin 
+// Generated Consulo DevKit plugin
+@Deprecated(forRemoval = true)
+@DeprecationInfo("Use Unit3dIconGroup")
 public interface Unity3dIcons
 {
 	Image EditorLayer = Unity3dIconGroup.editorLayer();
@@ -27,7 +30,6 @@ public interface Unity3dIcons
 	Image PluginsLayer = Unity3dIconGroup.pluginsLayer();
 	Image GizmosLayer = Unity3dIconGroup.gizmosLayer();
 	Image EventMethod = Unity3dIconGroup.lightningBolt();
-	Image Js = Unity3dIconGroup.js();
 	Image Unity3d = Unity3dIconGroup.unity3d();
 	Image Unity3dLineMarker = Unity3dIconGroup.unity3dLineMarker();
 }
