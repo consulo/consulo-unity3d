@@ -33,7 +33,7 @@ import java.util.List;
  */
 public class Unity3dAssetFileTypeDetector implements FileTypeRegistry.FileTypeDetector
 {
-	public static final List<String> ourAssetExtensions = List.of("unity", "prefab", "physicsMaterial2D", "mat", "asset", "anim", "controller", "spriteatlas", "mesh", "physicMaterial", "preset");
+	public static final List<String> ourAssetExtensions = List.of("unity", "prefab", "physicsMaterial2D", "mat", "asset", "anim", "controller", "spriteatlas", "mesh", "physicMaterial", "preset", "mask");
 
 	@Nullable
 	@Override
@@ -74,6 +74,6 @@ public class Unity3dAssetFileTypeDetector implements FileTypeRegistry.FileTypeDe
 	@Override
 	public int getVersion()
 	{
-		return 10;
+		return 11;
 	}
 }
