@@ -16,6 +16,7 @@
 
 package consulo.unity3d.module;
 
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkType;
 import com.intellij.openapi.roots.OrderRootType;
@@ -48,7 +49,7 @@ public class Unity3dChildModuleExtension extends ModuleExtensionImpl<Unity3dChil
 	@RequiredReadAction
 	public DotNetNamespaceGeneratePolicy getNamespaceGeneratePolicy()
 	{
-		Unity3dRootModuleExtension rootModuleExtension = Unity3dModuleExtensionUtil.getRootModuleExtension(getProject());
+		Unity3dRootModuleExtension rootModuleExtension = getRootExtension();
 		if(rootModuleExtension != null)
 		{
 			return rootModuleExtension.getNamespaceGeneratePolicy();
@@ -89,7 +90,7 @@ public class Unity3dChildModuleExtension extends ModuleExtensionImpl<Unity3dChil
 	@Nonnull
 	public List<String> getVariables()
 	{
-		Unity3dRootModuleExtension rootModuleExtension = Unity3dModuleExtensionUtil.getRootModuleExtension(getProject());
+		Unity3dRootModuleExtension rootModuleExtension = getRootExtension();
 		if(rootModuleExtension != null)
 		{
 			return rootModuleExtension.getVariables();
@@ -108,7 +109,7 @@ public class Unity3dChildModuleExtension extends ModuleExtensionImpl<Unity3dChil
 	@RequiredReadAction
 	public Map<String, String> getAvailableSystemLibraries()
 	{
-		Unity3dRootModuleExtension rootModuleExtension = Unity3dModuleExtensionUtil.getRootModuleExtension(getProject());
+		Unity3dRootModuleExtension rootModuleExtension = getRootExtension();
 		if(rootModuleExtension != null)
 		{
 			return rootModuleExtension.getAvailableSystemLibraries();
@@ -121,11 +122,23 @@ public class Unity3dChildModuleExtension extends ModuleExtensionImpl<Unity3dChil
 	@RequiredReadAction
 	public String[] getSystemLibraryUrls(@Nonnull String name, @Nonnull OrderRootType orderRootType)
 	{
-		Unity3dRootModuleExtension rootModuleExtension = Unity3dModuleExtensionUtil.getRootModuleExtension(getProject());
+		Unity3dRootModuleExtension rootModuleExtension = getRootExtension();
 		if(rootModuleExtension != null)
 		{
 			return rootModuleExtension.getSystemLibraryUrls(name, orderRootType);
 		}
 		return ArrayUtil.EMPTY_STRING_ARRAY;
+	}
+
+	@Nullable
+	@RequiredReadAction
+	private Unity3dRootModuleExtension getRootExtension()
+	{
+		Project project = getProject();
+		if(!project.isModulesReady())
+		{
+			return null;
+		}
+		return Unity3dModuleExtensionUtil.getRootModuleExtension(getProject());
 	}
 }

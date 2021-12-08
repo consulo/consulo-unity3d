@@ -76,11 +76,6 @@ public class Unity3dProjectService implements Disposable
 	@RequiredReadAction
 	private static Module findRootModuleImpl(@Nonnull Project project)
 	{
-		if(!project.isModulesReady())
-		{
-			return null;
-		}
-
 		VirtualFile baseDir = project.getBaseDir();
 		if(baseDir == null)
 		{
