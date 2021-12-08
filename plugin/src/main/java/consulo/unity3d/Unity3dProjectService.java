@@ -76,7 +76,7 @@ public class Unity3dProjectService implements Disposable
 	@RequiredReadAction
 	private static Module findRootModuleImpl(@Nonnull Project project)
 	{
-		if(!project.isInitialized())
+		if(!project.isModulesReady())
 		{
 			return null;
 		}
