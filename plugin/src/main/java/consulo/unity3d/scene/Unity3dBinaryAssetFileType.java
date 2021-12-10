@@ -18,6 +18,7 @@ package consulo.unity3d.scene;
 
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.PlainTextLikeFileType;
+import consulo.localize.LocalizeValue;
 import consulo.ui.image.Image;
 import consulo.unity3d.Unity3dIcons;
 
@@ -47,9 +48,9 @@ public class Unity3dBinaryAssetFileType implements FileType, PlainTextLikeFileTy
 
 	@Nonnull
 	@Override
-	public String getDescription()
+	public LocalizeValue getDescription()
 	{
-		return "Unity binary asset file";
+		return LocalizeValue.localizeTODO("Unity binary asset file");
 	}
 
 	@Nonnull

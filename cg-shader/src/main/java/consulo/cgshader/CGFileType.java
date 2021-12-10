@@ -16,12 +16,13 @@
 
 package consulo.cgshader;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.fileTypes.LanguageFileType;
+import consulo.localize.LocalizeValue;
 import consulo.ui.image.Image;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * @author VISTALL
@@ -45,9 +46,9 @@ public class CGFileType extends LanguageFileType
 
 	@Nonnull
 	@Override
-	public String getDescription()
+	public LocalizeValue getDescription()
 	{
-		return "CG shader files";
+		return LocalizeValue.localizeTODO("CG shader files");
 	}
 
 	@Nonnull

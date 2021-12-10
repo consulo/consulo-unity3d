@@ -16,13 +16,14 @@
 
 package consulo.unity3d;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import org.jetbrains.yaml.YAMLLanguage;
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.openapi.fileTypes.PlainTextFileType;
+import consulo.localize.LocalizeValue;
 import consulo.ui.image.Image;
+import org.jetbrains.yaml.YAMLLanguage;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * @author VISTALL
@@ -46,9 +47,9 @@ public class Unity3dMetaFileType extends LanguageFileType
 
 	@Nonnull
 	@Override
-	public String getDescription()
+	public LocalizeValue getDescription()
 	{
-		return "Meta files";
+		return LocalizeValue.localizeTODO("Meta files");
 	}
 
 	@Nonnull

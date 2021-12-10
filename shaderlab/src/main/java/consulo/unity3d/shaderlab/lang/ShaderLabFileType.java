@@ -16,12 +16,13 @@
 
 package consulo.unity3d.shaderlab.lang;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import com.intellij.openapi.fileTypes.LanguageFileType;
+import consulo.localize.LocalizeValue;
 import consulo.ui.image.Image;
 import consulo.unity3d.shaderlab.icon.ShaderLabIconGroup;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * @author VISTALL
@@ -45,9 +46,9 @@ public class ShaderLabFileType extends LanguageFileType
 
 	@Nonnull
 	@Override
-	public String getDescription()
+	public LocalizeValue getDescription()
 	{
-		return ".shader files";
+		return LocalizeValue.localizeTODO(".shader files");
 	}
 
 	@Nonnull

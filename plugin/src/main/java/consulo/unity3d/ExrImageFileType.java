@@ -17,6 +17,7 @@
 package consulo.unity3d;
 
 import com.intellij.openapi.fileTypes.FileType;
+import consulo.localize.LocalizeValue;
 import consulo.platform.base.icon.PlatformIconGroup;
 import consulo.ui.image.Image;
 
@@ -39,9 +40,9 @@ public class ExrImageFileType implements FileType
 
 	@Nonnull
 	@Override
-	public String getDescription()
+	public LocalizeValue getDescription()
 	{
-		return "EXR image files";
+		return LocalizeValue.localizeTODO("EXR image files");
 	}
 
 	@Nonnull

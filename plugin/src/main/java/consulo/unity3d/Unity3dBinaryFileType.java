@@ -16,12 +16,13 @@
 
 package consulo.unity3d;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.fileTypes.FileType;
+import consulo.localize.LocalizeValue;
 import consulo.ui.image.Image;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * @author VISTALL
@@ -40,16 +41,9 @@ public class Unity3dBinaryFileType implements FileType
 
 	@Nonnull
 	@Override
-	public String getDescription()
+	public LocalizeValue getDescription()
 	{
-		return "Unity binary file";
-	}
-
-	@Nonnull
-	@Override
-	public String getDefaultExtension()
-	{
-		return "";
+		return LocalizeValue.localizeTODO("Unity binary file");
 	}
 
 	@Nullable
