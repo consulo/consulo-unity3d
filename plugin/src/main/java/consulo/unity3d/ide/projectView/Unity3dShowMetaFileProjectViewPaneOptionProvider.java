@@ -16,6 +16,7 @@
 
 package consulo.unity3d.ide.projectView;
 
+import consulo.annotation.component.ExtensionImpl;
 import consulo.project.Project;
 import consulo.project.ui.view.ProjectView;
 import consulo.project.ui.view.ProjectViewPane;
@@ -34,6 +35,7 @@ import javax.annotation.Nonnull;
  * @author VISTALL
  * @since 09.05.2015
  */
+@ExtensionImpl
 public class Unity3dShowMetaFileProjectViewPaneOptionProvider extends ProjectViewPaneOptionProvider.BoolValue
 {
 	public static final KeyWithDefaultValue<Boolean> KEY = KeyWithDefaultValue.create("show-meta-files", Boolean.FALSE);

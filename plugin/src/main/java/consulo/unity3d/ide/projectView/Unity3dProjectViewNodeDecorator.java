@@ -16,6 +16,7 @@
 
 package consulo.unity3d.ide.projectView;
 
+import consulo.annotation.component.ExtensionImpl;
 import consulo.project.Project;
 import consulo.project.ui.view.tree.ProjectViewNode;
 import consulo.project.ui.view.tree.ProjectViewNodeDecorator;
@@ -31,6 +32,7 @@ import consulo.virtualFileSystem.VirtualFile;
  * @author VISTALL
  * @since 31.07.2015
  */
+@ExtensionImpl
 public class Unity3dProjectViewNodeDecorator implements ProjectViewNodeDecorator
 {
 	@RequiredUIAccess

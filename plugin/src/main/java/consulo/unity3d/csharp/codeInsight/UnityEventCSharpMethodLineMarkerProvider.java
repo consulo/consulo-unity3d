@@ -17,8 +17,10 @@
 package consulo.unity3d.csharp.codeInsight;
 
 import consulo.annotation.access.RequiredReadAction;
+import consulo.annotation.component.ExtensionImpl;
 import consulo.codeEditor.markup.GutterIconRenderer;
 import consulo.csharp.impl.ide.lineMarkerProvider.CSharpLineMarkerUtil;
+import consulo.csharp.lang.CSharpLanguage;
 import consulo.csharp.lang.impl.psi.CSharpTypeUtil;
 import consulo.csharp.lang.psi.CSharpMethodDeclaration;
 import consulo.csharp.lang.psi.CSharpTypeDeclaration;
@@ -27,6 +29,7 @@ import consulo.dotnet.psi.DotNetParameter;
 import consulo.dotnet.psi.DotNetParameterListOwner;
 import consulo.dotnet.psi.DotNetTypeDeclaration;
 import consulo.dotnet.psi.resolve.DotNetTypeRef;
+import consulo.language.Language;
 import consulo.language.editor.Pass;
 import consulo.language.editor.gutter.LineMarkerInfo;
 import consulo.language.editor.gutter.LineMarkerProviderDescriptor;
@@ -45,7 +48,8 @@ import java.util.Map;
  * @author VISTALL
  * @since 19.12.14
  */
-public abstract class UnityEventCSharpMethodLineMarkerProvider extends LineMarkerProviderDescriptor
+@ExtensionImpl
+public class UnityEventCSharpMethodLineMarkerProvider extends LineMarkerProviderDescriptor
 {
 	@Nullable
 	@Override
@@ -148,5 +152,12 @@ public abstract class UnityEventCSharpMethodLineMarkerProvider extends LineMarke
 			}
 		}
 		return true;
+	}
+
+	@Nonnull
+	@Override
+	public Language getLanguage()
+	{
+		return CSharpLanguage.INSTANCE;
 	}
 }

@@ -17,6 +17,7 @@
 package consulo.unity3d.scene.index;
 
 import consulo.annotation.access.RequiredReadAction;
+import consulo.annotation.component.ExtensionImpl;
 import consulo.index.io.*;
 import consulo.index.io.data.DataExternalizer;
 import consulo.language.ast.LighterAST;
@@ -38,6 +39,7 @@ import java.util.Map;
  * @author VISTALL
  * @since 01-Sep-17
  */
+@ExtensionImpl
 public class Unity3dMetaIndexExtension extends FileBasedIndexExtension<String, Integer>
 {
 	public static final ID<String, Integer> KEY = ID.create("unity3d.meta.index");

@@ -17,7 +17,10 @@
 package consulo.unity3d.scene.reference;
 
 import consulo.annotation.access.RequiredReadAction;
+import consulo.annotation.component.ExtensionImpl;
 import consulo.csharp.lang.CSharpFileType;
+import consulo.csharp.lang.CSharpLanguage;
+import consulo.language.Language;
 import consulo.language.pattern.PsiElementPattern;
 import consulo.language.pattern.StandardPatterns;
 import consulo.language.psi.*;
@@ -35,7 +38,8 @@ import javax.annotation.Nonnull;
  * @author VISTALL
  * @since 01-Sep-17
  */
-public abstract class Unity3dSceneFieldReferenceRegister extends PsiReferenceContributor
+@ExtensionImpl
+public class Unity3dSceneFieldReferenceRegister extends PsiReferenceContributor
 {
 	@Override
 	public void registerReferenceProviders(PsiReferenceRegistrar psiReferenceRegistrar)
@@ -109,5 +113,12 @@ public abstract class Unity3dSceneFieldReferenceRegister extends PsiReferenceCon
 				return new PsiReference[]{new Unity3dAssetGUIDReference(keyValue)};
 			}
 		});
+	}
+
+	@Nonnull
+	@Override
+	public Language getLanguage()
+	{
+		return CSharpLanguage.INSTANCE;
 	}
 }

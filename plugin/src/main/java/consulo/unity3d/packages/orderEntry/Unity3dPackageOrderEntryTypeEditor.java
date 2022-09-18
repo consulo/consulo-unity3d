@@ -16,6 +16,7 @@
 
 package consulo.unity3d.packages.orderEntry;
 
+import consulo.annotation.component.ExtensionImpl;
 import consulo.ide.setting.module.CustomOrderEntryTypeEditor;
 import consulo.module.content.layer.orderEntry.CustomOrderEntry;
 import consulo.ui.ex.ColoredTextContainer;
@@ -28,6 +29,7 @@ import java.util.function.Consumer;
  * @author VISTALL
  * @since 2018-09-19
  */
+@ExtensionImpl
 public class Unity3dPackageOrderEntryTypeEditor implements CustomOrderEntryTypeEditor<Unity3dPackageOrderEntryModel>
 {
 	@Nonnull

@@ -17,6 +17,7 @@
 package consulo.unity3d.csharp.codeInsight.inspection;
 
 import consulo.annotation.access.RequiredReadAction;
+import consulo.annotation.component.ExtensionImpl;
 import consulo.csharp.lang.impl.psi.CSharpElementVisitor;
 import consulo.csharp.lang.impl.psi.CSharpFileFactory;
 import consulo.csharp.lang.impl.psi.source.CSharpBinaryExpressionImpl;
@@ -26,7 +27,6 @@ import consulo.csharp.lang.psi.CSharpTokens;
 import consulo.csharp.lang.psi.CSharpTypeDeclaration;
 import consulo.dotnet.psi.DotNetExpression;
 import consulo.language.ast.IElementType;
-import consulo.language.editor.inspection.LocalInspectionTool;
 import consulo.language.editor.inspection.LocalQuickFixOnPsiElement;
 import consulo.language.editor.inspection.ProblemsHolder;
 import consulo.language.psi.PsiElement;
@@ -44,7 +44,8 @@ import javax.annotation.Nonnull;
  * @author VISTALL
  * @since 01-Nov-17
  */
-public abstract class UnityCompareTagInspection extends LocalInspectionTool
+@ExtensionImpl
+public class UnityCompareTagInspection extends UnityLocalInspectionTool
 {
 	private static class ReplaceByCompareTagFix extends LocalQuickFixOnPsiElement
 	{
@@ -169,5 +170,12 @@ public abstract class UnityCompareTagInspection extends LocalInspectionTool
 				}
 			}
 		};
+	}
+
+	@Nonnull
+	@Override
+	public String getDisplayName()
+	{
+		return "GameObject.tag equality warning";
 	}
 }

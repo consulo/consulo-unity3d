@@ -17,9 +17,9 @@
 package consulo.unity3d.csharp.codeInsight.inspection;
 
 import consulo.annotation.access.RequiredReadAction;
+import consulo.annotation.component.ExtensionImpl;
 import consulo.csharp.lang.impl.psi.CSharpElementVisitor;
 import consulo.csharp.lang.psi.CSharpMethodDeclaration;
-import consulo.language.editor.inspection.LocalInspectionTool;
 import consulo.language.editor.inspection.ProblemsHolder;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiElementVisitor;
@@ -34,8 +34,16 @@ import javax.annotation.Nonnull;
  * @author VISTALL
  * @since 27-Oct-17
  */
-public abstract class UnityOnGUIMethodInspection extends LocalInspectionTool
+@ExtensionImpl
+public class UnityOnGUIMethodInspection extends UnityLocalInspectionTool
 {
+	@Nonnull
+	@Override
+	public String getDisplayName()
+	{
+		return "OnGUI magic method";
+	}
+
 	@Nonnull
 	@Override
 	public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder, boolean isOnTheFly)

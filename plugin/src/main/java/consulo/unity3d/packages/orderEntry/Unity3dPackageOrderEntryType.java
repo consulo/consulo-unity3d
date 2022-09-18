@@ -16,6 +16,7 @@
 
 package consulo.unity3d.packages.orderEntry;
 
+import consulo.annotation.component.ExtensionImpl;
 import consulo.application.Application;
 import consulo.module.content.layer.ModuleRootLayer;
 import consulo.module.content.layer.orderEntry.CustomOrderEntryTypeProvider;
@@ -30,6 +31,7 @@ import java.util.List;
  * @author VISTALL
  * @since 2018-09-19
  */
+@ExtensionImpl
 public class Unity3dPackageOrderEntryType implements CustomOrderEntryTypeProvider<Unity3dPackageOrderEntryModel>
 {
 	public static final String ID = "unity-package";

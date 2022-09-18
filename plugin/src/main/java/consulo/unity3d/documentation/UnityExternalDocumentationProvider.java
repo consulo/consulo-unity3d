@@ -17,15 +17,17 @@
 package consulo.unity3d.documentation;
 
 import consulo.annotation.access.RequiredReadAction;
+import consulo.annotation.component.ExtensionImpl;
 import consulo.content.bundle.Sdk;
+import consulo.csharp.lang.CSharpLanguage;
 import consulo.dotnet.psi.DotNetFieldDeclaration;
 import consulo.dotnet.psi.DotNetLikeMethodDeclaration;
 import consulo.dotnet.psi.DotNetPropertyDeclaration;
 import consulo.dotnet.psi.DotNetTypeDeclaration;
-import consulo.language.editor.documentation.DocumentationProvider;
+import consulo.language.Language;
 import consulo.language.editor.documentation.ExternalDocumentationProvider;
+import consulo.language.editor.documentation.LanguageDocumentationProvider;
 import consulo.language.psi.PsiElement;
-import consulo.language.psi.PsiManager;
 import consulo.language.psi.PsiNamedElement;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.platform.Platform;
@@ -36,6 +38,7 @@ import consulo.util.io.FileUtil;
 import consulo.util.lang.StringUtil;
 import consulo.virtualFileSystem.StandardFileSystems;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
@@ -46,16 +49,10 @@ import java.util.List;
  * @author VISTALL
  * @since 2019-01-25
  */
-public class UnityExternalDocumentationProvider implements ExternalDocumentationProvider, DocumentationProvider
+@ExtensionImpl
+public class UnityExternalDocumentationProvider implements ExternalDocumentationProvider, LanguageDocumentationProvider
 {
 	private static final String UnityEnginePrefix = "UnityEngine.";
-
-	@Nullable
-	@Override
-	public String getQuickNavigateInfo(PsiElement element, PsiElement originalElement)
-	{
-		return null;
-	}
 
 	@Nullable
 	@Override
@@ -147,27 +144,6 @@ public class UnityExternalDocumentationProvider implements ExternalDocumentation
 
 	@Nullable
 	@Override
-	public String generateDoc(PsiElement element, @Nullable PsiElement originalElement)
-	{
-		return null;
-	}
-
-	@Nullable
-	@Override
-	public PsiElement getDocumentationElementForLookupItem(PsiManager psiManager, Object object, PsiElement element)
-	{
-		return null;
-	}
-
-	@Nullable
-	@Override
-	public PsiElement getDocumentationElementForLink(PsiManager psiManager, String link, PsiElement context)
-	{
-		return null;
-	}
-
-	@Nullable
-	@Override
 	public String fetchExternalDocumentation(Project project, PsiElement element, List<String> docUrls)
 	{
 		return null;
@@ -189,5 +165,12 @@ public class UnityExternalDocumentationProvider implements ExternalDocumentation
 	@Override
 	public void promptToConfigureDocumentation(PsiElement element)
 	{
+	}
+
+	@Nonnull
+	@Override
+	public Language getLanguage()
+	{
+		return CSharpLanguage.INSTANCE;
 	}
 }

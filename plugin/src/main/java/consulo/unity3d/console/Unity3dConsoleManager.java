@@ -16,6 +16,9 @@
 
 package consulo.unity3d.console;
 
+import consulo.annotation.component.ComponentScope;
+import consulo.annotation.component.ServiceAPI;
+import consulo.annotation.component.ServiceImpl;
 import consulo.application.Application;
 import consulo.application.util.concurrent.AppExecutorUtil;
 import consulo.disposer.Disposable;
@@ -41,6 +44,8 @@ import java.util.function.Consumer;
  * @since 03-Nov-17
  */
 @Singleton
+@ServiceAPI(value = ComponentScope.APPLICATION, lazy = false)
+@ServiceImpl
 public class Unity3dConsoleManager implements Disposable
 {
 	@Nonnull

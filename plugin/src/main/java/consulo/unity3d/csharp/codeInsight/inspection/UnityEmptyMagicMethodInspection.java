@@ -17,11 +17,11 @@
 package consulo.unity3d.csharp.codeInsight.inspection;
 
 import consulo.annotation.access.RequiredReadAction;
+import consulo.annotation.component.ExtensionImpl;
 import consulo.application.WriteAction;
 import consulo.csharp.lang.impl.psi.CSharpElementVisitor;
 import consulo.csharp.lang.impl.psi.source.CSharpBlockStatementImpl;
 import consulo.csharp.lang.psi.CSharpMethodDeclaration;
-import consulo.language.editor.inspection.LocalInspectionTool;
 import consulo.language.editor.inspection.LocalQuickFixOnPsiElement;
 import consulo.language.editor.inspection.ProblemsHolder;
 import consulo.language.psi.PsiElement;
@@ -40,7 +40,8 @@ import javax.annotation.Nonnull;
  * @author VISTALL
  * @since 27-Oct-17
  */
-public abstract class UnityEmptyMagicMethodInspection extends LocalInspectionTool
+@ExtensionImpl
+public class UnityEmptyMagicMethodInspection extends UnityLocalInspectionTool
 {
 	public static class RemoveMethodFix extends LocalQuickFixOnPsiElement
 	{
@@ -69,6 +70,13 @@ public abstract class UnityEmptyMagicMethodInspection extends LocalInspectionToo
 		{
 			WriteAction.run(psiElement::delete);
 		}
+	}
+
+	@Nonnull
+	@Override
+	public String getDisplayName()
+	{
+		return "Empty magic methods";
 	}
 
 	@Nonnull

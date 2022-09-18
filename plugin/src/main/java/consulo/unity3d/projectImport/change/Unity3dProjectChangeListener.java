@@ -17,6 +17,9 @@
 package consulo.unity3d.projectImport.change;
 
 import consulo.annotation.access.RequiredReadAction;
+import consulo.annotation.component.ComponentScope;
+import consulo.annotation.component.ServiceAPI;
+import consulo.annotation.component.ServiceImpl;
 import consulo.application.Application;
 import consulo.application.util.concurrent.AppExecutorUtil;
 import consulo.disposer.Disposable;
@@ -67,6 +70,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @since 1/11/18
  */
 @Singleton
+@ServiceAPI(value = ComponentScope.PROJECT, lazy = false)
+@ServiceImpl
 public class Unity3dProjectChangeListener implements Disposable
 {
 	public static class DataBlock

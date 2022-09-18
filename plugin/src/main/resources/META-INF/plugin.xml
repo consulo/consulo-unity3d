@@ -16,7 +16,7 @@
 
 <consulo-plugin url="https://github.com/consulo/consulo-unity3d">
 	<id>consulo.unity3d</id>
-	<name>Unity3D</name>
+	<name>Unity (Game Engine)</name>
 	<vendor>consulo.io</vendor>
 	<version>SNAPSHOT</version>
 	<category>Game Frameworks</category>
@@ -33,87 +33,4 @@
 
 	<depends config-file="com.intellij.xml.xml" optional="true">com.intellij.xml</depends>
 	<depends config-file="consulo.css.xml" optional="true">consulo.css</depends>
-
-	<import path="/META-INF/SharderLab.xml"/>
-
-	<import path="/META-INF/CGShader.xml"/>
-
-	<actions>
-		<group id="Unity3dProjectGroup">
-			<separator/>
-			<action id="SyncUnity3dProject" class="consulo.unity3d.action.SyncUnity3dProjectAction"/>
-			<add-to-group anchor="last" group-id="ProjectViewPopupMenuSettingsGroup"/>
-		</group>
-	</actions>
-
-
-	<extensions defaultExtensionNs="com.intellij">
-		<codeInsight.lineMarkerProvider language="C#"
-										implementationClass="consulo.unity3d.csharp.codeInsight.UnityEventCSharpMethodLineMarkerProvider"/>
-		<codeInsight.lineMarkerProvider language="C#"
-										implementationClass="consulo.unity3d.csharp.codeInsight.UnitySceneCSharpTypeLineMarkerProvider"/>
-		<localInspection
-				enabledByDefault="true"
-				level="WARNING"
-				language="C#"
-				groupPath="C#"
-				groupName="Unity"
-				displayName="Creation MonoBehaviour object via new expression"
-				implementationClass="consulo.unity3d.csharp.codeInsight.inspection.UnityNewMonoBehaviourInspection"/>
-
-		<localInspection
-				enabledByDefault="true"
-				level="WARNING"
-				language="C#"
-				groupPath="C#"
-				groupName="Unity"
-				displayName="Empty magic methods"
-				implementationClass="consulo.unity3d.csharp.codeInsight.inspection.UnityEmptyMagicMethodInspection"/>
-		<localInspection
-				enabledByDefault="true"
-				level="WARNING"
-				language="C#"
-				groupPath="C#"
-				groupName="Unity"
-				displayName="OnGUI magic method"
-				implementationClass="consulo.unity3d.csharp.codeInsight.inspection.UnityOnGUIMethodInspection"/>
-		<localInspection
-				enabledByDefault="true"
-				level="WARNING"
-				language="C#"
-				groupPath="C#"
-				groupName="Unity"
-				displayName="GameObject.tag equality warning"
-				implementationClass="consulo.unity3d.csharp.codeInsight.inspection.UnityCompareTagInspection"/>
-
-
-
-		<treeStructureProvider implementation="consulo.unity3d.ide.projectView.Unity3dMetaFileProjectViewProvider"/>
-		<projectViewOptionProvider implementation="consulo.unity3d.ide.projectView.Unity3dShowMetaFileProjectViewPaneOptionProvider"/>
-		<projectViewNodeDecorator implementation="consulo.unity3d.ide.projectView.Unity3dProjectViewNodeDecorator"/>
-		<createFromTemplateActionModuleResolver implementation="consulo.unity3d.projectImport.Unity3dModuleResolver"/>
-		<fileTypeDetector implementation="consulo.unity3d.scene.Unity3dAssetFileTypeDetector"/>
-		<fileBasedIndex implementation="consulo.unity3d.scene.index.Unity3dYMLAssetIndexExtension"/>
-		<fileBasedIndex implementation="consulo.unity3d.scene.index.Unity3dMetaIndexExtension"/>
-		<projectService serviceImplementation="consulo.unity3d.scene.Unity3dMetaManager"/>
-		<psi.referenceContributor language="yaml" implementation="consulo.unity3d.scene.reference.Unity3dSceneFieldReferenceRegister"/>
-
-		<lang.documentationProvider language="C#" implementationClass="consulo.unity3d.documentation.UnityExternalDocumentationProvider"/>
-
-
-		<psi.referenceContributor language="C#" implementation="consulo.unity3d.csharp.psi.reference.Unity3dEventMethodReferenceProvider"/>
-
-		<applicationService serviceImplementation="consulo.unity3d.packages.Unity3dPackageWatcher" lazy="false"/>
-		<applicationService serviceImplementation="consulo.unity3d.Unity3dLocalFileSystemComponent" lazy="false"/>
-		<applicationService serviceImplementation="consulo.unity3d.console.Unity3dConsoleManager" lazy="false"/>
-
-		<orderEntryType implementation="consulo.unity3d.packages.orderEntry.Unity3dPackageOrderEntryType"/>
-		<orderEntryTypeEditor key="unity-package" implementationClass="consulo.unity3d.packages.orderEntry.Unity3dPackageOrderEntryTypeEditor"/>
-
-		<projectService serviceImplementation="consulo.unity3d.projectImport.change.Unity3dProjectChangeListener" lazy="false"/>
-
-		<xdebugger.attachDebuggerProvider implementation="consulo.unity3d.run.debugger.attach.UnityAttachDebuggerProvider"/>
-
-
-	</extensions>
 </consulo-plugin>

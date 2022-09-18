@@ -17,6 +17,7 @@
 package consulo.unity3d.projectImport;
 
 import consulo.annotation.access.RequiredReadAction;
+import consulo.annotation.component.ExtensionImpl;
 import consulo.csharp.lang.CSharpFileType;
 import consulo.javascript.language.JavaScriptFileType;
 import consulo.module.Module;
@@ -37,6 +38,7 @@ import javax.annotation.Nullable;
  * @author VISTALL
  * @since 06.04.2015
  */
+@ExtensionImpl
 public class Unity3dModuleResolver implements NewFileModuleResolver
 {
 	private final Project myProject;

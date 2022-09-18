@@ -16,6 +16,7 @@
 
 package consulo.unity3d.scene;
 
+import consulo.annotation.component.ExtensionImpl;
 import consulo.util.io.ByteSequence;
 import consulo.util.lang.StringUtil;
 import consulo.virtualFileSystem.VirtualFile;
@@ -31,6 +32,7 @@ import java.util.List;
  * @author VISTALL
  * @since 09.08.2015
  */
+@ExtensionImpl
 public class Unity3dAssetFileTypeDetector implements FileTypeDetector
 {
 	public static final List<String> ourAssetExtensions = List.of("unity", "prefab", "physicsMaterial2D", "mat", "asset", "anim", "controller", "spriteatlas", "mesh", "physicMaterial", "preset", "mask");

@@ -17,14 +17,15 @@
 package consulo.unity3d.scene;
 
 import consulo.annotation.access.RequiredReadAction;
+import consulo.annotation.component.ComponentScope;
+import consulo.annotation.component.ServiceAPI;
+import consulo.annotation.component.ServiceImpl;
 import consulo.application.progress.ProgressManager;
 import consulo.application.util.LowMemoryWatcher;
 import consulo.application.util.function.CommonProcessors;
 import consulo.disposer.Disposable;
-import consulo.ide.ServiceManager;
 import consulo.language.psi.PsiFile;
 import consulo.language.psi.PsiManager;
-import consulo.language.psi.PsiModificationTracker;
 import consulo.language.psi.PsiModificationTrackerListener;
 import consulo.language.psi.scope.GlobalSearchScope;
 import consulo.language.psi.stub.FileBasedIndex;
@@ -56,6 +57,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since 01-Sep-17
  */
 @Singleton
+@ServiceAPI(ComponentScope.PROJECT)
+@ServiceImpl
 public class Unity3dMetaManager implements Disposable
 {
 	public static final String GUID_KEY = "guid";

@@ -18,6 +18,7 @@ package consulo.unity3d.scene.index;
 
 import consulo.annotation.DeprecationInfo;
 import consulo.annotation.access.RequiredReadAction;
+import consulo.annotation.component.ExtensionImpl;
 import consulo.index.io.DataIndexer;
 import consulo.index.io.ExternalIntegerKeyDescriptor;
 import consulo.index.io.ID;
@@ -64,6 +65,7 @@ import java.util.*;
  * m_EditorClassIdentifier:
  * speed: 30
  */
+@ExtensionImpl
 public class Unity3dYMLAssetIndexExtension extends FileBasedIndexExtension<Integer, List<Unity3dYMLAsset>>
 {
 	public static final ID<Integer, List<Unity3dYMLAsset>> KEY = ID.create("unity3d.yml.asset.new.index");

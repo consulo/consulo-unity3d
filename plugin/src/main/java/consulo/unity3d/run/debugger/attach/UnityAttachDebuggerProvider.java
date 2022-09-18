@@ -16,6 +16,7 @@
 
 package consulo.unity3d.run.debugger.attach;
 
+import consulo.annotation.component.ExtensionImpl;
 import consulo.execution.debug.attach.LocalAttachHost;
 import consulo.execution.debug.attach.XAttachDebugger;
 import consulo.execution.debug.attach.XAttachDebuggerProvider;
@@ -33,6 +34,7 @@ import java.util.List;
  * @author VISTALL
  * @since 09/01/2021
  */
+@ExtensionImpl
 public class UnityAttachDebuggerProvider implements XAttachDebuggerProvider
 {
 	@Override

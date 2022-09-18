@@ -16,6 +16,9 @@
 
 package consulo.unity3d;
 
+import consulo.annotation.component.ComponentScope;
+import consulo.annotation.component.ServiceAPI;
+import consulo.annotation.component.ServiceImpl;
 import consulo.disposer.Disposable;
 import consulo.logging.Logger;
 import consulo.util.lang.function.ThrowableConsumer;
@@ -35,6 +38,8 @@ import java.io.IOException;
  * @since 17.12.2015
  */
 @Singleton
+@ServiceAPI(value = ComponentScope.APPLICATION, lazy = false)
+@ServiceImpl
 public class Unity3dLocalFileSystemComponent implements Disposable
 {
 	private static final Logger LOGGER = Logger.getInstance(Unity3dLocalFileSystemComponent.class);

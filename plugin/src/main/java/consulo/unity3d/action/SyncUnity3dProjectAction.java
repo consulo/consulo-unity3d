@@ -16,6 +16,7 @@
 
 package consulo.unity3d.action;
 
+import consulo.annotation.component.ActionImpl;
 import consulo.language.editor.CommonDataKeys;
 import consulo.project.Project;
 import consulo.ui.annotation.RequiredUIAccess;
@@ -34,6 +35,7 @@ import javax.annotation.Nonnull;
  * @author VISTALL
  * @since 03.04.2015
  */
+@ActionImpl(id = "SyncUnity3dProject")
 public class SyncUnity3dProjectAction extends AnAction
 {
 	public SyncUnity3dProjectAction()

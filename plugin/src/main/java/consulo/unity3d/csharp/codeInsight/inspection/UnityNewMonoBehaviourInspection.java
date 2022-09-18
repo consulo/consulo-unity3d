@@ -17,13 +17,13 @@
 package consulo.unity3d.csharp.codeInsight.inspection;
 
 import consulo.annotation.access.RequiredReadAction;
+import consulo.annotation.component.ExtensionImpl;
 import consulo.csharp.lang.impl.psi.CSharpElementVisitor;
 import consulo.csharp.lang.impl.psi.CSharpTypeUtil;
 import consulo.csharp.lang.impl.psi.source.resolve.type.CSharpTypeRefByQName;
 import consulo.csharp.lang.psi.CSharpNewExpression;
 import consulo.dotnet.psi.DotNetType;
 import consulo.dotnet.psi.resolve.DotNetTypeRef;
-import consulo.language.editor.inspection.LocalInspectionTool;
 import consulo.language.editor.inspection.ProblemsHolder;
 import consulo.language.psi.PsiElementVisitor;
 import consulo.unity3d.Unity3dTypes;
@@ -36,8 +36,16 @@ import javax.annotation.Nonnull;
  * @author VISTALL
  * @since 06.01.2016
  */
-public abstract class UnityNewMonoBehaviourInspection extends LocalInspectionTool
+@ExtensionImpl
+public class UnityNewMonoBehaviourInspection extends UnityLocalInspectionTool
 {
+	@Nonnull
+	@Override
+	public String getDisplayName()
+	{
+		return "Creation MonoBehaviour object via new expression";
+	}
+
 	@Nonnull
 	@Override
 	public PsiElementVisitor buildVisitor(@Nonnull final ProblemsHolder holder, boolean isOnTheFly)
