@@ -16,10 +16,10 @@
 
 package consulo.unity3d.shaderlab.ide.refactoring;
 
-import javax.annotation.Nonnull;
-
-import com.intellij.psi.PsiElement;
+import consulo.language.psi.PsiElement;
 import consulo.unity3d.shaderlab.lang.psi.ShaderFileFactory;
+
+import javax.annotation.Nonnull;
 
 /**
  * @author VISTALL

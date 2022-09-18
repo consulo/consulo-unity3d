@@ -16,20 +16,17 @@
 
 package consulo.cgshader.completion;
 
-import com.intellij.codeInsight.completion.CompletionContributor;
-import com.intellij.codeInsight.completion.CompletionParameters;
-import com.intellij.codeInsight.completion.CompletionResultSet;
-import com.intellij.codeInsight.completion.CompletionType;
-import com.intellij.codeInsight.completion.util.ParenthesesInsertHandler;
-import com.intellij.codeInsight.lookup.LookupElementBuilder;
-import com.intellij.icons.AllIcons;
-import com.intellij.patterns.StandardPatterns;
-import com.intellij.util.ProcessingContext;
-import com.intellij.util.containers.ContainerUtil;
 import consulo.annotation.access.RequiredReadAction;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.application.AllIcons;
 import consulo.cgshader.CGLanguage;
 import consulo.cgshader.lexer.CGKeywords;
-import consulo.codeInsight.completion.CompletionProvider;
+import consulo.language.Language;
+import consulo.language.editor.completion.*;
+import consulo.language.editor.completion.lookup.LookupElementBuilder;
+import consulo.language.editor.completion.lookup.ParenthesesInsertHandler;
+import consulo.language.pattern.StandardPatterns;
+import consulo.language.util.ProcessingContext;
 import consulo.ui.image.Image;
 
 import javax.annotation.Nonnull;
@@ -39,9 +36,10 @@ import java.util.Set;
  * @author VISTALL
  * @since 11.10.2015
  */
+@ExtensionImpl
 public class CGCompletionContributor extends CompletionContributor
 {
-	private static final Set<String> ourMethods = ContainerUtil.newHashSet("abs", "acos", "all", "any", "asin", "atan", "atan2", "ceil", "clamp", "clip", "cos", "cosh", "cross", "ddx", "ddy",
+	private static final Set<String> ourMethods = Set.of("abs", "acos", "all", "any", "asin", "atan", "atan2", "ceil", "clamp", "clip", "cos", "cosh", "cross", "ddx", "ddy",
 			"degrees", "determinant", "distance", "dot", "exp", "exp2", "faceforward", "floatToIntBits", "floatToRawIntBits", "floor", "fmod", "frac", "frexp", "fwidth", "intBitsToFloat",
 			"isfinite", "isinf", "isnan", "ldexp", "length", "lerp", "lit", "log", "log10", "log2", "max", "min", "modf", "mul", "normalize", "pow", "radians", "reflect", "refract", "round",
 			"rsqrt", "saturate", "sign", "sin", "sincos", "sinh", "smoothstep", "sqrt", "step", "tan", "tanh", "tex1D", "tex1DARRAY", "tex1DARRAYbias", "tex1DARRAYcmpbias", "tex1DARRAYcmplod",
@@ -69,5 +67,12 @@ public class CGCompletionContributor extends CompletionContributor
 				}
 			}
 		});
+	}
+
+	@Nonnull
+	@Override
+	public Language getLanguage()
+	{
+		return CGLanguage.INSTANCE;
 	}
 }

@@ -16,21 +16,26 @@
 
 package consulo.unity3d.csharp.codeInsight;
 
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.ResolveResult;
-import com.intellij.psi.tree.IElementType;
-import com.intellij.psi.util.PsiTreeUtil;
 import consulo.annotation.access.RequiredReadAction;
 import consulo.annotation.access.RequiredWriteAction;
-import consulo.csharp.lang.evaluator.ConstantExpressionEvaluator;
-import consulo.csharp.lang.psi.*;
-import consulo.csharp.lang.psi.impl.source.resolve.MethodResolveResult;
-import consulo.csharp.lang.psi.impl.source.resolve.methodResolving.MethodResolvePriorityInfo;
-import consulo.csharp.lang.psi.impl.source.resolve.methodResolving.arguments.NCallArgument;
-import consulo.csharp.lang.psi.impl.source.resolve.util.CSharpResolveUtil;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.csharp.lang.impl.evaluator.ConstantExpressionEvaluator;
+import consulo.csharp.lang.impl.psi.CSharpFileFactory;
+import consulo.csharp.lang.impl.psi.source.resolve.MethodResolveResult;
+import consulo.csharp.lang.impl.psi.source.resolve.methodResolving.MethodResolvePriorityInfo;
+import consulo.csharp.lang.impl.psi.source.resolve.methodResolving.arguments.NCallArgument;
+import consulo.csharp.lang.impl.psi.source.resolve.util.CSharpResolveUtil;
+import consulo.csharp.lang.psi.CSharpCallArgument;
+import consulo.csharp.lang.psi.CSharpConstructorDeclaration;
+import consulo.csharp.lang.psi.CSharpNewExpression;
+import consulo.csharp.lang.psi.CSharpTokens;
 import consulo.dotnet.psi.DotNetExpression;
 import consulo.dotnet.psi.DotNetType;
-import consulo.language.editor.ElementColorProvider;
+import consulo.language.ast.IElementType;
+import consulo.language.psi.ElementColorProvider;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.ResolveResult;
+import consulo.language.psi.util.PsiTreeUtil;
 import consulo.ui.color.ColorValue;
 import consulo.ui.color.RGBColor;
 import consulo.unity3d.Unity3dTypes;
@@ -44,6 +49,7 @@ import java.util.Map;
  * @author VISTALL
  * @since 01.04.2015
  */
+@ExtensionImpl
 public class UnityCSharpStaticElementColor32Provider implements ElementColorProvider
 {
 	@Nullable

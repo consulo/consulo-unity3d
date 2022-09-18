@@ -16,17 +16,17 @@
 
 package consulo.unity3d.shaderlab.lang.parser.roles;
 
-import static consulo.unity3d.shaderlab.lang.parser.ShaderLabParser.doneError;
+import consulo.language.ast.IElementType;
+import consulo.language.parser.PsiBuilder;
+import consulo.unity3d.shaderlab.lang.parser.ShaderLabParserBuilder;
+import consulo.unity3d.shaderlab.lang.psi.ShaderLabElements;
+import consulo.unity3d.shaderlab.lang.psi.ShaderLabTokens;
+import consulo.util.collection.ArrayUtil;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.intellij.lang.PsiBuilder;
-import com.intellij.psi.tree.IElementType;
-import com.intellij.util.ArrayUtilRt;
-import consulo.unity3d.shaderlab.lang.parser.ShaderLabParserBuilder;
-import consulo.unity3d.shaderlab.lang.psi.ShaderLabElements;
-import consulo.unity3d.shaderlab.lang.psi.ShaderLabTokens;
+import static consulo.unity3d.shaderlab.lang.parser.ShaderLabParser.doneError;
 
 /**
  * @author VISTALL
@@ -62,7 +62,7 @@ public abstract class ShaderLabRole
 	@Nonnull
 	public String[] getValues()
 	{
-		return ArrayUtilRt.EMPTY_STRING_ARRAY;
+		return ArrayUtil.EMPTY_STRING_ARRAY;
 	}
 
 	@Nullable

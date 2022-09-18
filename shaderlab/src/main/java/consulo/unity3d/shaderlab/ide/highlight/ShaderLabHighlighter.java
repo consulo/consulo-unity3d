@@ -16,19 +16,18 @@
 
 package consulo.unity3d.shaderlab.ide.highlight;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.annotation.Nonnull;
-
-import com.intellij.lexer.Lexer;
-import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
-import com.intellij.openapi.editor.colors.TextAttributesKey;
-import com.intellij.openapi.fileTypes.SyntaxHighlighterBase;
-import com.intellij.psi.tree.IElementType;
+import consulo.codeEditor.DefaultLanguageHighlighterColors;
+import consulo.colorScheme.TextAttributesKey;
+import consulo.language.ast.IElementType;
+import consulo.language.editor.highlight.SyntaxHighlighterBase;
+import consulo.language.lexer.Lexer;
 import consulo.unity3d.shaderlab.lang.lexer.ShaderLabLexer;
 import consulo.unity3d.shaderlab.lang.psi.ShaderLabTokenSets;
 import consulo.unity3d.shaderlab.lang.psi.ShaderLabTokens;
+
+import javax.annotation.Nonnull;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author VISTALL

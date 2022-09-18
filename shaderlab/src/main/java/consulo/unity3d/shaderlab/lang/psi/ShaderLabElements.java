@@ -16,8 +16,8 @@
 
 package consulo.unity3d.shaderlab.lang.psi;
 
-import com.intellij.psi.tree.IElementType;
-import consulo.psi.tree.ElementTypeAsPsiFactory;
+import consulo.language.ast.ElementTypeAsPsiFactory;
+import consulo.language.ast.IElementType;
 import consulo.unity3d.shaderlab.lang.ShaderLabLanguage;
 
 /**

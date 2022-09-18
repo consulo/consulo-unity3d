@@ -16,18 +16,19 @@
 
 package consulo.unity3d.shaderlab.lang;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import com.intellij.lang.BracePair;
-import com.intellij.lang.PairedBraceMatcher;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.tree.IElementType;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.BracePair;
+import consulo.language.Language;
+import consulo.language.PairedBraceMatcher;
 import consulo.unity3d.shaderlab.lang.psi.ShaderLabTokens;
+
+import javax.annotation.Nonnull;
 
 /**
  * @author VISTALL
  * @since 08.05.2015
  */
+@ExtensionImpl
 public class ShaderLabPairedBraceMatcher implements PairedBraceMatcher
 {
 	private final BracePair[] myBracePairs = new BracePair[]{
@@ -42,15 +43,10 @@ public class ShaderLabPairedBraceMatcher implements PairedBraceMatcher
 		return myBracePairs;
 	}
 
+	@Nonnull
 	@Override
-	public boolean isPairedBracesAllowedBeforeType(@Nonnull IElementType lbraceType, @Nullable IElementType contextType)
+	public Language getLanguage()
 	{
-		return true;
-	}
-
-	@Override
-	public int getCodeConstructStart(PsiFile file, int openingBraceOffset)
-	{
-		return openingBraceOffset;
+		return ShaderLabLanguage.INSTANCE;
 	}
 }

@@ -16,10 +16,11 @@
 
 package consulo.unity3d.shaderlab.lang.psi;
 
+import consulo.language.ast.ASTNode;
+import consulo.language.impl.psi.ASTWrapperPsiElement;
+import consulo.language.psi.PsiElementVisitor;
+
 import javax.annotation.Nonnull;
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
-import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElementVisitor;
 
 /**
  * @author VISTALL

@@ -16,23 +16,27 @@
 
 package consulo.unity3d.run.test;
 
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
+import consulo.annotation.component.ComponentScope;
+import consulo.annotation.component.ServiceAPI;
+import consulo.annotation.component.ServiceImpl;
+import consulo.execution.test.sm.runner.GeneralTestEventsProcessor;
+import consulo.ide.ServiceManager;
+import consulo.process.ProcessHandler;
+import jakarta.inject.Singleton;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import jakarta.inject.Singleton;
-
-import com.intellij.execution.process.ProcessHandler;
-import com.intellij.execution.testframework.sm.runner.GeneralTestEventsProcessor;
-import com.intellij.openapi.components.ServiceManager;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author VISTALL
  * @since 18.01.2016
  */
 @Singleton
+@ServiceAPI(ComponentScope.APPLICATION)
+@ServiceImpl
 public class Unity3dTestSessionManager
 {
 	@Nonnull

@@ -16,7 +16,7 @@
 
 package consulo.unity3d.shaderlab.lang.psi;
 
-import com.intellij.psi.tree.IElementType;
+import consulo.language.ast.IElementType;
 import consulo.unity3d.shaderlab.lang.ShaderLabLanguage;
 
 /**
@@ -28,5 +28,4 @@ public interface ShaderLabKeyTokens
 	IElementType START_KEYWORD = new IElementType("START_KEYWORD", ShaderLabLanguage.INSTANCE);
 
 	IElementType VALUE_KEYWORD = new IElementType("VALUE_KEYWORD", ShaderLabLanguage.INSTANCE);
-
 }

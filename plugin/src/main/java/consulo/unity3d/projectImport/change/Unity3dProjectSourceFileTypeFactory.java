@@ -16,18 +16,21 @@
 
 package consulo.unity3d.projectImport.change;
 
-import java.util.function.Consumer;
+import consulo.annotation.component.ComponentScope;
+import consulo.annotation.component.ExtensionAPI;
+import consulo.component.extension.ExtensionPointName;
+import consulo.virtualFileSystem.fileType.FileType;
 
-import com.intellij.openapi.extensions.ExtensionPointName;
-import com.intellij.openapi.fileTypes.FileType;
+import java.util.function.Consumer;
 
 /**
  * @author VISTALL
  * @since 2018-01-12
  */
+@ExtensionAPI(ComponentScope.APPLICATION)
 public interface Unity3dProjectSourceFileTypeFactory
 {
-	ExtensionPointName<Unity3dProjectSourceFileTypeFactory> EP_NAME = ExtensionPointName.create("consulo.unity3d.projectSourceFileTypeFactory");
+	ExtensionPointName<Unity3dProjectSourceFileTypeFactory> EP_NAME = ExtensionPointName.create(Unity3dProjectSourceFileTypeFactory.class);
 
 	void registerFileTypes(Consumer<FileType> consumer);
 }

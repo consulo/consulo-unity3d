@@ -16,9 +16,9 @@
 
 package consulo.unity3d.module;
 
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.project.Project;
 import consulo.annotation.access.RequiredReadAction;
+import consulo.module.Module;
+import consulo.project.Project;
 import consulo.unity3d.Unity3dProjectService;
 
 import javax.annotation.Nonnull;

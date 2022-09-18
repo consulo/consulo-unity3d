@@ -16,7 +16,7 @@
 
 package consulo.unity3d.run.before;
 
-import com.intellij.execution.BeforeRunTask;
+import consulo.execution.BeforeRunTask;
 import consulo.util.dataholder.Key;
 
 import javax.annotation.Nonnull;

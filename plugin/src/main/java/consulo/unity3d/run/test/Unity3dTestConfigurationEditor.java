@@ -16,12 +16,12 @@
 
 package consulo.unity3d.run.test;
 
-import javax.annotation.Nullable;
-
-import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.options.SettingsEditor;
+import consulo.configurable.ConfigurationException;
+import consulo.execution.configuration.ui.SettingsEditor;
 import consulo.ui.Component;
 import consulo.ui.layout.VerticalLayout;
+
+import javax.annotation.Nullable;
 
 /**
  * @author VISTALL

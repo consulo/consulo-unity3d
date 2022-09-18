@@ -16,52 +16,45 @@
 
 package consulo.unity3d.projectImport;
 
-import com.intellij.execution.RunManager;
-import com.intellij.execution.RunnerAndConfigurationSettings;
-import com.intellij.execution.configurations.ConfigurationFactory;
-import com.intellij.execution.configurations.RunConfiguration;
-import com.intellij.notification.Notification;
-import com.intellij.notification.NotificationType;
-import com.intellij.openapi.application.AccessToken;
-import com.intellij.openapi.application.Application;
-import com.intellij.openapi.application.WriteAction;
-import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.fileTypes.FileTypeManager;
-import com.intellij.openapi.module.ModifiableModuleModel;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleManager;
-import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.progress.Task;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.roots.*;
-import com.intellij.openapi.roots.libraries.Library;
-import com.intellij.openapi.util.Version;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.*;
-import com.intellij.util.Consumer;
-import com.intellij.util.TimeoutUtil;
-import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.MultiMap;
-import com.intellij.util.io.storage.HeavyProcessLatch;
-import com.intellij.util.ui.UIUtil;
-import consulo.application.AccessRule;
+import consulo.application.*;
+import consulo.application.eap.EarlyAccessProgramManager;
+import consulo.application.progress.ProgressIndicator;
+import consulo.application.progress.Task;
+import consulo.content.ContentFolderTypeProvider;
+import consulo.content.base.BinariesOrderRootType;
+import consulo.content.base.DocumentationOrderRootType;
+import consulo.content.base.ExcludedContentFolderTypeProvider;
+import consulo.content.bundle.Sdk;
+import consulo.content.library.Library;
 import consulo.csharp.lang.CSharpFileType;
 import consulo.csharp.module.extension.CSharpLanguageVersion;
 import consulo.csharp.module.extension.CSharpSimpleMutableModuleExtension;
 import consulo.dotnet.dll.DotNetModuleFileType;
-import consulo.dotnet.roots.orderEntry.DotNetLibraryOrderEntryImpl;
-import consulo.ide.eap.EarlyAccessProgramManager;
+import consulo.dotnet.impl.roots.orderEntry.DotNetLibraryOrderEntryModel;
+import consulo.dotnet.impl.roots.orderEntry.DotNetLibraryOrderEntryType;
+import consulo.execution.RunManager;
+import consulo.execution.RunnerAndConfigurationSettings;
+import consulo.execution.configuration.ConfigurationFactory;
+import consulo.execution.configuration.RunConfiguration;
+import consulo.language.content.ProductionContentFolderTypeProvider;
+import consulo.language.file.FileTypeManager;
 import consulo.logging.Logger;
+import consulo.module.ModifiableModuleModel;
+import consulo.module.Module;
+import consulo.module.ModuleManager;
+import consulo.module.content.ModuleRootManager;
+import consulo.module.content.layer.ContentEntry;
+import consulo.module.content.layer.ContentFolder;
+import consulo.module.content.layer.ModifiableModuleRootLayer;
+import consulo.module.content.layer.ModifiableRootModel;
+import consulo.module.content.layer.orderEntry.LibraryOrderEntry;
 import consulo.module.extension.MutableModuleExtension;
-import consulo.roots.ContentFolderScopes;
-import consulo.roots.impl.ExcludedContentFolderTypeProvider;
-import consulo.roots.impl.ModuleRootLayerImpl;
-import consulo.roots.impl.ProductionContentFolderTypeProvider;
-import consulo.roots.types.BinariesOrderRootType;
-import consulo.roots.types.DocumentationOrderRootType;
+import consulo.project.Project;
+import consulo.project.ui.notification.Notification;
+import consulo.project.ui.notification.NotificationType;
+import consulo.ui.ex.awt.UIUtil;
 import consulo.unity3d.Unity3dMetaFileType;
+import consulo.unity3d.UnityNotificationGroup;
 import consulo.unity3d.UnityPluginValidator;
 import consulo.unity3d.bundle.Unity3dBundleType;
 import consulo.unity3d.bundle.Unity3dDefineByVersion;
@@ -77,13 +70,25 @@ import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import consulo.unity3d.module.Unity3dRootModuleExtension;
 import consulo.unity3d.module.Unity3dRootMutableModuleExtension;
 import consulo.unity3d.nunit.module.extension.Unity3dNUnitMutableModuleExtension;
-import consulo.unity3d.packages.orderEntry.Unity3dPackageOrderEntry;
+import consulo.unity3d.packages.orderEntry.Unity3dPackageOrderEntryModel;
+import consulo.unity3d.packages.orderEntry.Unity3dPackageOrderEntryType;
 import consulo.unity3d.projectImport.newImport.UnityProjectImporterWithAsmDef;
 import consulo.unity3d.run.Unity3dAttachApplicationType;
 import consulo.unity3d.run.Unity3dAttachConfiguration;
+import consulo.util.collection.ContainerUtil;
+import consulo.util.collection.MultiMap;
 import consulo.util.dataholder.Key;
+import consulo.util.io.FileUtil;
+import consulo.util.lang.StringUtil;
+import consulo.util.lang.TimeoutUtil;
+import consulo.util.lang.Version;
 import consulo.util.lang.ref.SimpleReference;
-import consulo.vfs.util.ArchiveVfsUtil;
+import consulo.virtualFileSystem.LocalFileSystem;
+import consulo.virtualFileSystem.VirtualFile;
+import consulo.virtualFileSystem.archive.ArchiveVfsUtil;
+import consulo.virtualFileSystem.fileType.FileType;
+import consulo.virtualFileSystem.util.VirtualFileUtil;
+import consulo.virtualFileSystem.util.VirtualFileVisitor;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -94,6 +99,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.function.Consumer;
 
 /**
  * @author VISTALL
@@ -190,8 +196,9 @@ public class Unity3dProjectImporter
 
 	private static void notifyAboutUnityEditorProblem(Project project)
 	{
-		UIUtil.invokeLaterIfNeeded(() -> new Notification("unity", project.getApplication().getName().get(), "UnityEditor is not responding.<br>Defines is not resolved.", NotificationType
-				.INFORMATION).notify(project));
+		UIUtil.invokeLaterIfNeeded(() -> new Notification(UnityNotificationGroup.INSTANCE, project.getApplication().getName().get(), "UnityEditor is not responding.<br>Defines is not resolved.",
+				NotificationType
+						.INFORMATION).notify(project));
 	}
 
 	/**
@@ -205,15 +212,10 @@ public class Unity3dProjectImporter
 	{
 		Task.Backgroundable.queue(project, "Sync Project", indicator ->
 		{
-			AccessToken accessToken = HeavyProcessLatch.INSTANCE.processStarted("unity sync project");
-			try
+			HeavyProcessLatch.INSTANCE.performOperation(HeavyProcessLatch.Type.Syncing, "Unity Sync Prroject", () ->
 			{
 				importAfterDefines(project, sdk, runValidator, indicator, requestor, unitySetDefines);
-			}
-			finally
-			{
-				accessToken.finish();
-			}
+			});
 		});
 	}
 
@@ -388,7 +390,7 @@ public class Unity3dProjectImporter
 		final VirtualFile assetsDir = baseDir.findFileByRelativePath(ASSETS_DIRECTORY);
 		if(assetsDir != null)
 		{
-			VfsUtil.visitChildrenRecursively(assetsDir, new VirtualFileVisitor()
+			VirtualFileUtil.visitChildrenRecursively(assetsDir, new VirtualFileVisitor()
 			{
 				@Override
 				public boolean visitFile(@Nonnull VirtualFile file)
@@ -409,18 +411,18 @@ public class Unity3dProjectImporter
 			layer.addInvalidModuleEntry("Assembly-CSharp-firstpass");
 			layer.addInvalidModuleEntry("Assembly-CSharp");
 
-			layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEditor.Graphs"));
+			layer.addCustomOderEntry(DotNetLibraryOrderEntryType.getInstance(), new DotNetLibraryOrderEntryModel("UnityEditor.Graphs"));
 
 			if(isVersionHigherOrEqual(unityBundle, "4.6.0"))
 			{
-				layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEditor.UI"));
+				layer.addCustomOderEntry(DotNetLibraryOrderEntryType.getInstance(), new DotNetLibraryOrderEntryModel("UnityEditor.UI"));
 			}
 
 			if(isVersionHigherOrEqual(unityBundle, "5.3.0"))
 			{
-				layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "nunit.framework"));
-				layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEngine.TestRunner"));
-				layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEditor.TestRunner"));
+				layer.addCustomOderEntry(DotNetLibraryOrderEntryType.getInstance(), new DotNetLibraryOrderEntryModel("nunit.framework"));
+				layer.addCustomOderEntry(DotNetLibraryOrderEntryType.getInstance(), new DotNetLibraryOrderEntryModel("UnityEngine.TestRunner"));
+				layer.addCustomOderEntry(DotNetLibraryOrderEntryType.getInstance(), new DotNetLibraryOrderEntryModel("UnityEditor.TestRunner"));
 
 				// enable nunit
 				layer.getExtensionWithoutCheck(Unity3dNUnitMutableModuleExtension.class).setEnabled(true);
@@ -428,12 +430,12 @@ public class Unity3dProjectImporter
 
 			if(isVersionHigherOrEqual(unityBundle, "2017.1.0"))
 			{
-				layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEditor.Timeline"));
+				layer.addCustomOderEntry(DotNetLibraryOrderEntryType.getInstance(), new DotNetLibraryOrderEntryModel("UnityEditor.Timeline"));
 			}
 
 			if(isVuforiaEnabled(unityBundle, project))
 			{
-				layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "Vuforia.UnityExtensions.Editor"));
+				layer.addCustomOderEntry(DotNetLibraryOrderEntryType.getInstance(), new DotNetLibraryOrderEntryModel("Vuforia.UnityExtensions.Editor"));
 			}
 		}, "unity3d-csharp-child", CSharpFileType.INSTANCE, virtualFilesByModule, context);
 	}
@@ -443,7 +445,7 @@ public class Unity3dProjectImporter
 	private static Module createAndSetupModule(@Nonnull String moduleName,
 											   @Nonnull ModifiableModuleModel modifiableModuleModels,
 											   @Nonnull Collection<VirtualFile> moduleDirs,
-											   @Nullable Consumer<ModuleRootLayerImpl> setupConsumer,
+											   @Nullable Consumer<ModifiableModuleRootLayer> setupConsumer,
 											   @Nonnull String moduleExtensionId,
 											   @Nonnull FileType fileType,
 											   @Nonnull MultiMap<Module, VirtualFile> virtualFilesByModule,
@@ -497,7 +499,7 @@ public class Unity3dProjectImporter
 	private static void fillModuleDependencies(@Nonnull Module module,
 											   @Nonnull ModifiableRootModel modifiableRootModel,
 											   @Nonnull Collection<VirtualFile> moduleSources,
-											   @Nullable Consumer<ModuleRootLayerImpl> setupConsumer,
+											   @Nullable Consumer<ModifiableModuleRootLayer> setupConsumer,
 											   @Nonnull String moduleExtensionId,
 											   @Nonnull FileType fileType,
 											   @Nonnull MultiMap<Module, VirtualFile> virtualFilesByModule,
@@ -515,7 +517,7 @@ public class Unity3dProjectImporter
 		int i = 0;
 		for(VirtualFile dir : moduleSources)
 		{
-			VfsUtil.visitChildrenRecursively(dir, new VirtualFileVisitor()
+			VirtualFileUtil.visitChildrenRecursively(dir, new VirtualFileVisitor()
 			{
 				@Override
 				public boolean visitFile(@Nonnull VirtualFile file)
@@ -557,7 +559,7 @@ public class Unity3dProjectImporter
 		modifiableRootModel.removeAllLayers(true);
 
 		// it will return Default layer
-		final ModuleRootLayerImpl layer = (ModuleRootLayerImpl) modifiableRootModel.getCurrentLayer();
+		final ModifiableModuleRootLayer layer = (ModifiableModuleRootLayer) modifiableRootModel.getCurrentLayer();
 
 		for(VirtualFile virtualFile : toAdd)
 		{
@@ -566,7 +568,7 @@ public class Unity3dProjectImporter
 
 		if(setupConsumer != null)
 		{
-			Application.get().runReadAction(() -> setupConsumer.consume(layer));
+			Application.get().runReadAction(() -> setupConsumer.accept(layer));
 		}
 
 		layer.getExtensionWithoutCheck(Unity3dChildMutableModuleExtension.class).setEnabled(true);
@@ -594,9 +596,11 @@ public class Unity3dProjectImporter
 			((CSharpSimpleMutableModuleExtension) langExtension).setLanguageVersion(languageVersion);
 		}
 
-		layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "mscorlib"));
-		layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEditor"));
-		layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEngine"));
+		DotNetLibraryOrderEntryType type = DotNetLibraryOrderEntryType.getInstance();
+
+		layer.addCustomOderEntry(type, new DotNetLibraryOrderEntryModel("mscorlib"));
+		layer.addCustomOderEntry(type, new DotNetLibraryOrderEntryModel("UnityEditor"));
+		layer.addCustomOderEntry(type, new DotNetLibraryOrderEntryModel("UnityEngine"));
 
 		for(Map.Entry<String, String> entry : context.getManifest().dependencies.entrySet())
 		{
@@ -610,8 +614,8 @@ public class Unity3dProjectImporter
 				{
 					URL url = new URL(value);
 					File targetDirectory = new File(url.getFile());
-					String ideaUrl = VfsUtilCore.pathToUrl(targetDirectory.getPath());
-					layer.addOrderEntry(new Unity3dPackageOrderEntry(layer, name, null, ideaUrl));
+					String ideaUrl = VirtualFileUtil.pathToUrl(targetDirectory.getPath());
+					layer.addCustomOderEntry(Unity3dPackageOrderEntryType.getInstance(), new Unity3dPackageOrderEntryModel(name, null, ideaUrl));
 				}
 				catch(Exception e)
 				{
@@ -631,8 +635,8 @@ public class Unity3dProjectImporter
 						if(firstDir.isPresent())
 						{
 							Path libraryHome = firstDir.get();
-							String ideaUrl = VfsUtilCore.pathToUrl(libraryHome.toString());
-							layer.addOrderEntry(new Unity3dPackageOrderEntry(layer, name, null, ideaUrl));
+							String ideaUrl = VirtualFileUtil.pathToUrl(libraryHome.toString());
+							layer.addCustomOderEntry(Unity3dPackageOrderEntryType.getInstance(), new Unity3dPackageOrderEntryModel(name, null, ideaUrl));
 						}
 					}
 					catch(IOException e)
@@ -643,7 +647,7 @@ public class Unity3dProjectImporter
 			}
 			else
 			{
-				layer.addOrderEntry(new Unity3dPackageOrderEntry(layer, name, value, null));
+				layer.addCustomOderEntry(Unity3dPackageOrderEntryType.getInstance(), new Unity3dPackageOrderEntryModel(name, value, null));
 			}
 		}
 
@@ -660,40 +664,40 @@ public class Unity3dProjectImporter
 
 		if(isVersionHigherOrEqual(unityBundle, "4.6.0"))
 		{
-			layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEngine.UI"));
+			layer.addCustomOderEntry(type, new DotNetLibraryOrderEntryModel("UnityEngine.UI"));
 		}
 
 		if(isVersionHigherOrEqual(unityBundle, "5.1.0"))
 		{
-			layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEngine.Networking"));
-			layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEngine.Analytics"));
+			layer.addCustomOderEntry(type, new DotNetLibraryOrderEntryModel("UnityEngine.Networking"));
+			layer.addCustomOderEntry(type, new DotNetLibraryOrderEntryModel("UnityEngine.Analytics"));
 		}
 		if(isVersionHigherOrEqual(unityBundle, "5.2.0"))
 		{
-			layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEngine.Advertisements"));
+			layer.addCustomOderEntry(type, new DotNetLibraryOrderEntryModel("UnityEngine.Advertisements"));
 		}
 
 		if(isVersionHigherOrEqual(unityBundle, "5.3.0"))
 		{
-			layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEngine.Purchasing"));
+			layer.addCustomOderEntry(type, new DotNetLibraryOrderEntryModel("UnityEngine.Purchasing"));
 		}
 
 		if(isVersionHigherOrEqual(unityBundle, "2017.1.0"))
 		{
-			layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "UnityEngine.Timeline"));
+			layer.addCustomOderEntry(type, new DotNetLibraryOrderEntryModel("UnityEngine.Timeline"));
 		}
 
 		if(isVuforiaEnabled(unityBundle, project))
 		{
-			layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "Vuforia.UnityExtensions"));
+			layer.addCustomOderEntry(type, new DotNetLibraryOrderEntryModel("Vuforia.UnityExtensions"));
 		}
 
-		layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "System"));
-		layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "System.Core"));
-		layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "System.Runtime.Serialization"));
-		layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "System.Xml"));
-		layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "System.Xml.Linq"));
-		layer.addOrderEntry(new DotNetLibraryOrderEntryImpl(layer, "System.Net.Http"));
+		layer.addCustomOderEntry(type, new DotNetLibraryOrderEntryModel("System"));
+		layer.addCustomOderEntry(type, new DotNetLibraryOrderEntryModel("System.Core"));
+		layer.addCustomOderEntry(type, new DotNetLibraryOrderEntryModel("System.Runtime.Serialization"));
+		layer.addCustomOderEntry(type, new DotNetLibraryOrderEntryModel("System.Xml"));
+		layer.addCustomOderEntry(type, new DotNetLibraryOrderEntryModel("System.Xml.Linq"));
+		layer.addCustomOderEntry(type, new DotNetLibraryOrderEntryModel("System.Net.Http"));
 
 		for(VirtualFile virtualFile : libraryFiles)
 		{
@@ -749,7 +753,7 @@ public class Unity3dProjectImporter
 		return new Version(0, 0, 0);
 	}
 
-	public static void addAsLibrary(VirtualFile virtualFile, ModuleRootLayerImpl layer)
+	public static void addAsLibrary(VirtualFile virtualFile, ModifiableModuleRootLayer layer)
 	{
 		if(virtualFile.getFileType() == DotNetModuleFileType.INSTANCE)
 		{
@@ -798,7 +802,7 @@ public class Unity3dProjectImporter
 			rootModule = rootModuleExtension.getModule();
 			AccessRule.read(() ->
 			{
-				ContentFolder[] contentFolders = ModuleRootManager.getInstance(rootModule).getContentFolders(ContentFolderScopes.excluded());
+				ContentFolder[] contentFolders = ModuleRootManager.getInstance(rootModule).getContentFolders(ContentFolderTypeProvider.onlyExcluded());
 				for(ContentFolder contentFolder : contentFolders)
 				{
 					excludedUrls.add(contentFolder.getUrl());
@@ -818,7 +822,7 @@ public class Unity3dProjectImporter
 		modifiableModel.removeAllLayers(true);
 
 		// return Default layer
-		ModuleRootLayerImpl layer = (ModuleRootLayerImpl) modifiableModel.getCurrentLayer();
+		ModifiableModuleRootLayer layer = (ModifiableModuleRootLayer) modifiableModel.getCurrentLayer();
 
 		ContentEntry contentEntry = layer.addContentEntry(projectUrl);
 

@@ -1,7 +1,7 @@
 package consulo.unity3d.run.debugger;
 
-import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.project.Project;
+import consulo.application.progress.ProgressIndicator;
+import consulo.project.Project;
 
 import javax.annotation.Nonnull;
 import java.util.function.Consumer;

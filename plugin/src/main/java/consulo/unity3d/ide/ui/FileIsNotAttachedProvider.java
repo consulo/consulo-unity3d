@@ -16,57 +16,54 @@
 
 package consulo.unity3d.ide.ui;
 
-import com.intellij.ProjectTopics;
-import com.intellij.openapi.fileEditor.FileEditor;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtilCore;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ModuleRootEvent;
-import com.intellij.openapi.roots.ModuleRootListener;
-import com.intellij.openapi.roots.ProjectFileIndex;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.ui.EditorNotificationPanel;
-import com.intellij.ui.EditorNotifications;
 import consulo.annotation.access.RequiredReadAction;
+import consulo.annotation.component.ExtensionImpl;
 import consulo.csharp.lang.CSharpFileType;
-import consulo.editor.notifications.EditorNotificationProvider;
-import consulo.module.extension.ModuleExtension;
-import consulo.msil.representation.fileSystem.MsilFileRepresentationVirtualFile;
+import consulo.fileEditor.EditorNotificationBuilder;
+import consulo.fileEditor.EditorNotificationProvider;
+import consulo.fileEditor.FileEditor;
+import consulo.language.util.ModuleUtilCore;
+import consulo.localize.LocalizeValue;
+import consulo.module.Module;
+import consulo.module.content.ProjectFileIndex;
+import consulo.msil.impl.representation.fileSystem.MsilFileRepresentationVirtualFile;
+import consulo.project.Project;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import consulo.unity3d.module.Unity3dRootModuleExtension;
 import consulo.unity3d.projectImport.Unity3dProjectImporter;
+import consulo.virtualFileSystem.VirtualFile;
 import jakarta.inject.Inject;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.function.Supplier;
 
 /**
  * @author VISTALL
  * @since 2018-11-29
  */
-public class FileIsNotAttachedProvider implements EditorNotificationProvider<EditorNotificationPanel>
+@ExtensionImpl
+public class FileIsNotAttachedProvider implements EditorNotificationProvider
 {
 	private final Project myProject;
 
 	@Inject
-	public FileIsNotAttachedProvider(Project project, final EditorNotifications notifications)
+	public FileIsNotAttachedProvider(Project project)
 	{
 		myProject = project;
-		myProject.getMessageBus().connect().subscribe(ProjectTopics.PROJECT_ROOTS, new ModuleRootListener()
-		{
-			@Override
-			public void rootsChanged(ModuleRootEvent event)
-			{
-				notifications.updateAllNotifications();
-			}
-		});
-		myProject.getMessageBus().connect().subscribe(ModuleExtension.CHANGE_TOPIC, (oldExtension, newExtension) -> notifications.updateAllNotifications());
+	}
+
+	@Nonnull
+	@Override
+	public String getId()
+	{
+		return "unity-file-not-attached";
 	}
 
 	@RequiredReadAction
 	@Nullable
 	@Override
-	public EditorNotificationPanel createNotificationPanel(@Nonnull VirtualFile virtualFile, @Nonnull FileEditor fileEditor)
+	public EditorNotificationBuilder buildNotification(@Nonnull VirtualFile virtualFile, @Nonnull FileEditor fileEditor, @Nonnull Supplier<EditorNotificationBuilder> supplier)
 	{
 		if(virtualFile.getFileType() != CSharpFileType.INSTANCE)
 		{
@@ -88,9 +85,9 @@ public class FileIsNotAttachedProvider implements EditorNotificationProvider<Edi
 
 		if(module == null || module.equals(rootModuleExtension.getModule()))
 		{
-			EditorNotificationPanel panel = new EditorNotificationPanel();
-			panel.text("File is not attached to project. Some features are unavailable (code analysis, debugging, etc)");
-			panel.createActionLabel("Re-import Unity Project", () ->
+			EditorNotificationBuilder panel = supplier.get();
+			panel.withText(LocalizeValue.localizeTODO("File is not attached to project. Some features are unavailable (code analysis, debugging, etc)"));
+			panel.withAction(LocalizeValue.localizeTODO("Re-import Unity Project"), () ->
 			{
 				Unity3dProjectImporter.syncProjectStep(myProject, rootModuleExtension.getSdk(), null, true);
 			});

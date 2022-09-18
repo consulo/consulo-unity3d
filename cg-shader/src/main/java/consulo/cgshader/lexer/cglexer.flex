@@ -1,9 +1,8 @@
 package consulo.cgshader.lexer;
 
-import com.intellij.lexer.LexerBase;
-import com.intellij.psi.tree.IElementType;
-import com.intellij.util.text.CharSequenceSubSequence;
-
+import consulo.language.ast.IElementType;
+import consulo.language.ast.TokenType;
+import consulo.language.lexer.LexerBase;
 %%
 
 %public
@@ -48,7 +47,7 @@ ESCAPE_SEQUENCE=\\[^\r\n]
 
 %%
 
-<YYINITIAL> {WHITE_SPACE_CHAR}+ { return com.intellij.psi.TokenType.WHITE_SPACE; }
+<YYINITIAL> {WHITE_SPACE_CHAR}+ { return WHITE_SPACE; }
 
 <YYINITIAL> {C_STYLE_COMMENT} { return CGTokens.LINE_COMMENT; }
 <YYINITIAL> {END_OF_LINE_COMMENT} { return CGTokens.BLOCK_COMMENT; }

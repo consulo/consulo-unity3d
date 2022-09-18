@@ -17,15 +17,15 @@
 package consulo.unity3d.editor;
 
 import com.google.gson.Gson;
-import com.intellij.execution.process.ProcessInfo;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.CharsetToolkit;
-import consulo.execution.process.OSProcessUtil;
 import consulo.logging.Logger;
+import consulo.process.ProcessInfo;
+import consulo.process.local.OSProcessUtil;
+import consulo.project.Project;
+import consulo.ui.ex.awt.Messages;
 import consulo.unity3d.run.debugger.UnityDebugProcessInfo;
 import consulo.unity3d.run.debugger.UnityProcessDialog;
+import consulo.util.io.CharsetToolkit;
+import consulo.util.lang.StringUtil;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
@@ -43,7 +43,7 @@ import java.io.IOException;
  */
 public class UnityEditorCommunication
 {
-	private static final Logger LOGGER = Logger.getInstance(UnityEditorCommunication.class);
+	private static final Logger LOG = Logger.getInstance(UnityEditorCommunication.class);
 
 	@Nullable
 	public static UnityDebugProcessInfo findEditorProcess()
@@ -99,7 +99,7 @@ public class UnityEditorCommunication
 		}
 		catch(IOException e)
 		{
-			LOGGER.warn(e);
+			LOG.warn(e);
 
 			if(!silent)
 			{

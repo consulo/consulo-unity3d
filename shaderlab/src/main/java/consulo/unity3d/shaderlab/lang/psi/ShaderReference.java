@@ -16,27 +16,23 @@
 
 package consulo.unity3d.shaderlab.lang.psi;
 
-import com.intellij.codeInsight.lookup.LookupElement;
-import com.intellij.codeInsight.lookup.LookupElementBuilder;
-import com.intellij.icons.AllIcons;
-import com.intellij.lang.ASTNode;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiQualifiedReferenceElement;
-import com.intellij.psi.PsiReference;
-import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.tree.TokenSet;
-import com.intellij.util.Consumer;
-import com.intellij.util.IncorrectOperationException;
-import com.intellij.util.SmartList;
-import com.intellij.util.containers.ContainerUtil;
 import consulo.annotation.access.RequiredReadAction;
 import consulo.annotation.access.RequiredWriteAction;
-import consulo.csharp.lang.psi.impl.msil.CSharpTransform;
+import consulo.application.AllIcons;
+import consulo.csharp.lang.impl.psi.msil.CSharpTransform;
+import consulo.document.util.TextRange;
 import consulo.dotnet.psi.DotNetTypeDeclaration;
-import consulo.dotnet.resolve.DotNetPsiSearcher;
+import consulo.dotnet.psi.resolve.DotNetPsiSearcher;
+import consulo.language.ast.ASTNode;
+import consulo.language.ast.TokenSet;
+import consulo.language.editor.completion.lookup.LookupElement;
+import consulo.language.editor.completion.lookup.LookupElementBuilder;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+import consulo.language.psi.PsiQualifiedReferenceElement;
+import consulo.language.psi.PsiReference;
+import consulo.language.psi.scope.GlobalSearchScope;
+import consulo.language.util.IncorrectOperationException;
 import consulo.ui.image.Image;
 import consulo.unity3d.shaderlab.ide.refactoring.ShaderRefactorUtil;
 import consulo.unity3d.shaderlab.lang.ShaderMaterialAttribute;
@@ -44,12 +40,16 @@ import consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabRole;
 import consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabRoles;
 import consulo.unity3d.shaderlab.lang.psi.light.LightShaderDef;
 import consulo.unity3d.shaderlab.lang.psi.stub.index.ShaderDefIndex;
+import consulo.util.collection.ContainerUtil;
+import consulo.util.collection.SmartList;
+import consulo.util.lang.StringUtil;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 /**
  * @author VISTALL
@@ -263,7 +263,7 @@ public class ShaderReference extends ShaderLabElement implements PsiQualifiedRef
 			{
 				builder = builder.withTypeText(type.getTargetText(), true);
 			}
-			consumer.consume(builder);
+			consumer.accept(builder);
 		}
 	}
 

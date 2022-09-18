@@ -16,13 +16,13 @@
 
 package consulo.unity3d.shaderlab.lang.psi.stub;
 
-import javax.annotation.Nullable;
-
-import com.intellij.psi.stubs.IStubElementType;
-import com.intellij.psi.stubs.NamedStubBase;
-import com.intellij.psi.stubs.StubElement;
-import com.intellij.util.io.StringRef;
+import consulo.index.io.StringRef;
+import consulo.language.psi.stub.IStubElementType;
+import consulo.language.psi.stub.NamedStubBase;
+import consulo.language.psi.stub.StubElement;
 import consulo.unity3d.shaderlab.lang.psi.ShaderDef;
+
+import javax.annotation.Nullable;
 
 /**
  * @author VISTALL

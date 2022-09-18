@@ -16,15 +16,15 @@
 
 package consulo.unity3d.unityui;
 
-import com.intellij.ide.highlighter.XmlFileType;
-import com.intellij.openapi.fileTypes.FileTypeConsumer;
-import com.intellij.openapi.fileTypes.FileTypeFactory;
+import consulo.virtualFileSystem.fileType.FileTypeConsumer;
+import consulo.virtualFileSystem.fileType.FileTypeFactory;
+import consulo.xml.ide.highlighter.XmlFileType;
 
 import javax.annotation.Nonnull;
 
 /**
  * @author VISTALL
- * @since 22/03/2021
+ * @since 22/03/2021g
  */
 public class Unity3dXmlFileTypeFactory extends FileTypeFactory
 {

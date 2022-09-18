@@ -16,9 +16,10 @@
 
 package consulo.unity3d.shaderlab.lang.psi;
 
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiNameIdentifierOwner;
+
 import javax.annotation.Nullable;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiNameIdentifierOwner;
 
 /**
  * @author VISTALL

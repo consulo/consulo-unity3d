@@ -16,10 +16,10 @@
 
 package consulo.unity3d.scene.index;
 
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.containers.MultiMap;
+import consulo.project.Project;
 import consulo.unity3d.scene.Unity3dMetaManager;
+import consulo.util.collection.MultiMap;
+import consulo.virtualFileSystem.VirtualFile;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

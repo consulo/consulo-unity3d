@@ -16,18 +16,17 @@
 
 package consulo.unity3d.run.debugger;
 
-import com.intellij.execution.process.ProcessInfo;
-import com.intellij.ide.util.ChooseElementsDialog;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.concurrency.AppExecutorUtil;
-import com.intellij.util.ui.UIUtil;
-import consulo.execution.process.OSProcessUtil;
+import consulo.application.util.concurrent.AppExecutorUtil;
 import consulo.logging.Logger;
+import consulo.process.ProcessInfo;
+import consulo.process.local.OSProcessUtil;
+import consulo.project.Project;
+import consulo.ui.ex.awt.ChooseElementsDialog;
+import consulo.ui.ex.awt.UIUtil;
 import consulo.ui.image.Image;
 import consulo.unity3d.Unity3dIcons;
-import consulo.unity3d.editor.UnityEditorCommunication;
 import consulo.util.collection.ContainerUtil;
+import consulo.util.lang.StringUtil;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

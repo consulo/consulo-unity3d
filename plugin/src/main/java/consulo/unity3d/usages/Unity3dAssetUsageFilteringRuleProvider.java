@@ -1,20 +1,21 @@
 package consulo.unity3d.usages;
 
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiFile;
-import com.intellij.usages.Usage;
-import com.intellij.usages.UsageTarget;
-import com.intellij.usages.UsageView;
-import com.intellij.usages.impl.RuleAction;
-import com.intellij.usages.rules.PsiElementUsage;
-import com.intellij.usages.rules.UsageFilteringRule;
-import com.intellij.usages.rules.UsageFilteringRuleProvider;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.psi.PsiFile;
+import consulo.project.Project;
 import consulo.ui.annotation.RequiredUIAccess;
+import consulo.ui.ex.action.AnAction;
+import consulo.ui.ex.action.AnActionEvent;
 import consulo.unity3d.Unity3dIcons;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import consulo.unity3d.scene.Unity3dYMLAssetFileType;
+import consulo.usage.RuleAction;
+import consulo.usage.Usage;
+import consulo.usage.UsageTarget;
+import consulo.usage.UsageView;
+import consulo.usage.rule.PsiElementUsage;
+import consulo.usage.rule.UsageFilteringRule;
+import consulo.usage.rule.UsageFilteringRuleProvider;
 
 import javax.annotation.Nonnull;
 
@@ -22,6 +23,7 @@ import javax.annotation.Nonnull;
  * @author VISTALL
  * @since 2018-03-10
  */
+@ExtensionImpl
 public class Unity3dAssetUsageFilteringRuleProvider implements UsageFilteringRuleProvider
 {
 	private static class ShowAssetUsageAction extends RuleAction
@@ -36,7 +38,7 @@ public class Unity3dAssetUsageFilteringRuleProvider implements UsageFilteringRul
 		public void update(AnActionEvent e)
 		{
 			super.update(e);
-			Project project = e.getProject();
+			Project project = e.getData(Project.KEY);
 			e.getPresentation().setVisible(project != null && Unity3dModuleExtensionUtil.getRootModuleExtension(project) != null);
 		}
 

@@ -16,13 +16,14 @@
 
 package consulo.unity3d.shaderlab.lang.psi;
 
+import consulo.language.ast.ASTNode;
+import consulo.language.psi.PsiElement;
+import consulo.language.util.IncorrectOperationException;
+import consulo.unity3d.shaderlab.ide.refactoring.ShaderRefactorUtil;
 import org.jetbrains.annotations.NonNls;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
-import com.intellij.util.IncorrectOperationException;
-import consulo.unity3d.shaderlab.ide.refactoring.ShaderRefactorUtil;
 
 /**
  * @author VISTALL

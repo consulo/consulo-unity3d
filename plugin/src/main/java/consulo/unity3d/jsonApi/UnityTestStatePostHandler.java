@@ -16,28 +16,23 @@
 
 package consulo.unity3d.jsonApi;
 
-import java.util.UUID;
-
-import javax.annotation.Nonnull;
-
-import com.intellij.execution.process.ProcessHandler;
-import com.intellij.execution.testframework.sm.runner.GeneralTestEventsProcessor;
-import com.intellij.execution.testframework.sm.runner.events.TestFailedEvent;
-import com.intellij.execution.testframework.sm.runner.events.TestFinishedEvent;
-import com.intellij.execution.testframework.sm.runner.events.TestIgnoredEvent;
-import com.intellij.execution.testframework.sm.runner.events.TestOutputEvent;
-import com.intellij.execution.testframework.sm.runner.events.TestStartedEvent;
-import com.intellij.execution.testframework.sm.runner.events.TestSuiteFinishedEvent;
-import com.intellij.execution.testframework.sm.runner.events.TestSuiteStartedEvent;
-import com.intellij.openapi.util.text.StringUtil;
-import consulo.builtInServer.json.JsonPostRequestHandler;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.builtinWebServer.json.JsonPostRequestHandler;
+import consulo.execution.test.sm.runner.GeneralTestEventsProcessor;
+import consulo.execution.test.sm.runner.event.*;
+import consulo.process.ProcessHandler;
 import consulo.unity3d.run.test.Unity3dTestSession;
 import consulo.unity3d.run.test.Unity3dTestSessionManager;
+import consulo.util.lang.StringUtil;
+
+import javax.annotation.Nonnull;
+import java.util.UUID;
 
 /**
  * @author VISTALL
  * @since 19.01.2016
  */
+@ExtensionImpl
 public class UnityTestStatePostHandler extends JsonPostRequestHandler<UnityTestStatePostRequest>
 {
 	public UnityTestStatePostHandler()

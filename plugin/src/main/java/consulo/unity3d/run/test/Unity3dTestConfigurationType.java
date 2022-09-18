@@ -16,12 +16,13 @@
 
 package consulo.unity3d.run.test;
 
-import com.intellij.execution.configurations.ConfigurationFactory;
-import com.intellij.execution.configurations.ConfigurationTypeBase;
-import com.intellij.execution.configurations.RunConfiguration;
-import com.intellij.icons.AllIcons;
-import com.intellij.openapi.project.Project;
 import consulo.annotation.access.RequiredReadAction;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.application.AllIcons;
+import consulo.execution.configuration.ConfigurationFactory;
+import consulo.execution.configuration.ConfigurationTypeBase;
+import consulo.execution.configuration.RunConfiguration;
+import consulo.project.Project;
 import consulo.ui.image.ImageEffects;
 import consulo.unity3d.Unity3dIcons;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
@@ -32,12 +33,13 @@ import javax.annotation.Nonnull;
  * @author VISTALL
  * @since 18.01.2016
  */
+@ExtensionImpl
 public class Unity3dTestConfigurationType extends ConfigurationTypeBase
 {
 	@Nonnull
 	public static Unity3dTestConfigurationType getInstance()
 	{
-		return CONFIGURATION_TYPE_EP.findExtensionOrFail(Unity3dTestConfigurationType.class);
+		return EP_NAME.findExtensionOrFail(Unity3dTestConfigurationType.class);
 	}
 
 	public Unity3dTestConfigurationType()

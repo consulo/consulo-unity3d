@@ -16,11 +16,11 @@
 
 package consulo.unity3d.shaderlab.lang.psi;
 
-import com.intellij.lang.ASTNode;
-import com.intellij.psi.LiteralTextEscaper;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiLanguageInjectionHost;
 import consulo.annotation.access.RequiredReadAction;
+import consulo.language.ast.ASTNode;
+import consulo.language.psi.LiteralTextEscaper;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiLanguageInjectionHost;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

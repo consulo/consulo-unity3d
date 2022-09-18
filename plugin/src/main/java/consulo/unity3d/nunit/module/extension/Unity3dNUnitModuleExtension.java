@@ -16,16 +16,17 @@
 
 package consulo.unity3d.nunit.module.extension;
 
-import javax.annotation.Nonnull;
-import consulo.module.extension.impl.ModuleExtensionImpl;
+import consulo.module.content.layer.ModuleRootLayer;
+import consulo.module.content.layer.extension.ModuleExtensionBase;
 import consulo.nunit.module.extension.NUnitSimpleModuleExtension;
-import consulo.roots.ModuleRootLayer;
+
+import javax.annotation.Nonnull;
 
 /**
  * @author VISTALL
  * @since 17.01.2016
  */
-public class Unity3dNUnitModuleExtension extends ModuleExtensionImpl<Unity3dNUnitModuleExtension> implements NUnitSimpleModuleExtension<Unity3dNUnitModuleExtension>
+public class Unity3dNUnitModuleExtension extends ModuleExtensionBase<Unity3dNUnitModuleExtension> implements NUnitSimpleModuleExtension<Unity3dNUnitModuleExtension>
 {
 	public Unity3dNUnitModuleExtension(@Nonnull String id, @Nonnull ModuleRootLayer moduleRootLayer)
 	{

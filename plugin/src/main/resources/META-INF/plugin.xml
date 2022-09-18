@@ -46,21 +46,6 @@
 		</group>
 	</actions>
 
-	<extensions defaultExtensionNs="consulo.csharp">
-		<memberAddByCompletionContributor implementation="consulo.unity3d.csharp.completion.UnitySpecificMethodCompletion"/>
-	</extensions>
-
-	<extensionPoints>
-		<extensionPoint name="projectSourceFileTypeFactory" interface="consulo.unity3d.projectImport.change.Unity3dProjectSourceFileTypeFactory"/>
-	</extensionPoints>
-
-	<extensions defaultExtensionNs="consulo.unity3d">
-		<projectSourceFileTypeFactory implementation="consulo.unity3d.projectImport.change.DefaultUnity3dProjectSourceFileTypeFactory"/>
-	</extensions>
-
-	<extensions defaultExtensionNs="consulo.javascript">
-		<jomFileDescriptor implementation="consulo.unity3d.asmdef.AsmDefFileDescriptor"/>
-	</extensions>
 
 	<extensions defaultExtensionNs="com.intellij">
 		<codeInsight.lineMarkerProvider language="C#"
@@ -101,61 +86,8 @@
 				displayName="GameObject.tag equality warning"
 				implementationClass="consulo.unity3d.csharp.codeInsight.inspection.UnityCompareTagInspection"/>
 
-		<usageFilteringRuleProvider implementation="consulo.unity3d.usages.Unity3dAssetUsageFilteringRuleProvider"/>
-		<applicationService serviceImplementation="consulo.unity3d.usages.Unity3dAssetUsageSettings"/>
 
-		<colorProvider implementation="consulo.unity3d.csharp.codeInsight.UnityCSharpStaticElementColorProvider"/>
-		<colorProvider implementation="consulo.unity3d.csharp.codeInsight.UnityCSharpStaticElementColor32Provider"/>
-		<iconDescriptorUpdater implementation="consulo.unity3d.UnityDirectoryIconDescriptorUpdater"/>
-		<sdkType implementation="consulo.unity3d.bundle.Unity3dBundleType"/>
 
-		<applicationService serviceImplementation="consulo.unity3d.run.debugger.UnityExternalDeviceManager"/>
-
-		<moduleExtensionProvider
-				key="unity3d"
-				name="Unity3D"
-				icon="consulo.unity3d.Unity3dIconGroup@unity3d"
-				immutableClass="consulo.unity3d.module.Unity3dRootModuleExtension"
-				mutableClass="consulo.unity3d.module.Unity3dRootMutableModuleExtension"/>
-
-		<moduleExtensionProvider
-				key="unity3d-child"
-				name="Unity3D (child)"
-				icon="consulo.unity3d.Unity3dIconGroup@unity3d"
-				immutableClass="consulo.unity3d.module.Unity3dChildModuleExtension"
-				mutableClass="consulo.unity3d.module.Unity3dChildMutableModuleExtension"/>
-
-		<moduleExtensionProvider
-				key="unity3d-nunit-child"
-				parentKey="unity3d-child"
-				name="NUnit"
-				icon="consulo.nunit.NUnitIconGroup@nunit"
-				immutableClass="consulo.unity3d.nunit.module.extension.Unity3dNUnitModuleExtension"
-				mutableClass="consulo.unity3d.nunit.module.extension.Unity3dNUnitMutableModuleExtension"/>
-
-		<moduleExtensionProvider
-				key="unity3d-csharp-child"
-				parentKey="unity3d-child"
-				name="C#"
-				icon="consulo.unity3d.Unity3dIconGroup@unity3d"
-				immutableClass="consulo.unity3d.csharp.module.extension.Unity3dCSharpModuleExtension"
-				mutableClass="consulo.unity3d.csharp.module.extension.Unity3dCSharpMutableModuleExtension"/>
-
-		<configurationType implementation="consulo.unity3d.run.test.Unity3dTestConfigurationType"/>
-		<configurationType implementation="consulo.unity3d.run.Unity3dAttachApplicationType"/>
-		<stepsBeforeRunProvider implementation="consulo.unity3d.run.before.UnityRefreshBeforeRunTaskProvider"/>
-		<programRunner implementation="consulo.unity3d.run.test.Unity3dTestDebuggerRunner"/>
-		<programRunner implementation="consulo.unity3d.run.Unity3dAttachRunner"/>
-
-		<applicationService serviceImplementation="consulo.unity3d.run.test.Unity3dTestSessionManager"/>
-
-		<projectService serviceImplementation="consulo.unity3d.Unity3dProjectService"/>
-
-		<moduleImportProvider implementation="consulo.unity3d.projectImport.Unity3dModuleImportProvider"/>
-		<editorNotificationProvider implementation="consulo.unity3d.ide.ui.SetupUnitySDKProvider"/>
-		<editorNotificationProvider implementation="consulo.unity3d.ide.ui.FileIsNotAttachedProvider"/>
-
-		<fileTypeFactory implementation="consulo.unity3d.Unity3dFileTypeFactory"/>
 		<treeStructureProvider implementation="consulo.unity3d.ide.projectView.Unity3dMetaFileProjectViewProvider"/>
 		<projectViewOptionProvider implementation="consulo.unity3d.ide.projectView.Unity3dShowMetaFileProjectViewPaneOptionProvider"/>
 		<projectViewNodeDecorator implementation="consulo.unity3d.ide.projectView.Unity3dProjectViewNodeDecorator"/>
@@ -166,17 +98,8 @@
 		<projectService serviceImplementation="consulo.unity3d.scene.Unity3dMetaManager"/>
 		<psi.referenceContributor language="yaml" implementation="consulo.unity3d.scene.reference.Unity3dSceneFieldReferenceRegister"/>
 
-		<referencesSearch implementation="consulo.unity3d.scene.reference.Unity3dSceneReferenceSearcher"/>
 		<lang.documentationProvider language="C#" implementationClass="consulo.unity3d.documentation.UnityExternalDocumentationProvider"/>
 
-		<httpRequestHandler implementation="consulo.unity3d.jsonApi.UnityOpenFilePostHandler"/>
-		<httpRequestHandler implementation="consulo.unity3d.jsonApi.UnityLogPostHandler"/>
-		<httpRequestHandler implementation="consulo.unity3d.jsonApi.UnityPlayStateHandler"/>
-		<httpRequestHandler implementation="consulo.unity3d.jsonApi.UnityTestStatePostHandler"/>
-		<httpRequestHandler implementation="consulo.unity3d.jsonApi.UnityRefreshResponseHandler"/>
-		<httpRequestHandler implementation="consulo.unity3d.jsonApi.UnitySetDefinesHandler"/>
-
-		<editorNotificationProvider implementation="consulo.unity3d.scene.prefab.Unity3dAssetEditorNotificationProvider"/>
 
 		<psi.referenceContributor language="C#" implementation="consulo.unity3d.csharp.psi.reference.Unity3dEventMethodReferenceProvider"/>
 
@@ -187,14 +110,10 @@
 		<orderEntryType implementation="consulo.unity3d.packages.orderEntry.Unity3dPackageOrderEntryType"/>
 		<orderEntryTypeEditor key="unity-package" implementationClass="consulo.unity3d.packages.orderEntry.Unity3dPackageOrderEntryTypeEditor"/>
 
-		<backgroundPostStartupActivity implementation="consulo.unity3d.UnityPluginValidator"/>
-
 		<projectService serviceImplementation="consulo.unity3d.projectImport.change.Unity3dProjectChangeListener" lazy="false"/>
 
 		<xdebugger.attachDebuggerProvider implementation="consulo.unity3d.run.debugger.attach.UnityAttachDebuggerProvider"/>
 
-		<eapDescriptor implementation="consulo.unity3d.projectImport.UnityAsmDefImportEapDescriptor"/>
 
-		<library.type implementation="consulo.unity3d.packages.library.UnityPackageLibraryType"/>
 	</extensions>
 </consulo-plugin>

@@ -16,25 +16,25 @@
 
 package consulo.unity3d.documentation;
 
-import com.intellij.lang.documentation.DocumentationProvider;
-import com.intellij.lang.documentation.ExternalDocumentationProvider;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.StandardFileSystems;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiManager;
-import com.intellij.psi.PsiNamedElement;
-import com.intellij.psi.util.PsiTreeUtil;
 import consulo.annotation.access.RequiredReadAction;
+import consulo.content.bundle.Sdk;
 import consulo.dotnet.psi.DotNetFieldDeclaration;
 import consulo.dotnet.psi.DotNetLikeMethodDeclaration;
 import consulo.dotnet.psi.DotNetPropertyDeclaration;
 import consulo.dotnet.psi.DotNetTypeDeclaration;
+import consulo.language.editor.documentation.DocumentationProvider;
+import consulo.language.editor.documentation.ExternalDocumentationProvider;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiManager;
+import consulo.language.psi.PsiNamedElement;
+import consulo.language.psi.util.PsiTreeUtil;
 import consulo.platform.Platform;
+import consulo.project.Project;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import consulo.unity3d.module.Unity3dRootModuleExtension;
+import consulo.util.io.FileUtil;
+import consulo.util.lang.StringUtil;
+import consulo.virtualFileSystem.StandardFileSystems;
 
 import javax.annotation.Nullable;
 import java.io.File;

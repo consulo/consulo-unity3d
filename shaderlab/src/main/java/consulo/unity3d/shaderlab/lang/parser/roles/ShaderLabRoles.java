@@ -1,21 +1,19 @@
 package consulo.unity3d.shaderlab.lang.parser.roles;
 
-import static consulo.unity3d.shaderlab.lang.parser.ShaderLabParser.doneError;
-import static consulo.unity3d.shaderlab.lang.parser.ShaderLabParser.expectWithError;
-import static consulo.unity3d.shaderlab.lang.parser.ShaderLabParser.parseBracketReference;
-import static consulo.unity3d.shaderlab.lang.parser.ShaderLabParser.parseElementsInBraces;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import com.intellij.lang.PsiBuilder;
-import com.intellij.lang.PsiBuilderUtil;
-import com.intellij.psi.tree.IElementType;
-import com.intellij.util.ThreeState;
+import consulo.language.ast.IElementType;
+import consulo.language.parser.PsiBuilder;
+import consulo.language.parser.PsiBuilderUtil;
 import consulo.unity3d.shaderlab.lang.ShaderLabPropertyType;
 import consulo.unity3d.shaderlab.lang.parser.ShaderLabParser;
 import consulo.unity3d.shaderlab.lang.parser.ShaderLabParserBuilder;
 import consulo.unity3d.shaderlab.lang.psi.ShaderLabElements;
 import consulo.unity3d.shaderlab.lang.psi.ShaderLabTokens;
+import consulo.util.lang.ThreeState;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import static consulo.unity3d.shaderlab.lang.parser.ShaderLabParser.*;
 
 /**
  * @author VISTALL

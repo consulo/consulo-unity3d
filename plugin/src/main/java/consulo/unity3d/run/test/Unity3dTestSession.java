@@ -16,8 +16,8 @@
 
 package consulo.unity3d.run.test;
 
-import com.intellij.execution.process.ProcessHandler;
-import com.intellij.execution.testframework.sm.runner.GeneralTestEventsProcessor;
+import consulo.execution.test.sm.runner.GeneralTestEventsProcessor;
+import consulo.process.ProcessHandler;
 
 /**
  * @author VISTALL

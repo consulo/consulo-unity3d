@@ -16,30 +16,30 @@
 
 package consulo.unity3d.csharp.completion;
 
-import com.intellij.codeInsight.completion.CompletionParameters;
-import com.intellij.codeInsight.completion.InsertHandler;
-import com.intellij.codeInsight.completion.InsertionContext;
-import com.intellij.codeInsight.lookup.LookupElement;
-import com.intellij.codeInsight.lookup.LookupElementBuilder;
-import com.intellij.icons.AllIcons;
-import com.intellij.openapi.editor.CaretModel;
-import com.intellij.openapi.module.ModuleUtilCore;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.codeStyle.CodeStyleManager;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.Consumer;
-import com.intellij.util.ProcessingContext;
 import consulo.annotation.access.RequiredReadAction;
-import consulo.csharp.ide.completion.CSharpMemberAddByCompletionContributor;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.application.AllIcons;
+import consulo.codeEditor.CaretModel;
+import consulo.csharp.impl.ide.completion.CSharpMemberAddByCompletionContributor;
+import consulo.csharp.lang.impl.psi.CSharpTypeRefPresentationUtil;
+import consulo.csharp.lang.impl.psi.source.CSharpBlockStatementImpl;
 import consulo.csharp.lang.psi.CSharpMethodDeclaration;
 import consulo.csharp.lang.psi.CSharpTypeDeclaration;
-import consulo.csharp.lang.psi.CSharpTypeRefPresentationUtil;
-import consulo.csharp.lang.psi.impl.source.CSharpBlockStatementImpl;
 import consulo.dotnet.psi.DotNetInheritUtil;
 import consulo.dotnet.psi.DotNetStatement;
 import consulo.dotnet.psi.DotNetVirtualImplementOwner;
-import consulo.dotnet.resolve.DotNetTypeRef;
-import consulo.ide.IconDescriptor;
+import consulo.dotnet.psi.resolve.DotNetTypeRef;
+import consulo.language.codeStyle.CodeStyleManager;
+import consulo.language.editor.completion.CompletionParameters;
+import consulo.language.editor.completion.lookup.InsertHandler;
+import consulo.language.editor.completion.lookup.InsertionContext;
+import consulo.language.editor.completion.lookup.LookupElement;
+import consulo.language.editor.completion.lookup.LookupElementBuilder;
+import consulo.language.icon.IconDescriptor;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.language.util.ModuleUtilCore;
+import consulo.language.util.ProcessingContext;
 import consulo.ui.annotation.RequiredUIAccess;
 import consulo.unity3d.Unity3dIcons;
 import consulo.unity3d.csharp.UnityFunctionManager;
@@ -47,11 +47,13 @@ import consulo.unity3d.module.Unity3dModuleExtension;
 
 import javax.annotation.Nonnull;
 import java.util.Map;
+import java.util.function.Consumer;
 
 /**
  * @author VISTALL
  * @since 19.12.14
  */
+@ExtensionImpl
 public class UnitySpecificMethodCompletion implements CSharpMemberAddByCompletionContributor
 {
 	@RequiredReadAction
@@ -81,10 +83,10 @@ public class UnitySpecificMethodCompletion implements CSharpMemberAddByCompletio
 				UnityFunctionManager.FunctionInfo nonParameterListCopy = functionInfo.createNonParameterListCopy();
 				if(nonParameterListCopy != null)
 				{
-					completionResultSet.consume(buildLookupItem(nonParameterListCopy, typeDeclaration));
+					completionResultSet.accept(buildLookupItem(nonParameterListCopy, typeDeclaration));
 				}
 
-				completionResultSet.consume(buildLookupItem(functionInfo, typeDeclaration));
+				completionResultSet.accept(buildLookupItem(functionInfo, typeDeclaration));
 			}
 		}
 	}

@@ -16,14 +16,14 @@
 
 package consulo.unity3d.projectImport.newImport.standardImporter;
 
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VfsUtil;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileVisitor;
 import consulo.csharp.lang.CSharpFileType;
+import consulo.project.Project;
 import consulo.unity3d.projectImport.Unity3dProjectImporter;
 import consulo.unity3d.projectImport.newImport.UnityProjectImporterWithAsmDef;
+import consulo.util.lang.StringUtil;
+import consulo.virtualFileSystem.VirtualFile;
+import consulo.virtualFileSystem.util.VirtualFileUtil;
+import consulo.virtualFileSystem.util.VirtualFileVisitor;
 
 import javax.annotation.Nonnull;
 import java.util.HashSet;
@@ -59,7 +59,7 @@ public class AssemblyCSharpEditor extends StandardModuleImporter
 		}
 		
 		Set<VirtualFile> directories = new HashSet<>();
-		VfsUtil.visitChildrenRecursively(assetsDir, new VirtualFileVisitor()
+		VirtualFileUtil.visitChildrenRecursively(assetsDir, new VirtualFileVisitor()
 		{
 			@Override
 			public boolean visitFile(@Nonnull VirtualFile file)

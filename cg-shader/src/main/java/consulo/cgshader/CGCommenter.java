@@ -16,13 +16,17 @@
 
 package consulo.cgshader;
 
-import javax.annotation.Nullable;
-import com.intellij.lang.Commenter;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.Commenter;
+import consulo.language.Language;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 /**
  * @author VISTALL
  * @since 11.10.2015
  */
+@ExtensionImpl
 public class CGCommenter implements Commenter
 {
 	@Nullable
@@ -58,5 +62,12 @@ public class CGCommenter implements Commenter
 	public String getCommentedBlockCommentSuffix()
 	{
 		return null;
+	}
+
+	@Nonnull
+	@Override
+	public Language getLanguage()
+	{
+		return CGLanguage.INSTANCE;
 	}
 }

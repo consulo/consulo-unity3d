@@ -16,15 +16,14 @@
 
 package consulo.unity3d.console;
 
-import com.intellij.openapi.application.Application;
-import com.intellij.openapi.project.Project;
-import com.intellij.util.concurrency.AppExecutorUtil;
-import com.intellij.util.containers.ConcurrentMultiMap;
-import com.intellij.util.containers.MultiMap;
+import consulo.application.Application;
+import consulo.application.util.concurrent.AppExecutorUtil;
 import consulo.disposer.Disposable;
+import consulo.project.Project;
 import consulo.unity3d.jsonApi.UnityLogHandler;
 import consulo.unity3d.jsonApi.UnityLogPostHandlerRequest;
 import consulo.unity3d.util.Unity3dProjectUtil;
+import consulo.util.collection.MultiMap;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
@@ -50,7 +49,7 @@ public class Unity3dConsoleManager implements Disposable
 		return Application.get().getComponent(Unity3dConsoleManager.class);
 	}
 
-	private final MultiMap<Project, Consumer<Collection<UnityLogPostHandlerRequest>>> myMap = new ConcurrentMultiMap<>();
+	private final MultiMap<Project, Consumer<Collection<UnityLogPostHandlerRequest>>> myMap = MultiMap.createConcurrentSet();
 	private final Deque<UnityLogPostHandlerRequest> myMessages = new ConcurrentLinkedDeque<>();
 
 	private Future<?> myProcessingTask;
@@ -59,7 +58,7 @@ public class Unity3dConsoleManager implements Disposable
 	public Unity3dConsoleManager(Application application)
 	{
 		myProcessingTask = AppExecutorUtil.getAppScheduledExecutorService().scheduleWithFixedDelay(this::pop, 2, 2, TimeUnit.SECONDS);
-		application.getMessageBus().connect().subscribe(UnityLogHandler.TOPIC, myMessages::add);
+		application.getMessageBus().connect().subscribe(UnityLogHandler.class, myMessages::add);
 	}
 
 	private void pop()

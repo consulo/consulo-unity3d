@@ -16,23 +16,25 @@
 
 package consulo.unity3d.scene.reference;
 
-import com.intellij.openapi.application.QueryExecutorBase;
-import com.intellij.openapi.application.ReadAction;
-import com.intellij.openapi.progress.ProgressManager;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiReference;
-import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.search.SearchScope;
-import com.intellij.psi.search.searches.ReferencesSearch;
-import com.intellij.psi.util.PsiUtilCore;
-import com.intellij.util.Processor;
-import com.intellij.util.containers.MultiMap;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.application.ReadAction;
+import consulo.application.progress.ProgressManager;
+import consulo.application.util.function.Processor;
+import consulo.content.scope.SearchScope;
 import consulo.csharp.lang.psi.CSharpFieldDeclaration;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiReference;
+import consulo.language.psi.PsiUtilCore;
+import consulo.language.psi.scope.GlobalSearchScope;
+import consulo.language.psi.search.ReferencesSearch;
+import consulo.language.psi.search.ReferencesSearchQueryExecutor;
+import consulo.project.Project;
+import consulo.project.util.query.QueryExecutorBase;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import consulo.unity3d.scene.Unity3dMetaManager;
 import consulo.unity3d.scene.index.Unity3dYMLAsset;
+import consulo.util.collection.MultiMap;
+import consulo.virtualFileSystem.VirtualFile;
 import org.jetbrains.yaml.psi.YAMLFile;
 
 import javax.annotation.Nonnull;
@@ -41,7 +43,8 @@ import javax.annotation.Nonnull;
  * @author VISTALL
  * @since 01-Sep-17
  */
-public class Unity3dSceneReferenceSearcher extends QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters>
+@ExtensionImpl
+public class Unity3dSceneReferenceSearcher extends QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters> implements ReferencesSearchQueryExecutor
 {
 	@Override
 	public void processQuery(@Nonnull ReferencesSearch.SearchParameters searchParameters, @Nonnull Processor<? super PsiReference> processor)

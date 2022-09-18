@@ -17,9 +17,9 @@
 package consulo.unity3d.csharp.module.extension;
 
 import consulo.annotation.access.RequiredReadAction;
-import consulo.csharp.module.extension.BaseCSharpSimpleModuleExtension;
+import consulo.csharp.base.module.extension.BaseCSharpSimpleModuleExtension;
 import consulo.csharp.module.extension.CSharpLanguageVersion;
-import consulo.roots.ModuleRootLayer;
+import consulo.module.content.layer.ModuleRootLayer;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

@@ -25,11 +25,11 @@ import consulo.unity3d.icon.Unity3dIconGroup;
 @DeprecationInfo("Use Unit3dIconGroup")
 public interface Unity3dIcons
 {
-	Image EditorLayer = Unity3dIconGroup.editorLayer();
-	Image AssetsLayer = Unity3dIconGroup.assetsLayer();
-	Image PluginsLayer = Unity3dIconGroup.pluginsLayer();
-	Image GizmosLayer = Unity3dIconGroup.gizmosLayer();
-	Image EventMethod = Unity3dIconGroup.lightningBolt();
+	Image EditorLayer = Unity3dIconGroup.editorlayer();
+	Image AssetsLayer = Unity3dIconGroup.assetslayer();
+	Image PluginsLayer = Unity3dIconGroup.pluginslayer();
+	Image GizmosLayer = Unity3dIconGroup.gizmoslayer();
+	Image EventMethod = Unity3dIconGroup.lightningbolt();
 	Image Unity3d = Unity3dIconGroup.unity3d();
-	Image Unity3dLineMarker = Unity3dIconGroup.unity3dLineMarker();
+	Image Unity3dLineMarker = Unity3dIconGroup.unity3dlinemarker();
 }

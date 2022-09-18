@@ -16,15 +16,15 @@
 
 package consulo.unity3d.projectImport.newImport.standardImporter;
 
-import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.fileTypes.FileTypeManager;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VfsUtil;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileVisitor;
 import consulo.dotnet.dll.DotNetModuleFileType;
+import consulo.language.file.FileTypeManager;
+import consulo.project.Project;
 import consulo.unity3d.projectImport.newImport.UnityAssemblyContext;
 import consulo.unity3d.projectImport.newImport.UnityProjectImporterWithAsmDef;
+import consulo.virtualFileSystem.VirtualFile;
+import consulo.virtualFileSystem.fileType.FileType;
+import consulo.virtualFileSystem.util.VirtualFileUtil;
+import consulo.virtualFileSystem.util.VirtualFileVisitor;
 
 import javax.annotation.Nonnull;
 import java.util.Set;
@@ -70,7 +70,7 @@ public abstract class StandardModuleImporter
 
 		for(VirtualFile directory : directories)
 		{
-			VfsUtil.visitChildrenRecursively(directory, new VirtualFileVisitor()
+			VirtualFileUtil.visitChildrenRecursively(directory, new VirtualFileVisitor()
 			{
 				@Override
 				public boolean visitFile(@Nonnull VirtualFile file)

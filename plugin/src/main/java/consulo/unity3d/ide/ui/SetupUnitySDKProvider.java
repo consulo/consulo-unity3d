@@ -16,54 +16,55 @@
 
 package consulo.unity3d.ide.ui;
 
-import com.intellij.ProjectTopics;
-import com.intellij.ide.DataManager;
-import com.intellij.openapi.actionSystem.ActionGroup;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.AnSeparator;
-import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.application.WriteAction;
-import com.intellij.openapi.fileEditor.FileEditor;
-import com.intellij.openapi.project.DumbAwareAction;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.projectRoots.SdkTable;
-import com.intellij.openapi.roots.ModuleRootEvent;
-import com.intellij.openapi.roots.ModuleRootListener;
-import com.intellij.openapi.ui.popup.JBPopupFactory;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiManager;
-import com.intellij.ui.EditorNotificationPanel;
-import com.intellij.ui.EditorNotifications;
-import com.intellij.ui.HyperlinkLabel;
 import consulo.annotation.access.RequiredReadAction;
-import consulo.bundle.SdkUtil;
-import consulo.editor.notifications.EditorNotificationProvider;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.application.WriteAction;
+import consulo.content.bundle.Sdk;
+import consulo.content.bundle.SdkTable;
+import consulo.content.bundle.SdkUtil;
+import consulo.dataContext.DataContext;
+import consulo.dataContext.DataManager;
+import consulo.fileEditor.EditorNotificationBuilder;
+import consulo.fileEditor.EditorNotificationProvider;
+import consulo.fileEditor.EditorNotifications;
+import consulo.fileEditor.FileEditor;
+import consulo.language.psi.PsiFile;
+import consulo.language.psi.PsiManager;
 import consulo.localize.LocalizeValue;
-import consulo.module.extension.ModuleExtension;
 import consulo.platform.base.icon.PlatformIconGroup;
+import consulo.project.Project;
 import consulo.ui.annotation.RequiredUIAccess;
+import consulo.ui.ex.RelativePoint;
+import consulo.ui.ex.action.ActionGroup;
+import consulo.ui.ex.action.AnActionEvent;
+import consulo.ui.ex.action.AnSeparator;
+import consulo.ui.ex.action.DumbAwareAction;
+import consulo.ui.ex.awt.UIExAWTDataKey;
+import consulo.ui.ex.popup.JBPopupFactory;
 import consulo.unity3d.bundle.Unity3dBundleType;
 import consulo.unity3d.localize.Unity3dLocalize;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import consulo.unity3d.module.Unity3dRootModuleExtension;
 import consulo.unity3d.projectImport.Unity3dProjectImporter;
 import consulo.unity3d.projectImport.ui.Unity3dWizardStep;
-import consulo.util.lang.ref.SimpleReference;
+import consulo.virtualFileSystem.VirtualFile;
 import jakarta.inject.Inject;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.swing.*;
+import java.awt.*;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 /**
  * @author VISTALL
  * @since 29.07.2015
  */
-public class SetupUnitySDKProvider implements EditorNotificationProvider<EditorNotificationPanel>
+@ExtensionImpl
+public class SetupUnitySDKProvider implements EditorNotificationProvider
 {
 	private final Project myProject;
 	private final EditorNotifications myNotifications;
@@ -75,20 +76,19 @@ public class SetupUnitySDKProvider implements EditorNotificationProvider<EditorN
 		myProject = project;
 		myNotifications = notifications;
 		mySdkTable = sdkTable;
-		myProject.getMessageBus().connect().subscribe(ProjectTopics.PROJECT_ROOTS, new ModuleRootListener()
-		{
-			@Override
-			public void rootsChanged(ModuleRootEvent event)
-			{
-				notifications.updateAllNotifications();
-			}
-		});
-		myProject.getMessageBus().connect().subscribe(ModuleExtension.CHANGE_TOPIC, (oldExtension, newExtension) -> notifications.updateAllNotifications());
 	}
 
+	@Nonnull
 	@Override
+	public String getId()
+	{
+		return "unity-setup-sdk";
+	}
+
 	@RequiredReadAction
-	public EditorNotificationPanel createNotificationPanel(@Nonnull VirtualFile file, @Nonnull FileEditor fileEditor)
+	@Nullable
+	@Override
+	public EditorNotificationBuilder buildNotification(@Nonnull VirtualFile file, @Nonnull FileEditor fileEditor, @Nonnull Supplier<EditorNotificationBuilder> supplier)
 	{
 		if(myProject.getUserData(Unity3dProjectImporter.ourInProgressFlag) == Boolean.TRUE)
 		{
@@ -112,9 +112,9 @@ public class SetupUnitySDKProvider implements EditorNotificationProvider<EditorN
 		{
 			if(rootModuleExtension.getInheritableSdk().isNull())
 			{
-				return createPanel(null, null);
+				return createPanel(null, null, supplier);
 			}
-			return createPanel(rootModuleExtension.getInheritableSdk().getName(), rootModuleExtension.getInheritableSdk().get());
+			return createPanel(rootModuleExtension.getInheritableSdk().getName(), rootModuleExtension.getInheritableSdk().get(), supplier);
 		}
 		return null;
 	}
@@ -130,39 +130,39 @@ public class SetupUnitySDKProvider implements EditorNotificationProvider<EditorN
 	}
 
 	@Nonnull
-	private EditorNotificationPanel createPanel(@Nullable String name, @Nullable Sdk targetSdk)
+	private EditorNotificationBuilder createPanel(@Nullable String name, @Nullable Sdk targetSdk, Supplier<EditorNotificationBuilder> supplier)
 	{
-		EditorNotificationPanel panel = new EditorNotificationPanel();
+		EditorNotificationBuilder panel = supplier.get();
 		String requiredVersion = Unity3dProjectImporter.loadVersionFromProject(myProject.getBasePath());
 
 		if(requiredVersion != null)
 		{
 			if(targetSdk != null)
 			{
-				panel.setText(Unity3dLocalize.unity0SdkIsBrokenRequiredVersion(targetSdk.getName(), requiredVersion).getValue());
+				panel.withText(Unity3dLocalize.unity0SdkIsBrokenRequiredVersion(targetSdk.getName(), requiredVersion));
 			}
 			else if(name == null)
 			{
-				panel.setText(Unity3dLocalize.unitySdkIsNotDefinedRequiredVersion(requiredVersion).getValue());
+				panel.withText(Unity3dLocalize.unitySdkIsNotDefinedRequiredVersion(requiredVersion));
 			}
 			else
 			{
-				panel.setText(Unity3dLocalize.unity0SdkIsNotDefinedRequiredVersion(name, requiredVersion).getValue());
+				panel.withText(Unity3dLocalize.unity0SdkIsNotDefinedRequiredVersion(name, requiredVersion));
 			}
 		}
 		else
 		{
 			if(targetSdk != null)
 			{
-				panel.setText(Unity3dLocalize.unity0SdkIsBroken(targetSdk.getName()).getValue());
+				panel.withText(Unity3dLocalize.unity0SdkIsBroken(targetSdk.getName()));
 			}
 			else if(name == null)
 			{
-				panel.setText(Unity3dLocalize.unitySdkIsNotDefined().getValue());
+				panel.withText(Unity3dLocalize.unitySdkIsNotDefined());
 			}
 			else
 			{
-				panel.setText(Unity3dLocalize.unity0SdkIsNotDefined(name).getValue());
+				panel.withText(Unity3dLocalize.unity0SdkIsNotDefined(name));
 			}
 		}
 
@@ -175,7 +175,7 @@ public class SetupUnitySDKProvider implements EditorNotificationProvider<EditorN
 			{
 				requiredVersionFound[0] = true;
 
-				panel.createActionLabel("Select '" + sdk.getName() + "'", () ->
+				panel.withAction(LocalizeValue.localizeTODO("Select '" + sdk.getName() + "'"), () ->
 				{
 					Unity3dProjectImporter.syncProjectStep(myProject, sdk, null, true);
 
@@ -184,8 +184,8 @@ public class SetupUnitySDKProvider implements EditorNotificationProvider<EditorN
 			});
 		}
 
-		SimpleReference<HyperlinkLabel> ref = SimpleReference.create();
-		Runnable action = () -> {
+		Runnable action = () ->
+		{
 			final DataContext dataContext = DataManager.getInstance().getDataContext();
 			ActionGroup.Builder builder = ActionGroup.newImmutableBuilder();
 			List<Sdk> sdksOfType = mySdkTable.getSdksOfType(Unity3dBundleType.getInstance());
@@ -205,13 +205,15 @@ public class SetupUnitySDKProvider implements EditorNotificationProvider<EditorN
 			}
 
 			builder.add(AnSeparator.create());
-			builder.add(new DumbAwareAction("From File System...", null, PlatformIconGroup.nodesFolderOpened())
+			builder.add(new DumbAwareAction("From File System...", null, PlatformIconGroup.nodesFolderopened())
 			{
 				@RequiredUIAccess
 				@Override
 				public void actionPerformed(@Nonnull AnActionEvent e)
 				{
-					Unity3dWizardStep.showAddSdk(ref.get(), sdk -> {
+					Component component = e.getInputEvent().getComponent();
+					Unity3dWizardStep.showAddSdk((JComponent) component, sdk ->
+					{
 						WriteAction.run(() -> mySdkTable.addSdk(sdk));
 
 						Unity3dProjectImporter.syncProjectStep(myProject, sdk, null, true);
@@ -221,12 +223,14 @@ public class SetupUnitySDKProvider implements EditorNotificationProvider<EditorN
 				}
 			});
 
+			PointerInfo info = MouseInfo.getPointerInfo();
+
 			JBPopupFactory.getInstance().createActionGroupPopup(requiredVersionFound[0] ? "Select Another Unity" : "Select Unity", builder.build(), dataContext,
 					JBPopupFactory.ActionSelectionAid.MNEMONICS, false)
-					.showUnderneathOf(ref.get());
+					.show(new RelativePoint(info.getLocation()));
 		};
-		HyperlinkLabel actionLabel = panel.createActionLabel(requiredVersionFound[0] ? "Select Another Unity..." : "Select Unity...", action);
-		ref.set(actionLabel);
+
+		panel.withAction(LocalizeValue.localizeTODO(requiredVersionFound[0] ? "Select Another Unity..." : "Select Unity..."), action);
 		return panel;
 	}
 }

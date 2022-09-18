@@ -16,18 +16,20 @@
 
 package consulo.unity3d.csharp.codeInsight;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import com.intellij.openapi.fileEditor.FileEditorManager;
-import com.intellij.openapi.fileEditor.OpenFileDescriptor;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.pom.Navigatable;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.impl.FakePsiElement;
+import consulo.fileEditor.FileEditorManager;
+import consulo.language.impl.psi.FakePsiElement;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+import consulo.navigation.Navigatable;
+import consulo.navigation.OpenFileDescriptor;
+import consulo.navigation.OpenFileDescriptorFactory;
+import consulo.project.Project;
 import consulo.unity3d.scene.index.Unity3dYMLAsset;
 import consulo.unity3d.scene.index.Unity3dYMLField;
+import consulo.virtualFileSystem.VirtualFile;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * @author VISTALL
@@ -86,7 +88,7 @@ class UnityAssetWrapper extends FakePsiElement implements Navigatable
 	@Override
 	public void navigate(boolean b)
 	{
-		OpenFileDescriptor descriptor = new OpenFileDescriptor(myProject, myVirtualFile, myOffset);
+		OpenFileDescriptor descriptor = OpenFileDescriptorFactory.getInstance(myProject).builder(myVirtualFile).offset(myOffset).build();
 		FileEditorManager.getInstance(myProject).openTextEditor(descriptor, true);
 	}
 

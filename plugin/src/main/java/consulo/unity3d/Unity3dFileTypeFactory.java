@@ -16,15 +16,16 @@
 
 package consulo.unity3d;
 
-import com.intellij.openapi.fileTypes.FileTypeConsumer;
-import com.intellij.openapi.fileTypes.FileTypeFactory;
-import com.intellij.openapi.fileTypes.PlainTextFileType;
-import com.intellij.openapi.util.text.StringUtil;
+import consulo.annotation.component.ExtensionImpl;
 import consulo.json.JsonFileType;
+import consulo.language.plain.PlainTextFileType;
 import consulo.unity3d.asmdef.AsmDefFileDescriptor;
 import consulo.unity3d.scene.Unity3dAssetFileTypeDetector;
 import consulo.unity3d.scene.Unity3dBinaryAssetFileType;
 import consulo.unity3d.scene.Unity3dYMLAssetFileType;
+import consulo.util.lang.StringUtil;
+import consulo.virtualFileSystem.fileType.FileTypeConsumer;
+import consulo.virtualFileSystem.fileType.FileTypeFactory;
 
 import javax.annotation.Nonnull;
 
@@ -32,6 +33,7 @@ import javax.annotation.Nonnull;
  * @author VISTALL
  * @since 02.03.2015
  */
+@ExtensionImpl
 public class Unity3dFileTypeFactory extends FileTypeFactory
 {
 	@Override
@@ -47,7 +49,7 @@ public class Unity3dFileTypeFactory extends FileTypeFactory
 
 		consumer.consume(JsonFileType.INSTANCE, AsmDefFileDescriptor.EXTENSION);
 
-		// register exr file type as 
+		// register exr file type as binary, do not try index it
 		consumer.consume(ExrImageFileType.INSTANCE);
 	}
 }

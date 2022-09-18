@@ -16,15 +16,15 @@
 
 package consulo.unity3d.packages;
 
-import com.intellij.openapi.application.Application;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VirtualFileManager;
 import com.sun.jna.platform.win32.*;
 import com.sun.jna.ptr.PointerByReference;
+import consulo.application.Application;
+import consulo.content.bundle.Sdk;
 import consulo.disposer.Disposable;
 import consulo.platform.Platform;
+import consulo.util.io.FileUtil;
+import consulo.virtualFileSystem.LocalFileSystem;
+import consulo.virtualFileSystem.VirtualFileManager;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 

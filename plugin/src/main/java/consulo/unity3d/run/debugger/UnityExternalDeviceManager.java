@@ -16,16 +16,18 @@
 
 package consulo.unity3d.run.debugger;
 
-import com.intellij.openapi.application.Application;
-import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.progress.Task;
-import com.intellij.openapi.project.Project;
-import com.intellij.util.ThreeState;
-import com.intellij.util.concurrency.AppExecutorUtil;
+import consulo.annotation.component.ComponentScope;
+import consulo.annotation.component.ServiceAPI;
+import consulo.annotation.component.ServiceImpl;
+import consulo.application.Application;
+import consulo.application.progress.ProgressIndicator;
+import consulo.application.progress.Task;
+import consulo.application.util.concurrent.AppExecutorUtil;
 import consulo.disposer.Disposable;
+import consulo.project.Project;
 import consulo.ui.annotation.RequiredUIAccess;
 import consulo.unity3d.run.debugger.android.UnityUdpExternalDeviceCollector;
-import consulo.unity3d.run.debugger.iOS.IOSUnityExternalDeviceCollector;
+import consulo.util.lang.ThreeState;
 import jakarta.inject.Singleton;
 
 import javax.annotation.Nonnull;
@@ -42,6 +44,8 @@ import java.util.concurrent.TimeUnit;
  * @since 10.11.14
  */
 @Singleton
+@ServiceAPI(ComponentScope.APPLICATION)
+@ServiceImpl
 public class UnityExternalDeviceManager implements Disposable
 {
 	@Nonnull

@@ -16,10 +16,10 @@
 
 package consulo.unity3d.projectImport.newImport.standardImporter;
 
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
 import consulo.csharp.lang.CSharpFileType;
+import consulo.project.Project;
 import consulo.unity3d.projectImport.Unity3dProjectImporter;
+import consulo.virtualFileSystem.VirtualFile;
 
 import javax.annotation.Nonnull;
 import java.util.Set;

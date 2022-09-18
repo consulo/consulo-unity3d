@@ -16,7 +16,7 @@
 
 package consulo.unity3d.bundle;
 
-import com.intellij.util.ArrayUtil;
+import consulo.util.collection.ArrayUtil;
 import org.intellij.lang.annotations.RegExp;
 
 import javax.annotation.Nonnull;

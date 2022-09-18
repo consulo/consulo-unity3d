@@ -16,35 +16,29 @@
 
 package consulo.unity3d.packages.orderEntry;
 
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.roots.OrderEntry;
-import com.intellij.openapi.roots.OrderRootType;
-import com.intellij.openapi.roots.RootPolicy;
-import com.intellij.openapi.roots.RootProvider;
-import com.intellij.openapi.roots.impl.ClonableOrderEntry;
-import com.intellij.openapi.roots.impl.LibraryOrderEntryBaseImpl;
-import com.intellij.openapi.roots.impl.ProjectRootManagerImpl;
-import com.intellij.openapi.roots.impl.RootProviderBaseImpl;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VfsUtilCore;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.pointers.VirtualFilePointer;
-import com.intellij.openapi.vfs.pointers.VirtualFilePointerManager;
-import com.intellij.util.ObjectUtil;
-import com.intellij.util.containers.ContainerUtil;
 import consulo.annotation.access.RequiredReadAction;
+import consulo.content.OrderRootType;
+import consulo.content.RootProvider;
+import consulo.content.RootProviderBase;
+import consulo.content.base.BinariesOrderRootType;
+import consulo.content.base.SourcesOrderRootType;
+import consulo.content.bundle.Sdk;
 import consulo.dotnet.dll.DotNetModuleFileType;
-import consulo.platform.Platform;
-import consulo.roots.OrderEntryWithTracking;
-import consulo.roots.impl.ModuleRootLayerImpl;
-import consulo.roots.types.BinariesOrderRootType;
-import consulo.roots.types.SourcesOrderRootType;
+import consulo.module.content.layer.ModuleRootLayer;
+import consulo.module.content.layer.orderEntry.CustomOrderEntryModel;
 import consulo.unity3d.module.Unity3dChildModuleExtension;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import consulo.unity3d.module.Unity3dRootModuleExtension;
 import consulo.unity3d.packages.Unity3dPackageWatcher;
-import consulo.vfs.util.ArchiveVfsUtil;
+import consulo.util.collection.ContainerUtil;
+import consulo.util.lang.ObjectUtil;
+import consulo.util.lang.StringUtil;
+import consulo.virtualFileSystem.LocalFileSystem;
+import consulo.virtualFileSystem.VirtualFile;
+import consulo.virtualFileSystem.VirtualFileManager;
+import consulo.virtualFileSystem.archive.ArchiveVfsUtil;
+import consulo.virtualFileSystem.pointer.VirtualFilePointer;
+import consulo.virtualFileSystem.util.VirtualFileUtil;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -58,9 +52,9 @@ import java.util.Objects;
  * @author VISTALL
  * @since 2018-09-19
  */
-public class Unity3dPackageOrderEntry extends LibraryOrderEntryBaseImpl implements ClonableOrderEntry, OrderEntryWithTracking
+public class Unity3dPackageOrderEntryModel implements CustomOrderEntryModel
 {
-	private RootProvider myRootProvider = new RootProviderBaseImpl()
+	private RootProvider myRootProvider = new RootProviderBase()
 	{
 		@Nonnull
 		@Override
@@ -103,9 +97,9 @@ public class Unity3dPackageOrderEntry extends LibraryOrderEntryBaseImpl implemen
 				}
 			}
 
-			if(myFilePointer != null)
+			if(myFileUrl != null)
 			{
-				VirtualFile file = myFilePointer.getFile();
+				VirtualFile file = VirtualFileManager.getInstance().findFileByUrl(myFileUrl);
 				if(file != null)
 				{
 					files.add(file);
@@ -126,7 +120,7 @@ public class Unity3dPackageOrderEntry extends LibraryOrderEntryBaseImpl implemen
 					}
 				}
 			}
-			return VfsUtilCore.toVirtualFileArray(files);
+			return VirtualFileUtil.toVirtualFileArray(files);
 		}
 
 		private void addDotNetModulesInsideLibrary(@Nonnull List<VirtualFile> result, @Nullable VirtualFile virtualFile)
@@ -190,30 +184,19 @@ public class Unity3dPackageOrderEntry extends LibraryOrderEntryBaseImpl implemen
 		}
 	};
 
+	private ModuleRootLayer myModuleRootLayer;
+
 	private String myName;
 	@Nullable
 	private String myVersion;
 	@Nullable
-	private VirtualFilePointer myFilePointer;
+	private String myFileUrl;
 
-	public Unity3dPackageOrderEntry(@Nonnull ModuleRootLayerImpl rootLayer, String name, @Nullable String version, @Nullable String url)
+	public Unity3dPackageOrderEntryModel(String name, @Nullable String version, @Nullable String url)
 	{
-		this(rootLayer, name, version, url, true);
-	}
-
-	public Unity3dPackageOrderEntry(@Nonnull ModuleRootLayerImpl rootLayer, String name, @Nullable String version, @Nullable String url, boolean init)
-	{
-		super(Unity3dPackageOrderEntryType.getInstance(), rootLayer, ProjectRootManagerImpl.getInstanceImpl(rootLayer.getProject()));
 		myName = name;
 		myVersion = version;
-		myFilePointer = url == null ? null : VirtualFilePointerManager.getInstance().create(url, this, null);
-
-		if(init)
-		{
-			init();
-
-			myProjectRootManagerImpl.addOrderWithTracking(this);
-		}
+		myFileUrl = url;
 	}
 
 	@Nullable
@@ -228,11 +211,17 @@ public class Unity3dPackageOrderEntry extends LibraryOrderEntryBaseImpl implemen
 		return extension.getSdk();
 	}
 
-	@Nullable
+	@Nonnull
 	@Override
 	public RootProvider getRootProvider()
 	{
 		return myRootProvider;
+	}
+
+	@Override
+	public void bind(@Nonnull ModuleRootLayer moduleRootLayer)
+	{
+		myModuleRootLayer = moduleRootLayer;
 	}
 
 	@Nonnull
@@ -245,7 +234,7 @@ public class Unity3dPackageOrderEntry extends LibraryOrderEntryBaseImpl implemen
 	@Nullable
 	public String getFileUrl()
 	{
-		return myFilePointer == null ? null : myFilePointer.getUrl();
+		return myFileUrl;
 	}
 
 	@Nullable
@@ -261,17 +250,11 @@ public class Unity3dPackageOrderEntry extends LibraryOrderEntryBaseImpl implemen
 	}
 
 	@Override
-	public <R> R accept(RootPolicy<R> rRootPolicy, @Nullable R r)
+	public boolean isEquivalentTo(@Nonnull CustomOrderEntryModel model)
 	{
-		return rRootPolicy.visitOrderEntry(this, r);
-	}
-
-	@Override
-	public boolean isEquivalentTo(@Nonnull OrderEntry entry)
-	{
-		return entry instanceof Unity3dPackageOrderEntry && Objects.equals(myName, entry.getPresentableName()) &&
-				Objects.equals(myVersion, ((Unity3dPackageOrderEntry) entry).getVersion()) &&
-				Objects.equals(getFileUrl(), ((Unity3dPackageOrderEntry) entry).getFileUrl());
+		return model instanceof Unity3dPackageOrderEntryModel && Objects.equals(myName, model.getPresentableName()) &&
+				Objects.equals(myVersion, ((Unity3dPackageOrderEntryModel) model).getVersion()) &&
+				Objects.equals(getFileUrl(), ((Unity3dPackageOrderEntryModel) model).getFileUrl());
 	}
 
 	@Override
@@ -280,9 +263,10 @@ public class Unity3dPackageOrderEntry extends LibraryOrderEntryBaseImpl implemen
 		return false;
 	}
 
+	@Nonnull
 	@Override
-	public OrderEntry cloneEntry(ModuleRootLayerImpl layer)
+	public Unity3dPackageOrderEntryModel clone()
 	{
-		return new Unity3dPackageOrderEntry(layer, myName, myVersion, getFileUrl());
+		return new Unity3dPackageOrderEntryModel(myName, myVersion, getFileUrl());
 	}
 }

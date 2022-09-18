@@ -16,30 +16,30 @@
 
 package consulo.unity3d.projectImport.ui;
 
-import com.intellij.openapi.application.WriteAction;
-import com.intellij.openapi.options.ShowSettingsUtil;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.projectRoots.SdkTable;
-import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil;
-import com.intellij.openapi.projectRoots.impl.SdkImpl;
-import consulo.awt.TargetAWT;
-import consulo.bundle.ui.BundleBox;
-import consulo.bundle.ui.BundleBoxBuilder;
+import consulo.application.WriteAction;
+import consulo.content.bundle.Sdk;
+import consulo.content.bundle.SdkModificator;
+import consulo.content.bundle.SdkTable;
+import consulo.content.bundle.SdkUtil;
 import consulo.disposer.Disposable;
-import consulo.ide.newProject.ui.UnifiedProjectOrModuleNameStep;
-import consulo.ide.settings.impl.ProjectStructureSettingsUtil;
+import consulo.ide.newModule.ui.UnifiedProjectOrModuleNameStep;
+import consulo.ide.setting.ProjectStructureSettingsUtil;
+import consulo.ide.setting.ShowSettingsUtil;
 import consulo.localize.LocalizeValue;
+import consulo.module.ui.BundleBox;
+import consulo.module.ui.BundleBoxBuilder;
 import consulo.ui.Button;
 import consulo.ui.ComboBox;
 import consulo.ui.Label;
 import consulo.ui.UIAccess;
 import consulo.ui.annotation.RequiredUIAccess;
+import consulo.ui.ex.awtUnsafe.TargetAWT;
 import consulo.ui.layout.DockLayout;
 import consulo.ui.model.MutableListModel;
 import consulo.ui.style.StandardColors;
 import consulo.ui.util.FormBuilder;
-import consulo.unity3d.bundle.Unity3dBundleType;
 import consulo.unity3d.localize.Unity3dLocalize;
+import consulo.unity3d.bundle.Unity3dBundleType;
 import consulo.unity3d.projectImport.Unity3dProjectImporter;
 import consulo.unity3d.projectImport.UnityModuleImportContext;
 
@@ -78,10 +78,12 @@ public class Unity3dWizardStep extends UnifiedProjectOrModuleNameStep<UnityModul
 		ComboBox<BundleBox.BundleBoxItem> comboBox = (myBundleBox = boxBuilder.build()).getComponent();
 		DockLayout dock = DockLayout.create();
 		dock.center(comboBox);
-		dock.right(Button.create(LocalizeValue.localizeTODO("Select..."), clickEvent -> {
+		dock.right(Button.create(LocalizeValue.localizeTODO("Select..."), clickEvent ->
+		{
 			JComponent awtComponent = (JComponent) TargetAWT.to(myBundleBox.getComponent());
 
-			showAddSdk(awtComponent, sdk -> {
+			showAddSdk(awtComponent, sdk ->
+			{
 				WriteAction.run(() -> SdkTable.getInstance().addSdk(sdk));
 
 				MutableListModel<BundleBox.BundleBoxItem> listModel = (MutableListModel<BundleBox.BundleBoxItem>) comboBox.getListModel();
@@ -127,24 +129,21 @@ public class Unity3dWizardStep extends UnifiedProjectOrModuleNameStep<UnityModul
 	@RequiredUIAccess
 	public static void showAddSdk(@Nonnull JComponent awtComponent, @RequiredUIAccess Consumer<Sdk> sdkConsumer)
 	{
-		ProjectStructureSettingsUtil settingsUtil = (ProjectStructureSettingsUtil) ShowSettingsUtil.getInstance();
+		ProjectStructureSettingsUtil settingsUtil = ShowSettingsUtil.getInstance();
 
 		Unity3dBundleType type = Unity3dBundleType.getInstance();
 
-		if(type.supportsCustomCreateUI())
+		SdkUtil.selectSdkHome(Unity3dBundleType.getInstance(), home ->
 		{
-			type.showCustomCreateUI(settingsUtil.getSdksModel(), awtComponent, sdkConsumer::accept);
-		}
-		else
-		{
-			SdkConfigurationUtil.selectSdkHome(type, home -> {
-				String newSdkName = SdkConfigurationUtil.createUniqueSdkName(type, home, settingsUtil.getSdksModel().getBundles());
-				final SdkImpl newSdk = new SdkImpl(SdkTable.getInstance(), newSdkName, type);
-				newSdk.setHomePath(home);
+			String newSdkName = SdkUtil.createUniqueSdkName(type, home, settingsUtil.getSdksModel().getBundles());
+			Sdk newSdk = SdkTable.getInstance().createSdk(newSdkName, type);
 
-				sdkConsumer.accept(newSdk);
-			});
-		}
+			SdkModificator modificator = newSdk.getSdkModificator();
+			modificator.setHomePath(home);
+			modificator.commitChanges();
+
+			sdkConsumer.accept(newSdk);
+		});
 	}
 
 	@Override

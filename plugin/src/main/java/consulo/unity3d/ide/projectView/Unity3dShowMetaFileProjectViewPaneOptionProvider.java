@@ -16,15 +16,15 @@
 
 package consulo.unity3d.ide.projectView;
 
-import com.intellij.ide.projectView.ProjectView;
-import com.intellij.ide.projectView.impl.AbstractProjectViewPane;
-import com.intellij.ide.projectView.impl.ProjectViewPane;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.DefaultActionGroup;
-import com.intellij.openapi.actionSystem.Presentation;
-import com.intellij.openapi.actionSystem.ToggleAction;
-import consulo.ide.projectView.impl.ProjectViewPaneOptionProvider;
+import consulo.project.Project;
+import consulo.project.ui.view.ProjectView;
+import consulo.project.ui.view.ProjectViewPane;
+import consulo.project.ui.view.ProjectViewPaneOptionProvider;
 import consulo.ui.annotation.RequiredUIAccess;
+import consulo.ui.ex.action.AnActionEvent;
+import consulo.ui.ex.action.DefaultActionGroup;
+import consulo.ui.ex.action.Presentation;
+import consulo.ui.ex.action.ToggleAction;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import consulo.util.dataholder.KeyWithDefaultValue;
 
@@ -40,9 +40,9 @@ public class Unity3dShowMetaFileProjectViewPaneOptionProvider extends ProjectVie
 
 	public final class ShowMetaFilesAction extends ToggleAction
 	{
-		private AbstractProjectViewPane myPane;
+		private ProjectViewPane myPane;
 
-		private ShowMetaFilesAction(AbstractProjectViewPane pane)
+		private ShowMetaFilesAction(ProjectViewPane pane)
 		{
 			super("Show '.meta' Files", "Show '.meta' Files", null);
 			myPane = pane;
@@ -72,8 +72,9 @@ public class Unity3dShowMetaFileProjectViewPaneOptionProvider extends ProjectVie
 		{
 			super.update(e);
 			final Presentation presentation = e.getPresentation();
-			final ProjectView projectView = ProjectView.getInstance(e.getProject());
-			presentation.setVisible(projectView.getCurrentProjectViewPane() == myPane && Unity3dModuleExtensionUtil.getRootModuleExtension(myPane.getProject()) != null);
+			Project project = e.getData(Project.KEY);
+			final ProjectView projectView = ProjectView.getInstance(project);
+			presentation.setVisible(projectView.getCurrentProjectViewPane() == myPane && Unity3dModuleExtensionUtil.getRootModuleExtension(project) != null);
 		}
 	}
 
@@ -86,7 +87,7 @@ public class Unity3dShowMetaFileProjectViewPaneOptionProvider extends ProjectVie
 
 	@Override
 	@RequiredUIAccess
-	public void addToolbarActions(@Nonnull AbstractProjectViewPane pane, @Nonnull DefaultActionGroup actionGroup)
+	public void addToolbarActions(@Nonnull ProjectViewPane pane, @Nonnull DefaultActionGroup actionGroup)
 	{
 		if(pane instanceof ProjectViewPane)
 		{

@@ -16,12 +16,12 @@
 
 package consulo.unity3d.shaderlab.lang.psi;
 
-import javax.annotation.Nonnull;
-
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFileFactory;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFileFactory;
+import consulo.project.Project;
 import consulo.unity3d.shaderlab.lang.ShaderLabFileType;
+
+import javax.annotation.Nonnull;
 
 /**
  * @author VISTALL

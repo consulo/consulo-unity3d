@@ -16,32 +16,34 @@
 
 package consulo.unity3d.jsonApi;
 
-import java.util.Arrays;
-import java.util.TreeSet;
-
-import javax.annotation.Nonnull;
-
-import com.intellij.notification.Notification;
-import com.intellij.notification.NotificationType;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.ApplicationNamesInfo;
-import com.intellij.openapi.command.WriteCommandAction;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ProjectManager;
-import com.intellij.openapi.roots.ModifiableRootModel;
-import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.openapi.util.Computable;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VirtualFile;
-import consulo.builtInServer.json.JsonPostRequestHandler;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.application.Application;
+import consulo.application.ApplicationManager;
+import consulo.application.util.function.Computable;
+import consulo.builtinWebServer.json.JsonPostRequestHandler;
+import consulo.language.editor.WriteCommandAction;
+import consulo.module.Module;
+import consulo.module.content.ModuleRootManager;
+import consulo.module.content.layer.ModifiableRootModel;
+import consulo.project.Project;
+import consulo.project.ProjectManager;
+import consulo.project.ui.notification.Notification;
+import consulo.project.ui.notification.NotificationType;
+import consulo.unity3d.UnityNotificationGroup;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import consulo.unity3d.module.Unity3dRootMutableModuleExtension;
+import consulo.virtualFileSystem.LocalFileSystem;
+import consulo.virtualFileSystem.VirtualFile;
+
+import javax.annotation.Nonnull;
+import java.util.Arrays;
+import java.util.TreeSet;
 
 /**
  * @author VISTALL
  * @since 28-Aug-16
  */
+@ExtensionImpl
 public class UnitySetDefinesHandler extends JsonPostRequestHandler<UnitySetDefines>
 {
 	public UnitySetDefinesHandler()
@@ -107,7 +109,7 @@ public class UnitySetDefinesHandler extends JsonPostRequestHandler<UnitySetDefin
 			return;
 		}
 
-		new Notification("unity", ApplicationNamesInfo.getInstance().getProductName(), "Build Target Changed.<br>Defines updated.", NotificationType.INFORMATION).notify(modifiableRootModel.getProject());
+		new Notification(UnityNotificationGroup.INSTANCE, Application.get().getName().get(), "Build Target Changed.<br>Defines updated.", NotificationType.INFORMATION).notify(modifiableRootModel.getProject());
 
 		Unity3dRootMutableModuleExtension extension = modifiableRootModel.getExtension(Unity3dRootMutableModuleExtension.class);
 		assert extension != null;

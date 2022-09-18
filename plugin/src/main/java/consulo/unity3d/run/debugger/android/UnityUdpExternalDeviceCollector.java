@@ -1,8 +1,8 @@
 package consulo.unity3d.run.debugger.android;
 
-import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.project.Project;
+import consulo.application.progress.ProgressIndicator;
 import consulo.logging.Logger;
+import consulo.project.Project;
 import consulo.unity3d.run.debugger.UnityExternalDevice;
 import consulo.unity3d.run.debugger.UnityExternalDeviceCollector;
 

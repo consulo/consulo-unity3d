@@ -16,16 +16,11 @@
 
 package consulo.unity3d.csharp.codeInsight;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
+import consulo.ui.ex.awt.ColoredListCellRenderer;
+import consulo.ui.ex.awt.UIUtil;
 
-import javax.swing.JComponent;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.ListCellRenderer;
-
-import com.intellij.ui.ColoredListCellRenderer;
-import com.intellij.util.ui.UIUtil;
+import javax.swing.*;
+import java.awt.*;
 
 /**
  * @author VISTALL

@@ -16,14 +16,16 @@
 
 package consulo.unity3d.jsonApi;
 
-import javax.annotation.Nonnull;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.builtinWebServer.json.JsonPostRequestHandler;
 
-import consulo.builtInServer.json.JsonPostRequestHandler;
+import javax.annotation.Nonnull;
 
 /**
  * @author VISTALL
  * @since 21.01.2016
  */
+@ExtensionImpl
 public class UnityRefreshResponseHandler extends JsonPostRequestHandler<UnityRefreshResponse>
 {
 	public UnityRefreshResponseHandler()

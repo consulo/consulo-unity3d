@@ -16,26 +16,28 @@
 
 package consulo.unity3d.run.before;
 
-import com.intellij.execution.BeforeRunTaskProvider;
-import com.intellij.execution.configurations.RunConfiguration;
-import com.intellij.execution.runners.ExecutionEnvironment;
-import com.intellij.notification.Notification;
-import com.intellij.notification.NotificationType;
-import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.application.ApplicationNamesInfo;
-import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.progress.Task;
-import com.intellij.util.TimeoutUtil;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.application.Application;
+import consulo.application.progress.Task;
+import consulo.dataContext.DataContext;
+import consulo.document.FileDocumentManager;
+import consulo.execution.BeforeRunTaskProvider;
+import consulo.execution.configuration.RunConfiguration;
+import consulo.execution.runner.ExecutionEnvironment;
+import consulo.project.ui.notification.Notification;
+import consulo.project.ui.notification.NotificationType;
 import consulo.ui.UIAccess;
 import consulo.ui.annotation.RequiredUIAccess;
 import consulo.ui.image.Image;
 import consulo.unity3d.Unity3dIcons;
+import consulo.unity3d.UnityNotificationGroup;
 import consulo.unity3d.editor.UnityEditorCommunication;
 import consulo.unity3d.editor.UnityRefresh;
 import consulo.unity3d.jsonApi.UnityPingPong;
 import consulo.unity3d.run.test.Unity3dTestConfiguration;
 import consulo.util.concurrent.AsyncResult;
 import consulo.util.dataholder.Key;
+import consulo.util.lang.TimeoutUtil;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -44,6 +46,7 @@ import javax.annotation.Nullable;
  * @author VISTALL
  * @since 21.01.2016
  */
+@ExtensionImpl
 public class UnityRefreshBeforeRunTaskProvider extends BeforeRunTaskProvider<UnityRefreshBeforeRunTask>
 {
 	private static final Key<UnityRefreshBeforeRunTask> ourKey = Key.create("unity.refresh.task");
@@ -96,7 +99,8 @@ public class UnityRefreshBeforeRunTaskProvider extends BeforeRunTaskProvider<Uni
 	{
 		AsyncResult<Void> result = AsyncResult.undefined();
 
-		uiAccess.give(() -> {
+		uiAccess.give(() ->
+		{
 			FileDocumentManager.getInstance().saveAllDocuments();
 
 			Task.Backgroundable.queue(env.getProject(), "Queue UnityEditor refresh", true, indicator -> {
@@ -119,7 +123,7 @@ public class UnityRefreshBeforeRunTaskProvider extends BeforeRunTaskProvider<Uni
 				boolean request = UnityEditorCommunication.request(env.getProject(), postObject, true);
 				if(!request)
 				{
-					new Notification("unity", ApplicationNamesInfo.getInstance().getProductName(), "UnityEditor is not responding", NotificationType.INFORMATION).notify(env.getProject());
+					new Notification(UnityNotificationGroup.INSTANCE, Application.get().getName().get(), "UnityEditor is not responding", NotificationType.INFORMATION).notify(env.getProject());
 
 					accessToken.finish(Boolean.FALSE);
 					return;

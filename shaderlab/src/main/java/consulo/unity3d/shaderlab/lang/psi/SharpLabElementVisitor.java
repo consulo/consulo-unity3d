@@ -16,7 +16,7 @@
 
 package consulo.unity3d.shaderlab.lang.psi;
 
-import com.intellij.psi.PsiElementVisitor;
+import consulo.language.psi.PsiElementVisitor;
 
 /**
  * @author VISTALL

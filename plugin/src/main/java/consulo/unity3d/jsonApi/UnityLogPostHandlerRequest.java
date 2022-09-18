@@ -16,12 +16,12 @@
 
 package consulo.unity3d.jsonApi;
 
+import consulo.ui.ex.MessageCategory;
+import consulo.util.lang.ObjectUtil;
+import org.intellij.lang.annotations.MagicConstant;
+
 import java.util.HashMap;
 import java.util.Map;
-
-import org.intellij.lang.annotations.MagicConstant;
-import com.intellij.util.ObjectUtil;
-import com.intellij.util.ui.MessageCategory;
 
 /**
  * @author VISTALL

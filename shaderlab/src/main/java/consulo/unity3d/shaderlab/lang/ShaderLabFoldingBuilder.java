@@ -16,24 +16,26 @@
 
 package consulo.unity3d.shaderlab.lang;
 
-import java.util.List;
-
-import javax.annotation.Nonnull;
-
-import com.intellij.lang.ASTNode;
-import com.intellij.lang.folding.CustomFoldingBuilder;
-import com.intellij.lang.folding.FoldingDescriptor;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiElement;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.document.Document;
+import consulo.document.util.TextRange;
+import consulo.language.Language;
+import consulo.language.ast.ASTNode;
+import consulo.language.editor.folding.CustomFoldingBuilder;
+import consulo.language.editor.folding.FoldingDescriptor;
+import consulo.language.psi.PsiElement;
 import consulo.unity3d.shaderlab.lang.psi.ShaderBraceOwner;
 import consulo.unity3d.shaderlab.lang.psi.ShaderRoleOwner;
 import consulo.unity3d.shaderlab.lang.psi.SharpLabElementVisitor;
+
+import javax.annotation.Nonnull;
+import java.util.List;
 
 /**
  * @author VISTALL
  * @since 09.05.2015
  */
+@ExtensionImpl
 public class ShaderLabFoldingBuilder extends CustomFoldingBuilder
 {
 	@Override
@@ -66,5 +68,12 @@ public class ShaderLabFoldingBuilder extends CustomFoldingBuilder
 	protected boolean isRegionCollapsedByDefault(@Nonnull ASTNode node)
 	{
 		return false;
+	}
+
+	@Nonnull
+	@Override
+	public Language getLanguage()
+	{
+		return ShaderLabLanguage.INSTANCE;
 	}
 }

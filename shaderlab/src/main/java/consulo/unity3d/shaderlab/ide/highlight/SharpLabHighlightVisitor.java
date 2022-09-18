@@ -16,16 +16,17 @@
 
 package consulo.unity3d.shaderlab.ide.highlight;
 
-import com.intellij.codeInsight.daemon.impl.HighlightInfo;
-import com.intellij.codeInsight.daemon.impl.HighlightInfoType;
-import com.intellij.codeInsight.daemon.impl.HighlightVisitor;
-import com.intellij.codeInsight.daemon.impl.analysis.HighlightInfoHolder;
-import com.intellij.lang.ASTNode;
-import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
-import com.intellij.openapi.editor.colors.TextAttributesKey;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import consulo.annotation.access.RequiredReadAction;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.codeEditor.DefaultLanguageHighlighterColors;
+import consulo.colorScheme.TextAttributesKey;
+import consulo.language.ast.ASTNode;
+import consulo.language.editor.rawHighlight.HighlightInfo;
+import consulo.language.editor.rawHighlight.HighlightInfoHolder;
+import consulo.language.editor.rawHighlight.HighlightInfoType;
+import consulo.language.editor.rawHighlight.HighlightVisitor;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
 import consulo.unity3d.shaderlab.lang.ShaderLabPropertyType;
 import consulo.unity3d.shaderlab.lang.psi.*;
 
@@ -35,6 +36,7 @@ import javax.annotation.Nonnull;
  * @author VISTALL
  * @since 08.05.2015
  */
+@ExtensionImpl
 public class SharpLabHighlightVisitor extends SharpLabElementVisitor implements HighlightVisitor
 {
 	private HighlightInfoHolder myHolder;
@@ -146,11 +148,5 @@ public class SharpLabHighlightVisitor extends SharpLabElementVisitor implements 
 	public HighlightVisitor clone()
 	{
 		return new SharpLabHighlightVisitor();
-	}
-
-	@Override
-	public int order()
-	{
-		return 0;
 	}
 }

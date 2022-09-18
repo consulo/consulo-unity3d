@@ -16,11 +16,12 @@
 
 package consulo.unity3d.asmdef;
 
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.psi.PsiFile;
+import consulo.annotation.component.ExtensionImpl;
 import consulo.json.jom.JomFileDescriptor;
+import consulo.language.psi.PsiFile;
 import consulo.ui.image.Image;
 import consulo.unity3d.icon.Unity3dIconGroup;
+import consulo.util.io.FileUtil;
 
 import javax.annotation.Nonnull;
 
@@ -28,6 +29,7 @@ import javax.annotation.Nonnull;
  * @author VISTALL
  * @since 22/03/2021
  */
+@ExtensionImpl
 public class AsmDefFileDescriptor extends JomFileDescriptor<AsmDefElement>
 {
 	public static final String EXTENSION = "asmdef";

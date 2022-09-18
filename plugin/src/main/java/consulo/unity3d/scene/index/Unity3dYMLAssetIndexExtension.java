@@ -16,23 +16,25 @@
 
 package consulo.unity3d.scene.index;
 
-import com.intellij.lang.LighterAST;
-import com.intellij.lang.LighterASTNode;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.tree.TokenSet;
-import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.indexing.*;
-import com.intellij.util.io.DataExternalizer;
-import com.intellij.util.io.DataInputOutputUtil;
-import com.intellij.util.io.ExternalIntegerKeyDescriptor;
-import com.intellij.util.io.KeyDescriptor;
 import consulo.annotation.DeprecationInfo;
 import consulo.annotation.access.RequiredReadAction;
+import consulo.index.io.DataIndexer;
+import consulo.index.io.ExternalIntegerKeyDescriptor;
+import consulo.index.io.ID;
+import consulo.index.io.KeyDescriptor;
+import consulo.index.io.data.DataExternalizer;
+import consulo.index.io.data.DataInputOutputUtil;
+import consulo.language.ast.LighterAST;
+import consulo.language.ast.LighterASTNode;
+import consulo.language.ast.TokenSet;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+import consulo.language.psi.stub.*;
 import consulo.unity3d.scene.Unity3dMetaManager;
 import consulo.unity3d.scene.Unity3dYMLAssetFileType;
+import consulo.util.collection.ContainerUtil;
 import consulo.util.lang.Pair;
+import consulo.util.lang.StringUtil;
 import org.jetbrains.yaml.YAMLElementTypes;
 import org.jetbrains.yaml.YAMLTokenTypes;
 import org.jetbrains.yaml.psi.*;
@@ -69,8 +71,8 @@ public class Unity3dYMLAssetIndexExtension extends FileBasedIndexExtension<Integ
 
 	private static final int ourVersion = 13;
 	private static final String ourGameObject = "GameObject";
-	private static final Set<String> ourAcceptKeys = ContainerUtil.newTroveSet("MonoBehaviour", "Prefab", "Transform", ourGameObject, "TrailRenderer");
-	private static final Set<String> ourGuidKeys = ContainerUtil.newTroveSet("m_PrefabParentObject", "m_Script", "m_ParentPrefab");
+	private static final Set<String> ourAcceptKeys = Set.of("MonoBehaviour", "Prefab", "Transform", ourGameObject, "TrailRenderer");
+	private static final Set<String> ourGuidKeys = Set.of("m_PrefabParentObject", "m_Script", "m_ParentPrefab");
 
 	private static final String ourGameObjectNameField = "m_Name";
 

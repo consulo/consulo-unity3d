@@ -1,13 +1,13 @@
 package consulo.unity3d.run.debugger.iOS;
 
-import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.util.concurrency.AppExecutorUtil;
 import com.sun.jna.Native;
 import consulo.application.AccessRule;
+import consulo.application.progress.ProgressIndicator;
+import consulo.application.util.concurrent.AppExecutorUtil;
+import consulo.content.bundle.Sdk;
 import consulo.logging.Logger;
 import consulo.platform.Platform;
+import consulo.project.Project;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import consulo.unity3d.module.Unity3dRootModuleExtension;
 import consulo.unity3d.run.debugger.UnityExternalDevice;

@@ -16,17 +16,17 @@
 
 package consulo.unity3d.shaderlab.lang.psi;
 
-import java.util.Collections;
-import java.util.List;
+import consulo.language.file.FileViewProvider;
+import consulo.language.impl.psi.PsiFileBase;
+import consulo.language.psi.stub.StubElement;
+import consulo.unity3d.shaderlab.lang.ShaderLabFileType;
+import consulo.unity3d.shaderlab.lang.ShaderLabLanguage;
+import consulo.virtualFileSystem.fileType.FileType;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import com.intellij.extapi.psi.PsiFileBase;
-import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.psi.FileViewProvider;
-import com.intellij.psi.stubs.StubElement;
-import consulo.unity3d.shaderlab.lang.ShaderLabFileType;
-import consulo.unity3d.shaderlab.lang.ShaderLabLanguage;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author VISTALL

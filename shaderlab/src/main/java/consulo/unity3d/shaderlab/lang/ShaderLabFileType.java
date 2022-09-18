@@ -16,7 +16,7 @@
 
 package consulo.unity3d.shaderlab.lang;
 
-import com.intellij.openapi.fileTypes.LanguageFileType;
+import consulo.language.file.LanguageFileType;
 import consulo.localize.LocalizeValue;
 import consulo.ui.image.Image;
 import consulo.unity3d.shaderlab.icon.ShaderLabIconGroup;

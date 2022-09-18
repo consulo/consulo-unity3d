@@ -16,20 +16,19 @@
 
 package consulo.unity3d;
 
-import java.io.File;
-import java.io.IOException;
-
-import javax.annotation.Nullable;
+import consulo.disposer.Disposable;
+import consulo.logging.Logger;
+import consulo.util.lang.function.ThrowableConsumer;
+import consulo.virtualFileSystem.LocalFileOperationsHandler;
+import consulo.virtualFileSystem.LocalFileSystem;
+import consulo.virtualFileSystem.VirtualFile;
+import consulo.virtualFileSystem.VirtualFileManager;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.vfs.LocalFileOperationsHandler;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileManager;
-import com.intellij.util.ThrowableConsumer;
-import consulo.disposer.Disposable;
+import javax.annotation.Nullable;
+import java.io.File;
+import java.io.IOException;
 
 /**
  * @author VISTALL
