@@ -14,23 +14,24 @@
  * limitations under the License.
  */
 
-package consulo.unity3d.unityui;
+package consulo.unity3d.uss;
 
+import consulo.annotation.component.ExtensionImpl;
 import consulo.virtualFileSystem.fileType.FileTypeConsumer;
 import consulo.virtualFileSystem.fileType.FileTypeFactory;
-import consulo.xml.ide.highlighter.XmlFileType;
 
 import javax.annotation.Nonnull;
 
 /**
  * @author VISTALL
- * @since 22/03/2021g
+ * @since 22/03/2021
  */
-public class Unity3dXmlFileTypeFactory extends FileTypeFactory
+@ExtensionImpl
+public class Unity3dCssFileTypeFactory extends FileTypeFactory
 {
 	@Override
 	public void createFileTypes(@Nonnull FileTypeConsumer fileTypeConsumer)
 	{
-		fileTypeConsumer.consume(XmlFileType.INSTANCE, "uxml");
+		fileTypeConsumer.consume(USSFileType.INSTANCE);
 	}
 }

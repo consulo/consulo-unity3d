@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <!--
-  - Copyright 2013-2017 consulo.io
+  - Copyright 2013-2022 consulo.io
   -
   - Licensed under the Apache License, Version 2.0 (the "License");
   - you may not use this file except in compliance with the License.
@@ -20,7 +21,7 @@
 
 	<parent>
 		<groupId>consulo</groupId>
-		<artifactId>arch.managment</artifactId>
+		<artifactId>arch.ide-api-provided</artifactId>
 		<version>3-SNAPSHOT</version>
 		<relativePath/>
 	</parent>
@@ -37,15 +38,16 @@
 	</repositories>
 
 	<groupId>consulo.plugin</groupId>
-	<artifactId>consulo.unity3d.parent</artifactId>
+	<artifactId>consulo.unity3d-uss.impl</artifactId>
 	<version>3-SNAPSHOT</version>
-	<packaging>pom</packaging>
+	<packaging>jar</packaging>
 
-	<modules>
-		<module>plugin</module>
-		<module>cg-shader</module>
-		<module>shaderlab</module>
-		<module>uss-impl</module>
-		<module>uxml-impl</module>
-	</modules>
+	<dependencies>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>consulo.css</artifactId>
+			<version>${project.version}</version>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
 </project>

@@ -1,0 +1,5 @@
+<consulo-plugin-requires>
+	<plugins>
+		<plugin>consulo.css</plugin>
+	</plugins>
+</consulo-plugin-requires>

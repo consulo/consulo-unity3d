@@ -23,11 +23,7 @@ module consulo.unity3d
 	requires consulo.javascript.base.api;
 	requires consulo.javascript.json.javascript.impl;
 
-	requires consulo.css;
-
 	requires org.jetbrains.plugins.yaml;
-
-	requires com.intellij.xml;
 
 	requires consulo.dotnet.mono.debugger.impl;
 	requires mono.soft.debugging;

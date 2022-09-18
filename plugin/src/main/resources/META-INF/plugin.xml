@@ -31,6 +31,6 @@
 	<depends>consulo.nunit</depends>
 	<depends>org.jetbrains.plugins.yaml</depends>
 
-	<depends config-file="com.intellij.xml.xml" optional="true">com.intellij.xml</depends>
-	<depends config-file="consulo.css.xml" optional="true">consulo.css</depends>
+	<depends optional="true">com.intellij.xml</depends>
+	<depends optional="true">consulo.css</depends>
 </consulo-plugin>

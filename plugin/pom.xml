@@ -98,6 +98,16 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>consulo.unity3d-uss.impl</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>consulo.unity3d-uxml.impl</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>com.googlecode.plist</groupId>
 			<artifactId>dd-plist</artifactId>
 			<version>1.20</version>
@@ -124,12 +134,6 @@
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>consulo.javascript</artifactId>
-			<version>${project.version}</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>consulo.css</artifactId>
 			<version>${project.version}</version>
 			<scope>provided</scope>
 		</dependency>
