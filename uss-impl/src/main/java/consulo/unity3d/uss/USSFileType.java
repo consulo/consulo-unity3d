@@ -16,11 +16,11 @@
 
 package consulo.unity3d.uss;
 
-import consulo.css.icon.CssIconGroup;
 import consulo.css.lang.CssLanguage;
 import consulo.language.file.LanguageFileType;
 import consulo.localize.LocalizeValue;
 import consulo.ui.image.Image;
+import consulo.unity3d.uss.icon.UssIconGroup;
 
 import javax.annotation.Nonnull;
 
@@ -55,7 +55,7 @@ public class USSFileType extends LanguageFileType
 	@Override
 	public Image getIcon()
 	{
-		return CssIconGroup.cssfile();
+		return UssIconGroup.ussfile();
 	}
 
 	@Nonnull
