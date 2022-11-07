@@ -82,7 +82,7 @@ public class Unity3dWizardStep extends UnifiedProjectOrModuleNameStep<UnityModul
 		{
 			JComponent awtComponent = (JComponent) TargetAWT.to(myBundleBox.getComponent());
 
-			showAddSdk(awtComponent, sdk ->
+			showAddSdk(sdk ->
 			{
 				WriteAction.run(() -> SdkTable.getInstance().addSdk(sdk));
 
@@ -127,7 +127,7 @@ public class Unity3dWizardStep extends UnifiedProjectOrModuleNameStep<UnityModul
 	}
 
 	@RequiredUIAccess
-	public static void showAddSdk(@Nonnull JComponent awtComponent, @RequiredUIAccess Consumer<Sdk> sdkConsumer)
+	public static void showAddSdk(@RequiredUIAccess Consumer<Sdk> sdkConsumer)
 	{
 		ProjectStructureSettingsUtil settingsUtil = ShowSettingsUtil.getInstance();
 

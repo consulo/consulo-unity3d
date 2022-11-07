@@ -87,7 +87,7 @@ public class FileIsNotAttachedProvider implements EditorNotificationProvider
 		{
 			EditorNotificationBuilder panel = supplier.get();
 			panel.withText(LocalizeValue.localizeTODO("File is not attached to project. Some features are unavailable (code analysis, debugging, etc)"));
-			panel.withAction(LocalizeValue.localizeTODO("Re-import Unity Project"), () ->
+			panel.withAction(LocalizeValue.localizeTODO("Re-import Unity Project"), (e) ->
 			{
 				Unity3dProjectImporter.syncProjectStep(myProject, rootModuleExtension.getSdk(), null, true);
 			});

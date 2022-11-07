@@ -87,7 +87,7 @@ public class Unity3dAssetEditorNotificationProvider implements EditorNotificatio
 
 		final EditorNotificationBuilder panel = supplier.get();
 		panel.withText(LocalizeValue.localizeTODO("Used asset..."));
-		panel.withAction(LocalizeValue.localizeTODO("Find usages..."), () -> FindManager.getInstance(myProject).findUsages(psiFile));
+		panel.withAction(LocalizeValue.localizeTODO("Find usages..."), (e) -> FindManager.getInstance(myProject).findUsages(psiFile));
 		return panel;
 	}
 }

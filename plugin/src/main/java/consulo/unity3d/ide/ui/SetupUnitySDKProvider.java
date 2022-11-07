@@ -34,12 +34,11 @@ import consulo.localize.LocalizeValue;
 import consulo.platform.base.icon.PlatformIconGroup;
 import consulo.project.Project;
 import consulo.ui.annotation.RequiredUIAccess;
-import consulo.ui.ex.RelativePoint;
+import consulo.ui.event.UIEvent;
 import consulo.ui.ex.action.ActionGroup;
 import consulo.ui.ex.action.AnActionEvent;
 import consulo.ui.ex.action.AnSeparator;
 import consulo.ui.ex.action.DumbAwareAction;
-import consulo.ui.ex.awt.UIExAWTDataKey;
 import consulo.ui.ex.popup.JBPopupFactory;
 import consulo.unity3d.bundle.Unity3dBundleType;
 import consulo.unity3d.localize.Unity3dLocalize;
@@ -52,11 +51,10 @@ import jakarta.inject.Inject;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.swing.*;
-import java.awt.*;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
@@ -175,7 +173,7 @@ public class SetupUnitySDKProvider implements EditorNotificationProvider
 			{
 				requiredVersionFound[0] = true;
 
-				panel.withAction(LocalizeValue.localizeTODO("Select '" + sdk.getName() + "'"), () ->
+				panel.withAction(LocalizeValue.localizeTODO("Select '" + sdk.getName() + "'"), (e) ->
 				{
 					Unity3dProjectImporter.syncProjectStep(myProject, sdk, null, true);
 
@@ -184,7 +182,7 @@ public class SetupUnitySDKProvider implements EditorNotificationProvider
 			});
 		}
 
-		Runnable action = () ->
+		Consumer<UIEvent<consulo.ui.Component>> action = (e) ->
 		{
 			final DataContext dataContext = DataManager.getInstance().getDataContext();
 			ActionGroup.Builder builder = ActionGroup.newImmutableBuilder();
@@ -211,8 +209,7 @@ public class SetupUnitySDKProvider implements EditorNotificationProvider
 				@Override
 				public void actionPerformed(@Nonnull AnActionEvent e)
 				{
-					Component component = e.getInputEvent().getComponent();
-					Unity3dWizardStep.showAddSdk((JComponent) component, sdk ->
+					Unity3dWizardStep.showAddSdk(sdk ->
 					{
 						WriteAction.run(() -> mySdkTable.addSdk(sdk));
 
@@ -223,11 +220,9 @@ public class SetupUnitySDKProvider implements EditorNotificationProvider
 				}
 			});
 
-			PointerInfo info = MouseInfo.getPointerInfo();
-
 			JBPopupFactory.getInstance().createActionGroupPopup(requiredVersionFound[0] ? "Select Another Unity" : "Select Unity", builder.build(), dataContext,
 					JBPopupFactory.ActionSelectionAid.MNEMONICS, false)
-					.show(new RelativePoint(info.getLocation()));
+					.showBy(e);
 		};
 
 		panel.withAction(LocalizeValue.localizeTODO(requiredVersionFound[0] ? "Select Another Unity..." : "Select Unity..."), action);
