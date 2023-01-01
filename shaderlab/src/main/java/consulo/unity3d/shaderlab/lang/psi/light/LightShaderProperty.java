@@ -16,20 +16,19 @@
 
 package consulo.unity3d.shaderlab.lang.psi.light;
 
-import javax.annotation.Nonnull;
-
-import org.jetbrains.annotations.NonNls;
-
-import javax.annotation.Nullable;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiManager;
-import com.intellij.psi.impl.light.LightElement;
-import com.intellij.util.IncorrectOperationException;
+import consulo.language.impl.psi.LightElement;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiManager;
+import consulo.language.util.IncorrectOperationException;
+import consulo.project.Project;
 import consulo.unity3d.shaderlab.lang.ShaderLabLanguage;
 import consulo.unity3d.shaderlab.lang.psi.ShaderProperty;
 import consulo.unity3d.shaderlab.lang.psi.ShaderPropertyType;
 import consulo.unity3d.shaderlab.lang.psi.ShaderPropertyValue;
+import org.jetbrains.annotations.NonNls;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * @author VISTALL

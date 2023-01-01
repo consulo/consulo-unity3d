@@ -16,25 +16,27 @@
 
 package consulo.unity3d.module;
 
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.projectRoots.SdkType;
-import com.intellij.openapi.util.Version;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.ArrayUtil;
 import consulo.annotation.access.RequiredReadAction;
+import consulo.content.bundle.Sdk;
+import consulo.content.bundle.SdkType;
 import consulo.dotnet.module.DotNetNamespaceGeneratePolicy;
 import consulo.dotnet.module.extension.BaseDotNetSimpleModuleExtension;
+import consulo.module.content.layer.ModuleRootLayer;
 import consulo.platform.Platform;
-import consulo.roots.ModuleRootLayer;
 import consulo.unity3d.bundle.Unity3dBundleType;
 import consulo.unity3d.projectImport.Unity3dProjectImporter;
+import consulo.util.collection.ArrayUtil;
+import consulo.util.lang.Version;
+import consulo.virtualFileSystem.LocalFileSystem;
+import consulo.virtualFileSystem.VirtualFile;
 import org.jdom.Element;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.File;
-import java.util.*;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.function.Consumer;
 
 /**
@@ -47,7 +49,7 @@ public class Unity3dRootModuleExtension extends BaseDotNetSimpleModuleExtension<
 	private static final int NET_4_6 = 1;
 
 	protected String myNamespacePrefix = null;
-	protected int scriptRuntimeVersion;
+	protected int scriptRuntimeVersion = NET_2_TO_3_5;
 
 	public Unity3dRootModuleExtension(@Nonnull String id, @Nonnull ModuleRootLayer rootModel)
 	{
@@ -182,6 +184,7 @@ public class Unity3dRootModuleExtension extends BaseDotNetSimpleModuleExtension<
 					paths.add(sdkHomePath + "/Contents/Frameworks/Mono/lib/mono/2.0");
 					// actual at unity5.4 beta
 					paths.add(sdkHomePath + "/Contents/Mono/lib/mono/2.0");
+					paths.add(sdkHomePath + "/Contents/MonoBleedingEdge/lib/mono/2.0-api");
 					break;
 				case NET_4_6:
 					paths.add(sdkHomePath + "/Contents/MonoBleedingEdge/lib/mono/4.5");
@@ -219,6 +222,8 @@ public class Unity3dRootModuleExtension extends BaseDotNetSimpleModuleExtension<
 			{
 				case NET_2_TO_3_5:
 					paths.add(sdkHomePath + "/Editor/Data/Mono/lib/mono/2.0");
+					// unity new distribution
+					paths.add(sdkHomePath + "/Editor/Data/MonoBleedingEdge/lib/mono/2.0-api");
 					break;
 				case NET_4_6:
 					paths.add(sdkHomePath + "/Editor/Data/MonoBleedingEdge/lib/mono/4.5");

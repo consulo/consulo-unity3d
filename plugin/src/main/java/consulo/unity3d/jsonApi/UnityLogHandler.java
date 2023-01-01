@@ -16,7 +16,7 @@
 
 package consulo.unity3d.jsonApi;
 
-import com.intellij.util.messages.Topic;
+import consulo.component.messagebus.Topic;
 
 /**
  * @author VISTALL

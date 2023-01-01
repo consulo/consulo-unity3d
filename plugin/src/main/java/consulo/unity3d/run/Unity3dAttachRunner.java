@@ -16,36 +16,37 @@
 
 package consulo.unity3d.run;
 
-import com.intellij.execution.ExecutionException;
-import com.intellij.execution.ExecutionResult;
-import com.intellij.execution.actions.StopProcessAction;
-import com.intellij.execution.configurations.RunProfile;
-import com.intellij.execution.configurations.RunProfileState;
-import com.intellij.execution.executors.DefaultDebugExecutor;
-import com.intellij.execution.process.ProcessHandler;
-import com.intellij.execution.process.ProcessOutputTypes;
-import com.intellij.execution.runners.AsyncProgramRunner;
-import com.intellij.execution.runners.ExecutionEnvironment;
-import com.intellij.execution.runners.ProgramRunner;
-import com.intellij.execution.ui.ConsoleView;
-import com.intellij.execution.ui.RunContentDescriptor;
-import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.progress.Task;
-import com.intellij.openapi.util.AsyncResult;
-import com.intellij.openapi.util.Comparing;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.containers.ContainerUtil;
-import com.intellij.xdebugger.XDebugSession;
-import com.intellij.xdebugger.XDebuggerManager;
-import consulo.dotnet.execution.DebugConnectionInfo;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.application.progress.ProgressIndicator;
+import consulo.application.progress.Task;
+import consulo.document.FileDocumentManager;
 import consulo.dotnet.mono.debugger.MonoVirtualMachineListener;
+import consulo.dotnet.util.DebugConnectionInfo;
+import consulo.execution.ExecutionResult;
+import consulo.execution.configuration.RunProfile;
+import consulo.execution.configuration.RunProfileState;
+import consulo.execution.debug.DefaultDebugExecutor;
+import consulo.execution.debug.XDebugSession;
+import consulo.execution.debug.XDebuggerManager;
+import consulo.execution.runner.AsyncProgramRunner;
+import consulo.execution.runner.ExecutionEnvironment;
+import consulo.execution.runner.ProgramRunner;
+import consulo.execution.ui.RunContentDescriptor;
+import consulo.execution.ui.console.ConsoleView;
+import consulo.process.ExecutionException;
+import consulo.process.ProcessHandler;
+import consulo.process.ProcessHandlerStopper;
+import consulo.process.ProcessOutputTypes;
 import consulo.ui.annotation.RequiredUIAccess;
 import consulo.unity3d.editor.UnityEditorCommunication;
 import consulo.unity3d.run.debugger.UnityDebugProcess;
-import consulo.unity3d.run.debugger.UnityExternalDeviceManager;
 import consulo.unity3d.run.debugger.UnityDebugProcessInfo;
+import consulo.unity3d.run.debugger.UnityExternalDeviceManager;
 import consulo.unity3d.run.debugger.UnityProcessDialog;
+import consulo.util.collection.ContainerUtil;
+import consulo.util.concurrent.AsyncResult;
+import consulo.util.lang.Comparing;
+import consulo.util.lang.StringUtil;
 import mono.debugger.VirtualMachine;
 
 import javax.annotation.Nonnull;
@@ -56,6 +57,7 @@ import java.util.List;
  * @author VISTALL
  * @since 10.11.14
  */
+@ExtensionImpl
 public class Unity3dAttachRunner extends AsyncProgramRunner
 {
 	public static Unity3dAttachRunner getInstance()
@@ -112,7 +114,7 @@ public class Unity3dAttachRunner extends AsyncProgramRunner
 					myDisconnected = true;
 					ProcessHandler processHandler = process.getProcessHandler();
 					processHandler.notifyTextAvailable(String.format("Disconnected from '%s' at %s:%d\n", selected.getName(), selected.getHost(), selected.getPort()), ProcessOutputTypes.STDERR);
-					StopProcessAction.stopProcess(processHandler);
+					ProcessHandlerStopper.stop(processHandler);
 				}
 
 				@Override
@@ -120,7 +122,7 @@ public class Unity3dAttachRunner extends AsyncProgramRunner
 				{
 					ProcessHandler processHandler = process.getProcessHandler();
 					processHandler.notifyTextAvailable(String.format("Failed attach to '%s' at %s:%d\n", selected.getName(), selected.getHost(), selected.getPort()), ProcessOutputTypes.STDERR);
-					StopProcessAction.stopProcess(processHandler);
+					ProcessHandlerStopper.stop(processHandler);
 				}
 			});
 			process.start();

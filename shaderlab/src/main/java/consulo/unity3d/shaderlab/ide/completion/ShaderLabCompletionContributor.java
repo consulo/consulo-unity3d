@@ -16,26 +16,25 @@
 
 package consulo.unity3d.shaderlab.ide.completion;
 
-import com.intellij.codeInsight.TailType;
-import com.intellij.codeInsight.completion.*;
-import com.intellij.codeInsight.lookup.LookupElement;
-import com.intellij.codeInsight.lookup.LookupElementBuilder;
-import com.intellij.icons.AllIcons;
-import com.intellij.openapi.editor.Caret;
-import com.intellij.openapi.progress.ProgressManager;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.patterns.StandardPatterns;
-import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.ProcessingContext;
 import consulo.annotation.access.RequiredReadAction;
-import consulo.codeInsight.completion.CompletionProvider;
-import consulo.csharp.ide.completion.util.SpaceInsertHandler;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.application.AllIcons;
+import consulo.application.progress.ProgressManager;
+import consulo.codeEditor.Caret;
+import consulo.csharp.impl.ide.completion.util.SpaceInsertHandler;
 import consulo.dotnet.psi.search.searches.DirectTypeInheritorsSearch;
-import consulo.ide.IconDescriptorUpdaters;
+import consulo.language.Language;
+import consulo.language.editor.completion.*;
+import consulo.language.editor.completion.lookup.*;
+import consulo.language.icon.IconDescriptorUpdaters;
+import consulo.language.pattern.StandardPatterns;
+import consulo.language.psi.scope.GlobalSearchScope;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.language.util.ProcessingContext;
+import consulo.project.Project;
 import consulo.ui.image.ImageEffects;
 import consulo.unity3d.shaderlab.lang.ShaderLabFileType;
+import consulo.unity3d.shaderlab.lang.ShaderLabLanguage;
 import consulo.unity3d.shaderlab.lang.ShaderLabPropertyType;
 import consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabCompositeRole;
 import consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabRole;
@@ -43,6 +42,7 @@ import consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabRoles;
 import consulo.unity3d.shaderlab.lang.psi.*;
 import consulo.unity3d.shaderlab.lang.psi.light.LightShaderDef;
 import consulo.unity3d.shaderlab.lang.psi.stub.index.ShaderDefIndex;
+import consulo.util.lang.StringUtil;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
@@ -51,12 +51,12 @@ import java.util.Collection;
  * @author VISTALL
  * @since 08.05.2015
  */
+@ExtensionImpl
 public class ShaderLabCompletionContributor extends CompletionContributor
 {
 	public ShaderLabCompletionContributor()
 	{
 		extend(CompletionType.BASIC, StandardPatterns.psiElement(ShaderLabTokens.IDENTIFIER).withParent(ShaderPropertyTypeElement.class), new CompletionProvider()
-
 		{
 			@RequiredReadAction
 			@Override
@@ -219,12 +219,19 @@ public class ShaderLabCompletionContributor extends CompletionContributor
 				{
 					String vmQName = typeDeclaration.getVmQName();
 
-					LookupElementBuilder builder = LookupElementBuilder.create(StringUtil.QUOTER.fun(vmQName));
+					LookupElementBuilder builder = LookupElementBuilder.create(StringUtil.QUOTER.apply(vmQName));
 					builder = builder.withIcon(IconDescriptorUpdaters.getIcon(typeDeclaration, 0));
 					builder = builder.withPresentableText(vmQName);
 					result.addElement(builder);
 				});
 			}
 		});
+	}
+
+	@Nonnull
+	@Override
+	public Language getLanguage()
+	{
+		return ShaderLabLanguage.INSTANCE;
 	}
 }

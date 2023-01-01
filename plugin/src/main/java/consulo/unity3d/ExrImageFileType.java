@@ -16,10 +16,10 @@
 
 package consulo.unity3d;
 
-import com.intellij.openapi.fileTypes.FileType;
 import consulo.localize.LocalizeValue;
 import consulo.platform.base.icon.PlatformIconGroup;
 import consulo.ui.image.Image;
+import consulo.virtualFileSystem.fileType.FileType;
 
 import javax.annotation.Nonnull;
 
@@ -56,7 +56,7 @@ public class ExrImageFileType implements FileType
 	@Override
 	public Image getIcon()
 	{
-		return PlatformIconGroup.fileTypesAny_type();
+		return PlatformIconGroup.filetypesAny_type();
 	}
 
 	@Override

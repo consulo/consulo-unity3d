@@ -16,41 +16,41 @@
 
 package consulo.unity3d.jsonApi;
 
-import com.intellij.ide.impl.ProjectUtil;
-import com.intellij.ide.impl.util.NewOrImportModuleUtil;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.fileEditor.FileEditorManager;
-import com.intellij.openapi.fileEditor.OpenFileDescriptor;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ProjectManager;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.projectRoots.SdkTable;
-import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil;
-import com.intellij.openapi.startup.StartupManager;
-import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.wm.IdeFocusManager;
-import com.intellij.openapi.wm.IdeFrame;
-import com.intellij.openapi.wm.WindowManager;
-import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.ui.UIUtil;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.WinDef;
-import consulo.awt.TargetAWT;
-import consulo.builtInServer.impl.net.json.RequestFocusHttpRequestHandler;
-import consulo.builtInServer.json.JsonPostRequestHandler;
-import consulo.moduleImport.ModuleImportContext;
-import consulo.moduleImport.ModuleImportProvider;
-import consulo.moduleImport.ui.ModuleImportProcessor;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.application.ui.wm.IdeFocusManager;
+import consulo.builtinWebServer.json.JsonPostRequestHandler;
+import consulo.codeEditor.Editor;
+import consulo.content.bundle.Sdk;
+import consulo.content.bundle.SdkTable;
+import consulo.content.bundle.SdkUtil;
+import consulo.fileEditor.FileEditorManager;
+import consulo.ide.moduleImport.ModuleImportContext;
+import consulo.ide.moduleImport.ModuleImportProcessor;
+import consulo.ide.moduleImport.ModuleImportProvider;
+import consulo.ide.newModule.NewOrImportModuleUtil;
+import consulo.navigation.OpenFileDescriptor;
+import consulo.navigation.OpenFileDescriptorFactory;
 import consulo.platform.Platform;
+import consulo.project.Project;
+import consulo.project.ProjectManager;
+import consulo.project.startup.StartupManager;
+import consulo.project.ui.wm.IdeFrame;
+import consulo.project.ui.wm.WindowManager;
+import consulo.project.util.ProjectUtil;
 import consulo.ui.UIAccess;
+import consulo.ui.ex.awt.Messages;
+import consulo.ui.ex.awt.UIUtil;
+import consulo.ui.ex.awtUnsafe.TargetAWT;
 import consulo.unity3d.bundle.Unity3dBundleType;
 import consulo.unity3d.projectImport.Unity3dModuleImportProvider;
 import consulo.util.concurrent.AsyncResult;
 import consulo.util.lang.Pair;
+import consulo.virtualFileSystem.LocalFileSystem;
+import consulo.virtualFileSystem.VirtualFile;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -63,9 +63,10 @@ import java.util.Set;
  * @author VISTALL
  * @since 14.11.2015
  */
+@ExtensionImpl
 public class UnityOpenFilePostHandler extends JsonPostRequestHandler<UnityOpenFilePostHandlerRequest>
 {
-	private static final Set<String> ourSupportedContentTypes = ContainerUtil.newHashSet("UnityEditor.MonoScript", "UnityEngine.Shader");
+	private static final Set<String> ourSupportedContentTypes = Set.of("UnityEditor.MonoScript", "UnityEngine.Shader");
 
 	public UnityOpenFilePostHandler()
 	{
@@ -110,7 +111,11 @@ public class UnityOpenFilePostHandler extends JsonPostRequestHandler<UnityOpenFi
 						VirtualFile sdkFileHome = LocalFileSystem.getInstance().findFileByPath(sdkPath);
 						if(sdkFileHome == null)
 						{
-							RequestFocusHttpRequestHandler.activateFrame(WindowManager.getInstance().findVisibleFrame());
+							IdeFrame frame = WindowManager.getInstance().findVisibleIdeFrame();
+							if(frame != null)
+							{
+								frame.activate();
+							}
 							Messages.showErrorDialog("Unity path is not resolved: " + sdkPath, "Consulo");
 							return;
 						}
@@ -129,12 +134,16 @@ public class UnityOpenFilePostHandler extends JsonPostRequestHandler<UnityOpenFi
 
 						if(targetSdk == null)
 						{
-							targetSdk = SdkConfigurationUtil.createAndAddSDK(sdkPath, Unity3dBundleType.getInstance(), false);
+							targetSdk = SdkUtil.createAndAddSDK(sdkPath, Unity3dBundleType.getInstance(), uiAccess);
 						}
 
 						if(targetSdk == null)
 						{
-							RequestFocusHttpRequestHandler.activateFrame(WindowManager.getInstance().findVisibleFrame());
+							IdeFrame frame = WindowManager.getInstance().findVisibleIdeFrame();
+							if(frame != null)
+							{
+								frame.activate();
+							}
 							Messages.showErrorDialog("Unity SDK cant add by path: " + sdkPath, "Consulo");
 							return;
 						}
@@ -146,7 +155,8 @@ public class UnityOpenFilePostHandler extends JsonPostRequestHandler<UnityOpenFi
 
 						ModuleImportProcessor.showImportChooser(null, projectVirtualFile, Collections.singletonList(importProvider), result);
 
-						result.doWhenDone(pair -> {
+						result.doWhenDone(pair ->
+						{
 							ModuleImportContext context = pair.getFirst();
 
 							ModuleImportProvider<ModuleImportContext> provider = pair.getSecond();
@@ -197,7 +207,7 @@ public class UnityOpenFilePostHandler extends JsonPostRequestHandler<UnityOpenFi
 			return;
 		}
 
-		RequestFocusHttpRequestHandler.activateFrame(ideFrame);
+		ideFrame.activate();
 
 		Platform.OperatingSystem os = Platform.current().os();
 		if(os.isMac())
@@ -221,7 +231,7 @@ public class UnityOpenFilePostHandler extends JsonPostRequestHandler<UnityOpenFi
 		VirtualFile fileByPath = LocalFileSystem.getInstance().findFileByPath(body.filePath);
 		if(fileByPath != null)
 		{
-			OpenFileDescriptor descriptor = new OpenFileDescriptor(openedProject, fileByPath, body.line - 1, -1);
+			OpenFileDescriptor descriptor = OpenFileDescriptorFactory.getInstance(openedProject).builder(fileByPath).line(body.line - 1).build();
 			Editor editor = FileEditorManager.getInstance(openedProject).openTextEditor(descriptor, true);
 
 			if(editor != null)

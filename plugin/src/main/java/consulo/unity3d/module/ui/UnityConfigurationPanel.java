@@ -16,21 +16,14 @@
 
 package consulo.unity3d.module.ui;
 
-import com.intellij.openapi.ui.InputValidator;
-import com.intellij.openapi.ui.LabeledComponent;
-import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.ui.VerticalFlowLayout;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.ui.CollectionListModel;
-import com.intellij.ui.DocumentAdapter;
-import com.intellij.ui.ToolbarDecorator;
-import com.intellij.ui.components.JBLabel;
-import com.intellij.ui.components.JBList;
-import com.intellij.ui.components.JBTextField;
 import consulo.dotnet.DotNetBundle;
-import consulo.extension.ui.ModuleExtensionSdkBoxBuilder;
+import consulo.module.ui.extension.ModuleExtensionSdkBoxBuilder;
 import consulo.ui.annotation.RequiredUIAccess;
+import consulo.ui.ex.InputValidator;
+import consulo.ui.ex.awt.*;
+import consulo.ui.ex.awt.event.DocumentAdapter;
 import consulo.unity3d.module.Unity3dRootMutableModuleExtension;
+import consulo.util.lang.StringUtil;
 
 import javax.annotation.Nonnull;
 import javax.swing.*;

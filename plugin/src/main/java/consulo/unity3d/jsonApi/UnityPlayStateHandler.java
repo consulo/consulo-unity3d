@@ -16,7 +16,8 @@
 
 package consulo.unity3d.jsonApi;
 
-import consulo.builtInServer.json.JsonPostRequestHandler;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.builtinWebServer.json.JsonPostRequestHandler;
 
 import javax.annotation.Nonnull;
 
@@ -24,6 +25,7 @@ import javax.annotation.Nonnull;
  * @author VISTALL
  * @since 07-Jun-16
  */
+@ExtensionImpl
 public class UnityPlayStateHandler extends JsonPostRequestHandler<UnityPlayStateHandlerRequest>
 {
 	public UnityPlayStateHandler()

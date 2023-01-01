@@ -18,15 +18,13 @@ package consulo.cgshader.lexer;
 
 import java.util.Set;
 
-import com.intellij.util.containers.ContainerUtil;
-
 /**
  * @author VISTALL
  * @since 11.10.2015
  */
 public interface CGKeywords
 {
-	Set<String> KEYWORDS = ContainerUtil.newHashSet("asm", "asm_fragment", "auto", "case", "class", "column_major", "compile", "const", "const_cast", "continue", "decl", "default", "delete",
+	Set<String> KEYWORDS = Set.of("asm", "asm_fragment", "auto", "case", "class", "column_major", "compile", "const", "const_cast", "continue", "decl", "default", "delete",
 			"discard", "do", "dword", "dynamic_cast", "else", "emit", "enum", "explicit", "extern", "for", "friend", "get", "if", "inline", "interface", "matrix", "mutable", "new", "operator",
 			"packed", "pass", "pixelfragment", "pixelshader", "private", "protected", "public", "register", "reinterpret_cast", "row_major", "shared", "sizeof", "static_cast", "string", "struct",
 			"switch", "technique", "template", "texture", "texture1D", "texture2D", "texture3D", "textureCUBE", "textureRECT", "this", "typedef", "typeid", "typename", "union", "vector",

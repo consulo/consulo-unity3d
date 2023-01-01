@@ -16,14 +16,19 @@
 
 package consulo.unity3d.shaderlab.ide.highlight;
 
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.Language;
+import consulo.language.editor.highlight.SingleLazyInstanceSyntaxHighlighterFactory;
+import consulo.language.editor.highlight.SyntaxHighlighter;
+import consulo.unity3d.shaderlab.lang.ShaderLabLanguage;
+
 import javax.annotation.Nonnull;
-import com.intellij.openapi.fileTypes.SingleLazyInstanceSyntaxHighlighterFactory;
-import com.intellij.openapi.fileTypes.SyntaxHighlighter;
 
 /**
  * @author VISTALL
  * @since 08.05.2015
  */
+@ExtensionImpl
 public class ShaderLabHighlighterFactory extends SingleLazyInstanceSyntaxHighlighterFactory
 {
 	@Nonnull
@@ -31,5 +36,12 @@ public class ShaderLabHighlighterFactory extends SingleLazyInstanceSyntaxHighlig
 	protected SyntaxHighlighter createHighlighter()
 	{
 		return new ShaderLabHighlighter();
+	}
+
+	@Nonnull
+	@Override
+	public Language getLanguage()
+	{
+		return ShaderLabLanguage.INSTANCE;
 	}
 }

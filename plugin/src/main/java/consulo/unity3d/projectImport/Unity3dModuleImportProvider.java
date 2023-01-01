@@ -16,15 +16,16 @@
 
 package consulo.unity3d.projectImport;
 
-import com.intellij.openapi.module.ModifiableModuleModel;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.startup.StartupManager;
 import consulo.annotation.access.RequiredReadAction;
-import consulo.moduleImport.ModuleImportProvider;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.content.bundle.Sdk;
+import consulo.ide.moduleImport.ModuleImportProvider;
+import consulo.module.ModifiableModuleModel;
+import consulo.module.Module;
+import consulo.project.Project;
+import consulo.project.startup.StartupManager;
+import consulo.ui.ex.wizard.WizardStep;
 import consulo.ui.image.Image;
-import consulo.ui.wizard.WizardStep;
 import consulo.unity3d.Unity3dIcons;
 import consulo.unity3d.jsonApi.UnityOpenFilePostHandlerRequest;
 import consulo.unity3d.projectImport.ui.Unity3dWizardStep;
@@ -39,6 +40,7 @@ import java.util.function.Consumer;
  * @author VISTALL
  * @since 29.12.14
  */
+@ExtensionImpl
 public class Unity3dModuleImportProvider implements ModuleImportProvider<UnityModuleImportContext>
 {
 	@Nullable
@@ -95,7 +97,6 @@ public class Unity3dModuleImportProvider implements ModuleImportProvider<UnityMo
 		UnityOpenFilePostHandlerRequest requestor = context.getRequestor();
 
 		Module rootModule = model.newModule(project.getName(), project.getBasePath());
-
 
 		newModuleConsumer.accept(rootModule);
 

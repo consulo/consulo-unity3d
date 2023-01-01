@@ -16,16 +16,16 @@
 
 package consulo.unity3d.run.debugger.attach;
 
-import com.intellij.execution.ExecutionException;
-import com.intellij.execution.ProgramRunnerUtil;
-import com.intellij.execution.RunManager;
-import com.intellij.execution.RunnerAndConfigurationSettings;
-import com.intellij.execution.configurations.ConfigurationFactory;
-import com.intellij.execution.executors.DefaultDebugExecutor;
-import com.intellij.execution.process.ProcessInfo;
-import com.intellij.openapi.project.Project;
-import com.intellij.xdebugger.attach.XAttachDebugger;
-import com.intellij.xdebugger.attach.XAttachHost;
+import consulo.execution.ProgramRunnerUtil;
+import consulo.execution.RunManager;
+import consulo.execution.RunnerAndConfigurationSettings;
+import consulo.execution.configuration.ConfigurationFactory;
+import consulo.execution.debug.DefaultDebugExecutor;
+import consulo.execution.debug.attach.XAttachDebugger;
+import consulo.execution.debug.attach.XAttachHost;
+import consulo.process.ExecutionException;
+import consulo.process.ProcessInfo;
+import consulo.project.Project;
 import consulo.unity3d.run.Unity3dAttachApplicationType;
 import consulo.unity3d.run.Unity3dAttachConfiguration;
 import consulo.unity3d.run.debugger.UnityDebugProcessInfo;

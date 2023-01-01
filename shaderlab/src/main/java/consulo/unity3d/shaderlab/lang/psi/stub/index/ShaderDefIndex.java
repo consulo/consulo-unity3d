@@ -16,22 +16,24 @@
 
 package consulo.unity3d.shaderlab.lang.psi.stub.index;
 
-import javax.annotation.Nonnull;
-
-import com.intellij.psi.stubs.StringStubIndexExtension;
-import com.intellij.psi.stubs.StubIndexKey;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.psi.stub.StringStubIndexExtension;
+import consulo.language.psi.stub.StubIndexKey;
 import consulo.unity3d.shaderlab.lang.psi.ShaderDef;
+
+import javax.annotation.Nonnull;
 
 /**
  * @author VISTALL
  * @since 08.05.2015
  */
+@ExtensionImpl
 public class ShaderDefIndex extends StringStubIndexExtension<ShaderDef>
 {
 	@Nonnull
 	public static ShaderDefIndex getInstance()
 	{
-		return EP_NAME.findExtension(ShaderDefIndex.class);
+		return EP_NAME.findExtensionOrFail(ShaderDefIndex.class);
 	}
 
 	public static final StubIndexKey<String, ShaderDef> KEY = StubIndexKey.createIndexKey("shader.def.key");

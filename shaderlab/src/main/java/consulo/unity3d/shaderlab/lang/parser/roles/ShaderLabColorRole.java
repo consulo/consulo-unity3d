@@ -16,15 +16,16 @@
 
 package consulo.unity3d.shaderlab.lang.parser.roles;
 
-import static consulo.unity3d.shaderlab.lang.parser.ShaderLabParser.parseBracketReference;
-import static consulo.unity3d.shaderlab.lang.parser.ShaderLabParser.parseElementsInBraces;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import com.intellij.lang.PsiBuilder;
+import consulo.language.parser.PsiBuilder;
 import consulo.unity3d.shaderlab.lang.parser.ShaderLabParserBuilder;
 import consulo.unity3d.shaderlab.lang.psi.ShaderLabElements;
 import consulo.unity3d.shaderlab.lang.psi.ShaderLabTokens;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import static consulo.unity3d.shaderlab.lang.parser.ShaderLabParser.parseBracketReference;
+import static consulo.unity3d.shaderlab.lang.parser.ShaderLabParser.parseElementsInBraces;
 
 /**
  * @author VISTALL

@@ -16,17 +16,18 @@
 
 package consulo.unity3d.action;
 
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.openapi.actionSystem.Presentation;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
+import consulo.annotation.component.ActionImpl;
+import consulo.language.editor.CommonDataKeys;
+import consulo.project.Project;
 import consulo.ui.annotation.RequiredUIAccess;
+import consulo.ui.ex.action.AnAction;
+import consulo.ui.ex.action.AnActionEvent;
+import consulo.ui.ex.action.Presentation;
 import consulo.unity3d.Unity3dIcons;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import consulo.unity3d.module.Unity3dRootModuleExtension;
 import consulo.unity3d.projectImport.Unity3dProjectImporter;
+import consulo.virtualFileSystem.VirtualFile;
 
 import javax.annotation.Nonnull;
 
@@ -34,6 +35,7 @@ import javax.annotation.Nonnull;
  * @author VISTALL
  * @since 03.04.2015
  */
+@ActionImpl(id = "SyncUnity3dProject")
 public class SyncUnity3dProjectAction extends AnAction
 {
 	public SyncUnity3dProjectAction()
@@ -45,7 +47,7 @@ public class SyncUnity3dProjectAction extends AnAction
 	@RequiredUIAccess
 	public void actionPerformed(@Nonnull AnActionEvent anActionEvent)
 	{
-		final Project project = anActionEvent.getProject();
+		final Project project = anActionEvent.getData(Project.KEY);
 		if(project == null)
 		{
 			return;
@@ -64,7 +66,7 @@ public class SyncUnity3dProjectAction extends AnAction
 	public void update(@Nonnull AnActionEvent e)
 	{
 		Presentation presentation = e.getPresentation();
-		Project project = e.getProject();
+		Project project = e.getData(Project.KEY);
 		if(project == null || Unity3dModuleExtensionUtil.getRootModuleExtension(project) == null)
 		{
 			presentation.setEnabledAndVisible(false);

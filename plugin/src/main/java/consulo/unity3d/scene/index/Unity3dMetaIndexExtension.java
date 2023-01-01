@@ -16,19 +16,18 @@
 
 package consulo.unity3d.scene.index;
 
-import com.intellij.lang.LighterAST;
-import com.intellij.lang.LighterASTNode;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.indexing.*;
-import com.intellij.util.io.DataExternalizer;
-import com.intellij.util.io.EnumeratorIntegerDescriptor;
-import com.intellij.util.io.EnumeratorStringDescriptor;
-import com.intellij.util.io.KeyDescriptor;
 import consulo.annotation.access.RequiredReadAction;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.index.io.*;
+import consulo.index.io.data.DataExternalizer;
+import consulo.language.ast.LighterAST;
+import consulo.language.ast.LighterASTNode;
+import consulo.language.psi.stub.*;
 import consulo.unity3d.Unity3dMetaFileType;
 import consulo.unity3d.scene.Unity3dMetaManager;
 import consulo.util.lang.Pair;
+import consulo.util.lang.StringUtil;
+import consulo.virtualFileSystem.VirtualFile;
 import org.jetbrains.yaml.YAMLElementTypes;
 import org.jetbrains.yaml.psi.*;
 
@@ -40,6 +39,7 @@ import java.util.Map;
  * @author VISTALL
  * @since 01-Sep-17
  */
+@ExtensionImpl
 public class Unity3dMetaIndexExtension extends FileBasedIndexExtension<String, Integer>
 {
 	public static final ID<String, Integer> KEY = ID.create("unity3d.meta.index");

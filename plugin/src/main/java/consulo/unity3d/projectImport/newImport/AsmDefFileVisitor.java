@@ -16,21 +16,21 @@
 
 package consulo.unity3d.projectImport.newImport;
 
-import com.intellij.openapi.application.ReadAction;
-import com.intellij.openapi.fileTypes.FileTypeManager;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileVisitor;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiManager;
 import consulo.annotation.access.RequiredReadAction;
+import consulo.application.ReadAction;
 import consulo.json.JsonFileType;
 import consulo.json.jom.JomElement;
 import consulo.json.jom.JomFileElement;
 import consulo.json.jom.JomManager;
+import consulo.language.file.FileTypeManager;
+import consulo.language.psi.PsiFile;
+import consulo.language.psi.PsiManager;
+import consulo.project.Project;
 import consulo.unity3d.asmdef.AsmDefElement;
 import consulo.unity3d.asmdef.AsmDefFileDescriptor;
 import consulo.util.lang.StringUtil;
+import consulo.virtualFileSystem.VirtualFile;
+import consulo.virtualFileSystem.util.VirtualFileVisitor;
 
 import javax.annotation.Nonnull;
 import java.util.Map;

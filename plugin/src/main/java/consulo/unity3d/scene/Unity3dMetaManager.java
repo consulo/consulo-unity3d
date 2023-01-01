@@ -16,46 +16,49 @@
 
 package consulo.unity3d.scene;
 
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import jakarta.inject.Inject;
-import jakarta.inject.Singleton;
-
-import org.jetbrains.yaml.psi.YAMLFile;
-import com.intellij.openapi.components.ServiceManager;
-import com.intellij.openapi.progress.ProgressManager;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Comparing;
-import com.intellij.openapi.util.LowMemoryWatcher;
-import com.intellij.openapi.vfs.AsyncFileListener;
-import com.intellij.openapi.vfs.VfsUtilCore;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileManager;
-import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiManager;
-import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.util.PsiModificationTracker;
-import com.intellij.util.CommonProcessors;
-import com.intellij.util.ObjectUtil;
-import com.intellij.util.containers.MultiMap;
-import com.intellij.util.indexing.FileBasedIndex;
 import consulo.annotation.access.RequiredReadAction;
+import consulo.annotation.component.ComponentScope;
+import consulo.annotation.component.ServiceAPI;
+import consulo.annotation.component.ServiceImpl;
+import consulo.application.progress.ProgressManager;
+import consulo.application.util.LowMemoryWatcher;
+import consulo.application.util.function.CommonProcessors;
 import consulo.disposer.Disposable;
+import consulo.language.psi.PsiFile;
+import consulo.language.psi.PsiManager;
+import consulo.language.psi.PsiModificationTrackerListener;
+import consulo.language.psi.scope.GlobalSearchScope;
+import consulo.language.psi.stub.FileBasedIndex;
+import consulo.project.Project;
 import consulo.unity3d.Unity3dMetaFileType;
 import consulo.unity3d.scene.index.Unity3dMetaIndexExtension;
 import consulo.unity3d.scene.index.Unity3dYMLAsset;
 import consulo.unity3d.scene.index.Unity3dYMLAssetIndexExtension;
+import consulo.util.collection.MultiMap;
+import consulo.util.lang.Comparing;
+import consulo.util.lang.ObjectUtil;
+import consulo.virtualFileSystem.VirtualFile;
+import consulo.virtualFileSystem.VirtualFileManager;
+import consulo.virtualFileSystem.event.AsyncFileListener;
+import consulo.virtualFileSystem.event.VFileEvent;
+import consulo.virtualFileSystem.util.VirtualFileUtil;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
+import org.jetbrains.yaml.psi.YAMLFile;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author VISTALL
  * @since 01-Sep-17
  */
 @Singleton
+@ServiceAPI(ComponentScope.PROJECT)
+@ServiceImpl
 public class Unity3dMetaManager implements Disposable
 {
 	public static final String GUID_KEY = "guid";
@@ -63,7 +66,7 @@ public class Unity3dMetaManager implements Disposable
 	@Nonnull
 	public static Unity3dMetaManager getInstance(@Nonnull Project project)
 	{
-		return ServiceManager.getService(project, Unity3dMetaManager.class);
+		return project.getInstance(Unity3dMetaManager.class);
 	}
 
 	private Project myProject;
@@ -74,7 +77,7 @@ public class Unity3dMetaManager implements Disposable
 	public Unity3dMetaManager(Project project, VirtualFileManager virtualFileManager)
 	{
 		myProject = project;
-		myProject.getMessageBus().connect().subscribe(PsiModificationTracker.TOPIC, () -> myGUIDs.clear());
+		myProject.getMessageBus().connect().subscribe(PsiModificationTrackerListener.class, () -> myGUIDs.clear());
 		virtualFileManager.addAsyncFileListener(new AsyncFileListener()
 		{
 			@Nonnull
@@ -168,7 +171,7 @@ public class Unity3dMetaManager implements Disposable
 					continue;
 				}
 
-				if(!VfsUtilCore.isAncestor(baseDir, assertFile, false))
+				if(!VirtualFileUtil.isAncestor(baseDir, assertFile, false))
 				{
 					continue;
 				}

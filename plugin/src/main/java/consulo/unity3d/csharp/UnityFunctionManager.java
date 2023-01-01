@@ -16,11 +16,11 @@
 
 package consulo.unity3d.csharp;
 
-import com.intellij.psi.PsiElement;
 import consulo.annotation.access.RequiredReadAction;
-import consulo.csharp.lang.psi.impl.source.resolve.type.CSharpArrayTypeRef;
-import consulo.csharp.lang.psi.impl.source.resolve.type.CSharpTypeRefByQName;
-import consulo.dotnet.resolve.DotNetTypeRef;
+import consulo.csharp.lang.impl.psi.source.resolve.type.CSharpArrayTypeRef;
+import consulo.csharp.lang.impl.psi.source.resolve.type.CSharpTypeRefByQName;
+import consulo.dotnet.psi.resolve.DotNetTypeRef;
+import consulo.language.psi.PsiElement;
 import consulo.logging.Logger;
 import consulo.util.jdom.JDOMUtil;
 import org.jdom.Document;

@@ -16,13 +16,16 @@
 
 package consulo.unity3d.packages.library;
 
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.libraries.*;
-import com.intellij.openapi.roots.libraries.ui.LibraryEditorComponent;
-import com.intellij.openapi.roots.libraries.ui.LibraryPropertiesEditor;
-import com.intellij.openapi.vfs.VirtualFile;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.content.library.*;
+import consulo.content.library.ui.LibraryEditorComponent;
+import consulo.content.library.ui.LibraryPropertiesEditor;
+import consulo.module.content.layer.ModuleRootLayer;
+import consulo.module.content.library.ModuleAwareLibraryType;
+import consulo.project.Project;
 import consulo.ui.image.Image;
 import consulo.unity3d.icon.Unity3dIconGroup;
+import consulo.virtualFileSystem.VirtualFile;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -32,7 +35,8 @@ import javax.swing.*;
  * @author VISTALL
  * @since 28/03/2021
  */
-public class UnityPackageLibraryType extends LibraryType<LibraryProperties>
+@ExtensionImpl
+public class UnityPackageLibraryType extends ModuleAwareLibraryType<LibraryProperties>
 {
 	public static PersistentLibraryKind<LibraryProperties> ID = new PersistentLibraryKind<>("unity")
 	{
@@ -75,5 +79,11 @@ public class UnityPackageLibraryType extends LibraryType<LibraryProperties>
 	public Image getIcon()
 	{
 		return Unity3dIconGroup.unity3d();
+	}
+
+	@Override
+	public boolean isAvailable(@Nonnull ModuleRootLayer moduleRootLayer)
+	{
+		return false;
 	}
 }

@@ -16,39 +16,41 @@
 
 package consulo.unity3d.projectImport.change;
 
-import com.intellij.ProjectTopics;
-import com.intellij.notification.Notification;
-import com.intellij.notification.NotificationAction;
-import com.intellij.notification.NotificationType;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.application.Application;
-import com.intellij.openapi.application.ApplicationInfo;
-import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtilCore;
-import com.intellij.openapi.project.DumbService;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ModuleRootEvent;
-import com.intellij.openapi.roots.ModuleRootListener;
-import com.intellij.openapi.startup.StartupManager;
-import com.intellij.openapi.vfs.AsyncFileListener;
-import com.intellij.openapi.vfs.StandardFileSystems;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileManager;
-import com.intellij.openapi.vfs.newvfs.events.VFileCreateEvent;
-import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
-import com.intellij.openapi.vfs.newvfs.events.VFileMoveEvent;
-import com.intellij.openapi.vfs.pointers.VirtualFilePointer;
-import com.intellij.openapi.vfs.pointers.VirtualFilePointerManager;
-import com.intellij.util.concurrency.AppExecutorUtil;
-import com.intellij.util.ui.UIUtil;
 import consulo.annotation.access.RequiredReadAction;
+import consulo.annotation.component.ComponentScope;
+import consulo.annotation.component.ServiceAPI;
+import consulo.annotation.component.ServiceImpl;
+import consulo.application.Application;
+import consulo.application.util.concurrent.AppExecutorUtil;
 import consulo.disposer.Disposable;
+import consulo.language.util.ModuleUtilCore;
+import consulo.module.Module;
+import consulo.module.content.layer.event.ModuleRootEvent;
+import consulo.module.content.layer.event.ModuleRootListener;
+import consulo.project.DumbService;
+import consulo.project.Project;
+import consulo.project.startup.StartupManager;
+import consulo.project.ui.notification.Notification;
+import consulo.project.ui.notification.NotificationAction;
+import consulo.project.ui.notification.NotificationType;
 import consulo.ui.UIAccess;
 import consulo.ui.annotation.RequiredUIAccess;
+import consulo.ui.ex.action.AnActionEvent;
+import consulo.ui.ex.awt.UIUtil;
+import consulo.unity3d.UnityNotificationGroup;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import consulo.unity3d.module.Unity3dRootModuleExtension;
 import consulo.unity3d.projectImport.Unity3dProjectImporter;
+import consulo.virtualFileSystem.StandardFileSystems;
+import consulo.virtualFileSystem.VirtualFile;
+import consulo.virtualFileSystem.VirtualFileManager;
+import consulo.virtualFileSystem.event.AsyncFileListener;
+import consulo.virtualFileSystem.event.VFileCreateEvent;
+import consulo.virtualFileSystem.event.VFileEvent;
+import consulo.virtualFileSystem.event.VFileMoveEvent;
+import consulo.virtualFileSystem.fileType.FileType;
+import consulo.virtualFileSystem.pointer.VirtualFilePointer;
+import consulo.virtualFileSystem.pointer.VirtualFilePointerManager;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
@@ -68,6 +70,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @since 1/11/18
  */
 @Singleton
+@ServiceAPI(value = ComponentScope.PROJECT, lazy = false)
+@ServiceImpl
 public class Unity3dProjectChangeListener implements Disposable
 {
 	public static class DataBlock
@@ -102,7 +106,7 @@ public class Unity3dProjectChangeListener implements Disposable
 			factory.registerFileTypes(mySourceFileTypes::add);
 		}
 
-		myProject.getMessageBus().connect().subscribe(ProjectTopics.PROJECT_ROOTS, new ModuleRootListener()
+		myProject.getMessageBus().connect().subscribe(ModuleRootListener.class, new ModuleRootListener()
 		{
 			@Override
 			@RequiredReadAction
@@ -207,7 +211,7 @@ public class Unity3dProjectChangeListener implements Disposable
 
 			if(needNotification)
 			{
-				Notification notification = new Notification("unity", ApplicationInfo.getInstance().getName(), "Unity project structure changed", NotificationType.INFORMATION);
+				Notification notification = new Notification(UnityNotificationGroup.INSTANCE, Application.get().getName().get(), "Unity project structure changed", NotificationType.INFORMATION);
 				notification.addAction(new NotificationAction("Rebuild project")
 				{
 					@RequiredUIAccess

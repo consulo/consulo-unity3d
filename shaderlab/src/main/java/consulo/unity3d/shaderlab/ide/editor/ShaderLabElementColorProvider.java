@@ -16,12 +16,13 @@
 
 package consulo.unity3d.shaderlab.ide.editor;
 
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFileFactory;
 import consulo.annotation.access.RequiredReadAction;
 import consulo.annotation.access.RequiredWriteAction;
-import consulo.language.editor.ElementColorProvider;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.psi.ElementColorProvider;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFileFactory;
+import consulo.project.Project;
 import consulo.ui.color.ColorValue;
 import consulo.ui.color.RGBColor;
 import consulo.unity3d.shaderlab.lang.ShaderLabFileType;
@@ -38,6 +39,7 @@ import java.util.List;
  * @author VISTALL
  * @since 09.05.2015
  */
+@ExtensionImpl
 public class ShaderLabElementColorProvider implements ElementColorProvider
 {
 	@RequiredReadAction

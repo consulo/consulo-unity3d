@@ -16,7 +16,8 @@
 
 package consulo.unity3d.projectImport;
 
-import consulo.ide.eap.EarlyAccessProgramDescriptor;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.application.eap.EarlyAccessProgramDescriptor;
 
 import javax.annotation.Nonnull;
 
@@ -24,6 +25,7 @@ import javax.annotation.Nonnull;
  * @author VISTALL
  * @since 23/03/2021
  */
+@ExtensionImpl
 public class UnityAsmDefImportEapDescriptor extends EarlyAccessProgramDescriptor
 {
 	@Nonnull

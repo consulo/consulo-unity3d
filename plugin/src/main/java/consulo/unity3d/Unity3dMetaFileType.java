@@ -16,8 +16,8 @@
 
 package consulo.unity3d;
 
-import com.intellij.openapi.fileTypes.LanguageFileType;
-import com.intellij.openapi.fileTypes.PlainTextFileType;
+import consulo.language.file.LanguageFileType;
+import consulo.language.plain.PlainTextFileType;
 import consulo.localize.LocalizeValue;
 import consulo.ui.image.Image;
 import org.jetbrains.yaml.YAMLLanguage;

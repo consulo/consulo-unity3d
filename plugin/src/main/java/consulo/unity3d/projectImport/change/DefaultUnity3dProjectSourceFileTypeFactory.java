@@ -16,17 +16,19 @@
 
 package consulo.unity3d.projectImport.change;
 
-import java.util.function.Consumer;
-
-import com.intellij.lang.javascript.JavaScriptFileType;
-import com.intellij.openapi.fileTypes.FileType;
+import consulo.annotation.component.ExtensionImpl;
 import consulo.csharp.lang.CSharpFileType;
 import consulo.dotnet.dll.DotNetModuleFileType;
+import consulo.javascript.language.JavaScriptFileType;
+import consulo.virtualFileSystem.fileType.FileType;
+
+import java.util.function.Consumer;
 
 /**
  * @author VISTALL
  * @since 2018-01-12
  */
+@ExtensionImpl
 public class DefaultUnity3dProjectSourceFileTypeFactory implements Unity3dProjectSourceFileTypeFactory
 {
 	@Override

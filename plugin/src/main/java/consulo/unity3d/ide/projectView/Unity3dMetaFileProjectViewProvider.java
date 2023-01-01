@@ -16,23 +16,24 @@
 
 package consulo.unity3d.ide.projectView;
 
-import com.intellij.ide.projectView.ProjectViewNode;
-import com.intellij.ide.projectView.TreeStructureProvider;
-import com.intellij.ide.projectView.ViewSettings;
-import com.intellij.ide.util.treeView.AbstractTreeNode;
-import com.intellij.ide.util.treeView.AbstractTreeUi;
-import com.intellij.openapi.progress.ProgressManager;
-import com.intellij.openapi.project.DumbAware;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
 import consulo.annotation.access.RequiredReadAction;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.application.dumb.DumbAware;
+import consulo.application.progress.ProgressManager;
+import consulo.project.Project;
+import consulo.project.ui.view.tree.AbstractTreeNode;
+import consulo.project.ui.view.tree.ProjectViewNode;
+import consulo.project.ui.view.tree.TreeStructureProvider;
+import consulo.project.ui.view.tree.ViewSettings;
 import consulo.ui.annotation.RequiredUIAccess;
+import consulo.ui.ex.tree.TreeHelper;
 import consulo.unity3d.Unity3dMetaFileType;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import consulo.unity3d.module.Unity3dRootModuleExtension;
+import consulo.virtualFileSystem.VirtualFile;
+import jakarta.inject.Inject;
 
 import javax.annotation.Nonnull;
-import jakarta.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -41,6 +42,7 @@ import java.util.List;
  * @author VISTALL
  * @since 02.03.2015
  */
+@ExtensionImpl
 public class Unity3dMetaFileProjectViewProvider implements TreeStructureProvider, DumbAware
 {
 	private final Project myProject;
@@ -55,7 +57,7 @@ public class Unity3dMetaFileProjectViewProvider implements TreeStructureProvider
 	@RequiredUIAccess
 	public Collection<AbstractTreeNode> modify(AbstractTreeNode parent, Collection<AbstractTreeNode> children, ViewSettings settings)
 	{
-		return AbstractTreeUi.calculateYieldingToWriteAction(() -> doModify(children, settings));
+		return TreeHelper.calculateYieldingToWriteAction(() -> doModify(children, settings));
 	}
 
 	@Nonnull

@@ -21,7 +21,7 @@
 	<parent>
 		<groupId>consulo</groupId>
 		<artifactId>arch.managment</artifactId>
-		<version>2-SNAPSHOT</version>
+		<version>3-SNAPSHOT</version>
 		<relativePath/>
 	</parent>
 
@@ -38,12 +38,14 @@
 
 	<groupId>consulo.plugin</groupId>
 	<artifactId>consulo.unity3d.parent</artifactId>
-	<version>2-SNAPSHOT</version>
+	<version>3-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<modules>
 		<module>plugin</module>
 		<module>cg-shader</module>
 		<module>shaderlab</module>
+		<module>uss-impl</module>
+		<module>uxml-impl</module>
 	</modules>
 </project>

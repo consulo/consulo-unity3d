@@ -16,10 +16,10 @@
 
 package consulo.unity3d;
 
-import com.intellij.icons.AllIcons;
-import com.intellij.openapi.fileTypes.FileType;
+import consulo.application.AllIcons;
 import consulo.localize.LocalizeValue;
 import consulo.ui.image.Image;
+import consulo.virtualFileSystem.fileType.FileType;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

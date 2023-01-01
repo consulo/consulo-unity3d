@@ -16,9 +16,9 @@
 
 package consulo.cgshader.lexer;
 
-import com.intellij.psi.TokenType;
-import com.intellij.psi.tree.IElementType;
 import consulo.cgshader.CGLanguage;
+import consulo.language.ast.IElementType;
+import consulo.language.ast.TokenType;
 
 /**
  * @author VISTALL

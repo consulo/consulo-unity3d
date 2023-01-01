@@ -16,29 +16,33 @@
 
 package consulo.unity3d.scene.prefab;
 
-import com.intellij.find.FindManager;
-import com.intellij.openapi.fileEditor.FileEditor;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiManager;
-import com.intellij.ui.EditorNotificationPanel;
-import com.intellij.util.containers.MultiMap;
 import consulo.annotation.access.RequiredReadAction;
-import consulo.editor.notifications.EditorNotificationProvider;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.fileEditor.EditorNotificationBuilder;
+import consulo.fileEditor.EditorNotificationProvider;
+import consulo.fileEditor.FileEditor;
+import consulo.find.FindManager;
+import consulo.language.psi.PsiFile;
+import consulo.language.psi.PsiManager;
+import consulo.localize.LocalizeValue;
+import consulo.project.Project;
 import consulo.unity3d.scene.Unity3dAssetUtil;
 import consulo.unity3d.scene.Unity3dYMLAssetFileType;
 import consulo.unity3d.scene.index.Unity3dYMLAsset;
+import consulo.util.collection.MultiMap;
+import consulo.virtualFileSystem.VirtualFile;
 import jakarta.inject.Inject;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.function.Supplier;
 
 /**
  * @author VISTALL
  * @since 10.03.2016
  */
-public class Unity3dAssetEditorNotificationProvider implements EditorNotificationProvider<EditorNotificationPanel>
+@ExtensionImpl
+public class Unity3dAssetEditorNotificationProvider implements EditorNotificationProvider
 {
 	private final Project myProject;
 
@@ -48,10 +52,17 @@ public class Unity3dAssetEditorNotificationProvider implements EditorNotificatio
 		myProject = project;
 	}
 
+	@Nonnull
+	@Override
+	public String getId()
+	{
+		return "unity-asset-usage";
+	}
+
 	@RequiredReadAction
 	@Nullable
 	@Override
-	public EditorNotificationPanel createNotificationPanel(@Nonnull VirtualFile file, @Nonnull FileEditor fileEditor)
+	public EditorNotificationBuilder buildNotification(@Nonnull VirtualFile file, @Nonnull FileEditor fileEditor, @Nonnull Supplier<EditorNotificationBuilder> supplier)
 	{
 		if(file.getFileType() != Unity3dYMLAssetFileType.INSTANCE)
 		{
@@ -74,9 +85,9 @@ public class Unity3dAssetEditorNotificationProvider implements EditorNotificatio
 			return null;
 		}
 
-		final EditorNotificationPanel panel = new EditorNotificationPanel();
-		panel.text("Used asset...");
-		panel.createActionLabel("Find usages...", () -> FindManager.getInstance(myProject).findUsages(psiFile));
+		final EditorNotificationBuilder panel = supplier.get();
+		panel.withText(LocalizeValue.localizeTODO("Used asset..."));
+		panel.withAction(LocalizeValue.localizeTODO("Find usages..."), (e) -> FindManager.getInstance(myProject).findUsages(psiFile));
 		return panel;
 	}
 }

@@ -16,10 +16,10 @@
 
 package consulo.unity3d.jsonApi;
 
-import com.intellij.openapi.project.Project;
 import consulo.annotation.access.RequiredReadAction;
 import consulo.csharp.compiler.MSBaseDotNetCompilerOptionsBuilder;
 import consulo.dotnet.compiler.DotNetCompilerMessage;
+import consulo.project.Project;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 
 /**

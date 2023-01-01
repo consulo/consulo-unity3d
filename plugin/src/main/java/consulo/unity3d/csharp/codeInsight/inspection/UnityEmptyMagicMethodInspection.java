@@ -16,18 +16,18 @@
 
 package consulo.unity3d.csharp.codeInsight.inspection;
 
-import com.intellij.codeInspection.LocalInspectionTool;
-import com.intellij.codeInspection.LocalQuickFixOnPsiElement;
-import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.application.WriteAction;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.PsiFile;
 import consulo.annotation.access.RequiredReadAction;
-import consulo.csharp.lang.psi.CSharpElementVisitor;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.application.WriteAction;
+import consulo.csharp.lang.impl.psi.CSharpElementVisitor;
+import consulo.csharp.lang.impl.psi.source.CSharpBlockStatementImpl;
 import consulo.csharp.lang.psi.CSharpMethodDeclaration;
-import consulo.csharp.lang.psi.impl.source.CSharpBlockStatementImpl;
+import consulo.language.editor.inspection.LocalQuickFixOnPsiElement;
+import consulo.language.editor.inspection.ProblemsHolder;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiElementVisitor;
+import consulo.language.psi.PsiFile;
+import consulo.project.Project;
 import consulo.unity3d.csharp.UnityFunctionManager;
 import consulo.unity3d.csharp.codeInsight.UnityEventCSharpMethodLineMarkerProvider;
 import consulo.unity3d.localize.Unity3dLocalize;
@@ -40,7 +40,8 @@ import javax.annotation.Nonnull;
  * @author VISTALL
  * @since 27-Oct-17
  */
-public class UnityEmptyMagicMethodInspection extends LocalInspectionTool
+@ExtensionImpl
+public class UnityEmptyMagicMethodInspection extends UnityLocalInspectionTool
 {
 	public static class RemoveMethodFix extends LocalQuickFixOnPsiElement
 	{
@@ -69,6 +70,13 @@ public class UnityEmptyMagicMethodInspection extends LocalInspectionTool
 		{
 			WriteAction.run(psiElement::delete);
 		}
+	}
+
+	@Nonnull
+	@Override
+	public String getDisplayName()
+	{
+		return "Empty magic methods";
 	}
 
 	@Nonnull

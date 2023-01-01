@@ -16,17 +16,17 @@
 
 package consulo.unity3d.editor;
 
-import javax.annotation.Nullable;
-
-import com.intellij.lang.Language;
-import com.intellij.navigation.ItemPresentation;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VfsUtil;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.NavigatablePsiElement;
-import com.intellij.psi.PsiManager;
-import com.intellij.psi.impl.light.LightElement;
+import consulo.language.Language;
+import consulo.language.impl.psi.LightElement;
+import consulo.language.psi.NavigatablePsiElement;
+import consulo.language.psi.PsiManager;
+import consulo.navigation.ItemPresentation;
+import consulo.project.Project;
 import consulo.ui.image.Image;
+import consulo.virtualFileSystem.VirtualFile;
+import consulo.virtualFileSystem.util.VirtualFileUtil;
+
+import javax.annotation.Nullable;
 
 /**
  * @author VISTALL
@@ -62,7 +62,7 @@ public class UnitySceneFile extends LightElement implements NavigatablePsiElemen
 			@Override
 			public String getPresentableText()
 			{
-				return VfsUtil.getRelativePath(myVirtualFile, getProject().getBaseDir());
+				return VirtualFileUtil.getRelativePath(myVirtualFile, getProject().getBaseDir());
 			}
 
 			@Nullable

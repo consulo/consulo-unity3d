@@ -16,23 +16,23 @@
 
 package consulo.unity3d.ide.projectView;
 
-import com.intellij.ide.projectView.PresentationData;
-import com.intellij.ide.projectView.ProjectViewNode;
-import com.intellij.ide.projectView.ProjectViewNodeDecorator;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.packageDependencies.ui.PackageDependenciesNode;
-import com.intellij.ui.ColoredTreeCellRenderer;
-import com.intellij.ui.SimpleTextAttributes;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.project.Project;
+import consulo.project.ui.view.tree.ProjectViewNode;
+import consulo.project.ui.view.tree.ProjectViewNodeDecorator;
 import consulo.ui.annotation.RequiredUIAccess;
+import consulo.ui.ex.SimpleTextAttributes;
+import consulo.ui.ex.tree.PresentationData;
 import consulo.unity3d.Unity3dMetaFileType;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import consulo.unity3d.module.Unity3dRootModuleExtension;
+import consulo.virtualFileSystem.VirtualFile;
 
 /**
  * @author VISTALL
  * @since 31.07.2015
  */
+@ExtensionImpl
 public class Unity3dProjectViewNodeDecorator implements ProjectViewNodeDecorator
 {
 	@RequiredUIAccess
@@ -66,11 +66,5 @@ public class Unity3dProjectViewNodeDecorator implements ProjectViewNodeDecorator
 		data.addText(virtualFile.getName(), SimpleTextAttributes.GRAYED_BOLD_ATTRIBUTES);
 		String nameWithoutExtension = virtualFile.getNameWithoutExtension();
 		data.setTooltip("File(directory) '" + nameWithoutExtension + "' is not exists, meta file can be deleted.");
-	}
-
-	@Override
-	public void decorate(PackageDependenciesNode node, ColoredTreeCellRenderer cellRenderer)
-	{
-
 	}
 }

@@ -16,9 +16,9 @@
 
 package consulo.unity3d.projectImport.newImport;
 
-import com.intellij.openapi.roots.libraries.Library;
-import com.intellij.openapi.vfs.VirtualFile;
+import consulo.content.library.Library;
 import consulo.unity3d.asmdef.AsmDefElement;
+import consulo.virtualFileSystem.VirtualFile;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

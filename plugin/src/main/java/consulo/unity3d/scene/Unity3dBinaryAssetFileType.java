@@ -16,11 +16,11 @@
 
 package consulo.unity3d.scene;
 
-import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.fileTypes.PlainTextLikeFileType;
 import consulo.localize.LocalizeValue;
 import consulo.ui.image.Image;
 import consulo.unity3d.Unity3dIcons;
+import consulo.virtualFileSystem.fileType.FileType;
+import consulo.virtualFileSystem.fileType.PlainTextLikeFileType;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

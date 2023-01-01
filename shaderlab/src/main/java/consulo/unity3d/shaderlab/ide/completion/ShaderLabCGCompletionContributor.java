@@ -16,18 +16,15 @@
 
 package consulo.unity3d.shaderlab.ide.completion;
 
-import com.intellij.codeInsight.completion.CompletionContributor;
-import com.intellij.codeInsight.completion.CompletionParameters;
-import com.intellij.codeInsight.completion.CompletionResultSet;
-import com.intellij.codeInsight.completion.CompletionType;
-import com.intellij.patterns.StandardPatterns;
-import com.intellij.psi.PsiLanguageInjectionHost;
-import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
-import com.intellij.psi.impl.source.tree.injected.Place;
-import com.intellij.util.ProcessingContext;
 import consulo.annotation.access.RequiredReadAction;
+import consulo.annotation.component.ExtensionImpl;
 import consulo.cgshader.CGLanguage;
-import consulo.codeInsight.completion.CompletionProvider;
+import consulo.language.Language;
+import consulo.language.editor.completion.*;
+import consulo.language.inject.InjectedLanguageManager;
+import consulo.language.pattern.StandardPatterns;
+import consulo.language.psi.PsiLanguageInjectionHost;
+import consulo.language.util.ProcessingContext;
 import consulo.unity3d.shaderlab.lang.psi.ShaderCGScript;
 import consulo.unity3d.shaderlab.lang.psi.ShaderLabFile;
 import consulo.unity3d.shaderlab.lang.psi.ShaderReference;
@@ -38,6 +35,7 @@ import javax.annotation.Nonnull;
  * @author VISTALL
  * @since 11.10.2015
  */
+@ExtensionImpl
 public class ShaderLabCGCompletionContributor extends CompletionContributor
 {
 	public ShaderLabCGCompletionContributor()
@@ -48,7 +46,7 @@ public class ShaderLabCGCompletionContributor extends CompletionContributor
 			@Override
 			public void addCompletions(@Nonnull CompletionParameters parameters, ProcessingContext context, @Nonnull final CompletionResultSet result)
 			{
-				Place shreds = InjectedLanguageUtil.getShreds(parameters.getOriginalFile());
+				PsiLanguageInjectionHost.Place shreds = InjectedLanguageManager.getInstance(parameters.getPosition().getProject()).getShreds(parameters.getOriginalFile());
 
 				for(PsiLanguageInjectionHost.Shred shred : shreds)
 				{
@@ -61,5 +59,12 @@ public class ShaderLabCGCompletionContributor extends CompletionContributor
 				}
 			}
 		});
+	}
+
+	@Nonnull
+	@Override
+	public Language getLanguage()
+	{
+		return CGLanguage.INSTANCE;
 	}
 }

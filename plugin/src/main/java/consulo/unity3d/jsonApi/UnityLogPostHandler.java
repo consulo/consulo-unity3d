@@ -16,19 +16,20 @@
 
 package consulo.unity3d.jsonApi;
 
-import java.util.HashMap;
-import java.util.Map;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.application.ApplicationManager;
+import consulo.builtinWebServer.json.JsonPostRequestHandler;
+import consulo.ui.ex.MessageCategory;
 
 import javax.annotation.Nonnull;
-
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.util.ui.MessageCategory;
-import consulo.builtInServer.json.JsonPostRequestHandler;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author VISTALL
  * @since 07-Jun-16
  */
+@ExtensionImpl
 public class UnityLogPostHandler extends JsonPostRequestHandler<UnityLogPostHandlerRequest>
 {
 	private static Map<String, Integer> ourTypeMap = new HashMap<>();

@@ -16,7 +16,7 @@
 
 package consulo.unity3d.shaderlab.lang;
 
-import com.intellij.lang.Language;
+import consulo.language.Language;
 
 /**
  * @author VISTALL

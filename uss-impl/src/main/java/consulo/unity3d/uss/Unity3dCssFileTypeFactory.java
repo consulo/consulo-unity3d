@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2017 consulo.io
+ * Copyright 2013-2021 consulo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,25 +14,24 @@
  * limitations under the License.
  */
 
-package consulo.unity3d.run;
+package consulo.unity3d.uss;
 
-import com.intellij.execution.KillableProcess;
-import com.intellij.xdebugger.DefaultDebugProcessHandler;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.virtualFileSystem.fileType.FileTypeConsumer;
+import consulo.virtualFileSystem.fileType.FileTypeFactory;
+
+import javax.annotation.Nonnull;
 
 /**
  * @author VISTALL
- * @since 02-May-17
+ * @since 22/03/2021
  */
-public class Unity3dDebugProcessHander extends DefaultDebugProcessHandler implements KillableProcess
+@ExtensionImpl
+public class Unity3dCssFileTypeFactory extends FileTypeFactory
 {
 	@Override
-	public boolean canKillProcess()
+	public void createFileTypes(@Nonnull FileTypeConsumer fileTypeConsumer)
 	{
-		return true;
-	}
-
-	@Override
-	public void killProcess()
-	{
+		fileTypeConsumer.consume(USSFileType.INSTANCE);
 	}
 }

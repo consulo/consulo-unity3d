@@ -16,17 +16,16 @@
 
 package consulo.unity3d.shaderlab.lang.parser.roles;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import consulo.language.parser.PsiBuilder;
+import consulo.unity3d.shaderlab.lang.parser.ShaderLabParserBuilder;
+import consulo.unity3d.shaderlab.lang.psi.ShaderLabElements;
+import consulo.util.collection.ArrayUtil;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import com.intellij.lang.PsiBuilder;
-import com.intellij.util.ArrayUtilRt;
-import consulo.unity3d.shaderlab.lang.parser.ShaderLabParserBuilder;
-import consulo.unity3d.shaderlab.lang.psi.ShaderLabElements;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author VISTALL
@@ -57,7 +56,7 @@ public class ShaderLabOrRole extends ShaderLabValueRole
 		{
 			Collections.addAll(result, role.getValues());
 		}
-		return ArrayUtilRt.toStringArray(result);
+		return ArrayUtil.toStringArray(result);
 	}
 
 	@Nullable

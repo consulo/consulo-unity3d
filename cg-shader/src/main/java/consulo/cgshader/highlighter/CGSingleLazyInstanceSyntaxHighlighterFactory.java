@@ -16,14 +16,19 @@
 
 package consulo.cgshader.highlighter;
 
+import consulo.annotation.component.ExtensionImpl;
+import consulo.cgshader.CGLanguage;
+import consulo.language.Language;
+import consulo.language.editor.highlight.SingleLazyInstanceSyntaxHighlighterFactory;
+import consulo.language.editor.highlight.SyntaxHighlighter;
+
 import javax.annotation.Nonnull;
-import com.intellij.openapi.fileTypes.SingleLazyInstanceSyntaxHighlighterFactory;
-import com.intellij.openapi.fileTypes.SyntaxHighlighter;
 
 /**
  * @author VISTALL
  * @since 11.10.2015
  */
+@ExtensionImpl
 public class CGSingleLazyInstanceSyntaxHighlighterFactory extends SingleLazyInstanceSyntaxHighlighterFactory
 {
 	@Nonnull
@@ -31,5 +36,12 @@ public class CGSingleLazyInstanceSyntaxHighlighterFactory extends SingleLazyInst
 	protected SyntaxHighlighter createHighlighter()
 	{
 		return new CGSyntaxHighlighter();
+	}
+
+	@Nonnull
+	@Override
+	public Language getLanguage()
+	{
+		return CGLanguage.INSTANCE;
 	}
 }

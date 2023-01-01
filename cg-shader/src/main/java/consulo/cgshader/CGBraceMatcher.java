@@ -16,19 +16,19 @@
 
 package consulo.cgshader;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import com.intellij.lang.BracePair;
-import com.intellij.lang.PairedBraceMatcher;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.tree.IElementType;
+import consulo.annotation.component.ExtensionImpl;
 import consulo.cgshader.lexer.CGTokens;
+import consulo.language.BracePair;
+import consulo.language.Language;
+import consulo.language.PairedBraceMatcher;
+
+import javax.annotation.Nonnull;
 
 /**
  * @author VISTALL
  * @since 11.10.2015
  */
+@ExtensionImpl
 public class CGBraceMatcher implements PairedBraceMatcher
 {
 	private static final BracePair[] ourPairs = new BracePair[]{
@@ -43,15 +43,10 @@ public class CGBraceMatcher implements PairedBraceMatcher
 		return ourPairs;
 	}
 
+	@Nonnull
 	@Override
-	public boolean isPairedBracesAllowedBeforeType(@Nonnull IElementType lbraceType, @Nullable IElementType contextType)
+	public Language getLanguage()
 	{
-		return false;
-	}
-
-	@Override
-	public int getCodeConstructStart(PsiFile file, int openingBraceOffset)
-	{
-		return openingBraceOffset;
+		return CGLanguage.INSTANCE;
 	}
 }

@@ -16,7 +16,7 @@
 
 package consulo.unity3d.scene;
 
-import com.intellij.openapi.fileTypes.LanguageFileType;
+import consulo.language.file.LanguageFileType;
 import consulo.localize.LocalizeValue;
 import consulo.ui.image.Image;
 import consulo.unity3d.shaderlab.icon.ShaderLabIconGroup;
@@ -49,7 +49,7 @@ public class Unity3dYMLAssetFileType extends LanguageFileType
 	@Override
 	public LocalizeValue getDescription()
 	{
-		return LocalizeValue.localizeTODO("Unity yml asset file");
+		return LocalizeValue.localizeTODO("Unity YAML Asset File");
 	}
 
 	@Nonnull

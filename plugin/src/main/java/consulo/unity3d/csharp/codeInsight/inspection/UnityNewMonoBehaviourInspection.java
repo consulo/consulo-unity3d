@@ -16,16 +16,16 @@
 
 package consulo.unity3d.csharp.codeInsight.inspection;
 
-import com.intellij.codeInspection.LocalInspectionTool;
-import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.psi.PsiElementVisitor;
 import consulo.annotation.access.RequiredReadAction;
-import consulo.csharp.lang.psi.CSharpElementVisitor;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.csharp.lang.impl.psi.CSharpElementVisitor;
+import consulo.csharp.lang.impl.psi.CSharpTypeUtil;
+import consulo.csharp.lang.impl.psi.source.resolve.type.CSharpTypeRefByQName;
 import consulo.csharp.lang.psi.CSharpNewExpression;
-import consulo.csharp.lang.psi.impl.CSharpTypeUtil;
-import consulo.csharp.lang.psi.impl.source.resolve.type.CSharpTypeRefByQName;
 import consulo.dotnet.psi.DotNetType;
-import consulo.dotnet.resolve.DotNetTypeRef;
+import consulo.dotnet.psi.resolve.DotNetTypeRef;
+import consulo.language.editor.inspection.ProblemsHolder;
+import consulo.language.psi.PsiElementVisitor;
 import consulo.unity3d.Unity3dTypes;
 import consulo.unity3d.localize.Unity3dLocalize;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
@@ -36,8 +36,16 @@ import javax.annotation.Nonnull;
  * @author VISTALL
  * @since 06.01.2016
  */
-public class UnityNewMonoBehaviourInspection extends LocalInspectionTool
+@ExtensionImpl
+public class UnityNewMonoBehaviourInspection extends UnityLocalInspectionTool
 {
+	@Nonnull
+	@Override
+	public String getDisplayName()
+	{
+		return "Creation MonoBehaviour object via new expression";
+	}
+
 	@Nonnull
 	@Override
 	public PsiElementVisitor buildVisitor(@Nonnull final ProblemsHolder holder, boolean isOnTheFly)

@@ -16,15 +16,15 @@
 
 package consulo.unity3d.shaderlab.lang.parser.roles;
 
-import javax.annotation.Nonnull;
-
-import com.intellij.lang.PsiBuilder;
-import com.intellij.lang.PsiBuilderUtil;
-import com.intellij.psi.tree.IElementType;
+import consulo.language.ast.IElementType;
+import consulo.language.parser.PsiBuilder;
+import consulo.language.parser.PsiBuilderUtil;
 import consulo.unity3d.shaderlab.lang.parser.ShaderLabParser;
 import consulo.unity3d.shaderlab.lang.parser.ShaderLabParserBuilder;
 import consulo.unity3d.shaderlab.lang.psi.ShaderLabElements;
 import consulo.unity3d.shaderlab.lang.psi.ShaderLabTokens;
+
+import javax.annotation.Nonnull;
 
 /**
  * @author VISTALL

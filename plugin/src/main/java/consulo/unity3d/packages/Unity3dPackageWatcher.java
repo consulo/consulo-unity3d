@@ -16,15 +16,18 @@
 
 package consulo.unity3d.packages;
 
-import com.intellij.openapi.application.Application;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VirtualFileManager;
 import com.sun.jna.platform.win32.*;
 import com.sun.jna.ptr.PointerByReference;
+import consulo.annotation.component.ComponentScope;
+import consulo.annotation.component.ServiceAPI;
+import consulo.annotation.component.ServiceImpl;
+import consulo.application.Application;
+import consulo.content.bundle.Sdk;
 import consulo.disposer.Disposable;
 import consulo.platform.Platform;
+import consulo.util.io.FileUtil;
+import consulo.virtualFileSystem.LocalFileSystem;
+import consulo.virtualFileSystem.VirtualFileManager;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
@@ -40,6 +43,8 @@ import java.util.stream.Collectors;
  * @since 20-Oct-17
  */
 @Singleton
+@ServiceAPI(value = ComponentScope.APPLICATION, lazy = false)
+@ServiceImpl
 public class Unity3dPackageWatcher implements Disposable
 {
 	@Nonnull

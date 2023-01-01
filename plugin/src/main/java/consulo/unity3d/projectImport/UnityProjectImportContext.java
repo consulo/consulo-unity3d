@@ -16,18 +16,18 @@
 
 package consulo.unity3d.projectImport;
 
-import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiManager;
 import consulo.application.AccessRule;
+import consulo.application.progress.ProgressIndicator;
+import consulo.content.bundle.Sdk;
+import consulo.language.psi.PsiFile;
+import consulo.language.psi.PsiManager;
 import consulo.logging.Logger;
+import consulo.project.Project;
 import consulo.unity3d.bundle.Unity3dDefineByVersion;
 import consulo.unity3d.packages.Unity3dManifest;
 import consulo.unity3d.scene.Unity3dYMLAssetFileType;
+import consulo.util.lang.StringUtil;
+import consulo.virtualFileSystem.VirtualFile;
 import org.jetbrains.yaml.psi.*;
 
 import javax.annotation.Nonnull;

@@ -16,11 +16,12 @@
 
 package consulo.unity3d.packages.orderEntry;
 
-import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.text.StringUtil;
-import consulo.roots.ModuleRootLayer;
-import consulo.roots.impl.ModuleRootLayerImpl;
-import consulo.roots.orderEntry.OrderEntryType;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.application.Application;
+import consulo.module.content.layer.ModuleRootLayer;
+import consulo.module.content.layer.orderEntry.CustomOrderEntryTypeProvider;
+import consulo.util.lang.StringUtil;
+import consulo.util.xml.serializer.InvalidDataException;
 import org.jdom.Element;
 
 import javax.annotation.Nonnull;
@@ -30,24 +31,27 @@ import java.util.List;
  * @author VISTALL
  * @since 2018-09-19
  */
-public class Unity3dPackageOrderEntryType implements OrderEntryType<Unity3dPackageOrderEntry>
+@ExtensionImpl
+public class Unity3dPackageOrderEntryType implements CustomOrderEntryTypeProvider<Unity3dPackageOrderEntryModel>
 {
+	public static final String ID = "unity-package";
+
 	@Nonnull
 	public static Unity3dPackageOrderEntryType getInstance()
 	{
-		return EP_NAME.findExtensionOrFail(Unity3dPackageOrderEntryType.class);
+		return EP.findExtensionOrFail(Application.get(), Unity3dPackageOrderEntryType.class);
 	}
 
 	@Nonnull
 	@Override
 	public String getId()
 	{
-		return "unity-package";
+		return ID;
 	}
 
 	@Nonnull
 	@Override
-	public Unity3dPackageOrderEntry loadOrderEntry(@Nonnull Element element, @Nonnull ModuleRootLayer moduleRootLayer) throws InvalidDataException
+	public Unity3dPackageOrderEntryModel loadOrderEntry(@Nonnull Element element, @Nonnull ModuleRootLayer moduleRootLayer) throws InvalidDataException
 	{
 		String name = element.getAttributeValue("name");
 		String version = element.getAttributeValue("version");
@@ -59,11 +63,11 @@ public class Unity3dPackageOrderEntryType implements OrderEntryType<Unity3dPacka
 			version = values.get(1);
 		}
 		String url = element.getAttributeValue("fileUrl");
-		return new Unity3dPackageOrderEntry((ModuleRootLayerImpl) moduleRootLayer, name, version, url);
+		return new Unity3dPackageOrderEntryModel(name, version, url);
 	}
 
 	@Override
-	public void storeOrderEntry(@Nonnull Element element, @Nonnull Unity3dPackageOrderEntry orderEntry)
+	public void storeOrderEntry(@Nonnull Element element, @Nonnull Unity3dPackageOrderEntryModel orderEntry)
 	{
 		element.setAttribute("name", orderEntry.getPresentableName());
 		String version = orderEntry.getVersion();

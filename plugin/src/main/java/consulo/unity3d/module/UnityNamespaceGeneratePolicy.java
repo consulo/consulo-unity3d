@@ -16,15 +16,15 @@
 
 package consulo.unity3d.module;
 
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VfsUtil;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiDirectory;
 import consulo.annotation.access.RequiredReadAction;
 import consulo.dotnet.module.DotNetNamespaceGeneratePolicy;
+import consulo.language.psi.PsiDirectory;
+import consulo.project.Project;
 import consulo.unity3d.projectImport.Unity3dProjectImporter;
 import consulo.unity3d.projectImport.newImport.standardImporter.AssemblyCSharpFirstPass;
+import consulo.util.lang.StringUtil;
+import consulo.virtualFileSystem.VirtualFile;
+import consulo.virtualFileSystem.util.VirtualFileUtil;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -104,7 +104,7 @@ public class UnityNamespaceGeneratePolicy extends DotNetNamespaceGeneratePolicy
 				for(String path : AssemblyCSharpFirstPass.FIRST_PASS_PATHS)
 				{
 					VirtualFile child = baseDir.findFileByRelativePath(path);
-					if(child != null && VfsUtil.isAncestor(child, currentDirectory, false))
+					if(child != null && VirtualFileUtil.isAncestor(child, currentDirectory, false))
 					{
 						targetDirectory = child;
 						break;
@@ -112,7 +112,7 @@ public class UnityNamespaceGeneratePolicy extends DotNetNamespaceGeneratePolicy
 				}
 			}
 
-			String relativePath = VfsUtil.getRelativePath(currentDirectory, targetDirectory, '.');
+			String relativePath = VirtualFileUtil.getRelativePath(currentDirectory, targetDirectory, '.');
 			if(relativePath != null)
 			{
 				if(!StringUtil.isEmpty(myNamespacePrefix))

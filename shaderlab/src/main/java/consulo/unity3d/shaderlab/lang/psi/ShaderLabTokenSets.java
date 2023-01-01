@@ -16,7 +16,7 @@
 
 package consulo.unity3d.shaderlab.lang.psi;
 
-import com.intellij.psi.tree.TokenSet;
+import consulo.language.ast.TokenSet;
 
 /**
  * @author VISTALL

@@ -16,9 +16,9 @@
 
 package consulo.unity3d.projectImport;
 
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.Sdk;
-import consulo.moduleImport.ModuleImportContext;
+import consulo.content.bundle.Sdk;
+import consulo.ide.moduleImport.ModuleImportContext;
+import consulo.project.Project;
 import consulo.unity3d.jsonApi.UnityOpenFilePostHandlerRequest;
 
 import javax.annotation.Nullable;

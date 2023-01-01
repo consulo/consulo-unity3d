@@ -16,23 +16,25 @@
 
 package consulo.unity3d.csharp.codeInsight;
 
-import com.intellij.codeHighlighting.Pass;
-import com.intellij.codeInsight.daemon.LineMarkerInfo;
-import com.intellij.codeInsight.daemon.LineMarkerProviderDescriptor;
-import com.intellij.openapi.editor.markup.GutterIconRenderer;
-import com.intellij.openapi.module.ModuleUtilCore;
-import com.intellij.psi.PsiElement;
-import com.intellij.util.ConstantFunction;
 import consulo.annotation.access.RequiredReadAction;
-import consulo.csharp.ide.lineMarkerProvider.CSharpLineMarkerUtil;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.codeEditor.markup.GutterIconRenderer;
+import consulo.csharp.impl.ide.lineMarkerProvider.CSharpLineMarkerUtil;
+import consulo.csharp.lang.CSharpLanguage;
+import consulo.csharp.lang.impl.psi.CSharpTypeUtil;
 import consulo.csharp.lang.psi.CSharpMethodDeclaration;
 import consulo.csharp.lang.psi.CSharpTypeDeclaration;
-import consulo.csharp.lang.psi.impl.CSharpTypeUtil;
 import consulo.dotnet.psi.DotNetInheritUtil;
 import consulo.dotnet.psi.DotNetParameter;
 import consulo.dotnet.psi.DotNetParameterListOwner;
 import consulo.dotnet.psi.DotNetTypeDeclaration;
-import consulo.dotnet.resolve.DotNetTypeRef;
+import consulo.dotnet.psi.resolve.DotNetTypeRef;
+import consulo.language.Language;
+import consulo.language.editor.Pass;
+import consulo.language.editor.gutter.LineMarkerInfo;
+import consulo.language.editor.gutter.LineMarkerProviderDescriptor;
+import consulo.language.psi.PsiElement;
+import consulo.language.util.ModuleUtilCore;
 import consulo.ui.image.Image;
 import consulo.unity3d.Unity3dIcons;
 import consulo.unity3d.csharp.UnityFunctionManager;
@@ -46,6 +48,7 @@ import java.util.Map;
  * @author VISTALL
  * @since 19.12.14
  */
+@ExtensionImpl
 public class UnityEventCSharpMethodLineMarkerProvider extends LineMarkerProviderDescriptor
 {
 	@Nullable
@@ -86,8 +89,8 @@ public class UnityEventCSharpMethodLineMarkerProvider extends LineMarkerProvider
 			UnityFunctionManager.FunctionInfo magicMethod = findMagicMethod(methodDeclaration);
 			if(magicMethod != null)
 			{
-				return new LineMarkerInfo<>(element, element.getTextRange(), Unity3dIcons.EventMethod, Pass.LINE_MARKERS, new ConstantFunction<>(magicMethod.getDescription()), null,
-						GutterIconRenderer.Alignment.LEFT);
+				return new LineMarkerInfo<>(element, element.getTextRange(), Unity3dIcons.EventMethod, Pass.LINE_MARKERS, (e) -> magicMethod.getDescription(), null, GutterIconRenderer.Alignment
+						.LEFT);
 			}
 		}
 
@@ -149,5 +152,12 @@ public class UnityEventCSharpMethodLineMarkerProvider extends LineMarkerProvider
 			}
 		}
 		return true;
+	}
+
+	@Nonnull
+	@Override
+	public Language getLanguage()
+	{
+		return CSharpLanguage.INSTANCE;
 	}
 }

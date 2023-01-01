@@ -16,19 +16,20 @@
 
 package consulo.unity3d.projectImport;
 
-import com.intellij.ide.actions.CreateFileFromTemplateAction;
-import com.intellij.lang.javascript.JavaScriptFileType;
-import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleManager;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VfsUtil;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiDirectory;
 import consulo.annotation.access.RequiredReadAction;
+import consulo.annotation.component.ExtensionImpl;
 import consulo.csharp.lang.CSharpFileType;
+import consulo.javascript.language.JavaScriptFileType;
+import consulo.module.Module;
+import consulo.module.ModuleManager;
+import consulo.module.content.NewFileModuleResolver;
+import consulo.project.Project;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import consulo.unity3d.projectImport.newImport.standardImporter.AssemblyCSharpFirstPass;
+import consulo.virtualFileSystem.VirtualFile;
+import consulo.virtualFileSystem.fileType.FileType;
+import consulo.virtualFileSystem.util.VirtualFileUtil;
+import jakarta.inject.Inject;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -37,46 +38,52 @@ import javax.annotation.Nullable;
  * @author VISTALL
  * @since 06.04.2015
  */
-public class Unity3dModuleResolver implements CreateFileFromTemplateAction.ModuleResolver
+@ExtensionImpl
+public class Unity3dModuleResolver implements NewFileModuleResolver
 {
+	private final Project myProject;
+
+	@Inject
+	public Unity3dModuleResolver(Project project)
+	{
+		myProject = project;
+	}
+
 	@Nullable
 	@Override
 	@RequiredReadAction
-	public Module resolveModule(@Nonnull PsiDirectory psiDirectory, @Nonnull FileType fileType)
+	public Module resolveModule( @Nonnull VirtualFile dir, @Nonnull FileType fileType)
 	{
-		Module module = resolveModuleImpl(psiDirectory, fileType);
+		Module module = resolveModuleImpl(dir, fileType);
 		return module != null && module.getModuleDirUrl() != null ? null : module;
 	}
 
 	@Nullable
 	@RequiredReadAction
-	public Module resolveModuleImpl(@Nonnull PsiDirectory psiDirectory, @Nonnull FileType fileType)
+	public Module resolveModuleImpl(@Nonnull VirtualFile file, @Nonnull FileType fileType)
 	{
 		if(fileType == CSharpFileType.INSTANCE)
 		{
-			return findModule(psiDirectory, "CSharp");
+			return findModule(file, "CSharp");
 		}
 		else if(fileType == JavaScriptFileType.INSTANCE)
 		{
-			return findModule(psiDirectory, "UnityScript");
+			return findModule(file, "UnityScript");
 		}
 		return null;
 	}
 
 	@Nullable
 	@RequiredReadAction
-	private Module findModule(PsiDirectory directory, String modulePrefix)
+	private Module findModule(VirtualFile parent, String modulePrefix)
 	{
-		Project project = directory.getProject();
-		VirtualFile parent = directory.getVirtualFile();
-
-		Module module = Unity3dModuleExtensionUtil.getRootModule(project);
+		Module module = Unity3dModuleExtensionUtil.getRootModule(myProject);
 		if(module == null)
 		{
 			return null;
 		}
 
-		VirtualFile baseDir = project.getBaseDir();
+		VirtualFile baseDir = myProject.getBaseDir();
 		assert baseDir != null;
 		VirtualFile assetsDir = baseDir.findChild("Assets");
 		if(assetsDir == null)
@@ -84,7 +91,7 @@ public class Unity3dModuleResolver implements CreateFileFromTemplateAction.Modul
 			return null;
 		}
 
-		if(!VfsUtil.isAncestor(assetsDir, parent, true))
+		if(!VirtualFileUtil.isAncestor(assetsDir, parent, true))
 		{
 			return null;
 		}
@@ -93,7 +100,7 @@ public class Unity3dModuleResolver implements CreateFileFromTemplateAction.Modul
 		{
 			if(parent.getName().equals("Editor"))
 			{
-				return ModuleManager.getInstance(project).findModuleByName("Assembly-" + modulePrefix + "-Editor");
+				return ModuleManager.getInstance(myProject).findModuleByName("Assembly-" + modulePrefix + "-Editor");
 			}
 			parent = parent.getParent();
 		}
@@ -101,11 +108,11 @@ public class Unity3dModuleResolver implements CreateFileFromTemplateAction.Modul
 		for(String path : AssemblyCSharpFirstPass.FIRST_PASS_PATHS)
 		{
 			VirtualFile pathFile = baseDir.findFileByRelativePath(path);
-			if(pathFile != null && VfsUtil.isAncestor(pathFile, parent, true))
+			if(pathFile != null && VirtualFileUtil.isAncestor(pathFile, parent, true))
 			{
-				return ModuleManager.getInstance(project).findModuleByName("Assembly-" + modulePrefix + "-firstpass");
+				return ModuleManager.getInstance(myProject).findModuleByName("Assembly-" + modulePrefix + "-firstpass");
 			}
 		}
-		return ModuleManager.getInstance(project).findModuleByName("Assembly-" + modulePrefix);
+		return ModuleManager.getInstance(myProject).findModuleByName("Assembly-" + modulePrefix);
 	}
 }

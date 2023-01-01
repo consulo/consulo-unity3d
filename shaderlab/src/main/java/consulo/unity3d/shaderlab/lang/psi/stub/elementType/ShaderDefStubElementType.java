@@ -16,12 +16,12 @@
 
 package consulo.unity3d.shaderlab.lang.psi.stub.elementType;
 
-import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.stubs.*;
-import com.intellij.util.io.StringRef;
 import consulo.annotation.access.RequiredReadAction;
-import consulo.psi.tree.IElementTypeAsPsiFactory;
+import consulo.index.io.StringRef;
+import consulo.language.ast.ASTNode;
+import consulo.language.ast.IElementTypeAsPsiFactory;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.stub.*;
 import consulo.unity3d.shaderlab.lang.ShaderLabLanguage;
 import consulo.unity3d.shaderlab.lang.psi.ShaderDef;
 import consulo.unity3d.shaderlab.lang.psi.impl.ShaderDefImpl;

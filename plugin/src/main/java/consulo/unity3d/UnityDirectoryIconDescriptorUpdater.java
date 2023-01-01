@@ -16,20 +16,21 @@
 
 package consulo.unity3d;
 
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VfsUtil;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiDirectory;
-import com.intellij.psi.PsiElement;
-import com.intellij.util.text.CaseInsensitiveStringHashingStrategy;
 import consulo.annotation.access.RequiredReadAction;
-import consulo.ide.IconDescriptor;
-import consulo.ide.IconDescriptorUpdater;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.icon.IconDescriptor;
+import consulo.language.icon.IconDescriptorUpdater;
+import consulo.language.psi.PsiDirectory;
+import consulo.language.psi.PsiElement;
+import consulo.module.Module;
+import consulo.project.Project;
 import consulo.ui.image.Image;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import consulo.unity3d.projectImport.Unity3dProjectImporter;
+import consulo.util.collection.HashingStrategy;
 import consulo.util.collection.Maps;
+import consulo.virtualFileSystem.VirtualFile;
+import consulo.virtualFileSystem.util.VirtualFileUtil;
 
 import javax.annotation.Nonnull;
 import java.util.Map;
@@ -38,9 +39,10 @@ import java.util.Map;
  * @author VISTALL
  * @since 2019-07-20
  */
+@ExtensionImpl
 public class UnityDirectoryIconDescriptorUpdater implements IconDescriptorUpdater
 {
-	private final Map<String, Image> myFolderIcons = Maps.newHashMap(CaseInsensitiveStringHashingStrategy.INSTANCE);
+	private final Map<String, Image> myFolderIcons = Maps.newHashMap(HashingStrategy.CaseInsensitiveStringHashingStrategy.INSTANCE);
 
 	public UnityDirectoryIconDescriptorUpdater()
 	{
@@ -82,7 +84,7 @@ public class UnityDirectoryIconDescriptorUpdater implements IconDescriptorUpdate
 			return;
 		}
 
-		if(!VfsUtil.isAncestor(assetsDirectory, ((PsiDirectory) psiElement).getVirtualFile(), false))
+		if(!VirtualFileUtil.isAncestor(assetsDirectory, ((PsiDirectory) psiElement).getVirtualFile(), false))
 		{
 			return;
 		}

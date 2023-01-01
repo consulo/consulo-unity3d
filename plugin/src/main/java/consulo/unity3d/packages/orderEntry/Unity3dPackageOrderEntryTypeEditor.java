@@ -16,24 +16,38 @@
 
 package consulo.unity3d.packages.orderEntry;
 
-import javax.annotation.Nonnull;
-
-import com.intellij.openapi.roots.ui.CellAppearanceEx;
-import com.intellij.openapi.roots.ui.util.SimpleTextCellAppearance;
-import consulo.roots.orderEntry.OrderEntryTypeEditor;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.ide.setting.module.CustomOrderEntryTypeEditor;
+import consulo.module.content.layer.orderEntry.CustomOrderEntry;
+import consulo.ui.ex.ColoredTextContainer;
 import consulo.unity3d.Unity3dIcons;
+
+import javax.annotation.Nonnull;
+import java.util.function.Consumer;
 
 /**
  * @author VISTALL
  * @since 2018-09-19
  */
-public class Unity3dPackageOrderEntryTypeEditor implements OrderEntryTypeEditor<Unity3dPackageOrderEntry>
+@ExtensionImpl
+public class Unity3dPackageOrderEntryTypeEditor implements CustomOrderEntryTypeEditor<Unity3dPackageOrderEntryModel>
 {
 	@Nonnull
 	@Override
-	public CellAppearanceEx getCellAppearance(@Nonnull Unity3dPackageOrderEntry dotNetLibraryOrderEntry)
+	public Consumer<ColoredTextContainer> getRender(@Nonnull CustomOrderEntry<Unity3dPackageOrderEntryModel> orderEntry)
 	{
-		return SimpleTextCellAppearance.synthetic(dotNetLibraryOrderEntry.getPresentableName(), Unity3dIcons.Unity3d);
+		return render ->
+		{
+			render.append(orderEntry.getPresentableName());
+			render.setIcon(Unity3dIcons.Unity3d);
+		};
+	}
+
+	@Nonnull
+	@Override
+	public String getOrderTypeId()
+	{
+		return Unity3dPackageOrderEntryType.ID;
 	}
 }
 

@@ -16,12 +16,13 @@
 
 package consulo.unity3d.shaderlab.ide;
 
-import com.intellij.lang.injection.MultiHostInjector;
-import com.intellij.lang.injection.MultiHostRegistrar;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiElement;
 import consulo.annotation.access.RequiredReadAction;
+import consulo.annotation.component.ExtensionImpl;
 import consulo.cgshader.CGLanguage;
+import consulo.document.util.TextRange;
+import consulo.language.inject.MultiHostInjector;
+import consulo.language.inject.MultiHostRegistrar;
+import consulo.language.psi.PsiElement;
 import consulo.unity3d.shaderlab.lang.psi.ShaderCGScript;
 
 import javax.annotation.Nonnull;
@@ -29,8 +30,16 @@ import javax.annotation.Nonnull;
  * @author VISTALL
  * @since 11.10.2015
  */
+@ExtensionImpl
 public class CGLanguageInjection implements MultiHostInjector
 {
+	@Nonnull
+	@Override
+	public Class<? extends PsiElement> getElementClass()
+	{
+		return ShaderCGScript.class;
+	}
+
 	@Override
 	@RequiredReadAction
 	public void injectLanguages(@Nonnull MultiHostRegistrar registrar, @Nonnull PsiElement context)

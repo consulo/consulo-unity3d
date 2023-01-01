@@ -16,10 +16,11 @@
 
 package consulo.unity3d.run;
 
-import com.intellij.execution.configuration.ConfigurationFactoryEx;
-import com.intellij.execution.configurations.ConfigurationTypeBase;
-import com.intellij.execution.configurations.RunConfiguration;
-import com.intellij.openapi.project.Project;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.execution.configuration.ConfigurationFactoryEx;
+import consulo.execution.configuration.ConfigurationTypeBase;
+import consulo.execution.configuration.RunConfiguration;
+import consulo.project.Project;
 import consulo.unity3d.Unity3dIcons;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 
@@ -29,12 +30,13 @@ import javax.annotation.Nonnull;
  * @author VISTALL
  * @since 10.11.14
  */
+@ExtensionImpl
 public class Unity3dAttachApplicationType extends ConfigurationTypeBase
 {
 	@Nonnull
 	public static Unity3dAttachApplicationType getInstance()
 	{
-		return CONFIGURATION_TYPE_EP.findExtensionOrFail(Unity3dAttachApplicationType.class);
+		return EP_NAME.findExtensionOrFail(Unity3dAttachApplicationType.class);
 	}
 
 	public Unity3dAttachApplicationType()

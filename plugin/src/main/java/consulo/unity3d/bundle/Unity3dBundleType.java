@@ -16,30 +16,30 @@
 
 package consulo.unity3d.bundle;
 
+import com.dd.plist.NSDictionary;
+import com.dd.plist.NSObject;
+import com.dd.plist.NSString;
+import com.dd.plist.PropertyListParser;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.application.util.SystemInfo;
+import consulo.content.bundle.SdkType;
+import consulo.logging.Logger;
+import consulo.ui.image.Image;
+import consulo.unity3d.Unity3dIcons;
+import consulo.util.lang.SystemProperties;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import com.dd.plist.NSDictionary;
-import com.dd.plist.NSObject;
-import com.dd.plist.NSString;
-import com.dd.plist.PropertyListParser;
-import com.intellij.openapi.projectRoots.SdkType;
-import com.intellij.openapi.util.SystemInfo;
-import com.intellij.util.SmartList;
-import com.intellij.util.SystemProperties;
-import consulo.logging.Logger;
-import consulo.ui.image.Image;
-import consulo.unity3d.Unity3dIcons;
-
 /**
  * @author VISTALL
  * @since 28.09.14
  */
+@ExtensionImpl
 public class Unity3dBundleType extends SdkType
 {
 	private static final Logger LOG = Logger.getInstance(Unity3dBundleType.class);

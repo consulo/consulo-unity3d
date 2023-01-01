@@ -16,19 +16,21 @@
 
 package consulo.unity3d;
 
-import com.intellij.ProjectTopics;
-import com.intellij.openapi.components.ServiceManager;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleManager;
-import com.intellij.openapi.module.ModuleUtilCore;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ModuleRootEvent;
-import com.intellij.openapi.roots.ModuleRootListener;
-import com.intellij.openapi.util.ClearableLazyValue;
-import com.intellij.openapi.vfs.VirtualFile;
 import consulo.annotation.access.RequiredReadAction;
+import consulo.annotation.component.ComponentScope;
+import consulo.annotation.component.ServiceAPI;
+import consulo.annotation.component.ServiceImpl;
+import consulo.application.util.ClearableLazyValue;
 import consulo.disposer.Disposable;
+import consulo.ide.ServiceManager;
+import consulo.language.util.ModuleUtilCore;
+import consulo.module.Module;
+import consulo.module.ModuleManager;
+import consulo.module.content.layer.event.ModuleRootEvent;
+import consulo.module.content.layer.event.ModuleRootListener;
+import consulo.project.Project;
 import consulo.unity3d.module.Unity3dRootModuleExtension;
+import consulo.virtualFileSystem.VirtualFile;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
@@ -40,6 +42,8 @@ import javax.annotation.Nullable;
  * @since 18-Jun-17
  */
 @Singleton
+@ServiceAPI(ComponentScope.PROJECT)
+@ServiceImpl
 public class Unity3dProjectService implements Disposable
 {
 	private static class CacheValue
@@ -99,7 +103,7 @@ public class Unity3dProjectService implements Disposable
 	Unity3dProjectService(Project project)
 	{
 		myProject = project;
-		project.getMessageBus().connect().subscribe(ProjectTopics.PROJECT_ROOTS, new ModuleRootListener()
+		project.getMessageBus().connect().subscribe(ModuleRootListener.class, new ModuleRootListener()
 		{
 			@Override
 			public void rootsChanged(ModuleRootEvent event)

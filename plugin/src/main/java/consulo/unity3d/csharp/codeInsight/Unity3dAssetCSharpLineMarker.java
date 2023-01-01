@@ -16,37 +16,31 @@
 
 package consulo.unity3d.csharp.codeInsight;
 
-import com.intellij.codeInsight.daemon.GutterIconNavigationHandler;
-import com.intellij.codeInsight.daemon.impl.PsiElementListNavigator;
-import com.intellij.icons.AllIcons;
-import com.intellij.openapi.editor.colors.EditorColorsManager;
-import com.intellij.openapi.editor.colors.TextAttributesKey;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Comparing;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VfsUtil;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.NavigatablePsiElement;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.psi.util.PsiUtilCore;
-import com.intellij.ui.ColoredListCellRenderer;
-import com.intellij.ui.SimpleTextAttributes;
-import com.intellij.util.ArrayUtil;
-import com.intellij.util.Function;
-import com.intellij.util.containers.MultiMap;
 import consulo.annotation.access.RequiredReadAction;
-import consulo.csharp.ide.highlight.CSharpHighlightKey;
-import consulo.csharp.ide.lineMarkerProvider.CSharpLineMarkerUtil;
+import consulo.application.AllIcons;
+import consulo.colorScheme.EditorColorsManager;
+import consulo.colorScheme.TextAttributesKey;
+import consulo.csharp.impl.ide.highlight.CSharpHighlightKey;
+import consulo.csharp.impl.ide.lineMarkerProvider.CSharpLineMarkerUtil;
+import consulo.csharp.lang.impl.psi.CSharpTypeUtil;
 import consulo.csharp.lang.psi.CSharpEnumConstantDeclaration;
 import consulo.csharp.lang.psi.CSharpFieldDeclaration;
 import consulo.csharp.lang.psi.CSharpTypeDeclaration;
-import consulo.csharp.lang.psi.impl.CSharpTypeUtil;
 import consulo.dotnet.DotNetTypes;
 import consulo.dotnet.psi.DotNetTypeDeclaration;
-import consulo.dotnet.resolve.DotNetTypeRef;
+import consulo.dotnet.psi.resolve.DotNetTypeRef;
 import consulo.dotnet.util.ArrayUtil2;
+import consulo.language.editor.gutter.GutterIconNavigationHandler;
+import consulo.language.editor.ui.PsiElementListNavigator;
+import consulo.language.psi.NavigatablePsiElement;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiUtilCore;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.project.Project;
 import consulo.ui.annotation.RequiredUIAccess;
+import consulo.ui.ex.SimpleTextAttributes;
+import consulo.ui.ex.awt.ColoredListCellRenderer;
+import consulo.ui.ex.util.TextAttributesUtil;
 import consulo.ui.image.Image;
 import consulo.unity3d.Unity3dIcons;
 import consulo.unity3d.scene.Unity3dAssetUtil;
@@ -55,7 +49,13 @@ import consulo.unity3d.scene.index.Unity3dYMLAsset;
 import consulo.unity3d.scene.index.Unity3dYMLAssetIndexExtension;
 import consulo.unity3d.scene.index.Unity3dYMLField;
 import consulo.unity3d.shaderlab.icon.ShaderLabIconGroup;
+import consulo.util.collection.ArrayUtil;
+import consulo.util.collection.MultiMap;
+import consulo.util.lang.Comparing;
 import consulo.util.lang.Pair;
+import consulo.util.lang.StringUtil;
+import consulo.virtualFileSystem.VirtualFile;
+import consulo.virtualFileSystem.util.VirtualFileUtil;
 
 import javax.annotation.Nonnull;
 import javax.swing.*;
@@ -63,6 +63,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 /**
  * @author VISTALL
@@ -129,7 +130,7 @@ public enum Unity3dAssetCSharpLineMarker
 										@Override
 										protected void customizeCellRenderer(@Nonnull JList<? extends UnityAssetWrapper> jList, UnityAssetWrapper unityAssetWrapper, int i, boolean b, boolean b1)
 										{
-											String relativePath = VfsUtil.getRelativePath(unityAssetWrapper.getVirtualFile(), type.getProject().getBaseDir());
+											String relativePath = VirtualFileUtil.getRelativePath(unityAssetWrapper.getVirtualFile(), type.getProject().getBaseDir());
 
 											append(relativePath, SimpleTextAttributes.GRAY_ATTRIBUTES);
 										}
@@ -286,12 +287,12 @@ public enum Unity3dAssetCSharpLineMarker
 											SimpleTextAttributes prefixAttributes = SimpleTextAttributes.REGULAR_ATTRIBUTES;
 											if(key != null)
 											{
-												textAttributes = SimpleTextAttributes.fromTextAttributes(EditorColorsManager.getInstance().getGlobalScheme().getAttributes(key));
+												textAttributes = TextAttributesUtil.fromTextAttributes(EditorColorsManager.getInstance().getGlobalScheme().getAttributes(key));
 											}
 
 											if(prefixKey != null)
 											{
-												prefixAttributes = SimpleTextAttributes.fromTextAttributes(EditorColorsManager.getInstance().getGlobalScheme().getAttributes(prefixKey));
+												prefixAttributes = TextAttributesUtil.fromTextAttributes(EditorColorsManager.getInstance().getGlobalScheme().getAttributes(prefixKey));
 											}
 
 											if(value.startsWith(Unity3dYMLAssetIndexExtension.ourCustomGUIDPrefix))
@@ -301,7 +302,7 @@ public enum Unity3dAssetCSharpLineMarker
 												VirtualFile fileByGUID = Unity3dMetaManager.getInstance(project).findFileByGUID(guid);
 												if(fileByGUID != null)
 												{
-													value = VfsUtil.getRelativePath(fileByGUID, field.getProject().getBaseDir());
+													value = VirtualFileUtil.getRelativePath(fileByGUID, field.getProject().getBaseDir());
 												}
 												else
 												{
@@ -329,7 +330,7 @@ public enum Unity3dAssetCSharpLineMarker
 										@Override
 										protected void customizeCellRenderer(@Nonnull JList<? extends UnityAssetWrapper> jList, UnityAssetWrapper unityAssetWrapper, int i, boolean b, boolean b1)
 										{
-											String relativePath = VfsUtil.getRelativePath(unityAssetWrapper.getVirtualFile(), field.getProject().getBaseDir());
+											String relativePath = VirtualFileUtil.getRelativePath(unityAssetWrapper.getVirtualFile(), field.getProject().getBaseDir());
 
 											append(relativePath, SimpleTextAttributes.GRAY_ATTRIBUTES);
 										}

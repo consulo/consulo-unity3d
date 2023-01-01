@@ -16,22 +16,22 @@
 
 package consulo.unity3d.run;
 
-import com.intellij.compiler.options.CompileStepBeforeRun;
-import com.intellij.execution.DefaultExecutionResult;
-import com.intellij.execution.ExecutionException;
-import com.intellij.execution.Executor;
-import com.intellij.execution.configurations.*;
-import com.intellij.execution.runners.ExecutionEnvironment;
-import com.intellij.execution.runners.RunConfigurationWithSuppressedDefaultRunAction;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleManager;
-import com.intellij.openapi.options.SettingsEditor;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.WriteExternalException;
-import com.intellij.util.xmlb.XmlSerializer;
 import consulo.annotation.access.RequiredReadAction;
+import consulo.compiler.execution.CompileStepBeforeRun;
+import consulo.execution.DefaultExecutionResult;
+import consulo.execution.configuration.*;
+import consulo.execution.configuration.ui.SettingsEditor;
+import consulo.execution.executor.Executor;
+import consulo.execution.runner.ExecutionEnvironment;
+import consulo.module.Module;
+import consulo.module.ModuleManager;
+import consulo.process.ExecutionException;
+import consulo.process.NopProcessHandler;
+import consulo.project.Project;
 import consulo.unity3d.run.debugger.UnityDebugProcessInfo;
+import consulo.util.xml.serializer.InvalidDataException;
+import consulo.util.xml.serializer.WriteExternalException;
+import consulo.util.xml.serializer.XmlSerializer;
 import org.jdom.Element;
 
 import javax.annotation.Nonnull;
@@ -114,7 +114,7 @@ public class Unity3dAttachConfiguration extends LocatableConfigurationBase imple
 	@Override
 	public RunProfileState getState(@Nonnull Executor executor, @Nonnull ExecutionEnvironment env) throws ExecutionException
 	{
-		return (executor1, runner) -> new DefaultExecutionResult(null, new Unity3dDebugProcessHander());
+		return (executor1, runner) -> new DefaultExecutionResult(null, new NopProcessHandler());
 	}
 
 	@Nonnull

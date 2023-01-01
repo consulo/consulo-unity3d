@@ -16,16 +16,16 @@
 
 package consulo.unity3d.module;
 
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.projectRoots.SdkType;
-import com.intellij.openapi.roots.OrderRootType;
-import com.intellij.util.ArrayUtil;
 import consulo.annotation.access.RequiredReadAction;
+import consulo.content.OrderRootType;
+import consulo.content.bundle.Sdk;
+import consulo.content.bundle.SdkType;
 import consulo.dotnet.module.DotNetNamespaceGeneratePolicy;
+import consulo.module.content.layer.ModuleRootLayer;
+import consulo.module.content.layer.extension.ModuleExtensionBase;
 import consulo.module.extension.ModuleInheritableNamedPointer;
-import consulo.module.extension.impl.ModuleExtensionImpl;
-import consulo.roots.ModuleRootLayer;
+import consulo.project.Project;
+import consulo.util.collection.ArrayUtil;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -37,7 +37,7 @@ import java.util.Map;
  * @author VISTALL
  * @since 29.03.2015
  */
-public class Unity3dChildModuleExtension extends ModuleExtensionImpl<Unity3dChildModuleExtension> implements Unity3dModuleExtension<Unity3dChildModuleExtension>
+public class Unity3dChildModuleExtension extends ModuleExtensionBase<Unity3dChildModuleExtension> implements Unity3dModuleExtension<Unity3dChildModuleExtension>
 {
 	public Unity3dChildModuleExtension(@Nonnull String id, @Nonnull ModuleRootLayer moduleRootLayer)
 	{

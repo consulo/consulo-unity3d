@@ -18,50 +18,52 @@ package consulo.unity3d;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.intellij.notification.*;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.application.ReadAction;
-import com.intellij.openapi.command.WriteCommandAction;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleManager;
-import com.intellij.openapi.progress.Task;
-import com.intellij.openapi.project.DumbService;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ModifiableRootModel;
-import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.openapi.roots.libraries.Library;
-import com.intellij.openapi.roots.libraries.LibraryTable;
-import com.intellij.openapi.util.ThrowableComputable;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.Consumer;
-import com.intellij.util.PathUtil;
-import com.intellij.util.SmartList;
 import consulo.annotation.access.RequiredReadAction;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.application.ReadAction;
+import consulo.application.progress.Task;
+import consulo.application.util.function.ThrowableComputable;
+import consulo.content.base.BinariesOrderRootType;
+import consulo.content.library.Library;
+import consulo.content.library.LibraryTable;
 import consulo.dotnet.dll.DotNetModuleFileType;
+import consulo.language.editor.WriteCommandAction;
 import consulo.logging.Logger;
-import consulo.project.startup.StartupActivity;
-import consulo.roots.ModifiableModuleRootLayer;
-import consulo.roots.ModuleRootLayer;
-import consulo.roots.types.BinariesOrderRootType;
+import consulo.module.Module;
+import consulo.module.ModuleManager;
+import consulo.module.content.ModuleRootManager;
+import consulo.module.content.layer.ModifiableModuleRootLayer;
+import consulo.module.content.layer.ModifiableRootModel;
+import consulo.module.content.layer.ModuleRootLayer;
+import consulo.project.DumbService;
+import consulo.project.Project;
+import consulo.project.startup.BackgroundStartupActivity;
+import consulo.project.ui.notification.Notification;
+import consulo.project.ui.notification.NotificationAction;
+import consulo.project.ui.notification.NotificationType;
 import consulo.ui.UIAccess;
 import consulo.ui.annotation.RequiredUIAccess;
+import consulo.ui.ex.action.AnActionEvent;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import consulo.unity3d.module.Unity3dRootModuleExtension;
 import consulo.unity3d.packages.Unity3dManifest;
 import consulo.util.collection.ArrayUtil;
-import jakarta.inject.Singleton;
+import consulo.util.collection.SmartList;
+import consulo.util.io.PathUtil;
+import consulo.util.lang.StringUtil;
+import consulo.virtualFileSystem.VirtualFile;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * @author VISTALL
  * @since 26-Jul-16
  */
-@Singleton
-public class UnityPluginValidator implements StartupActivity.Background
+@ExtensionImpl
+public class UnityPluginValidator implements BackgroundStartupActivity
 {
 	private static final Logger LOG = Logger.getInstance(UnityPluginValidator.class);
 
@@ -69,7 +71,6 @@ public class UnityPluginValidator implements StartupActivity.Background
 	public static final String PLUGIN_LINK = "https://github.com/consulo/UnityEditorConsuloPlugin.git#2.6.0";
 
 	private static final String ourPath = "Assets/Editor/Plugins";
-	private static final NotificationGroup ourGroup = new NotificationGroup("consulo.unity", NotificationDisplayType.STICKY_BALLOON, true);
 
 	@Override
 	public void runActivity(@Nonnull Project project, @Nonnull UIAccess uiAccess)
@@ -118,7 +119,7 @@ public class UnityPluginValidator implements StartupActivity.Background
 
 	private static void showNotify(final Project project, @Nonnull String text, @Nonnull String actionName, boolean update)
 	{
-		Notification notification = new Notification(ourGroup.getDisplayId(), "Unity3D Plugin", text, update ? NotificationType.WARNING : NotificationType.INFORMATION);
+		Notification notification = new Notification(UnityNotificationGroup.INSTANCE, "Unity3D Plugin", text, update ? NotificationType.WARNING : NotificationType.INFORMATION);
 		notification.addAction(new NotificationAction(actionName)
 		{
 			@RequiredUIAccess
@@ -251,7 +252,7 @@ public class UnityPluginValidator implements StartupActivity.Background
 					ModuleRootManager moduleRootManager = ModuleRootManager.getInstance(module);
 					ModifiableRootModel modifiableModel = moduleRootManager.getModifiableModel();
 
-					action.consume(modifiableModel);
+					action.accept(modifiableModel);
 
 					list.add(modifiableModel);
 				}

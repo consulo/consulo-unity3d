@@ -16,17 +16,20 @@
 
 package consulo.unity3d.scene.reference;
 
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.patterns.PsiElementPattern;
-import com.intellij.patterns.StandardPatterns;
-import com.intellij.psi.*;
-import com.intellij.util.ProcessingContext;
 import consulo.annotation.access.RequiredReadAction;
+import consulo.annotation.component.ExtensionImpl;
 import consulo.csharp.lang.CSharpFileType;
+import consulo.csharp.lang.CSharpLanguage;
+import consulo.language.Language;
+import consulo.language.pattern.PsiElementPattern;
+import consulo.language.pattern.StandardPatterns;
+import consulo.language.psi.*;
+import consulo.language.util.ProcessingContext;
+import consulo.project.Project;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import consulo.unity3d.scene.Unity3dMetaManager;
 import consulo.unity3d.scene.Unity3dYMLAssetFileType;
+import consulo.virtualFileSystem.VirtualFile;
 import org.jetbrains.yaml.psi.*;
 
 import javax.annotation.Nonnull;
@@ -35,6 +38,7 @@ import javax.annotation.Nonnull;
  * @author VISTALL
  * @since 01-Sep-17
  */
+@ExtensionImpl
 public class Unity3dSceneFieldReferenceRegister extends PsiReferenceContributor
 {
 	@Override
@@ -109,5 +113,12 @@ public class Unity3dSceneFieldReferenceRegister extends PsiReferenceContributor
 				return new PsiReference[]{new Unity3dAssetGUIDReference(keyValue)};
 			}
 		});
+	}
+
+	@Nonnull
+	@Override
+	public Language getLanguage()
+	{
+		return CSharpLanguage.INSTANCE;
 	}
 }
