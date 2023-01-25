@@ -28,41 +28,41 @@ public interface ShaderLabElements
 {
 	IElementType SHADER_DEF = ShaderLabStubElements.SHADER_DEF;
 
-	IElementType PROPERTY_LIST = new ElementTypeAsPsiFactory("PROPERTY_LIST", ShaderLabLanguage.INSTANCE, ShaderPropertyList.class);
+	IElementType PROPERTY_LIST = new ElementTypeAsPsiFactory("PROPERTY_LIST", ShaderLabLanguage.INSTANCE, ShaderPropertyList::new);
 
-	IElementType PROPERTY = new ElementTypeAsPsiFactory("PROPERTY", ShaderLabLanguage.INSTANCE, ShaderPropertyElement.class);
+	IElementType PROPERTY = new ElementTypeAsPsiFactory("PROPERTY", ShaderLabLanguage.INSTANCE, ShaderPropertyElement::new);
 
-	IElementType PROPERTY_TYPE = new ElementTypeAsPsiFactory("PROPERTY_TYPE", ShaderLabLanguage.INSTANCE, ShaderPropertyTypeElement.class);
+	IElementType PROPERTY_TYPE = new ElementTypeAsPsiFactory("PROPERTY_TYPE", ShaderLabLanguage.INSTANCE, ShaderPropertyTypeElement::new);
 
-	IElementType PROPERTY_VALUE = new ElementTypeAsPsiFactory("PROPERTY_VALUE", ShaderLabLanguage.INSTANCE, ShaderPropertyValue.class);
+	IElementType PROPERTY_VALUE = new ElementTypeAsPsiFactory("PROPERTY_VALUE", ShaderLabLanguage.INSTANCE, ShaderPropertyValue::new);
 
-	IElementType PROPERTY_ATTRIBUTE = new ElementTypeAsPsiFactory("PROPERTY_ATTRIBUTE", ShaderLabLanguage.INSTANCE, ShaderPropertyAttribute.class);
+	IElementType PROPERTY_ATTRIBUTE = new ElementTypeAsPsiFactory("PROPERTY_ATTRIBUTE", ShaderLabLanguage.INSTANCE, ShaderPropertyAttribute::new);
 
-	IElementType PROPERTY_OPTION = new ElementTypeAsPsiFactory("PROPERTY_OPTION", ShaderLabLanguage.INSTANCE, ShaderPropertyOption.class);
+	IElementType PROPERTY_OPTION = new ElementTypeAsPsiFactory("PROPERTY_OPTION", ShaderLabLanguage.INSTANCE, ShaderPropertyOption::new);
 
-	IElementType REFERENCE = new ElementTypeAsPsiFactory("REFERENCE", ShaderLabLanguage.INSTANCE, ShaderReference.class);
+	IElementType REFERENCE = new ElementTypeAsPsiFactory("REFERENCE", ShaderLabLanguage.INSTANCE, ShaderReference::new);
 
-	IElementType TAG_LIST = new ElementTypeAsPsiFactory("TAG_LIST", ShaderLabLanguage.INSTANCE, ShaderTagList.class);
+	IElementType TAG_LIST = new ElementTypeAsPsiFactory("TAG_LIST", ShaderLabLanguage.INSTANCE, ShaderTagList::new);
 
-	IElementType TAG = new ElementTypeAsPsiFactory("TAG", ShaderLabLanguage.INSTANCE, ShaderTag.class);
+	IElementType TAG = new ElementTypeAsPsiFactory("TAG", ShaderLabLanguage.INSTANCE, ShaderTag::new);
 
-	IElementType MATERIAL = new ElementTypeAsPsiFactory("MATERIAL", ShaderLabLanguage.INSTANCE, ShaderCompositeCommand.class);
+	IElementType MATERIAL = new ElementTypeAsPsiFactory("MATERIAL", ShaderLabLanguage.INSTANCE, ShaderCompositeCommand::new);
 
-	IElementType BLEND = new ElementTypeAsPsiFactory("BLEND", ShaderLabLanguage.INSTANCE, ShaderCompositeCommand.class);
+	IElementType BLEND = new ElementTypeAsPsiFactory("BLEND", ShaderLabLanguage.INSTANCE, ShaderCompositeCommand::new);
 
-	IElementType FOG = new ElementTypeAsPsiFactory("FOG", ShaderLabLanguage.INSTANCE, ShaderCompositeCommand.class);
+	IElementType FOG = new ElementTypeAsPsiFactory("FOG", ShaderLabLanguage.INSTANCE, ShaderCompositeCommand::new);
 
-	IElementType PASS = new ElementTypeAsPsiFactory("PASS", ShaderLabLanguage.INSTANCE, ShaderCompositeCommand.class);
+	IElementType PASS = new ElementTypeAsPsiFactory("PASS", ShaderLabLanguage.INSTANCE, ShaderCompositeCommand::new);
 
-	IElementType STENCIL = new ElementTypeAsPsiFactory("STENCIL", ShaderLabLanguage.INSTANCE, ShaderCompositeCommand.class);
+	IElementType STENCIL = new ElementTypeAsPsiFactory("STENCIL", ShaderLabLanguage.INSTANCE, ShaderCompositeCommand::new);
 
-	IElementType SUB_SHADER = new ElementTypeAsPsiFactory("SUB_SHADER", ShaderLabLanguage.INSTANCE, ShaderCompositeCommand.class);
+	IElementType SUB_SHADER = new ElementTypeAsPsiFactory("SUB_SHADER", ShaderLabLanguage.INSTANCE, ShaderCompositeCommand::new);
 
-	IElementType SIMPLE_VALUE = new ElementTypeAsPsiFactory("SIMPLE_VALUE", ShaderLabLanguage.INSTANCE, ShaderSimpleValue.class);
+	IElementType SIMPLE_VALUE = new ElementTypeAsPsiFactory("SIMPLE_VALUE", ShaderLabLanguage.INSTANCE, ShaderSimpleValue::new);
 
-	IElementType PAIR_VALUE = new ElementTypeAsPsiFactory("PAIR_VALUE", ShaderLabLanguage.INSTANCE, ShaderPairValue.class);
+	IElementType PAIR_VALUE = new ElementTypeAsPsiFactory("PAIR_VALUE", ShaderLabLanguage.INSTANCE, ShaderPairValue::new);
 
-	IElementType SET_TEXTURE = new ElementTypeAsPsiFactory("SET_TEXTURE", ShaderLabLanguage.INSTANCE, ShaderSetTexture.class);
+	IElementType SET_TEXTURE = new ElementTypeAsPsiFactory("SET_TEXTURE", ShaderLabLanguage.INSTANCE, ShaderSetTexture::new);
 
-	IElementType CG_SHADER = new ElementTypeAsPsiFactory("CG_SHADER", ShaderLabLanguage.INSTANCE, ShaderCGScript.class);
+	IElementType CG_SHADER = new ElementTypeAsPsiFactory("CG_SHADER", ShaderLabLanguage.INSTANCE, ShaderCGScript::new);
 }
