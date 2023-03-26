@@ -17,7 +17,6 @@
 package consulo.unity3d.shaderlab.ide.highlight;
 
 import consulo.annotation.access.RequiredReadAction;
-import consulo.annotation.component.ExtensionImpl;
 import consulo.codeEditor.DefaultLanguageHighlighterColors;
 import consulo.colorScheme.TextAttributesKey;
 import consulo.language.ast.ASTNode;
@@ -36,7 +35,6 @@ import javax.annotation.Nonnull;
  * @author VISTALL
  * @since 08.05.2015
  */
-@ExtensionImpl
 public class SharpLabHighlightVisitor extends SharpLabElementVisitor implements HighlightVisitor
 {
 	private HighlightInfoHolder myHolder;
@@ -124,12 +122,6 @@ public class SharpLabHighlightVisitor extends SharpLabElementVisitor implements 
 	}
 
 	@Override
-	public boolean suitableForFile(@Nonnull PsiFile file)
-	{
-		return file instanceof ShaderLabFile;
-	}
-
-	@Override
 	public void visit(@Nonnull PsiElement element)
 	{
 		element.accept(this);
@@ -141,12 +133,5 @@ public class SharpLabHighlightVisitor extends SharpLabElementVisitor implements 
 		myHolder = holder;
 		action.run();
 		return true;
-	}
-
-	@Nonnull
-	@Override
-	public HighlightVisitor clone()
-	{
-		return new SharpLabHighlightVisitor();
 	}
 }
