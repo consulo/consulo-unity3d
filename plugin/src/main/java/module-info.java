@@ -39,4 +39,5 @@ module consulo.unity3d
 	requires dd.plist;
 
 	opens consulo.unity3d.usages to consulo.util.xml.serializer;
+	opens consulo.unity3d.run to consulo.util.xml.serializer;
 }
