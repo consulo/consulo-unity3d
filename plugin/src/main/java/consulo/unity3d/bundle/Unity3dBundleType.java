@@ -24,6 +24,7 @@ import consulo.annotation.component.ExtensionImpl;
 import consulo.application.util.SystemInfo;
 import consulo.content.bundle.SdkType;
 import consulo.logging.Logger;
+import consulo.platform.Platform;
 import consulo.ui.image.Image;
 import consulo.unity3d.Unity3dIcons;
 import consulo.util.lang.SystemProperties;
@@ -31,6 +32,7 @@ import consulo.util.lang.SystemProperties;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -152,11 +154,12 @@ public class Unity3dBundleType extends SdkType
 	{
 		try
 		{
-			if(SystemInfo.isWindows)
+			Platform.OperatingSystem os = Platform.current().os();
+			if(os.isWindows())
 			{
-				return WindowsVersionHelper.getVersion(sdkHome + "/Editor/Unity.exe");
+				return os.getWindowsFileVersion(Path.of(sdkHome, "Editor", "Unity.exe"), 3);
 			}
-			else if(SystemInfo.isMac)
+			else if(os.isMac())
 			{
 				NSObject rootObject = PropertyListParser.parse(sdkHome + "/Contents/Info.plist");
 				if(rootObject instanceof NSDictionary)
@@ -166,7 +169,7 @@ public class Unity3dBundleType extends SdkType
 					return filterReleaseInfo(version.getContent());
 				}
 			}
-			else if(SystemInfo.isLinux)
+			else if(os.isLinux())
 			{
 				// fixme [vistall] maybe something better?
 				File packageManagerDir = new File(sdkHome, "/Editor/Data/PackageManager/Unity/PackageManager");
