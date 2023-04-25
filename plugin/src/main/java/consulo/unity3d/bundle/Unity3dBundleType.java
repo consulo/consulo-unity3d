@@ -25,6 +25,7 @@ import consulo.application.util.SystemInfo;
 import consulo.content.bundle.SdkType;
 import consulo.logging.Logger;
 import consulo.platform.Platform;
+import consulo.platform.PlatformOperatingSystem;
 import consulo.ui.image.Image;
 import consulo.unity3d.Unity3dIcons;
 import consulo.util.lang.SystemProperties;
@@ -154,7 +155,7 @@ public class Unity3dBundleType extends SdkType
 	{
 		try
 		{
-			Platform.OperatingSystem os = Platform.current().os();
+			PlatformOperatingSystem os = Platform.current().os();
 			if(os.isWindows())
 			{
 				return os.getWindowsFileVersion(Path.of(sdkHome, "Editor", "Unity.exe"), 3);

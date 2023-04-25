@@ -35,6 +35,7 @@ import consulo.ide.newModule.NewOrImportModuleUtil;
 import consulo.navigation.OpenFileDescriptor;
 import consulo.navigation.OpenFileDescriptorFactory;
 import consulo.platform.Platform;
+import consulo.platform.PlatformOperatingSystem;
 import consulo.project.Project;
 import consulo.project.ProjectManager;
 import consulo.project.startup.StartupManager;
@@ -209,7 +210,7 @@ public class UnityOpenFilePostHandler extends JsonPostRequestHandler<UnityOpenFi
 
 		ideFrame.activate();
 
-		Platform.OperatingSystem os = Platform.current().os();
+		PlatformOperatingSystem os = Platform.current().os();
 		if(os.isMac())
 		{
 			// something?

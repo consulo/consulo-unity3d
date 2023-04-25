@@ -25,6 +25,8 @@ import consulo.application.Application;
 import consulo.content.bundle.Sdk;
 import consulo.disposer.Disposable;
 import consulo.platform.Platform;
+import consulo.platform.PlatformOperatingSystem;
+import consulo.platform.PlatformUser;
 import consulo.util.io.FileUtil;
 import consulo.virtualFileSystem.LocalFileSystem;
 import consulo.virtualFileSystem.VirtualFileManager;
@@ -50,7 +52,7 @@ public class Unity3dPackageWatcher implements Disposable
 	@Nonnull
 	public static Unity3dPackageWatcher getInstance()
 	{
-		return Application.get().getComponent(Unity3dPackageWatcher.class);
+		return Application.get().getInstance(Unity3dPackageWatcher.class);
 	}
 
 	private final LocalFileSystem myLocalFileSystem;
@@ -108,10 +110,10 @@ public class Unity3dPackageWatcher implements Disposable
 		List<String> paths = new ArrayList<>();
 
 		Platform platform = Platform.current();
-		Platform.OperatingSystem os = platform.os();
-		Platform.User user = platform.user();
+		PlatformOperatingSystem os = platform.os();
+		PlatformUser user = platform.user();
 
-		if(os.isWindowsVistaOrNewer())
+		if(os.isWindows())
 		{
 			paths.add(Shell32Util.getFolderPath(ShlObj.CSIDL_LOCAL_APPDATA) + "\\Unity");
 
