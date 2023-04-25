@@ -40,4 +40,6 @@ module consulo.unity3d
 
 	opens consulo.unity3d.usages to consulo.util.xml.serializer;
 	opens consulo.unity3d.run to consulo.util.xml.serializer;
+	opens consulo.unity3d.editor to com.google.gson;
+	opens consulo.unity3d.packages to com.google.gson, consulo.application.impl;
 }

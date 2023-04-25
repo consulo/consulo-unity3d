@@ -10,7 +10,7 @@
           </option>
           <option name="goals">
             <list>
-              <option value="consulo:run-desktop" />
+              <option value="consulo:run-desktop-awt-fork" />
               <option value="-pl" />
               <option value="consulo.plugin:consulo.unity3d" />
             </list>
