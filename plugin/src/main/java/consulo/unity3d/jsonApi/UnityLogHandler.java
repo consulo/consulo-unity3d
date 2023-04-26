@@ -16,15 +16,16 @@
 
 package consulo.unity3d.jsonApi;
 
+import consulo.annotation.component.ComponentScope;
+import consulo.annotation.component.TopicAPI;
 import consulo.component.messagebus.Topic;
 
 /**
  * @author VISTALL
  * @since 05-Jun-17
  */
+@TopicAPI(ComponentScope.APPLICATION)
 public interface UnityLogHandler
 {
-	Topic<UnityLogHandler> TOPIC = Topic.create("unityLogHandler", UnityLogHandler.class);
-
 	void handle(UnityLogPostHandlerRequest request);
 }
