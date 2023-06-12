@@ -18,8 +18,8 @@ package consulo.unity3d.run.debugger;
 
 import consulo.application.util.concurrent.AppExecutorUtil;
 import consulo.logging.Logger;
-import consulo.process.ProcessInfo;
-import consulo.process.local.OSProcessUtil;
+import consulo.platform.Platform;
+import consulo.platform.ProcessInfo;
 import consulo.project.Project;
 import consulo.ui.ex.awt.ChooseElementsDialog;
 import consulo.ui.ex.awt.UIUtil;
@@ -79,7 +79,7 @@ public class UnityProcessDialog extends ChooseElementsDialog<UnityDebugProcessIn
 				ContainerUtil.addIfNotNull(items, device.mapToDebuggerProcess());
 			}
 
-			for(ProcessInfo processInfo : OSProcessUtil.getProcessList())
+			for(ProcessInfo processInfo : Platform.current().os().processes())
 			{
 				UnityDebugProcessInfo process = tryParseIfUnityProcess(processInfo);
 				if(process != null)

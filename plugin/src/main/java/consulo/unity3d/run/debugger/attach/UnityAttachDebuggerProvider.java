@@ -21,7 +21,7 @@ import consulo.execution.debug.attach.LocalAttachHost;
 import consulo.execution.debug.attach.XAttachDebugger;
 import consulo.execution.debug.attach.XAttachDebuggerProvider;
 import consulo.execution.debug.attach.XAttachHost;
-import consulo.process.ProcessInfo;
+import consulo.platform.ProcessInfo;
 import consulo.project.Project;
 import consulo.unity3d.run.debugger.UnityDebugProcessInfo;
 import consulo.unity3d.run.debugger.UnityProcessDialog;
