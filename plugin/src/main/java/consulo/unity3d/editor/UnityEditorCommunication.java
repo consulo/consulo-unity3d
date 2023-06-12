@@ -18,8 +18,8 @@ package consulo.unity3d.editor;
 
 import com.google.gson.Gson;
 import consulo.logging.Logger;
-import consulo.process.ProcessInfo;
-import consulo.process.local.OSProcessUtil;
+import consulo.platform.Platform;
+import consulo.platform.ProcessInfo;
 import consulo.project.Project;
 import consulo.ui.ex.awt.Messages;
 import consulo.unity3d.run.debugger.UnityDebugProcessInfo;
@@ -48,7 +48,7 @@ public class UnityEditorCommunication
 	@Nullable
 	public static UnityDebugProcessInfo findEditorProcess()
 	{
-		for(ProcessInfo processInfo : OSProcessUtil.getProcessList())
+		for(ProcessInfo processInfo : Platform.current().os().processes())
 		{
 			UnityDebugProcessInfo unityProcess = UnityProcessDialog.tryParseIfUnityProcess(processInfo);
 			if(unityProcess != null)
