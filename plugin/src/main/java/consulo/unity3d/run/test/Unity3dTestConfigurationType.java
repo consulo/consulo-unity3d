@@ -25,6 +25,7 @@ import consulo.execution.configuration.RunConfiguration;
 import consulo.project.Project;
 import consulo.ui.image.ImageEffects;
 import consulo.unity3d.Unity3dIcons;
+import consulo.unity3d.localize.Unity3dLocalize;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 
 import javax.annotation.Nonnull;
@@ -44,7 +45,7 @@ public class Unity3dTestConfigurationType extends ConfigurationTypeBase
 
 	public Unity3dTestConfigurationType()
 	{
-		super("#Unity3dTestConfigurationType", "Unity Test", "", ImageEffects.layered(Unity3dIcons.Unity3d, AllIcons.Nodes.JunitTestMark));
+		super("#Unity3dTestConfigurationType", Unity3dLocalize.unityTestConfigurationName(), ImageEffects.layered(Unity3dIcons.Unity3d, AllIcons.Nodes.JunitTestMark));
 
 		addFactory(new ConfigurationFactory(this)
 		{

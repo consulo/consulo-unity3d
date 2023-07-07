@@ -17,11 +17,12 @@
 package consulo.unity3d.run;
 
 import consulo.annotation.component.ExtensionImpl;
-import consulo.execution.configuration.ConfigurationFactoryEx;
+import consulo.execution.configuration.ConfigurationFactory;
 import consulo.execution.configuration.ConfigurationTypeBase;
 import consulo.execution.configuration.RunConfiguration;
 import consulo.project.Project;
-import consulo.unity3d.Unity3dIcons;
+import consulo.unity3d.icon.Unity3dIconGroup;
+import consulo.unity3d.localize.Unity3dLocalize;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 
 import javax.annotation.Nonnull;
@@ -41,9 +42,9 @@ public class Unity3dAttachApplicationType extends ConfigurationTypeBase
 
 	public Unity3dAttachApplicationType()
 	{
-		super("Unity3dAttachApplicationType", "Unity Debug Attach", "", Unity3dIcons.Unity3d);
+		super("Unity3dAttachApplicationType", Unity3dLocalize.unityDebugAttachConfigurationName(), Unity3dIconGroup.unity3d());
 
-		addFactory(new ConfigurationFactoryEx(this)
+		addFactory(new ConfigurationFactory(this)
 		{
 			@Override
 			public RunConfiguration createTemplateConfiguration(Project project)

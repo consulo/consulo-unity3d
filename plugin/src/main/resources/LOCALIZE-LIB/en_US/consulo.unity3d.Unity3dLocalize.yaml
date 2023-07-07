@@ -1,3 +1,5 @@
+plugin.name:
+  text: 'Unity (Game Engine)'
 action.SyncUnity3dProject.text:
   text: Re-import Unity Project
 action.Unity3Attach.text:
@@ -28,3 +30,7 @@ unity.0.sdk.is.broken:
   text: 'Unity by name ''''{0}'''' is broken.'
 unity.0.sdk.is.broken.required.version:
   text: 'Unity by name ''''{0}'''' is broken. Required version: ''''{1}'''''
+unity.debug.attach.configuration.name:
+  text: Unity Debug Attach
+unity.test.configuration.name:
+  text: Unity Test
