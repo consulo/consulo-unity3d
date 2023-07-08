@@ -49,6 +49,13 @@ public class Unity3dTestConfigurationType extends ConfigurationTypeBase
 
 		addFactory(new ConfigurationFactory(this)
 		{
+			@Nonnull
+			@Override
+			public String getId()
+			{
+				return "Unity Test";
+			}
+
 			@Override
 			public RunConfiguration createTemplateConfiguration(Project project)
 			{

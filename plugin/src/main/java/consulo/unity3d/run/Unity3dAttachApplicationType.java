@@ -46,6 +46,13 @@ public class Unity3dAttachApplicationType extends ConfigurationTypeBase
 
 		addFactory(new ConfigurationFactory(this)
 		{
+			@Nonnull
+			@Override
+			public String getId()
+			{
+				return "Unity Debug Attach";
+			}
+
 			@Override
 			public RunConfiguration createTemplateConfiguration(Project project)
 			{
