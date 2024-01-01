@@ -21,7 +21,9 @@ import consulo.csharp.lang.impl.psi.source.resolve.type.CSharpArrayTypeRef;
 import consulo.csharp.lang.impl.psi.source.resolve.type.CSharpTypeRefByQName;
 import consulo.dotnet.psi.resolve.DotNetTypeRef;
 import consulo.language.psi.PsiElement;
+import consulo.language.psi.scope.GlobalSearchScope;
 import consulo.logging.Logger;
+import consulo.project.Project;
 import consulo.util.jdom.JDOMUtil;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -140,11 +142,15 @@ public class UnityFunctionManager
 			type = type.substring(0, i);
 			count++;
 		}
-		DotNetTypeRef typeRef = new CSharpTypeRefByQName(scope, type);
+
+		Project project = scope.getProject();
+		GlobalSearchScope resolveScope = scope.getResolveScope();
+
+		DotNetTypeRef typeRef = new CSharpTypeRefByQName(project, resolveScope, type);
 
 		for(int j = 0; j < count; j++)
 		{
-			typeRef = new CSharpArrayTypeRef(typeRef, 0);
+			typeRef = new CSharpArrayTypeRef(project, resolveScope, typeRef, 0);
 		}
 		return typeRef;
 	}
