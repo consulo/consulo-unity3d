@@ -23,6 +23,7 @@ import consulo.dotnet.module.DotNetNamespaceGeneratePolicy;
 import consulo.dotnet.module.extension.BaseDotNetSimpleModuleExtension;
 import consulo.module.content.layer.ModuleRootLayer;
 import consulo.platform.Platform;
+import consulo.platform.PlatformOperatingSystem;
 import consulo.unity3d.bundle.Unity3dBundleType;
 import consulo.unity3d.projectImport.Unity3dProjectImporter;
 import consulo.util.collection.ArrayUtil;
@@ -141,7 +142,7 @@ public class Unity3dRootModuleExtension extends BaseDotNetSimpleModuleExtension<
 		return array;
 	}
 
-	public static void collectManagedDirectories(@Nonnull Sdk sdk, @Nonnull Platform.OperatingSystem os, @Nonnull Consumer<String> consumer)
+	public static void collectManagedDirectories(@Nonnull Sdk sdk, @Nonnull PlatformOperatingSystem os, @Nonnull Consumer<String> consumer)
 	{
 		String sdkHomePath = sdk.getHomePath();
 		if(sdkHomePath == null)
@@ -164,7 +165,7 @@ public class Unity3dRootModuleExtension extends BaseDotNetSimpleModuleExtension<
 	{
 		Version version = Unity3dProjectImporter.parseVersion(sdk.getVersionString());
 
-		Platform.OperatingSystem os = Platform.current().os();
+		PlatformOperatingSystem os = Platform.current().os();
 
 		Set<String> paths = new LinkedHashSet<>();
 

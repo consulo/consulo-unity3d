@@ -158,7 +158,7 @@ public class Unity3dBundleType extends SdkType
 			PlatformOperatingSystem os = Platform.current().os();
 			if(os.isWindows())
 			{
-				return os.getWindowsFileVersion(Path.of(sdkHome, "Editor", "Unity.exe"), 3);
+				return os.asWindows().getWindowsFileVersion(Path.of(sdkHome, "Editor", "Unity.exe"), 3);
 			}
 			else if(os.isMac())
 			{
