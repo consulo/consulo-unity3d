@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license. -->
 <svg version="1.0" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 width="14px" height="14px" viewBox="0 0 14 14" enable-background="new 0 0 14 14" xml:space="preserve">
-<path fill-rule="evenodd" clip-rule="evenodd" fill="#E66D17" d="M7.2,5.9C7,5.7,7,5.4,7,5.2l0.4-2.9L2.8,7.9h3.3
+<path fill-rule="evenodd" clip-rule="evenodd" fill="#C77D55" d="M7.2,5.9C7,5.7,7,5.4,7,5.2l0.4-2.9L2.8,7.9h3.3
 	c0.2,0,0.5,0.1,0.6,0.3C7,8.3,7,8.6,7,8.8l-0.4,2.9l4.6-5.6H7.9C7.6,6.1,7.4,6,7.2,5.9z M8.5,0.8C8.6,0.4,8,0.2,7.7,0.5L1.6,8
 	c-0.2,0.3,0,0.7,0.3,0.7h4.2l-0.6,4.5c-0.1,0.4,0.5,0.7,0.8,0.3L12.4,6c0.2-0.3,0-0.7-0.3-0.7H7.9L8.5,0.8z"/>
 </svg>
+

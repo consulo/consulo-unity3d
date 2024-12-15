@@ -25,6 +25,7 @@ import consulo.language.psi.PsiElement;
 import consulo.module.Module;
 import consulo.project.Project;
 import consulo.ui.image.Image;
+import consulo.unity3d.icon.Unity3dIconGroup;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import consulo.unity3d.projectImport.Unity3dProjectImporter;
 import consulo.util.collection.HashingStrategy;
@@ -46,11 +47,10 @@ public class UnityDirectoryIconDescriptorUpdater implements IconDescriptorUpdate
 
 	public UnityDirectoryIconDescriptorUpdater()
 	{
-		myFolderIcons.put("Editor", Unity3dIcons.EditorLayer);
-		myFolderIcons.put("Plugins", Unity3dIcons.PluginsLayer);
-		myFolderIcons.put("Pro Standard Assets", Unity3dIcons.AssetsLayer);
-		myFolderIcons.put("Standard Assets", Unity3dIcons.AssetsLayer);
-		myFolderIcons.put("Gizmos", Unity3dIcons.GizmosLayer);
+		myFolderIcons.put("Editor", Unity3dIconGroup.editfolder());
+		myFolderIcons.put("Plugins", Unity3dIconGroup.pluginsfolder());
+		myFolderIcons.put("Pro Standard Assets", Unity3dIconGroup.assetsfolder());
+		myFolderIcons.put("Standard Assets", Unity3dIconGroup.assetsfolder());
 	}
 
 	@RequiredReadAction
@@ -89,6 +89,6 @@ public class UnityDirectoryIconDescriptorUpdater implements IconDescriptorUpdate
 			return;
 		}
 
-		iconDescriptor.addLayerIcon(image);
+		iconDescriptor.setMainIcon(image);
 	}
 }
