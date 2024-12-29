@@ -28,7 +28,7 @@ import consulo.unity3d.shaderlab.lang.psi.impl.ShaderDefImpl;
 import consulo.unity3d.shaderlab.lang.psi.stub.ShaderDefStub;
 import consulo.unity3d.shaderlab.lang.psi.stub.index.ShaderDefIndex;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import java.io.IOException;
 
 /**

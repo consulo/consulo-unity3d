@@ -21,8 +21,8 @@ import consulo.module.Module;
 import consulo.project.Project;
 import consulo.unity3d.Unity3dProjectService;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * @author VISTALL

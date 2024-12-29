@@ -16,7 +16,7 @@
 
 package consulo.unity3d.shaderlab.lang.parser.roles;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import consulo.unity3d.shaderlab.lang.parser.ShaderLabParserBuilder;
 
 /**

@@ -17,7 +17,7 @@ import consulo.usage.rule.PsiElementUsage;
 import consulo.usage.rule.UsageFilteringRule;
 import consulo.usage.rule.UsageFilteringRuleProvider;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * @author VISTALL

@@ -29,7 +29,7 @@ import consulo.unity3d.shaderlab.lang.psi.ShaderCGScript;
 import consulo.unity3d.shaderlab.lang.psi.ShaderLabFile;
 import consulo.unity3d.shaderlab.lang.psi.ShaderReference;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * @author VISTALL

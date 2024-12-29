@@ -25,7 +25,7 @@ import consulo.unity3d.shaderlab.lang.lexer.ShaderLabLexer;
 import consulo.unity3d.shaderlab.lang.psi.ShaderLabTokenSets;
 import consulo.unity3d.shaderlab.lang.psi.ShaderLabTokens;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.Map;
 

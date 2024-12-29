@@ -35,7 +35,7 @@ import consulo.unity3d.shaderlab.lang.psi.ShaderLabFile;
 import consulo.unity3d.shaderlab.lang.psi.ShaderLabStubElements;
 import consulo.unity3d.shaderlab.lang.psi.ShaderLabTokenSets;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * @author VISTALL

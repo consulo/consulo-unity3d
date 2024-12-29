@@ -32,7 +32,7 @@ import consulo.unity3d.scene.Unity3dYMLAssetFileType;
 import consulo.virtualFileSystem.VirtualFile;
 import org.jetbrains.yaml.psi.*;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * @author VISTALL

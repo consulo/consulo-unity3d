@@ -19,8 +19,8 @@ package consulo.unity3d.bundle;
 import consulo.util.collection.ArrayUtil;
 import org.intellij.lang.annotations.RegExp;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

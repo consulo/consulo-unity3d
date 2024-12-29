@@ -30,7 +30,7 @@ import consulo.unity3d.run.debugger.android.UnityUdpExternalDeviceCollector;
 import consulo.util.lang.ThreeState;
 import jakarta.inject.Singleton;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;

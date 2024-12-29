@@ -19,7 +19,7 @@ package consulo.unity3d.run.before;
 import consulo.execution.BeforeRunTask;
 import consulo.util.dataholder.Key;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * @author VISTALL

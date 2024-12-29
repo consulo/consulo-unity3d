@@ -32,7 +32,7 @@ import consulo.unity3d.editor.UnityEditorCommunication;
 import consulo.unity3d.run.Unity3dAttachRunner;
 import consulo.unity3d.run.debugger.UnityDebugProcessInfo;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * @author VISTALL

@@ -19,7 +19,7 @@ package consulo.unity3d.jsonApi;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.builtinWebServer.json.JsonPostRequestHandler;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * @author VISTALL

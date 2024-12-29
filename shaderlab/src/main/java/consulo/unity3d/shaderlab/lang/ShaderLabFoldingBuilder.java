@@ -28,7 +28,7 @@ import consulo.unity3d.shaderlab.lang.psi.ShaderBraceOwner;
 import consulo.unity3d.shaderlab.lang.psi.ShaderRoleOwner;
 import consulo.unity3d.shaderlab.lang.psi.SharpLabElementVisitor;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import java.util.List;
 
 /**

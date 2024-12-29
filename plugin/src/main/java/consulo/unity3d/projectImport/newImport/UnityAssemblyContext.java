@@ -20,8 +20,8 @@ import consulo.content.library.Library;
 import consulo.unity3d.asmdef.AsmDefElement;
 import consulo.virtualFileSystem.VirtualFile;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Objects;

@@ -29,7 +29,7 @@ import consulo.language.pattern.StandardPatterns;
 import consulo.language.util.ProcessingContext;
 import consulo.ui.image.Image;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import java.util.Set;
 
 /**

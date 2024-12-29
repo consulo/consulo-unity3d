@@ -23,7 +23,7 @@ import consulo.ui.image.Image;
 import consulo.unity3d.icon.Unity3dIconGroup;
 import consulo.util.io.FileUtil;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * @author VISTALL

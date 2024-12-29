@@ -19,7 +19,7 @@ package consulo.unity3d.shaderlab.ide.refactoring;
 import consulo.language.psi.PsiElement;
 import consulo.unity3d.shaderlab.lang.psi.ShaderFileFactory;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * @author VISTALL

@@ -23,8 +23,8 @@ import consulo.project.Project;
 import consulo.unity3d.shaderlab.lang.ShaderLabLanguage;
 import consulo.unity3d.shaderlab.lang.psi.ShaderPropertyType;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * @author VISTALL

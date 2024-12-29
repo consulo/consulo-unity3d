@@ -36,7 +36,7 @@ import consulo.unity3d.scene.Unity3dAssetUtil;
 import consulo.virtualFileSystem.VirtualFile;
 import org.jetbrains.yaml.psi.YAMLKeyValue;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * @author VISTALL

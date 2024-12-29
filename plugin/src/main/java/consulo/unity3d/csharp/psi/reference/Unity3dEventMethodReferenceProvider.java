@@ -38,7 +38,7 @@ import consulo.language.util.ProcessingContext;
 import consulo.unity3d.Unity3dTypes;
 import consulo.util.collection.ArrayUtil;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * @author VISTALL

@@ -21,7 +21,7 @@ import consulo.language.psi.PsiFileFactory;
 import consulo.project.Project;
 import consulo.unity3d.shaderlab.lang.ShaderLabFileType;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * @author VISTALL

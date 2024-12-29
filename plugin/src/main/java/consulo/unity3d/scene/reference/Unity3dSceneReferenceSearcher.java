@@ -37,7 +37,7 @@ import consulo.util.collection.MultiMap;
 import consulo.virtualFileSystem.VirtualFile;
 import org.jetbrains.yaml.psi.YAMLFile;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * @author VISTALL

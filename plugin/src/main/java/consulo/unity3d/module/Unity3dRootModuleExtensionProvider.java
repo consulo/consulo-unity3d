@@ -25,7 +25,7 @@ import consulo.module.extension.MutableModuleExtension;
 import consulo.ui.image.Image;
 import consulo.unity3d.icon.Unity3dIconGroup;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * @author VISTALL

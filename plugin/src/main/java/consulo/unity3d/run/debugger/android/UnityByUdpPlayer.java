@@ -20,8 +20,8 @@ import consulo.unity3d.run.debugger.BaseUnityExternalDevice;
 import consulo.unity3d.run.debugger.UnityDebugProcessInfo;
 import consulo.util.lang.StringUtil;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import java.net.InetAddress;
 import java.util.Map;
 

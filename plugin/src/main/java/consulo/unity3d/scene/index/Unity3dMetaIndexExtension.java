@@ -31,7 +31,7 @@ import consulo.virtualFileSystem.VirtualFile;
 import org.jetbrains.yaml.YAMLElementTypes;
 import org.jetbrains.yaml.psi.*;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import java.util.List;
 import java.util.Map;
 

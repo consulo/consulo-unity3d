@@ -21,8 +21,8 @@ import consulo.localize.LocalizeValue;
 import consulo.ui.image.Image;
 import consulo.unity3d.shaderlab.icon.ShaderLabIconGroup;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * @author VISTALL

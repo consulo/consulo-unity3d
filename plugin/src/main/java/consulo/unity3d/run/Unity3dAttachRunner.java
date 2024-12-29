@@ -49,8 +49,8 @@ import consulo.util.lang.Comparing;
 import consulo.util.lang.StringUtil;
 import mono.debugger.VirtualMachine;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import java.util.List;
 
 /**

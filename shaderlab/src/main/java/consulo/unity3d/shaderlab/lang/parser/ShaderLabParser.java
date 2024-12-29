@@ -28,7 +28,7 @@ import consulo.unity3d.shaderlab.lang.psi.ShaderLabElements;
 import consulo.unity3d.shaderlab.lang.psi.ShaderLabKeyTokens;
 import consulo.unity3d.shaderlab.lang.psi.ShaderLabTokens;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import java.util.Objects;
 
 /**

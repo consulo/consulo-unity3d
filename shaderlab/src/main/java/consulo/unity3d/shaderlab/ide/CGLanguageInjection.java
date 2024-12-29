@@ -25,7 +25,7 @@ import consulo.language.inject.MultiHostRegistrar;
 import consulo.language.psi.PsiElement;
 import consulo.unity3d.shaderlab.lang.psi.ShaderCGScript;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 /**
  * @author VISTALL
  * @since 11.10.2015

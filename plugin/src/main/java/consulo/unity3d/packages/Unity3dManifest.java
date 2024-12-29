@@ -26,7 +26,7 @@ import consulo.unity3d.projectImport.Unity3dProjectImporter;
 import consulo.virtualFileSystem.LocalFileSystem;
 import consulo.virtualFileSystem.VirtualFile;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import java.io.IOException;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;

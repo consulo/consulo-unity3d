@@ -25,7 +25,7 @@ import consulo.unity3d.run.test.Unity3dTestSession;
 import consulo.unity3d.run.test.Unity3dTestSessionManager;
 import consulo.util.lang.StringUtil;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import java.util.UUID;
 
 /**

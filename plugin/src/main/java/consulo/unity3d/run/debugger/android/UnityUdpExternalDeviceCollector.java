@@ -6,7 +6,7 @@ import consulo.project.Project;
 import consulo.unity3d.run.debugger.UnityExternalDevice;
 import consulo.unity3d.run.debugger.UnityExternalDeviceCollector;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.MulticastSocket;

@@ -23,7 +23,7 @@ import consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabRole;
 import consulo.unity3d.shaderlab.lang.psi.ShaderLabKeyTokens;
 import consulo.unity3d.shaderlab.lang.psi.ShaderLabTokens;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * @author VISTALL

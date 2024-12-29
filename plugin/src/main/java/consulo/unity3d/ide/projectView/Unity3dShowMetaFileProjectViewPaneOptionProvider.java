@@ -29,7 +29,7 @@ import consulo.ui.ex.action.ToggleAction;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import consulo.util.dataholder.KeyWithDefaultValue;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * @author VISTALL

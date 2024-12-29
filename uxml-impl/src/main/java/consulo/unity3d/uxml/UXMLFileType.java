@@ -22,7 +22,7 @@ import consulo.xml.ide.highlighter.XmlFileType;
 import consulo.xml.ide.highlighter.XmlLikeFileType;
 import consulo.xml.lang.xml.XMLLanguage;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * @author VISTALL

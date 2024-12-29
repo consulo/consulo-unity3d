@@ -21,7 +21,7 @@ import consulo.execution.configuration.ui.SettingsEditor;
 import consulo.ui.Component;
 import consulo.ui.layout.VerticalLayout;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * @author VISTALL

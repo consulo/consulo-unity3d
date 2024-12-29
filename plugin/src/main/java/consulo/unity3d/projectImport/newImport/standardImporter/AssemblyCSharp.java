@@ -21,7 +21,7 @@ import consulo.project.Project;
 import consulo.unity3d.projectImport.Unity3dProjectImporter;
 import consulo.virtualFileSystem.VirtualFile;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import java.util.Set;
 
 /**

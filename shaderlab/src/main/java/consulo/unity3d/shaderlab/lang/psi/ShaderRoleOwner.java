@@ -16,7 +16,7 @@
 
 package consulo.unity3d.shaderlab.lang.psi;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import consulo.unity3d.shaderlab.lang.parser.roles.ShaderLabRole;
 
 /**

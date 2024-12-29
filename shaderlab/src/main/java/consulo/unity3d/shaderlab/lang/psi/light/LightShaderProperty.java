@@ -27,8 +27,8 @@ import consulo.unity3d.shaderlab.lang.psi.ShaderPropertyType;
 import consulo.unity3d.shaderlab.lang.psi.ShaderPropertyValue;
 import org.jetbrains.annotations.NonNls;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * @author VISTALL

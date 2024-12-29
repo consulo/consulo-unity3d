@@ -21,8 +21,8 @@ import consulo.csharp.base.module.extension.BaseCSharpSimpleModuleExtension;
 import consulo.csharp.module.extension.CSharpLanguageVersion;
 import consulo.module.content.layer.ModuleRootLayer;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * @author VISTALL

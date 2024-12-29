@@ -22,7 +22,7 @@ import consulo.language.editor.highlight.SingleLazyInstanceSyntaxHighlighterFact
 import consulo.language.editor.highlight.SyntaxHighlighter;
 import consulo.unity3d.shaderlab.lang.ShaderLabLanguage;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * @author VISTALL

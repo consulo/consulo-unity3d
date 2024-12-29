@@ -25,7 +25,7 @@ import consulo.ui.ex.awt.event.DocumentAdapter;
 import consulo.unity3d.module.Unity3dRootMutableModuleExtension;
 import consulo.util.lang.StringUtil;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import java.util.List;

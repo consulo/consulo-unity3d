@@ -35,7 +35,7 @@ import consulo.unity3d.module.Unity3dRootMutableModuleExtension;
 import consulo.virtualFileSystem.LocalFileSystem;
 import consulo.virtualFileSystem.VirtualFile;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.TreeSet;
 

@@ -18,7 +18,7 @@ package consulo.unity3d.run.debugger.android;
 
 import consulo.unity3d.run.debugger.UnityExternalDevice;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.MulticastSocket;

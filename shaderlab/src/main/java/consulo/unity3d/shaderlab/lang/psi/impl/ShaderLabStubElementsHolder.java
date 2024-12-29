@@ -21,8 +21,8 @@ import consulo.language.psi.stub.ObjectStubSerializerProvider;
 import consulo.language.psi.stub.StubElementTypeHolder;
 import consulo.unity3d.shaderlab.lang.psi.ShaderLabStubElements;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import java.lang.reflect.Field;
 import java.util.List;
 

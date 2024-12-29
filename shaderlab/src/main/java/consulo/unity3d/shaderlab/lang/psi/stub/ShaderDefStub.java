@@ -22,7 +22,7 @@ import consulo.language.psi.stub.NamedStubBase;
 import consulo.language.psi.stub.StubElement;
 import consulo.unity3d.shaderlab.lang.psi.ShaderDef;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * @author VISTALL

@@ -14,7 +14,7 @@ import consulo.unity3d.run.debugger.UnityExternalDevice;
 import consulo.unity3d.run.debugger.UnityExternalDeviceCollector;
 import consulo.util.lang.ObjectUtil;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import java.io.File;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
