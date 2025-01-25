@@ -53,7 +53,7 @@ import consulo.project.Project;
 import consulo.project.ui.notification.Notification;
 import consulo.project.ui.notification.NotificationType;
 import consulo.ui.ex.awt.UIUtil;
-import consulo.unity3d.Unity3dMetaFileType;
+import consulo.unity3d.meta.Unity3dMetaFileType;
 import consulo.unity3d.UnityNotificationGroup;
 import consulo.unity3d.UnityPluginValidator;
 import consulo.unity3d.bundle.Unity3dBundleType;

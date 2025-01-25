@@ -7,6 +7,8 @@ module consulo.unity3d
 	// TODO remove in future
 	requires java.desktop;
 
+	requires consulo.game.framework.api;
+
 	requires consulo.ide.api;
 
 	requires consulo.language.impl;
@@ -27,7 +29,7 @@ module consulo.unity3d
 
 	requires consulo.dotnet.mono.debugger.impl;
 	requires mono.soft.debugging;
-	
+
 	requires com.sun.jna;
 	requires com.sun.jna.platform;
 

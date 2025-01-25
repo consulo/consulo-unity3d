@@ -43,7 +43,7 @@ import consulo.ui.ex.awt.ColoredListCellRenderer;
 import consulo.ui.ex.util.TextAttributesUtil;
 import consulo.ui.image.Image;
 import consulo.unity3d.Unity3dIcons;
-import consulo.unity3d.scene.Unity3dAssetUtil;
+import consulo.unity3d.asset.Unity3dAssetUtil;
 import consulo.unity3d.scene.Unity3dMetaManager;
 import consulo.unity3d.scene.index.Unity3dYMLAsset;
 import consulo.unity3d.scene.index.Unity3dYMLAssetIndexExtension;

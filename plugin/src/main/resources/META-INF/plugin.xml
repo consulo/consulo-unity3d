@@ -15,22 +15,23 @@
   -->
 
 <consulo-plugin url="https://github.com/consulo/consulo-unity3d">
-	<id>consulo.unity3d</id>
-	<name>Unity (Game Engine)</name>
-	<vendor>consulo.io</vendor>
-	<version>SNAPSHOT</version>
-	<category>Game Frameworks</category>
-	<tags>
-		<tag>game.framework</tag>
-	</tags>
-	<localize>consulo.unity3d.Unity3dLocalize</localize>
+    <id>consulo.unity3d</id>
+    <name>Unity (Game Engine)</name>
+    <vendor>consulo.io</vendor>
+    <version>SNAPSHOT</version>
+    <category>Game Frameworks</category>
+    <tags>
+        <tag>game.framework</tag>
+    </tags>
+    <localize>consulo.unity3d.Unity3dLocalize</localize>
 
-	<depends>consulo.dotnet.mono</depends>
-	<depends>consulo.csharp</depends>
-	<depends>consulo.javascript</depends>
-	<depends>consulo.nunit</depends>
-	<depends>org.jetbrains.plugins.yaml</depends>
+    <depends>consulo.game.framework</depends>
+    <depends>consulo.dotnet.mono</depends>
+    <depends>consulo.csharp</depends>
+    <depends>consulo.javascript</depends>
+    <depends>consulo.nunit</depends>
+    <depends>org.jetbrains.plugins.yaml</depends>
 
-	<depends optional="true">com.intellij.xml</depends>
-	<depends optional="true">consulo.css</depends>
+    <depends optional="true">com.intellij.xml</depends>
+    <depends optional="true">consulo.css</depends>
 </consulo-plugin>

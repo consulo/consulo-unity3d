@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package consulo.unity3d.scene;
+package consulo.unity3d.asset;
 
 import consulo.annotation.access.RequiredReadAction;
 import consulo.csharp.lang.psi.CSharpTypeDeclaration;
@@ -23,10 +23,10 @@ import consulo.language.psi.PsiFile;
 import consulo.language.psi.PsiManager;
 import consulo.language.psi.PsiRecursiveElementWalkingVisitor;
 import consulo.project.Project;
+import consulo.unity3d.scene.Unity3dMetaManager;
 import consulo.util.collection.ContainerUtil;
 import consulo.util.lang.ref.Ref;
 import consulo.virtualFileSystem.VirtualFile;
-
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 

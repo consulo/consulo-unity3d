@@ -28,7 +28,7 @@ import consulo.language.util.ProcessingContext;
 import consulo.project.Project;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import consulo.unity3d.scene.Unity3dMetaManager;
-import consulo.unity3d.scene.Unity3dYMLAssetFileType;
+import consulo.unity3d.asset.Unity3dYMLAssetFileType;
 import consulo.virtualFileSystem.VirtualFile;
 import org.jetbrains.yaml.psi.*;
 

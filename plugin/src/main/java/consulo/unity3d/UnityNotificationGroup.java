@@ -21,8 +21,8 @@ import consulo.localize.LocalizeValue;
 import consulo.project.ui.notification.NotificationDisplayType;
 import consulo.project.ui.notification.NotificationGroup;
 import consulo.project.ui.notification.NotificationGroupContributor;
-
 import jakarta.annotation.Nonnull;
+
 import java.util.function.Consumer;
 
 /**
@@ -30,13 +30,11 @@ import java.util.function.Consumer;
  * @since 16-Sep-22
  */
 @ExtensionImpl
-public final class UnityNotificationGroup implements NotificationGroupContributor
-{
-	public static final NotificationGroup INSTANCE = new NotificationGroup("unity.com", LocalizeValue.localizeTODO("Unity"), NotificationDisplayType.STICKY_BALLOON, true);
+public final class UnityNotificationGroup implements NotificationGroupContributor {
+    public static final NotificationGroup INSTANCE = new NotificationGroup("unity.com", LocalizeValue.localizeTODO("Unity"), NotificationDisplayType.STICKY_BALLOON, true);
 
-	@Override
-	public void contribute(@Nonnull Consumer<NotificationGroup> consumer)
-	{
-		consumer.accept(INSTANCE);
-	}
+    @Override
+    public void contribute(@Nonnull Consumer<NotificationGroup> consumer) {
+        consumer.accept(INSTANCE);
+    }
 }

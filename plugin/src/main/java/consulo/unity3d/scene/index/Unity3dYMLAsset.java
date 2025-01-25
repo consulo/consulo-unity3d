@@ -29,7 +29,7 @@ import java.util.List;
  * @author VISTALL
  * @since 30-Aug-17
  */
-public record Unity3dYMLAsset(String guild, String gameObjectName, int startOffset, List<Unity3dYMLField> values)
+public record Unity3dYMLAsset(String guid, String gameObjectName, int startOffset, List<Unity3dYMLField> values)
 {
 	@Nonnull
 	public static MultiMap<VirtualFile, Unity3dYMLAsset> findAssetAsAttach(@Nonnull Project project, @Nullable VirtualFile file)
@@ -52,9 +52,9 @@ public record Unity3dYMLAsset(String guild, String gameObjectName, int startOffs
 
 	@Nonnull
 	@Deprecated
-	public String getGuild()
+	public String getGuid()
 	{
-		return guild();
+		return guid();
 	}
 
 	@Nonnull

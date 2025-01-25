@@ -1,0 +1,46 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="consulo:run-desktop-awt" type="MavenRunConfiguration" factoryName="Maven" singleton="true">
+    <MavenSettings>
+      <option name="myGeneralSettings" />
+      <option name="myRunnerSettings">
+        <MavenRunnerSettings>
+          <option name="environmentProperties">
+            <map />
+          </option>
+          <option name="jreName" />
+          <option name="mavenProperties">
+            <map />
+          </option>
+          <option name="passParentEnv" value="true" />
+          <option name="runMavenInBackground" value="true" />
+          <option name="skipTests" value="false" />
+          <option name="vmOptions" value="--add-opens=java.desktop/sun.awt=ALL-UNNAMED --add-opens=java.desktop/sun.swing=ALL-UNNAMED --add-opens=java.desktop/sun.awt.image=ALL-UNNAMED --add-opens=java.desktop/sun.java2d=ALL-UNNAMED --add-opens=java.desktop/sun.font=ALL-UNNAMED --add-opens=java.desktop/java.awt=ALL-UNNAMED --add-opens=java.desktop/javax.swing=ALL-UNNAMED --add-opens=java.desktop/javax.swing.plaf.basic=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.desktop/javax.swing.text.html=ALL-UNNAMED --add-opens=java.desktop/java.awt.peer=ALL-UNNAMED --add-opens=java.desktop/java.awt.event=ALL-UNNAMED -Didea.ProcessCanceledException=disabled" />
+        </MavenRunnerSettings>
+      </option>
+      <option name="myRunnerParameters">
+        <MavenRunnerParameters>
+          <option name="profiles">
+            <set />
+          </option>
+          <option name="goals">
+            <list>
+              <option value="consulo:run-desktop-awt" />
+              <option value="-pl" />
+              <option value="consulo.plugin:consulo.unity3d" />
+            </list>
+          </option>
+          <option name="profilesMap">
+            <map />
+          </option>
+          <option name="resolveToWorkspace" value="true" />
+          <option name="workingDirPath" value="$PROJECT_DIR$" />
+        </MavenRunnerParameters>
+      </option>
+    </MavenSettings>
+    <ConfigurationWrapper RunnerId="Debug" />
+    <ConfigurationWrapper RunnerId="Run" />
+    <method>
+      <option name="Maven.BeforeRunTask" enabled="true" file="$PROJECT_DIR$/pom.xml" goal="-T 1C package" />
+    </method>
+  </configuration>
+</component>

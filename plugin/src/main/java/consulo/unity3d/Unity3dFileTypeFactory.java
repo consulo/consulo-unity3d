@@ -20,13 +20,10 @@ import consulo.annotation.component.ExtensionImpl;
 import consulo.json.JsonFileType;
 import consulo.language.plain.PlainTextFileType;
 import consulo.unity3d.asmdef.AsmDefFileDescriptor;
-import consulo.unity3d.scene.Unity3dAssetFileTypeDetector;
-import consulo.unity3d.scene.Unity3dBinaryAssetFileType;
-import consulo.unity3d.scene.Unity3dYMLAssetFileType;
-import consulo.util.lang.StringUtil;
+import consulo.unity3d.asset.Unity3dBinaryAssetFileType;
+import consulo.unity3d.asset.Unity3dYMLAssetFileType;
 import consulo.virtualFileSystem.fileType.FileTypeConsumer;
 import consulo.virtualFileSystem.fileType.FileTypeFactory;
-
 import jakarta.annotation.Nonnull;
 
 /**
@@ -34,22 +31,15 @@ import jakarta.annotation.Nonnull;
  * @since 02.03.2015
  */
 @ExtensionImpl
-public class Unity3dFileTypeFactory extends FileTypeFactory
-{
-	@Override
-	public void createFileTypes(@Nonnull FileTypeConsumer consumer)
-	{
-		consumer.consume(Unity3dMetaFileType.INSTANCE);
-		consumer.consume(Unity3dBinaryAssetFileType.INSTANCE, StringUtil.join(Unity3dAssetFileTypeDetector.ourAssetExtensions, ";"));
-		consumer.consume(Unity3dYMLAssetFileType.INSTANCE);
+public class Unity3dFileTypeFactory extends FileTypeFactory {
+    @Override
+    public void createFileTypes(@Nonnull FileTypeConsumer consumer) {
+        consumer.consume(Unity3dBinaryAssetFileType.INSTANCE);
 
-		consumer.consume(Unity3dBinaryFileType.INSTANCE, "fbx");
+        consumer.consume(Unity3dYMLAssetFileType.INSTANCE);
 
-		consumer.consume(PlainTextFileType.INSTANCE, "rsp");
+        consumer.consume(PlainTextFileType.INSTANCE, "rsp");
 
-		consumer.consume(JsonFileType.INSTANCE, AsmDefFileDescriptor.EXTENSION);
-
-		// register exr file type as binary, do not try index it
-		consumer.consume(ExrImageFileType.INSTANCE);
-	}
+        consumer.consume(JsonFileType.INSTANCE, AsmDefFileDescriptor.EXTENSION);
+    }
 }

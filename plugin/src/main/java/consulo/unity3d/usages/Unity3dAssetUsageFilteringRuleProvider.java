@@ -8,7 +8,7 @@ import consulo.ui.ex.action.AnAction;
 import consulo.ui.ex.action.AnActionEvent;
 import consulo.unity3d.Unity3dIcons;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
-import consulo.unity3d.scene.Unity3dYMLAssetFileType;
+import consulo.unity3d.asset.Unity3dYMLAssetFileType;
 import consulo.usage.RuleAction;
 import consulo.usage.Usage;
 import consulo.usage.UsageTarget;

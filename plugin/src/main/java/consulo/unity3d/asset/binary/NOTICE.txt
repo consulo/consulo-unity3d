@@ -1,0 +1,5 @@
+Some parts from disunity
+
+https://github.com/ata4/disunity
+
+https://github.com/consulo/disunity

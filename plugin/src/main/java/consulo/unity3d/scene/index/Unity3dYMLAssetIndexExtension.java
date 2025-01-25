@@ -32,7 +32,7 @@ import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
 import consulo.language.psi.stub.*;
 import consulo.unity3d.scene.Unity3dMetaManager;
-import consulo.unity3d.scene.Unity3dYMLAssetFileType;
+import consulo.unity3d.asset.Unity3dYMLAssetFileType;
 import consulo.util.collection.ContainerUtil;
 import consulo.util.lang.Pair;
 import consulo.util.lang.StringUtil;
@@ -88,7 +88,7 @@ public class Unity3dYMLAssetIndexExtension extends FileBasedIndexExtension<Integ
 		{
 			DataInputOutputUtil.writeSeq(dataOutput, list, asset ->
 			{
-				dataOutput.writeUTF(asset.guild());
+				dataOutput.writeUTF(asset.guid());
 				dataOutput.writeInt(asset.startOffset());
 				String gameObjectName = asset.gameObjectName();
 				dataOutput.writeBoolean(gameObjectName != null);

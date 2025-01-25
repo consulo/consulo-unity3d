@@ -14,55 +14,43 @@
  * limitations under the License.
  */
 
-package consulo.unity3d.scene;
+package consulo.unity3d.meta;
 
+import consulo.gameFramework.icon.GameFrameworkIconGroup;
+import consulo.gameFramework.meta.MetadataFileType;
 import consulo.language.file.LanguageFileType;
 import consulo.localize.LocalizeValue;
 import consulo.ui.image.Image;
-import consulo.unity3d.shaderlab.icon.ShaderLabIconGroup;
-import org.jetbrains.yaml.YAMLLanguage;
-
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
+import org.jetbrains.yaml.YAMLLanguage;
 
 /**
  * @author VISTALL
- * @since 09.08.2015
+ * @since 02.03.2015
  */
-public class Unity3dYMLAssetFileType extends LanguageFileType
-{
-	public static final Unity3dYMLAssetFileType INSTANCE = new Unity3dYMLAssetFileType();
+public class Unity3dMetaFileType extends LanguageFileType implements MetadataFileType {
+    public static final Unity3dMetaFileType INSTANCE = new Unity3dMetaFileType();
 
-	private Unity3dYMLAssetFileType()
-	{
-		super(YAMLLanguage.INSTANCE);
-	}
+    public Unity3dMetaFileType() {
+        super(YAMLLanguage.INSTANCE);
+    }
 
-	@Nonnull
-	@Override
-	public String getId()
-	{
-		return "UNITY_YML_ASSET";
-	}
+    @Nonnull
+    @Override
+    public String getId() {
+        return "UNITY_META";
+    }
 
-	@Nonnull
-	@Override
-	public LocalizeValue getDescription()
-	{
-		return LocalizeValue.localizeTODO("Unity YAML Asset File");
-	}
+    @Nonnull
+    @Override
+    public LocalizeValue getDescription() {
+        return LocalizeValue.localizeTODO("Meta files");
+    }
 
-	@Nonnull
-	@Override
-	public String getDefaultExtension()
-	{
-		return "";
-	}
-
-	@Nullable
-	@Override
-	public Image getIcon()
-	{
-		return ShaderLabIconGroup.shader();
-	}
+    @Nullable
+    @Override
+    public Image getIcon() {
+        return GameFrameworkIconGroup.metadatafile();
+    }
 }

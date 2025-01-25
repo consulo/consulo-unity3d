@@ -32,7 +32,7 @@ import consulo.language.psi.PsiFile;
 import consulo.language.psi.PsiManager;
 import consulo.language.psi.resolve.ResolveState;
 import consulo.project.Project;
-import consulo.unity3d.scene.Unity3dAssetUtil;
+import consulo.unity3d.asset.Unity3dAssetUtil;
 import consulo.virtualFileSystem.VirtualFile;
 import org.jetbrains.yaml.psi.YAMLKeyValue;
 
