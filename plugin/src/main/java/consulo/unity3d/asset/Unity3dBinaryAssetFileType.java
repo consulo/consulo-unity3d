@@ -42,7 +42,7 @@ public class Unity3dBinaryAssetFileType implements FileType {
     @Nonnull
     @Override
     public LocalizeValue getDescription() {
-        return LocalizeValue.localizeTODO("Unity binary asset file");
+        return LocalizeValue.localizeTODO("Unity Binary Asset File");
     }
 
     @Nonnull

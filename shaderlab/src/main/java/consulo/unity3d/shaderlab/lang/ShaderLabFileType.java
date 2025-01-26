@@ -48,7 +48,7 @@ public class ShaderLabFileType extends LanguageFileType
 	@Override
 	public LocalizeValue getDescription()
 	{
-		return LocalizeValue.localizeTODO(".shader files");
+		return LocalizeValue.localizeTODO("Unity Shader");
 	}
 
 	@Nonnull
