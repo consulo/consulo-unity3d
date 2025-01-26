@@ -34,7 +34,7 @@ import java.util.List;
  * @author VISTALL
  * @since 09.08.2015
  */
-@ExtensionImpl
+@ExtensionImpl(id = "unity")
 public class Unity3dAssetFileTypeDetector implements FileTypeDetector {
     public static final List<String> ourAssetExtensions = List.of("unity",
         "prefab",
@@ -90,7 +90,7 @@ public class Unity3dAssetFileTypeDetector implements FileTypeDetector {
 
     @Override
     public int getDesiredContentPrefixLength() {
-        return 64;
+        return 96;
     }
 
     @Override
