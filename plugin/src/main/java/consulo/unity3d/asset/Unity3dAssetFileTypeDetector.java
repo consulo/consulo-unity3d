@@ -26,7 +26,6 @@ import consulo.virtualFileSystem.fileType.FileTypeDetector;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Collection;
 import java.util.List;
@@ -73,7 +72,7 @@ public class Unity3dAssetFileTypeDetector implements FileTypeDetector {
                 return Unity3dBinaryAssetFileType.INSTANCE;
             }
         }
-        catch (IOException ignored) {
+        catch (Exception ignored) {
         }
 
         return null;
