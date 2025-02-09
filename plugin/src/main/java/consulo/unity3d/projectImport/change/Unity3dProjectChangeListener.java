@@ -25,6 +25,7 @@ import consulo.application.ReadAction;
 import consulo.application.util.concurrent.AppExecutorUtil;
 import consulo.disposer.Disposable;
 import consulo.language.util.ModuleUtilCore;
+import consulo.localize.LocalizeValue;
 import consulo.module.Module;
 import consulo.module.content.layer.event.ModuleRootEvent;
 import consulo.module.content.layer.event.ModuleRootListener;
@@ -184,7 +185,7 @@ public class Unity3dProjectChangeListener implements Disposable {
 
             if (needNotification) {
                 Notification notification = new Notification(UnityNotificationGroup.INSTANCE, Application.get().getName().get(), "Unity project structure changed", NotificationType.INFORMATION);
-                notification.addAction(new NotificationAction("Rebuild project") {
+                notification.addAction(new NotificationAction(LocalizeValue.localizeTODO("Rebuild Project")) {
                     @RequiredUIAccess
                     @Override
                     public void actionPerformed(@Nonnull AnActionEvent anActionEvent, @Nonnull Notification notification) {

@@ -28,6 +28,7 @@ import consulo.content.library.Library;
 import consulo.content.library.LibraryTable;
 import consulo.dotnet.dll.DotNetModuleFileType;
 import consulo.language.editor.WriteCommandAction;
+import consulo.localize.LocalizeValue;
 import consulo.logging.Logger;
 import consulo.module.Module;
 import consulo.module.ModuleManager;
@@ -103,14 +104,14 @@ public class UnityPluginValidator implements BackgroundStartupActivity {
         }
 
         if (ver == null) {
-            showNotify(project, "Consulo plugin for UnityEditor is missing", "Install via manifest", false);
+            showNotify(project, "Consulo plugin for UnityEditor is missing", LocalizeValue.localizeTODO("Install via manifest"), false);
         }
         else {
-            showNotify(project, "Outdated Consulo plugin for UnityEditor", "Update via manifest", true);
+            showNotify(project, "Outdated Consulo plugin for UnityEditor", LocalizeValue.localizeTODO("Update via manifest"), true);
         }
     }
 
-    private static void showNotify(final Project project, @Nonnull String text, @Nonnull String actionName, boolean update) {
+    private static void showNotify(final Project project, @Nonnull String text, @Nonnull LocalizeValue actionName, boolean update) {
         Notification notification = new Notification(UnityNotificationGroup.INSTANCE, "Unity3D Plugin", text, update ? NotificationType.WARNING : NotificationType.INFORMATION);
         notification.addAction(new NotificationAction(actionName) {
             @RequiredUIAccess
