@@ -19,7 +19,6 @@ package consulo.unity3d.scene.reference;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.application.ReadAction;
 import consulo.application.progress.ProgressManager;
-import consulo.application.util.function.Processor;
 import consulo.content.scope.SearchScope;
 import consulo.csharp.lang.psi.CSharpFieldDeclaration;
 import consulo.language.psi.PsiElement;
@@ -35,51 +34,44 @@ import consulo.unity3d.scene.Unity3dMetaManager;
 import consulo.unity3d.scene.index.Unity3dYMLAsset;
 import consulo.util.collection.MultiMap;
 import consulo.virtualFileSystem.VirtualFile;
+import jakarta.annotation.Nonnull;
 import org.jetbrains.yaml.psi.YAMLFile;
 
-import jakarta.annotation.Nonnull;
+import java.util.function.Predicate;
 
 /**
  * @author VISTALL
  * @since 01-Sep-17
  */
 @ExtensionImpl
-public class Unity3dSceneReferenceSearcher extends QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters> implements ReferencesSearchQueryExecutor
-{
-	@Override
-	public void processQuery(@Nonnull ReferencesSearch.SearchParameters searchParameters, @Nonnull Processor<? super PsiReference> processor)
-	{
-		SearchScope scope = ReadAction.compute(searchParameters::getEffectiveSearchScope);
-		if(!(scope instanceof GlobalSearchScope))
-		{
-			return;
-		}
+public class Unity3dSceneReferenceSearcher extends QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters> implements ReferencesSearchQueryExecutor {
+    @Override
+    public void processQuery(@Nonnull ReferencesSearch.SearchParameters searchParameters, @Nonnull Predicate<? super PsiReference> processor) {
+        SearchScope scope = ReadAction.compute(searchParameters::getEffectiveSearchScope);
+        if (!(scope instanceof GlobalSearchScope)) {
+            return;
+        }
 
-		Project project = searchParameters.getProject();
+        Project project = searchParameters.getProject();
 
-		PsiElement element = searchParameters.getElementToSearch();
-		if(ReadAction.compute(() -> Unity3dModuleExtensionUtil.getRootModule(searchParameters.getProject()) != null))
-		{
-			if(element instanceof CSharpFieldDeclaration)
-			{
-				String name = ReadAction.compute(((CSharpFieldDeclaration) element)::getName);
-				MultiMap<VirtualFile, Unity3dYMLAsset> map = ReadAction.compute(() -> Unity3dYMLAsset.findAssetAsAttach(project, PsiUtilCore.getVirtualFile(element)));
+        PsiElement element = searchParameters.getElementToSearch();
+        if (ReadAction.compute(() -> Unity3dModuleExtensionUtil.getRootModule(searchParameters.getProject()) != null)) {
+            if (element instanceof CSharpFieldDeclaration) {
+                String name = ReadAction.compute(((CSharpFieldDeclaration) element)::getName);
+                MultiMap<VirtualFile, Unity3dYMLAsset> map = ReadAction.compute(() -> Unity3dYMLAsset.findAssetAsAttach(project, PsiUtilCore.getVirtualFile(element)));
 
-				for(VirtualFile virtualFile : map.keySet())
-				{
-					ProgressManager.checkCanceled();
+                for (VirtualFile virtualFile : map.keySet()) {
+                    ProgressManager.checkCanceled();
 
-					searchParameters.getOptimizer().searchWord(name + ":", GlobalSearchScope.fileScope(project, virtualFile), true, element);
-				}
-			}
-			else if(element instanceof YAMLFile)
-			{
-				String guid = ReadAction.compute(() -> Unity3dMetaManager.getInstance(project).getGUID(PsiUtilCore.getVirtualFile(element)));
-				if(guid != null)
-				{
-					searchParameters.getOptimizer().searchWord(guid, GlobalSearchScope.allScope(project), true, element);
-				}
-			}
-		}
-	}
+                    searchParameters.getOptimizer().searchWord(name + ":", GlobalSearchScope.fileScope(project, virtualFile), true, element);
+                }
+            }
+            else if (element instanceof YAMLFile) {
+                String guid = ReadAction.compute(() -> Unity3dMetaManager.getInstance(project).getGUID(PsiUtilCore.getVirtualFile(element)));
+                if (guid != null) {
+                    searchParameters.getOptimizer().searchWord(guid, GlobalSearchScope.allScope(project), true, element);
+                }
+            }
+        }
+    }
 }
