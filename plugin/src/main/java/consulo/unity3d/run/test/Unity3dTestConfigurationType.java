@@ -19,7 +19,9 @@ package consulo.unity3d.run.test;
 import consulo.annotation.access.RequiredReadAction;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.application.AllIcons;
+import consulo.application.Application;
 import consulo.execution.configuration.ConfigurationFactory;
+import consulo.execution.configuration.ConfigurationType;
 import consulo.execution.configuration.ConfigurationTypeBase;
 import consulo.execution.configuration.RunConfiguration;
 import consulo.project.Project;
@@ -27,7 +29,6 @@ import consulo.ui.image.ImageEffects;
 import consulo.unity3d.Unity3dIcons;
 import consulo.unity3d.localize.Unity3dLocalize;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
-
 import jakarta.annotation.Nonnull;
 
 /**
@@ -35,39 +36,32 @@ import jakarta.annotation.Nonnull;
  * @since 18.01.2016
  */
 @ExtensionImpl
-public class Unity3dTestConfigurationType extends ConfigurationTypeBase
-{
-	@Nonnull
-	public static Unity3dTestConfigurationType getInstance()
-	{
-		return EP_NAME.findExtensionOrFail(Unity3dTestConfigurationType.class);
-	}
+public class Unity3dTestConfigurationType extends ConfigurationTypeBase {
+    @Nonnull
+    public static Unity3dTestConfigurationType getInstance() {
+        return Application.get().getExtensionPoint(ConfigurationType.class).findExtensionOrFail(Unity3dTestConfigurationType.class);
+    }
 
-	public Unity3dTestConfigurationType()
-	{
-		super("#Unity3dTestConfigurationType", Unity3dLocalize.unityTestConfigurationName(), ImageEffects.layered(Unity3dIcons.Unity3d, AllIcons.Nodes.JunitTestMark));
+    public Unity3dTestConfigurationType() {
+        super("#Unity3dTestConfigurationType", Unity3dLocalize.unityTestConfigurationName(), ImageEffects.layered(Unity3dIcons.Unity3d, AllIcons.Nodes.JunitTestMark));
 
-		addFactory(new ConfigurationFactory(this)
-		{
-			@Nonnull
-			@Override
-			public String getId()
-			{
-				return "Unity Test";
-			}
+        addFactory(new ConfigurationFactory(this) {
+            @Nonnull
+            @Override
+            public String getId() {
+                return "Unity Test";
+            }
 
-			@Override
-			public RunConfiguration createTemplateConfiguration(Project project)
-			{
-				return new Unity3dTestConfiguration(project, this, "Unnamed");
-			}
+            @Override
+            public RunConfiguration createTemplateConfiguration(Project project) {
+                return new Unity3dTestConfiguration(project, this, "Unnamed");
+            }
 
-			@Override
-			@RequiredReadAction
-			public boolean isApplicable(@Nonnull Project project)
-			{
-				return Unity3dModuleExtensionUtil.getRootModuleExtension(project) != null;
-			}
-		});
-	}
+            @Override
+            @RequiredReadAction
+            public boolean isApplicable(@Nonnull Project project) {
+                return Unity3dModuleExtensionUtil.getRootModuleExtension(project) != null;
+            }
+        });
+    }
 }
