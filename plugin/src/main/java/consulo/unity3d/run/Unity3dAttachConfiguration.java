@@ -18,11 +18,14 @@ package consulo.unity3d.run;
 
 import consulo.annotation.access.RequiredReadAction;
 import consulo.compiler.execution.CompileStepBeforeRun;
+import consulo.csharp.lang.CSharpFileType;
+import consulo.dotnet.debugger.impl.DotNetConfurationWithDefaultDebugFileType;
 import consulo.execution.DefaultExecutionResult;
 import consulo.execution.configuration.*;
 import consulo.execution.configuration.ui.SettingsEditor;
 import consulo.execution.executor.Executor;
 import consulo.execution.runner.ExecutionEnvironment;
+import consulo.language.file.LanguageFileType;
 import consulo.module.Module;
 import consulo.module.ModuleManager;
 import consulo.process.ExecutionException;
@@ -32,106 +35,100 @@ import consulo.unity3d.run.debugger.UnityDebugProcessInfo;
 import consulo.util.xml.serializer.InvalidDataException;
 import consulo.util.xml.serializer.WriteExternalException;
 import consulo.util.xml.serializer.XmlSerializer;
-import org.jdom.Element;
-
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
+import org.jdom.Element;
 
 /**
  * @author VISTALL
  * @since 10.11.14
  */
-public class Unity3dAttachConfiguration extends LocatableConfigurationBase implements ModuleRunProfile, RunConfigurationWithSuppressedDefaultRunAction, CompileStepBeforeRun.Suppressor
-{
-	public enum AttachTarget
-	{
-		UNITY_EDITOR,
-		BY_NAME,
-		FROM_DIALOG
-	}
+public class Unity3dAttachConfiguration extends LocatableConfigurationBase implements
+    ModuleRunProfile,
+    RunConfigurationWithSuppressedDefaultRunAction,
+    CompileStepBeforeRun.Suppressor,
+    DotNetConfurationWithDefaultDebugFileType {
+    public enum AttachTarget {
+        UNITY_EDITOR,
+        BY_NAME,
+        FROM_DIALOG
+    }
 
-	private AttachTarget myAttachTarget = AttachTarget.UNITY_EDITOR;
-	private String myProcessName;
+    private AttachTarget myAttachTarget = AttachTarget.UNITY_EDITOR;
+    private String myProcessName;
 
-	// for attaching from attach action
-	@Nullable
-	private UnityDebugProcessInfo myForceUnityProcess;
+    // for attaching from attach action
+    @Nullable
+    private UnityDebugProcessInfo myForceUnityProcess;
 
-	public Unity3dAttachConfiguration(Project project, ConfigurationFactory factory)
-	{
-		super(project, factory, "Unity Debug Attach");
-	}
+    public Unity3dAttachConfiguration(Project project, ConfigurationFactory factory) {
+        super(project, factory, "Unity Debug Attach");
+    }
 
-	public Unity3dAttachConfiguration(Project project, String name, ConfigurationFactory factory)
-	{
-		super(project, factory, name);
-	}
+    public Unity3dAttachConfiguration(Project project, String name, ConfigurationFactory factory) {
+        super(project, factory, name);
+    }
 
-	public void setAttachTarget(AttachTarget attachTarget)
-	{
-		myAttachTarget = attachTarget;
-	}
+    public void setAttachTarget(AttachTarget attachTarget) {
+        myAttachTarget = attachTarget;
+    }
 
-	public AttachTarget getAttachTarget()
-	{
-		return myAttachTarget;
-	}
+    public AttachTarget getAttachTarget() {
+        return myAttachTarget;
+    }
 
-	public void setProcessName(String processName)
-	{
-		myProcessName = processName;
-	}
+    public void setProcessName(String processName) {
+        myProcessName = processName;
+    }
 
-	public String getProcessName()
-	{
-		return myProcessName;
-	}
+    public String getProcessName() {
+        return myProcessName;
+    }
 
-	@Override
-	public void readExternal(Element element) throws InvalidDataException
-	{
-		super.readExternal(element);
+    @Nonnull
+    @Override
+    public LanguageFileType getDefaultDebuggerFileType() {
+        return CSharpFileType.INSTANCE;
+    }
 
-		XmlSerializer.deserializeInto(this, element);
-	}
+    @Override
+    public void readExternal(Element element) throws InvalidDataException {
+        super.readExternal(element);
 
-	@Override
-	public void writeExternal(Element element) throws WriteExternalException
-	{
-		super.writeExternal(element);
+        XmlSerializer.deserializeInto(this, element);
+    }
 
-		XmlSerializer.serializeInto(this, element);
-	}
+    @Override
+    public void writeExternal(Element element) throws WriteExternalException {
+        super.writeExternal(element);
 
-	@Nonnull
-	@Override
-	public SettingsEditor<? extends RunConfiguration> getConfigurationEditor()
-	{
-		return new Unity3dConfigurationEditor();
-	}
+        XmlSerializer.serializeInto(this, element);
+    }
 
-	@Nullable
-	@Override
-	public RunProfileState getState(@Nonnull Executor executor, @Nonnull ExecutionEnvironment env) throws ExecutionException
-	{
-		return (executor1, runner) -> new DefaultExecutionResult(null, new NopProcessHandler());
-	}
+    @Nonnull
+    @Override
+    public SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
+        return new Unity3dConfigurationEditor();
+    }
 
-	@Nonnull
-	@Override
-	@RequiredReadAction
-	public Module[] getModules()
-	{
-		return ModuleManager.getInstance(getProject()).getModules();
-	}
+    @Nullable
+    @Override
+    public RunProfileState getState(@Nonnull Executor executor, @Nonnull ExecutionEnvironment env) throws ExecutionException {
+        return (executor1, runner) -> new DefaultExecutionResult(null, new NopProcessHandler());
+    }
 
-	public UnityDebugProcessInfo getForceUnityProcess()
-	{
-		return myForceUnityProcess;
-	}
+    @Nonnull
+    @Override
+    @RequiredReadAction
+    public Module[] getModules() {
+        return ModuleManager.getInstance(getProject()).getModules();
+    }
 
-	public void setForceUnityProcess(UnityDebugProcessInfo forceUnityProcess)
-	{
-		myForceUnityProcess = forceUnityProcess;
-	}
+    public UnityDebugProcessInfo getForceUnityProcess() {
+        return myForceUnityProcess;
+    }
+
+    public void setForceUnityProcess(UnityDebugProcessInfo forceUnityProcess) {
+        myForceUnityProcess = forceUnityProcess;
+    }
 }

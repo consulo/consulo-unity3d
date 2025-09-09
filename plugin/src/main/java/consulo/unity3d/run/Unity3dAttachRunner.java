@@ -30,7 +30,6 @@ import consulo.execution.debug.XDebugSession;
 import consulo.execution.debug.XDebuggerManager;
 import consulo.execution.runner.AsyncProgramRunner;
 import consulo.execution.runner.ExecutionEnvironment;
-import consulo.execution.runner.ProgramRunner;
 import consulo.execution.ui.RunContentDescriptor;
 import consulo.execution.ui.console.ConsoleView;
 import consulo.process.ExecutionException;
@@ -47,10 +46,10 @@ import consulo.util.collection.ContainerUtil;
 import consulo.util.concurrent.AsyncResult;
 import consulo.util.lang.Comparing;
 import consulo.util.lang.StringUtil;
-import mono.debugger.VirtualMachine;
-
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
+import mono.debugger.VirtualMachine;
+
 import java.util.List;
 
 /**
@@ -58,203 +57,169 @@ import java.util.List;
  * @since 10.11.14
  */
 @ExtensionImpl
-public class Unity3dAttachRunner extends AsyncProgramRunner
-{
-	public static Unity3dAttachRunner getInstance()
-	{
-		return ProgramRunner.PROGRAM_RUNNER_EP.findExtension(Unity3dAttachRunner.class);
-	}
+public class Unity3dAttachRunner extends AsyncProgramRunner {
+    @Nonnull
+    @Override
+    public String getRunnerId() {
+        return "Unity3dAttachRunner";
+    }
 
-	@Nonnull
-	@Override
-	public String getRunnerId()
-	{
-		return "Unity3dAttachRunner";
-	}
+    @Override
+    public boolean canRun(@Nonnull String executorId, @Nonnull RunProfile profile) {
+        return executorId.equals(DefaultDebugExecutor.EXECUTOR_ID) && profile instanceof Unity3dAttachConfiguration;
+    }
 
-	@Override
-	public boolean canRun(@Nonnull String executorId, @Nonnull RunProfile profile)
-	{
-		return executorId.equals(DefaultDebugExecutor.EXECUTOR_ID) && profile instanceof Unity3dAttachConfiguration;
-	}
+    @Nonnull
+    @RequiredUIAccess
+    public static RunContentDescriptor runContentDescriptor(ExecutionResult executionResult,
+                                                            @Nonnull final ExecutionEnvironment environment,
+                                                            @Nonnull UnityDebugProcessInfo selected,
+                                                            @Nullable final ConsoleView consoleView,
+                                                            boolean insideEditor) throws ExecutionException {
+        final XDebugSession debugSession = XDebuggerManager.getInstance(environment.getProject()).startSession(environment, session ->
+        {
+            DebugConnectionInfo debugConnectionInfo = new DebugConnectionInfo(selected.getHost(), selected.getPort(), true);
+            final UnityDebugProcess process = new UnityDebugProcess(session, environment.getRunProfile(), debugConnectionInfo, consoleView, insideEditor);
+            process.setExecutionResult(executionResult);
 
-	@Nonnull
-	@RequiredUIAccess
-	public static RunContentDescriptor runContentDescriptor(ExecutionResult executionResult,
-															@Nonnull final ExecutionEnvironment environment,
-															@Nonnull UnityDebugProcessInfo selected,
-															@Nullable final ConsoleView consoleView,
-															boolean insideEditor) throws ExecutionException
-	{
-		final XDebugSession debugSession = XDebuggerManager.getInstance(environment.getProject()).startSession(environment, session ->
-		{
-			DebugConnectionInfo debugConnectionInfo = new DebugConnectionInfo(selected.getHost(), selected.getPort(), true);
-			final UnityDebugProcess process = new UnityDebugProcess(session, environment.getRunProfile(), debugConnectionInfo, consoleView, insideEditor);
-			process.setExecutionResult(executionResult);
+            process.getDebugThread().addListener(new MonoVirtualMachineListener() {
+                private boolean myDisconnected = false;
 
-			process.getDebugThread().addListener(new MonoVirtualMachineListener()
-			{
-				private boolean myDisconnected = false;
+                @Override
+                public void connectionSuccess(@Nonnull VirtualMachine machine) {
+                    ProcessHandler processHandler = process.getProcessHandler();
+                    processHandler.notifyTextAvailable(String.format("Success attach to '%s' at %s:%d\n", selected.getName(), selected.getHost(), selected.getPort()), ProcessOutputTypes.STDOUT);
+                }
 
-				@Override
-				public void connectionSuccess(@Nonnull VirtualMachine machine)
-				{
-					ProcessHandler processHandler = process.getProcessHandler();
-					processHandler.notifyTextAvailable(String.format("Success attach to '%s' at %s:%d\n", selected.getName(), selected.getHost(), selected.getPort()), ProcessOutputTypes.STDOUT);
-				}
+                @Override
+                public void connectionStopped() {
+                    if (myDisconnected) {
+                        return;
+                    }
 
-				@Override
-				public void connectionStopped()
-				{
-					if(myDisconnected)
-					{
-						return;
-					}
+                    myDisconnected = true;
+                    ProcessHandler processHandler = process.getProcessHandler();
+                    processHandler.notifyTextAvailable(String.format("Disconnected from '%s' at %s:%d\n", selected.getName(), selected.getHost(), selected.getPort()), ProcessOutputTypes.STDERR);
+                    ProcessHandlerStopper.stop(processHandler);
+                }
 
-					myDisconnected = true;
-					ProcessHandler processHandler = process.getProcessHandler();
-					processHandler.notifyTextAvailable(String.format("Disconnected from '%s' at %s:%d\n", selected.getName(), selected.getHost(), selected.getPort()), ProcessOutputTypes.STDERR);
-					ProcessHandlerStopper.stop(processHandler);
-				}
+                @Override
+                public void connectionFailed() {
+                    ProcessHandler processHandler = process.getProcessHandler();
+                    processHandler.notifyTextAvailable(String.format("Failed attach to '%s' at %s:%d\n", selected.getName(), selected.getHost(), selected.getPort()), ProcessOutputTypes.STDERR);
+                    ProcessHandlerStopper.stop(processHandler);
+                }
+            });
+            process.start();
+            return process;
+        });
 
-				@Override
-				public void connectionFailed()
-				{
-					ProcessHandler processHandler = process.getProcessHandler();
-					processHandler.notifyTextAvailable(String.format("Failed attach to '%s' at %s:%d\n", selected.getName(), selected.getHost(), selected.getPort()), ProcessOutputTypes.STDERR);
-					ProcessHandlerStopper.stop(processHandler);
-				}
-			});
-			process.start();
-			return process;
-		});
+        return debugSession.getRunContentDescriptor();
+    }
 
-		return debugSession.getRunContentDescriptor();
-	}
+    @Nonnull
+    @Override
+    @RequiredUIAccess
+    protected AsyncResult<RunContentDescriptor> execute(@Nonnull ExecutionEnvironment environment, @Nonnull RunProfileState state) throws ExecutionException {
+        FileDocumentManager.getInstance().saveAllDocuments();
 
-	@Nonnull
-	@Override
-	@RequiredUIAccess
-	protected AsyncResult<RunContentDescriptor> execute(@Nonnull ExecutionEnvironment environment, @Nonnull RunProfileState state) throws ExecutionException
-	{
-		FileDocumentManager.getInstance().saveAllDocuments();
+        AsyncResult<RunContentDescriptor> result = AsyncResult.undefined();
 
-		AsyncResult<RunContentDescriptor> result = AsyncResult.undefined();
+        Unity3dAttachConfiguration runProfile = (Unity3dAttachConfiguration) environment.getRunProfile();
 
-		Unity3dAttachConfiguration runProfile = (Unity3dAttachConfiguration) environment.getRunProfile();
+        ExecutionResult executionResult = state.execute(environment.getExecutor(), this);
 
-		ExecutionResult executionResult = state.execute(environment.getExecutor(), this);
+        UnityDebugProcessInfo forceUnityProcess = runProfile.getForceUnityProcess();
+        if (forceUnityProcess != null) {
+            setRunDescriptor(result, environment, executionResult, forceUnityProcess);
+            return result;
+        }
 
-		UnityDebugProcessInfo forceUnityProcess = runProfile.getForceUnityProcess();
-		if(forceUnityProcess != null)
-		{
-			setRunDescriptor(result, environment, executionResult, forceUnityProcess);
-			return result;
-		}
+        switch (runProfile.getAttachTarget()) {
+            case UNITY_EDITOR:
+                new Task.Backgroundable(environment.getProject(), "Searching Unity Editor...", false) {
+                    private UnityDebugProcessInfo myUnityProcess;
 
-		switch(runProfile.getAttachTarget())
-		{
-			case UNITY_EDITOR:
-				new Task.Backgroundable(environment.getProject(), "Searching Unity Editor...", false)
-				{
-					private UnityDebugProcessInfo myUnityProcess;
+                    @Override
+                    public void run(@Nonnull ProgressIndicator progressIndicator) {
+                        myUnityProcess = UnityEditorCommunication.findEditorProcess();
+                    }
 
-					@Override
-					public void run(@Nonnull ProgressIndicator progressIndicator)
-					{
-						myUnityProcess = UnityEditorCommunication.findEditorProcess();
-					}
+                    @RequiredUIAccess
+                    @Override
+                    public void onSuccess() {
+                        if (myUnityProcess != null) {
+                            try {
+                                result.setDone(runContentDescriptor(executionResult, environment, myUnityProcess, null, true));
+                            }
+                            catch (ExecutionException e) {
+                                result.rejectWithThrowable(e);
+                            }
+                        }
+                        else {
+                            result.rejectWithThrowable(new ExecutionException("Unity Editor is not running"));
+                        }
+                    }
+                }.queue();
+                return result;
+            case BY_NAME:
+                UnityExternalDeviceManager.getInstance().bindAndRun(environment.getProject(), () ->
+                {
+                    new Task.Backgroundable(environment.getProject(), "Searching process by name: " + runProfile.getProcessName()) {
+                        private UnityDebugProcessInfo myUnityProcess;
 
-					@RequiredUIAccess
-					@Override
-					public void onSuccess()
-					{
-						if(myUnityProcess != null)
-						{
-							try
-							{
-								result.setDone(runContentDescriptor(executionResult, environment, myUnityProcess, null, true));
-							}
-							catch(ExecutionException e)
-							{
-								result.rejectWithThrowable(e);
-							}
-						}
-						else
-						{
-							result.rejectWithThrowable(new ExecutionException("Unity Editor is not running"));
-						}
-					}
-				}.queue();
-				return result;
-			case BY_NAME:
-				UnityExternalDeviceManager.getInstance().bindAndRun(environment.getProject(), () ->
-				{
-					new Task.Backgroundable(environment.getProject(), "Searching process by name: " + runProfile.getProcessName())
-					{
-						private UnityDebugProcessInfo myUnityProcess;
+                        @Override
+                        public void run(@Nonnull ProgressIndicator progressIndicator) {
+                            for (UnityDebugProcessInfo unityProcess : UnityProcessDialog.collectItems()) {
+                                if (StringUtil.isEmpty(runProfile.getProcessName()) || Comparing.equal(unityProcess.getName(), runProfile.getProcessName())) {
+                                    myUnityProcess = unityProcess;
+                                    break;
+                                }
+                            }
+                        }
 
-						@Override
-						public void run(@Nonnull ProgressIndicator progressIndicator)
-						{
-							for(UnityDebugProcessInfo unityProcess : UnityProcessDialog.collectItems())
-							{
-								if(StringUtil.isEmpty(runProfile.getProcessName()) || Comparing.equal(unityProcess.getName(), runProfile.getProcessName()))
-								{
-									myUnityProcess = unityProcess;
-									break;
-								}
-							}
-						}
+                        @RequiredUIAccess
+                        @Override
+                        public void onFinished() {
+                            setRunDescriptor(result, environment, executionResult, myUnityProcess);
+                        }
+                    }.queue();
+                });
+                break;
+            case FROM_DIALOG:
+                UnityExternalDeviceManager.getInstance().bindAndRun(environment.getProject(), () ->
+                {
+                    UnityProcessDialog dialog = new UnityProcessDialog(environment.getProject());
 
-						@RequiredUIAccess
-						@Override
-						public void onFinished()
-						{
-							setRunDescriptor(result, environment, executionResult, myUnityProcess);
-						}
-					}.queue();
-				});
-				break;
-			case FROM_DIALOG:
-				UnityExternalDeviceManager.getInstance().bindAndRun(environment.getProject(), () ->
-				{
-					UnityProcessDialog dialog = new UnityProcessDialog(environment.getProject());
+                    List<UnityDebugProcessInfo> unityProcesses = dialog.showAndGetResult();
 
-					List<UnityDebugProcessInfo> unityProcesses = dialog.showAndGetResult();
+                    UnityDebugProcessInfo process = ContainerUtil.getFirstItem(unityProcesses);
+                    if (process == null) {
+                        result.setDone(null);
+                        return;
+                    }
+                    setRunDescriptor(result, environment, executionResult, process);
+                });
+                break;
+        }
+        return result;
+    }
 
-					UnityDebugProcessInfo process = ContainerUtil.getFirstItem(unityProcesses);
-					if(process == null)
-					{
-						result.setDone(null);
-						return;
-					}
-					setRunDescriptor(result, environment, executionResult, process);
-				});
-				break;
-		}
-		return result;
-	}
+    @RequiredUIAccess
+    private static void setRunDescriptor(AsyncResult<RunContentDescriptor> result,
+                                         ExecutionEnvironment environment,
+                                         ExecutionResult executionResult,
+                                         @Nullable UnityDebugProcessInfo process) {
+        if (process == null) {
+            result.rejectWithThrowable(new ExecutionException("Process not find for attach"));
+            return;
+        }
 
-	@RequiredUIAccess
-	private static void setRunDescriptor(AsyncResult<RunContentDescriptor> result,
-										 ExecutionEnvironment environment,
-										 ExecutionResult executionResult,
-										 @Nullable UnityDebugProcessInfo process)
-	{
-		if(process == null)
-		{
-			result.rejectWithThrowable(new ExecutionException("Process not find for attach"));
-			return;
-		}
-
-		try
-		{
-			result.setDone(runContentDescriptor(executionResult, environment, process, null, true));
-		}
-		catch(ExecutionException e)
-		{
-			result.rejectWithThrowable(e);
-		}
-	}
+        try {
+            result.setDone(runContentDescriptor(executionResult, environment, process, null, true));
+        }
+        catch (ExecutionException e) {
+            result.rejectWithThrowable(e);
+        }
+    }
 }

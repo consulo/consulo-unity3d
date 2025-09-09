@@ -17,10 +17,13 @@
 package consulo.unity3d.run.test;
 
 import consulo.annotation.access.RequiredReadAction;
+import consulo.csharp.lang.CSharpFileType;
+import consulo.dotnet.debugger.impl.DotNetConfurationWithDefaultDebugFileType;
 import consulo.execution.configuration.*;
 import consulo.execution.configuration.ui.SettingsEditor;
 import consulo.execution.executor.Executor;
 import consulo.execution.runner.ExecutionEnvironment;
+import consulo.language.file.LanguageFileType;
 import consulo.module.Module;
 import consulo.module.ModuleManager;
 import consulo.process.ExecutionException;
@@ -29,58 +32,56 @@ import consulo.ui.annotation.RequiredUIAccess;
 import consulo.util.xml.serializer.InvalidDataException;
 import consulo.util.xml.serializer.WriteExternalException;
 import consulo.util.xml.serializer.XmlSerializer;
-import org.jdom.Element;
-
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
+import org.jdom.Element;
 
 /**
  * @author VISTALL
  * @since 18.01.2016
  */
-public class Unity3dTestConfiguration extends LocatableConfigurationBase implements ModuleRunConfiguration
-{
-	public Unity3dTestConfiguration(Project project, ConfigurationFactory factory, String name)
-	{
-		super(project, factory, name);
-	}
+public class Unity3dTestConfiguration extends LocatableConfigurationBase implements ModuleRunConfiguration, DotNetConfurationWithDefaultDebugFileType {
+    public Unity3dTestConfiguration(Project project, ConfigurationFactory factory, String name) {
+        super(project, factory, name);
+    }
 
-	@Override
-	public void readExternal(Element element) throws InvalidDataException
-	{
-		super.readExternal(element);
+    @Override
+    public void readExternal(Element element) throws InvalidDataException {
+        super.readExternal(element);
 
-		XmlSerializer.deserializeInto(this, element);
-	}
+        XmlSerializer.deserializeInto(this, element);
+    }
 
-	@Override
-	public void writeExternal(Element element) throws WriteExternalException
-	{
-		super.writeExternal(element);
+    @Override
+    public void writeExternal(Element element) throws WriteExternalException {
+        super.writeExternal(element);
 
-		XmlSerializer.serializeInto(this, element);
-	}
+        XmlSerializer.serializeInto(this, element);
+    }
 
-	@Nonnull
-	@Override
-	public SettingsEditor<? extends RunConfiguration> getConfigurationEditor()
-	{
-		return new Unity3dTestConfigurationEditor();
-	}
+    @Nonnull
+    @Override
+    public SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
+        return new Unity3dTestConfigurationEditor();
+    }
 
-	@Nullable
-	@Override
-	@RequiredUIAccess
-	public RunProfileState getState(@Nonnull Executor executor, @Nonnull final ExecutionEnvironment environment) throws ExecutionException
-	{
-		return new Unity3dTestRunState(environment);
-	}
+    @Nullable
+    @Override
+    @RequiredUIAccess
+    public RunProfileState getState(@Nonnull Executor executor, @Nonnull final ExecutionEnvironment environment) throws ExecutionException {
+        return new Unity3dTestRunState(environment);
+    }
 
-	@Nonnull
-	@Override
-	@RequiredReadAction
-	public Module[] getModules()
-	{
-		return ModuleManager.getInstance(getProject()).getModules();
-	}
+    @Nonnull
+    @Override
+    @RequiredReadAction
+    public Module[] getModules() {
+        return ModuleManager.getInstance(getProject()).getModules();
+    }
+
+    @Nonnull
+    @Override
+    public LanguageFileType getDefaultDebuggerFileType() {
+        return CSharpFileType.INSTANCE;
+    }
 }
