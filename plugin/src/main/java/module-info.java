@@ -45,4 +45,5 @@ module consulo.unity3d
 	opens consulo.unity3d.editor to com.google.gson;
 	opens consulo.unity3d.packages to com.google.gson, consulo.application.impl;
 	opens consulo.unity3d.jsonApi to com.google.gson;
+	
 }

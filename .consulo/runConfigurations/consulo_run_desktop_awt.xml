@@ -24,9 +24,9 @@
           </option>
           <option name="goals">
             <list>
-              <option value="consulo:run-desktop-awt" />
+              <option value="consulo:run-desktop-awt-fork" />
               <option value="-pl" />
-              <option value="consulo.plugin:consulo.unity3d" />
+              <option value=":consulo.unity3d" />
             </list>
           </option>
           <option name="profilesMap">

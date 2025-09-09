@@ -21,13 +21,12 @@ import com.google.gson.GsonBuilder;
 import consulo.annotation.access.RequiredReadAction;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.application.ReadAction;
+import consulo.application.WriteAction;
 import consulo.application.progress.Task;
-import consulo.application.util.function.ThrowableComputable;
 import consulo.content.base.BinariesOrderRootType;
 import consulo.content.library.Library;
 import consulo.content.library.LibraryTable;
 import consulo.dotnet.dll.DotNetModuleFileType;
-import consulo.language.editor.WriteCommandAction;
 import consulo.localize.LocalizeValue;
 import consulo.logging.Logger;
 import consulo.module.Module;
@@ -162,12 +161,10 @@ public class UnityPluginValidator implements BackgroundStartupActivity {
             // drop old plugins
             for (VirtualFile oldPluginFile : oldPluginFiles) {
                 try {
-                    WriteCommandAction.runWriteCommandAction(project, (ThrowableComputable<Object, Throwable>) () ->
-                    {
+                    WriteAction.run(() ->{
                         oldPluginFile.delete(null);
 
                         doActionOnSuffixFile(oldPluginFile, virtualFile -> virtualFile.delete(null), ".mdb");
-                        return null;
                     });
                 }
                 catch (Throwable e) {
@@ -200,7 +197,7 @@ public class UnityPluginValidator implements BackgroundStartupActivity {
 
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-            WriteCommandAction.runWriteCommandAction(project, () -> Unity3dManifest.write(project, gson.toJson(newManifest)));
+            WriteAction.runLater(() -> Unity3dManifest.write(project, gson.toJson(newManifest)));
         });
     }
 
@@ -247,8 +244,7 @@ public class UnityPluginValidator implements BackgroundStartupActivity {
             }
         });
 
-        WriteCommandAction.runWriteCommandAction(project, () ->
-        {
+        WriteAction.runLater(() -> {
             for (ModifiableRootModel modifiableRootModel : list) {
                 modifiableRootModel.commit();
             }
