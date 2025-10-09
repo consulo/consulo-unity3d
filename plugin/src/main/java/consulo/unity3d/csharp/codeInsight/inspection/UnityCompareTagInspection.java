@@ -33,11 +33,10 @@ import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiElementVisitor;
 import consulo.language.psi.PsiFile;
 import consulo.language.psi.util.PsiTreeUtil;
+import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 import consulo.unity3d.Unity3dTypes;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
-import org.jetbrains.annotations.Nls;
-
 import jakarta.annotation.Nonnull;
 
 /**
@@ -45,137 +44,106 @@ import jakarta.annotation.Nonnull;
  * @since 01-Nov-17
  */
 @ExtensionImpl
-public class UnityCompareTagInspection extends UnityLocalInspectionTool
-{
-	private static class ReplaceByCompareTagFix extends LocalQuickFixOnPsiElement
-	{
-		private ReplaceByCompareTagFix(@Nonnull PsiElement element)
-		{
-			super(element);
-		}
+public class UnityCompareTagInspection extends UnityLocalInspectionTool {
+    private static class ReplaceByCompareTagFix extends LocalQuickFixOnPsiElement {
+        private ReplaceByCompareTagFix(@Nonnull PsiElement element) {
+            super(element);
+        }
 
-		@Nonnull
-		@Override
-		public String getText()
-		{
-			return "Replace by CompareTag";
-		}
+        @Nonnull
+        @Override
+        public LocalizeValue getText() {
+            return LocalizeValue.localizeTODO("Replace by CompareTag");
+        }
 
-		@Override
-		@RequiredReadAction
-		public void invoke(@Nonnull Project project, @Nonnull PsiFile psiFile, @Nonnull PsiElement psiElement, @Nonnull PsiElement psiElement1)
-		{
-			CSharpBinaryExpressionImpl expression = (CSharpBinaryExpressionImpl) psiElement;
+        @Override
+        @RequiredReadAction
+        public void invoke(@Nonnull Project project, @Nonnull PsiFile psiFile, @Nonnull PsiElement psiElement, @Nonnull PsiElement psiElement1) {
+            CSharpBinaryExpressionImpl expression = (CSharpBinaryExpressionImpl) psiElement;
 
-			DotNetExpression leftExpression = expression.getLeftExpression();
-			if(!(leftExpression instanceof CSharpReferenceExpression))
-			{
-				return;
-			}
+            DotNetExpression leftExpression = expression.getLeftExpression();
+            if (!(leftExpression instanceof CSharpReferenceExpression)) {
+                return;
+            }
 
-			StringBuilder builder = new StringBuilder();
+            StringBuilder builder = new StringBuilder();
 
-			if(expression.getOperatorElement().getOperatorElementType() == CSharpTokens.NTEQ)
-			{
-				builder.append("!");
-			}
+            if (expression.getOperatorElement().getOperatorElementType() == CSharpTokens.NTEQ) {
+                builder.append("!");
+            }
 
-			DotNetExpression qualifier = ((CSharpReferenceExpression) leftExpression).getQualifier();
-			if(qualifier != null)
-			{
-				builder.append(qualifier.getText()).append(".");
-			}
+            DotNetExpression qualifier = ((CSharpReferenceExpression) leftExpression).getQualifier();
+            if (qualifier != null) {
+                builder.append(qualifier.getText()).append(".");
+            }
 
-			builder.append("CompareTag(");
-			builder.append(expression.getRightExpression().getText());
-			builder.append(")");
+            builder.append("CompareTag(");
+            builder.append(expression.getRightExpression().getText());
+            builder.append(")");
 
-			DotNetExpression methodCall = CSharpFileFactory.createExpression(project, builder.toString());
+            DotNetExpression methodCall = CSharpFileFactory.createExpression(project, builder.toString());
 
-			expression.replace(methodCall);
-		}
+            expression.replace(methodCall);
+        }
+    }
 
-		@Nls
-		@Nonnull
-		@Override
-		public String getFamilyName()
-		{
-			return "C#";
-		}
-	}
+    @Nonnull
+    @Override
+    public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder, boolean isOnTheFly) {
+        if (Unity3dModuleExtensionUtil.getRootModule(holder.getProject()) == null) {
+            return PsiElementVisitor.EMPTY_VISITOR;
+        }
 
-	@Nonnull
-	@Override
-	public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder, boolean isOnTheFly)
-	{
-		if(Unity3dModuleExtensionUtil.getRootModule(holder.getProject()) == null)
-		{
-			return PsiElementVisitor.EMPTY_VISITOR;
-		}
+        return new CSharpElementVisitor() {
+            @Override
+            @RequiredReadAction
+            public void visitBinaryExpression(CSharpBinaryExpressionImpl expression) {
+                IElementType operatorElementType = expression.getOperatorElement().getOperatorElementType();
 
-		return new CSharpElementVisitor()
-		{
-			@Override
-			@RequiredReadAction
-			public void visitBinaryExpression(CSharpBinaryExpressionImpl expression)
-			{
-				IElementType operatorElementType = expression.getOperatorElement().getOperatorElementType();
+                if (operatorElementType == CSharpTokens.EQEQ || operatorElementType == CSharpTokens.NTEQ) {
+                    DotNetExpression leftExpression = expression.getLeftExpression();
 
-				if(operatorElementType == CSharpTokens.EQEQ || operatorElementType == CSharpTokens.NTEQ)
-				{
-					DotNetExpression leftExpression = expression.getLeftExpression();
+                    DotNetExpression rightExpression = expression.getRightExpression();
+                    if (rightExpression == null) {
+                        return;
+                    }
 
-					DotNetExpression rightExpression = expression.getRightExpression();
-					if(rightExpression == null)
-					{
-						return;
-					}
+                    if (leftExpression instanceof CSharpReferenceExpression) {
+                        String referenceName = ((CSharpReferenceExpression) leftExpression).getReferenceName();
+                        if ("tag".equals(referenceName)) {
+                            PsiElement maybeField = ((CSharpReferenceExpression) leftExpression).resolve();
+                            if (maybeField instanceof CSharpPropertyDeclaration) {
 
-					if(leftExpression instanceof CSharpReferenceExpression)
-					{
-						String referenceName = ((CSharpReferenceExpression) leftExpression).getReferenceName();
-						if("tag".equals(referenceName))
-						{
-							PsiElement maybeField = ((CSharpReferenceExpression) leftExpression).resolve();
-							if(maybeField instanceof CSharpPropertyDeclaration)
-							{
+                                DotNetExpression qualifier = ((CSharpReferenceExpression) leftExpression).getQualifier();
+                                CSharpTypeDeclaration target = null;
+                                if (qualifier == null) {
+                                    target = PsiTreeUtil.getParentOfType(leftExpression, CSharpTypeDeclaration.class);
+                                }
+                                else if (qualifier instanceof CSharpReferenceExpression) {
+                                    PsiElement resolveTarget = ((CSharpReferenceExpression) qualifier).resolve();
+                                    if (resolveTarget instanceof CSharpTypeDeclaration) {
+                                        target = (CSharpTypeDeclaration) resolveTarget;
+                                    }
+                                }
 
-								DotNetExpression qualifier = ((CSharpReferenceExpression) leftExpression).getQualifier();
-								CSharpTypeDeclaration target = null;
-								if(qualifier == null)
-								{
-									target = PsiTreeUtil.getParentOfType(leftExpression, CSharpTypeDeclaration.class);
-								}
-								else if(qualifier instanceof CSharpReferenceExpression)
-								{
-									PsiElement resolveTarget = ((CSharpReferenceExpression) qualifier).resolve();
-									if(resolveTarget instanceof CSharpTypeDeclaration)
-									{
-										target = (CSharpTypeDeclaration) resolveTarget;
-									}
-								}
+                                if (target == null) {
+                                    return;
+                                }
 
-								if(target == null)
-								{
-									return;
-								}
+                                if (target.isInheritor(Unity3dTypes.UnityEngine.Component, true)) {
+                                    holder.registerProblem(expression, "Using CompareTag for tag comparison does not cause allocations", new ReplaceByCompareTagFix(expression));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        };
+    }
 
-								if(target.isInheritor(Unity3dTypes.UnityEngine.Component, true))
-								{
-									holder.registerProblem(expression, "Using CompareTag for tag comparison does not cause allocations", new ReplaceByCompareTagFix(expression));
-								}
-							}
-						}
-					}
-				}
-			}
-		};
-	}
-
-	@Nonnull
-	@Override
-	public String getDisplayName()
-	{
-		return "GameObject.tag equality warning";
-	}
+    @Nonnull
+    @Override
+    public LocalizeValue getDisplayName() {
+        return LocalizeValue.localizeTODO("GameObject.tag equality warning");
+    }
 }

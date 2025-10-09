@@ -27,13 +27,12 @@ import consulo.language.editor.inspection.ProblemsHolder;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiElementVisitor;
 import consulo.language.psi.PsiFile;
+import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 import consulo.unity3d.csharp.UnityFunctionManager;
 import consulo.unity3d.csharp.codeInsight.UnityEventCSharpMethodLineMarkerProvider;
 import consulo.unity3d.localize.Unity3dLocalize;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
-import org.jetbrains.annotations.Nls;
-
 import jakarta.annotation.Nonnull;
 
 /**
@@ -41,71 +40,51 @@ import jakarta.annotation.Nonnull;
  * @since 27-Oct-17
  */
 @ExtensionImpl
-public class UnityEmptyMagicMethodInspection extends UnityLocalInspectionTool
-{
-	public static class RemoveMethodFix extends LocalQuickFixOnPsiElement
-	{
-		public RemoveMethodFix(@Nonnull CSharpMethodDeclaration declaration)
-		{
-			super(declaration);
-		}
+public class UnityEmptyMagicMethodInspection extends UnityLocalInspectionTool {
+    public static class RemoveMethodFix extends LocalQuickFixOnPsiElement {
+        public RemoveMethodFix(@Nonnull CSharpMethodDeclaration declaration) {
+            super(declaration);
+        }
 
-		@Nonnull
-		@Override
-		public String getText()
-		{
-			return "Remove method";
-		}
+        @Nonnull
+        @Override
+        public LocalizeValue getText() {
+            return LocalizeValue.localizeTODO("Remove method");
+        }
 
-		@Nls
-		@Nonnull
-		@Override
-		public String getFamilyName()
-		{
-			return "C#\\Unity";
-		}
+        @Override
+        public void invoke(@Nonnull Project project, @Nonnull PsiFile psiFile, @Nonnull PsiElement psiElement, @Nonnull PsiElement psiElement1) {
+            WriteAction.run(psiElement::delete);
+        }
+    }
 
-		@Override
-		public void invoke(@Nonnull Project project, @Nonnull PsiFile psiFile, @Nonnull PsiElement psiElement, @Nonnull PsiElement psiElement1)
-		{
-			WriteAction.run(psiElement::delete);
-		}
-	}
+    @Nonnull
+    @Override
+    public LocalizeValue getDisplayName() {
+        return LocalizeValue.localizeTODO("Empty magic methods");
+    }
 
-	@Nonnull
-	@Override
-	public String getDisplayName()
-	{
-		return "Empty magic methods";
-	}
+    @Nonnull
+    @Override
+    public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder, boolean isOnTheFly) {
+        if (Unity3dModuleExtensionUtil.getRootModule(holder.getProject()) == null) {
+            return PsiElementVisitor.EMPTY_VISITOR;
+        }
 
-	@Nonnull
-	@Override
-	public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder, boolean isOnTheFly)
-	{
-		if(Unity3dModuleExtensionUtil.getRootModule(holder.getProject()) == null)
-		{
-			return PsiElementVisitor.EMPTY_VISITOR;
-		}
-
-		return new CSharpElementVisitor()
-		{
-			@Override
-			@RequiredReadAction
-			public void visitMethodDeclaration(CSharpMethodDeclaration declaration)
-			{
-				UnityFunctionManager.FunctionInfo magicMethod = UnityEventCSharpMethodLineMarkerProvider.findMagicMethod(declaration);
-				if(magicMethod != null)
-				{
-					PsiElement codeBlock = declaration.getCodeBlock().getElement();
-					if(codeBlock == null || codeBlock instanceof CSharpBlockStatementImpl && ((CSharpBlockStatementImpl) codeBlock).getStatements().length == 0)
-					{
-						PsiElement nameIdentifier = declaration.getNameIdentifier();
-						assert nameIdentifier != null;
-						holder.registerProblem(nameIdentifier, Unity3dLocalize.emptyMagicMethodInspectionMessage().getValue(), new RemoveMethodFix(declaration));
-					}
-				}
-			}
-		};
-	}
+        return new CSharpElementVisitor() {
+            @Override
+            @RequiredReadAction
+            public void visitMethodDeclaration(CSharpMethodDeclaration declaration) {
+                UnityFunctionManager.FunctionInfo magicMethod = UnityEventCSharpMethodLineMarkerProvider.findMagicMethod(declaration);
+                if (magicMethod != null) {
+                    PsiElement codeBlock = declaration.getCodeBlock().getElement();
+                    if (codeBlock == null || codeBlock instanceof CSharpBlockStatementImpl && ((CSharpBlockStatementImpl) codeBlock).getStatements().length == 0) {
+                        PsiElement nameIdentifier = declaration.getNameIdentifier();
+                        assert nameIdentifier != null;
+                        holder.registerProblem(nameIdentifier, Unity3dLocalize.emptyMagicMethodInspectionMessage().getValue(), new RemoveMethodFix(declaration));
+                    }
+                }
+            }
+        };
+    }
 }

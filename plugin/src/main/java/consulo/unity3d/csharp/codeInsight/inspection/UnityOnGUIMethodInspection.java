@@ -23,11 +23,11 @@ import consulo.csharp.lang.psi.CSharpMethodDeclaration;
 import consulo.language.editor.inspection.ProblemsHolder;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiElementVisitor;
+import consulo.localize.LocalizeValue;
 import consulo.unity3d.csharp.UnityFunctionManager;
 import consulo.unity3d.csharp.codeInsight.UnityEventCSharpMethodLineMarkerProvider;
 import consulo.unity3d.localize.Unity3dLocalize;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
-
 import jakarta.annotation.Nonnull;
 
 /**
@@ -35,42 +35,34 @@ import jakarta.annotation.Nonnull;
  * @since 27-Oct-17
  */
 @ExtensionImpl
-public class UnityOnGUIMethodInspection extends UnityLocalInspectionTool
-{
-	@Nonnull
-	@Override
-	public String getDisplayName()
-	{
-		return "OnGUI magic method";
-	}
+public class UnityOnGUIMethodInspection extends UnityLocalInspectionTool {
+    @Nonnull
+    @Override
+    public LocalizeValue getDisplayName() {
+        return LocalizeValue.localizeTODO("OnGUI magic method");
+    }
 
-	@Nonnull
-	@Override
-	public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder, boolean isOnTheFly)
-	{
-		if(Unity3dModuleExtensionUtil.getRootModule(holder.getProject()) == null)
-		{
-			return PsiElementVisitor.EMPTY_VISITOR;
-		}
+    @Nonnull
+    @Override
+    public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder, boolean isOnTheFly) {
+        if (Unity3dModuleExtensionUtil.getRootModule(holder.getProject()) == null) {
+            return PsiElementVisitor.EMPTY_VISITOR;
+        }
 
-		return new CSharpElementVisitor()
-		{
-			@Override
-			@RequiredReadAction
-			public void visitMethodDeclaration(CSharpMethodDeclaration declaration)
-			{
-				String name = declaration.getName();
-				if("OnGUI".equals(name))
-				{
-					UnityFunctionManager.FunctionInfo magicMethod = UnityEventCSharpMethodLineMarkerProvider.findMagicMethod(declaration);
-					if(magicMethod != null)
-					{
-						PsiElement nameIdentifier = declaration.getNameIdentifier();
-						assert nameIdentifier != null;
-						holder.registerProblem(nameIdentifier, Unity3dLocalize.onguiMethodInspectionMessage().get(), new UnityEmptyMagicMethodInspection.RemoveMethodFix(declaration));
-					}
-				}
-			}
-		};
-	}
+        return new CSharpElementVisitor() {
+            @Override
+            @RequiredReadAction
+            public void visitMethodDeclaration(CSharpMethodDeclaration declaration) {
+                String name = declaration.getName();
+                if ("OnGUI".equals(name)) {
+                    UnityFunctionManager.FunctionInfo magicMethod = UnityEventCSharpMethodLineMarkerProvider.findMagicMethod(declaration);
+                    if (magicMethod != null) {
+                        PsiElement nameIdentifier = declaration.getNameIdentifier();
+                        assert nameIdentifier != null;
+                        holder.registerProblem(nameIdentifier, Unity3dLocalize.onguiMethodInspectionMessage().get(), new UnityEmptyMagicMethodInspection.RemoveMethodFix(declaration));
+                    }
+                }
+            }
+        };
+    }
 }

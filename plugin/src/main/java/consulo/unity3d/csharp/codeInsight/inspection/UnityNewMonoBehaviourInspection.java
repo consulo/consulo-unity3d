@@ -26,10 +26,10 @@ import consulo.dotnet.psi.DotNetType;
 import consulo.dotnet.psi.resolve.DotNetTypeRef;
 import consulo.language.editor.inspection.ProblemsHolder;
 import consulo.language.psi.PsiElementVisitor;
+import consulo.localize.LocalizeValue;
 import consulo.unity3d.Unity3dTypes;
 import consulo.unity3d.localize.Unity3dLocalize;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
-
 import jakarta.annotation.Nonnull;
 
 /**
@@ -37,42 +37,34 @@ import jakarta.annotation.Nonnull;
  * @since 06.01.2016
  */
 @ExtensionImpl
-public class UnityNewMonoBehaviourInspection extends UnityLocalInspectionTool
-{
-	@Nonnull
-	@Override
-	public String getDisplayName()
-	{
-		return "Creation MonoBehaviour object via new expression";
-	}
+public class UnityNewMonoBehaviourInspection extends UnityLocalInspectionTool {
+    @Nonnull
+    @Override
+    public LocalizeValue getDisplayName() {
+        return LocalizeValue.localizeTODO("Creation MonoBehaviour object via new expression");
+    }
 
-	@Nonnull
-	@Override
-	public PsiElementVisitor buildVisitor(@Nonnull final ProblemsHolder holder, boolean isOnTheFly)
-	{
-		if(Unity3dModuleExtensionUtil.getRootModule(holder.getProject()) == null)
-		{
-			return PsiElementVisitor.EMPTY_VISITOR;
-		}
+    @Nonnull
+    @Override
+    public PsiElementVisitor buildVisitor(@Nonnull final ProblemsHolder holder, boolean isOnTheFly) {
+        if (Unity3dModuleExtensionUtil.getRootModule(holder.getProject()) == null) {
+            return PsiElementVisitor.EMPTY_VISITOR;
+        }
 
-		return new CSharpElementVisitor()
-		{
-			@Override
-			@RequiredReadAction
-			public void visitNewExpression(CSharpNewExpression expression)
-			{
-				DotNetType newType = expression.getNewType();
-				if(newType == null)
-				{
-					return;
-				}
-				DotNetTypeRef typeRef = expression.toTypeRef(true);
-				if(CSharpTypeUtil.isInheritable(new CSharpTypeRefByQName(expression, Unity3dTypes.UnityEngine.MonoBehaviour), typeRef))
-				{
-					holder.registerProblem(newType, Unity3dLocalize.newMonoBehaviourInspectionMessage().getValue());
-				}
-			}
-		};
-	}
+        return new CSharpElementVisitor() {
+            @Override
+            @RequiredReadAction
+            public void visitNewExpression(CSharpNewExpression expression) {
+                DotNetType newType = expression.getNewType();
+                if (newType == null) {
+                    return;
+                }
+                DotNetTypeRef typeRef = expression.toTypeRef(true);
+                if (CSharpTypeUtil.isInheritable(new CSharpTypeRefByQName(expression, Unity3dTypes.UnityEngine.MonoBehaviour), typeRef)) {
+                    holder.registerProblem(newType, Unity3dLocalize.newMonoBehaviourInspectionMessage().getValue());
+                }
+            }
+        };
+    }
 
 }

@@ -20,7 +20,8 @@ import consulo.csharp.lang.CSharpLanguage;
 import consulo.language.Language;
 import consulo.language.editor.inspection.LocalInspectionTool;
 import consulo.language.editor.rawHighlight.HighlightDisplayLevel;
-
+import consulo.localize.LocalizeValue;
+import consulo.unity3d.localize.Unity3dLocalize;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
@@ -28,26 +29,22 @@ import jakarta.annotation.Nullable;
  * @author VISTALL
  * @since 18-Sep-22
  */
-public abstract class UnityLocalInspectionTool extends LocalInspectionTool
-{
-	@Nonnull
-	@Override
-	public HighlightDisplayLevel getDefaultLevel()
-	{
-		return HighlightDisplayLevel.WARNING;
-	}
+public abstract class UnityLocalInspectionTool extends LocalInspectionTool {
+    @Nonnull
+    @Override
+    public HighlightDisplayLevel getDefaultLevel() {
+        return HighlightDisplayLevel.WARNING;
+    }
 
-	@Nullable
-	@Override
-	public Language getLanguage()
-	{
-		return CSharpLanguage.INSTANCE;
-	}
+    @Nullable
+    @Override
+    public Language getLanguage() {
+        return CSharpLanguage.INSTANCE;
+    }
 
-	@Nonnull
-	@Override
-	public String getGroupDisplayName()
-	{
-		return "Unity (Game Engine)";
-	}
+    @Nonnull
+    @Override
+    public LocalizeValue getGroupDisplayName() {
+        return Unity3dLocalize.inspectionUnityGroupName();
+    }
 }
