@@ -28,61 +28,64 @@ import consulo.language.psi.PsiManager;
 import consulo.project.Project;
 import consulo.unity3d.asmdef.AsmDefElement;
 import consulo.unity3d.asmdef.AsmDefFileDescriptor;
+import consulo.unity3d.scene.Unity3dMetaManager;
 import consulo.util.lang.StringUtil;
 import consulo.virtualFileSystem.VirtualFile;
 import consulo.virtualFileSystem.util.VirtualFileVisitor;
-
 import jakarta.annotation.Nonnull;
+
 import java.util.Map;
 
 /**
  * @author VISTALL
  * @since 26/03/2021
  */
-class AsmDefFileVisitor extends VirtualFileVisitor
-{
-	private final PsiManager myPsiManager;
-	private final JomManager myJomManager;
-	private final FileTypeManager myFileTypeManager;
-	private final UnityAssemblyType myType;
-	private final Map<String, UnityAssemblyContext> myAssemblies;
+class AsmDefFileVisitor extends VirtualFileVisitor {
+    private final PsiManager myPsiManager;
+    private final JomManager myJomManager;
+    private final FileTypeManager myFileTypeManager;
+    private final UnityAssemblyType myType;
+    private final Map<String, UnityAssemblyContext> myAssemblies;
+    private final Unity3dMetaManager myUnityMetaManager;
 
-	AsmDefFileVisitor(Project project, UnityAssemblyType type, Map<String, UnityAssemblyContext> assemblies)
-	{
-		myType = type;
-		myAssemblies = assemblies;
-		myFileTypeManager = FileTypeManager.getInstance();
-		myPsiManager = PsiManager.getInstance(project);
-		myJomManager = JomManager.getInstance(project);
-	}
+    AsmDefFileVisitor(Project project, UnityAssemblyType type, Map<String, UnityAssemblyContext> assemblies) {
+        myType = type;
+        myAssemblies = assemblies;
+        myFileTypeManager = FileTypeManager.getInstance();
+        myPsiManager = PsiManager.getInstance(project);
+        myJomManager = JomManager.getInstance(project);
+        myUnityMetaManager = Unity3dMetaManager.getInstance(project);
+    }
 
-	@Override
-	@RequiredReadAction
-	public boolean visitFile(@Nonnull VirtualFile file)
-	{
-		if(myFileTypeManager.isFileIgnored(file))
-		{
-			return false;
-		}
+    @Override
+    @RequiredReadAction
+    public boolean visitFile(@Nonnull VirtualFile file) {
+        if (myFileTypeManager.isFileIgnored(file)) {
+            return false;
+        }
 
-		if(file.getFileType() == JsonFileType.INSTANCE && AsmDefFileDescriptor.EXTENSION.equals(file.getExtension()))
-		{
-			ReadAction.run(() -> {
-				PsiFile maybeJsonFile = myPsiManager.findFile(file);
-				if(maybeJsonFile != null)
-				{
-					JomFileElement<JomElement> fileElement = myJomManager.getFileElement(maybeJsonFile);
-					if(fileElement != null && fileElement.getRootElement() instanceof AsmDefElement def)
-					{
-						String name = def.getName();
-						if(!StringUtil.isEmptyOrSpaces(name))
-						{
-							myAssemblies.put(name, new UnityAssemblyContext(myType, name, file, def));
-						}
-					}
-				}
-			});
-		}
-		return super.visitFile(file);
-	}
+        if (file.getFileType() == JsonFileType.INSTANCE && AsmDefFileDescriptor.EXTENSION.equals(file.getExtension())) {
+            ReadAction.run(() -> {
+                PsiFile maybeJsonFile = myPsiManager.findFile(file);
+                if (maybeJsonFile != null) {
+                    JomFileElement<JomElement> fileElement = myJomManager.getFileElement(maybeJsonFile);
+                    if (fileElement != null && fileElement.getRootElement() instanceof AsmDefElement def) {
+                        String name = def.getName();
+
+                        UnityAssemblyContext context = new UnityAssemblyContext(myType, name, file, def);
+
+                        if (!StringUtil.isEmptyOrSpaces(name)) {
+                            myAssemblies.put(name, context);
+                        }
+
+                        String guid = myUnityMetaManager.getGUID(file);
+                        if (guid != null) {
+                            myAssemblies.put("GUID:" + guid, context);
+                        }
+                    }
+                }
+            });
+        }
+        return super.visitFile(file);
+    }
 }

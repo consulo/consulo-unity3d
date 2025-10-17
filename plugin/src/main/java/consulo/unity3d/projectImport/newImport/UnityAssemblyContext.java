@@ -19,9 +19,9 @@ package consulo.unity3d.projectImport.newImport;
 import consulo.content.library.Library;
 import consulo.unity3d.asmdef.AsmDefElement;
 import consulo.virtualFileSystem.VirtualFile;
-
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
+
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Objects;
@@ -31,134 +31,114 @@ import java.util.Set;
  * @author VISTALL
  * @since 23/03/2021
  */
-public class UnityAssemblyContext
-{
-	@Nonnull
-	private final UnityAssemblyType myType;
-	@Nonnull
-	private final String myName;
-	private final VirtualFile myAsmdefFile;
-	@Nullable
-	private final VirtualFile myAsmDirectory;
-	private final AsmDefElement myAsmDefElement;
+public class UnityAssemblyContext {
+    @Nonnull
+    private final UnityAssemblyType myType;
+    @Nonnull
+    private final String myName;
+    private final VirtualFile myAsmdefFile;
+    @Nullable
+    private final VirtualFile myAsmDirectory;
+    private final AsmDefElement myAsmDefElement;
 
-	private Set<VirtualFile> mySourceFiles = new HashSet<>();
-	private final Set<VirtualFile> myAssemblies = new LinkedHashSet<>();
+    private Set<VirtualFile> mySourceFiles = new HashSet<>();
+    private final Set<VirtualFile> myAssemblies = new LinkedHashSet<>();
 
-	private Library myLibrary;
+    private Library myLibrary;
 
-	private Set<UnityAssemblyContext> myDependencies = new HashSet<>();
+    private Set<UnityAssemblyContext> myDependencies = new HashSet<>();
 
-	UnityAssemblyContext(@Nonnull UnityAssemblyType type, @Nonnull String name, @Nullable VirtualFile asmdefFile, AsmDefElement asmDefElement)
-	{
-		myType = type;
-		myName = name;
-		myAsmdefFile = asmdefFile;
-		myAsmDefElement = asmDefElement;
+    UnityAssemblyContext(@Nonnull UnityAssemblyType type, @Nonnull String name, @Nullable VirtualFile asmdefFile, AsmDefElement asmDefElement) {
+        myType = type;
+        myName = name;
+        myAsmdefFile = asmdefFile;
+        myAsmDefElement = asmDefElement;
 
-		myAsmDirectory = asmdefFile != null ? asmdefFile.getParent() : null;
-	}
+        myAsmDirectory = asmdefFile != null ? asmdefFile.getParent() : null;
+    }
 
-	public void addSourceFile(@Nonnull VirtualFile virtualFile)
-	{
-		mySourceFiles.add(virtualFile);
-	}
+    public void addSourceFile(@Nonnull VirtualFile virtualFile) {
+        mySourceFiles.add(virtualFile);
+    }
 
-	public void addAssembly(@Nonnull VirtualFile virtualFile)
-	{
-		myAssemblies.add(virtualFile);
-	}
+    public void addAssembly(@Nonnull VirtualFile virtualFile) {
+        myAssemblies.add(virtualFile);
+    }
 
-	@Nonnull
-	public Set<VirtualFile> getAssemblies()
-	{
-		return myAssemblies;
-	}
+    @Nonnull
+    public Set<VirtualFile> getAssemblies() {
+        return myAssemblies;
+    }
 
-	@Nonnull
-	public UnityAssemblyType getType()
-	{
-		return myType;
-	}
+    @Nonnull
+    public UnityAssemblyType getType() {
+        return myType;
+    }
 
-	@Nullable
-	public AsmDefElement getAsmDefElement()
-	{
-		return myAsmDefElement;
-	}
+    @Nullable
+    public AsmDefElement getAsmDefElement() {
+        return myAsmDefElement;
+    }
 
-	@Nonnull
-	public String getName()
-	{
-		return myName;
-	}
+    @Nonnull
+    public String getName() {
+        return myName;
+    }
 
-	@Nullable
-	public VirtualFile getAsmdefFile()
-	{
-		return myAsmdefFile;
-	}
+    @Nullable
+    public VirtualFile getAsmdefFile() {
+        return myAsmdefFile;
+    }
 
-	@Nonnull
-	public Set<VirtualFile> getSourceFiles()
-	{
-		return mySourceFiles;
-	}
+    @Nonnull
+    public Set<VirtualFile> getSourceFiles() {
+        return mySourceFiles;
+    }
 
-	@Nullable
-	public VirtualFile getAsmDirectory()
-	{
-		return myAsmDirectory;
-	}
+    @Nullable
+    public VirtualFile getAsmDirectory() {
+        return myAsmDirectory;
+    }
 
-	public void setLibrary(Library library)
-	{
-		myLibrary = library;
-	}
+    public void setLibrary(Library library) {
+        myLibrary = library;
+    }
 
-	@Nullable
-	public Library getLibrary()
-	{
-		return myLibrary;
-	}
+    @Nullable
+    public Library getLibrary() {
+        return myLibrary;
+    }
 
-	public Set<UnityAssemblyContext> getDependencies()
-	{
-		return myDependencies;
-	}
+    public Set<UnityAssemblyContext> getDependencies() {
+        return myDependencies;
+    }
 
-	public void addDependency(UnityAssemblyContext context)
-	{
-		myDependencies.add(context);
-	}
+    public void addDependency(UnityAssemblyContext context) {
+        myDependencies.add(context);
+    }
 
-	@Override
-	public String toString()
-	{
-		return "UnityAssemblyContext{" +
-				"myName='" + myName + '\'' +
-				", myType=" + myType +
-				'}';
-	}
+    @Override
+    public String toString() {
+        return "UnityAssemblyContext{" +
+            "myName='" + myName + '\'' +
+            ", myType=" + myType +
+            '}';
+    }
 
-	@Override
-	public boolean equals(Object o)
-	{
-		if(this == o)
-		{
-			return true;
-		}
-		if(o == null || getClass() != o.getClass())
-		{
-			return false;
-		}
-		UnityAssemblyContext that = (UnityAssemblyContext) o;
-		return Objects.equals(myName, that.myName);
-	}
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        UnityAssemblyContext that = (UnityAssemblyContext) o;
+        return Objects.equals(myName, that.myName);
+    }
 
-	@Override
-	public int hashCode()
-	{
-		return Objects.hash(myName);
-	}
+    @Override
+    public int hashCode() {
+        return Objects.hash(myName);
+    }
 }
