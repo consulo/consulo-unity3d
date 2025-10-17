@@ -25,35 +25,34 @@ import java.util.Set;
  * @author VISTALL
  * @since 22/03/2021
  */
-public interface AsmDefElement extends JomElement
-{
-	@JomPropertyGetter
-	String getName();
+public interface AsmDefElement extends JomElement {
+    @JomPropertyGetter
+    String getName();
 
-	@JomPropertyGetter
-	boolean isAllowUnsafeCode();
+    @JomPropertyGetter
+    boolean isAllowUnsafeCode();
 
-	@JomPropertyGetter
-	boolean isOverrideReferences();
+    @JomPropertyGetter
+    boolean isOverrideReferences();
 
-	@JomPropertyGetter
-	boolean isAutoReferenced();
+    @JomPropertyGetter
+    boolean isAutoReferenced();
 
-	@JomPropertyGetter
-	Set<String> getReferences();
+    @JomPropertyGetter
+    Set<String> getReferences();
 
-	@JomPropertyGetter
-	Set<String> getOptionalUnityReferences();
+    @JomPropertyGetter
+    Set<String> getOptionalUnityReferences();
 
-	@JomPropertyGetter
-	Set<String> getIncludePlatforms();
+    @JomPropertyGetter
+    Set<String> getIncludePlatforms();
 
-	@JomPropertyGetter
-	Set<String> getExcludePlatforms();
+    @JomPropertyGetter
+    Set<String> getExcludePlatforms();
 
-	@JomPropertyGetter
-	Set<String> getDefineConstraints();
+    @JomPropertyGetter
+    Set<String> getDefineConstraints();
 
-	@JomPropertyGetter
-	Set<String> getPrecompiledReferences();
+    @JomPropertyGetter
+    Set<String> getPrecompiledReferences();
 }
