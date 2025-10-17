@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2021 consulo.io
+ * Copyright 2013-2025 consulo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,20 +18,17 @@ package consulo.unity3d.projectImport;
 
 import consulo.annotation.component.ExtensionImpl;
 import consulo.application.eap.EarlyAccessProgramDescriptor;
-
 import jakarta.annotation.Nonnull;
 
 /**
  * @author VISTALL
- * @since 23/03/2021
+ * @since 2025-10-17
  */
 @ExtensionImpl
-public class UnityAsmDefImportEapDescriptor extends EarlyAccessProgramDescriptor
-{
-	@Nonnull
-	@Override
-	public String getName()
-	{
-		return "New Unity Importing (with asmdef support)";
-	}
+public class UnityOldImportEapDescriptor extends EarlyAccessProgramDescriptor {
+    @Nonnull
+    @Override
+    public String getName() {
+        return "Unity: old import";
+    }
 }
