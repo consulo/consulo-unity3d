@@ -245,11 +245,12 @@ public class UnityProjectImporterWithAsmDef {
             for (Map.Entry<String, UnityProjectResolution.OutputPackage> entry : resolution.outputs.entrySet()) {
                 UnityProjectResolution.OutputPackage value = entry.getValue();
 
-                if (Files.exists(Path.of(value.resolvedPath))) {
-                    initializePackageLibraryExternal(
+                Path packageDir = Path.of(value.resolvedPath);
+                if (Files.exists(packageDir)) {
+                    initializePackageLibrary(
                         context,
+                        packageDir,
                         value.name,
-                        value.version,
                         writeCommits,
                         asmdefs,
                         librariesModModel
@@ -476,7 +477,7 @@ public class UnityProjectImporterWithAsmDef {
                     URL url = new URL(packageVersion);
                     File targetDirectory = new File(url.getFile());
 
-                    initializePackageLibraryFileUrl(context, targetDirectory, packageVersion, writeCommits, asmdefs, librariesModModel);
+                    initializePackageLibraryFileUrl(context, targetDirectory.toPath(), packageVersion, writeCommits, asmdefs, librariesModModel);
                 }
                 catch (Exception e) {
                     LOG.warn(e);
@@ -492,7 +493,7 @@ public class UnityProjectImporterWithAsmDef {
                         if (firstDir.isPresent()) {
                             Path libraryHome = firstDir.get();
 
-                            initializePackageLibraryGit(context, libraryHome.toFile(), writeCommits, asmdefs, librariesModModel);
+                            initializePackageLibraryGit(context, libraryHome, writeCommits, asmdefs, librariesModModel);
                         }
                     }
                     catch (IOException e) {
@@ -509,7 +510,7 @@ public class UnityProjectImporterWithAsmDef {
     }
 
     private static void initializePackageLibraryFileUrl(UnityProjectImportContext context,
-                                                        File packageDir,
+                                                        Path packageDir,
                                                         String url,
                                                         List<Runnable> writeCommits,
                                                         Map<String, UnityAssemblyContext> asmdefs,
@@ -518,11 +519,11 @@ public class UnityProjectImporterWithAsmDef {
     }
 
     private static void initializePackageLibraryGit(UnityProjectImportContext context,
-                                                    File packageDir,
+                                                    Path packageDir,
                                                     List<Runnable> writeCommits,
                                                     Map<String, UnityAssemblyContext> asmdefs,
                                                     LibraryTable.ModifiableModel librariesModModel) {
-        initializePackageLibrary(context, packageDir, packageDir.getName(), writeCommits, asmdefs, librariesModModel);
+        initializePackageLibrary(context, packageDir, packageDir.getFileName().toString(), writeCommits, asmdefs, librariesModModel);
     }
 
     private static void initializePackageLibraryExternal(UnityProjectImportContext context,
@@ -561,16 +562,16 @@ public class UnityProjectImporterWithAsmDef {
             return;
         }
 
-        initializePackageLibrary(context, packageDir, packageWithVersion, writeCommits, asmdefs, librariesModModel);
+        initializePackageLibrary(context, packageDir.toPath(), packageWithVersion, writeCommits, asmdefs, librariesModModel);
     }
 
     private static void initializePackageLibrary(UnityProjectImportContext context,
-                                                 File packageDir,
+                                                 Path packageDir,
                                                  String packageName,
                                                  List<Runnable> writeCommits,
                                                  Map<String, UnityAssemblyContext> asmdefs,
                                                  LibraryTable.ModifiableModel librariesModModel) {
-        VirtualFile packageVDir = LocalFileSystem.getInstance().findFileByIoFile(packageDir);
+        VirtualFile packageVDir = LocalFileSystem.getInstance().findFileByNioFile(packageDir);
         if (packageVDir == null) {
             return;
         }
