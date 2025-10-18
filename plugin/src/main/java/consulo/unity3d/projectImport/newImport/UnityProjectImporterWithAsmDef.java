@@ -233,7 +233,7 @@ public class UnityProjectImporterWithAsmDef {
                 resolution = gson.fromJson(reader, UnityProjectResolution.class);
             }
             catch (Throwable e) {
-                LOG.warn("Error reading: " + projectResolutionJson);
+                LOG.warn("Error reading: " + projectResolutionJson, e);
             }
         }
 
