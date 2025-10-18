@@ -16,7 +16,7 @@
 
 package consulo.unity3d.projectImport.newImport;
 
-import consulo.application.AccessRule;
+import com.google.gson.Gson;
 import consulo.application.ReadAction;
 import consulo.application.WriteAction;
 import consulo.application.progress.ProgressIndicator;
@@ -25,7 +25,6 @@ import consulo.content.base.SourcesOrderRootType;
 import consulo.content.bundle.Sdk;
 import consulo.content.library.Library;
 import consulo.content.library.LibraryTable;
-import consulo.content.library.LibraryTablesRegistrar;
 import consulo.csharp.lang.CSharpFileType;
 import consulo.csharp.module.extension.CSharpSimpleMutableModuleExtension;
 import consulo.dotnet.dll.DotNetModuleFileType;
@@ -43,7 +42,9 @@ import consulo.module.content.layer.ModifiableModuleRootLayer;
 import consulo.module.content.layer.ModifiableRootModel;
 import consulo.platform.Platform;
 import consulo.project.Project;
+import consulo.project.content.library.ProjectLibraryTable;
 import consulo.unity3d.asmdef.AsmDefElement;
+import consulo.unity3d.localize.Unity3dLocalize;
 import consulo.unity3d.module.Unity3dChildMutableModuleExtension;
 import consulo.unity3d.module.Unity3dRootModuleExtension;
 import consulo.unity3d.packages.Unity3dPackageWatcher;
@@ -64,7 +65,9 @@ import jakarta.annotation.Nullable;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Reader;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -102,7 +105,7 @@ public class UnityProjectImporterWithAsmDef {
 
         UnityProjectImportContext context = UnityProjectImportContext.load(project, defines, baseDir, progressIndicator, unitySdk);
 
-        ModifiableModuleModel newModulesModel = fromProjectStructure ? originalModel : AccessRule.read(() -> ModuleManager.getInstance(project).getModifiableModel());
+        ModifiableModuleModel newModulesModel = fromProjectStructure ? originalModel : ReadAction.compute(() -> ModuleManager.getInstance(project).getModifiableModel());
         assert newModulesModel != null;
 
         List<Module> modules = new ArrayList<>();
@@ -127,6 +130,8 @@ public class UnityProjectImporterWithAsmDef {
         for (StandardModuleImporter importer : ourStandardModuleImporters) {
             asmdefs.put(importer.getName(), new UnityAssemblyContext(UnityAssemblyType.STANDARD, importer.getName(), null, null));
         }
+
+        Gson gson = new Gson();
 
         VirtualFileUtil.visitChildrenRecursively(assetsDir, new AsmDefFileVisitor(project, UnityAssemblyType.FROM_SOURCE, asmdefs));
 
@@ -178,7 +183,7 @@ public class UnityProjectImporterWithAsmDef {
                 continue;
             }
 
-            progressIndicator.setTextValue(LocalizeValue.localizeTODO("Analyzing " + assemblyContext.getName()));
+            progressIndicator.setTextValue(Unity3dLocalize.unityImportAnalyzing0Task(assemblyContext.getName()));
 
             //boolean isAllowEditorDir = assemblyContext.getAsmDefElement().getIncludePlatforms().contains(EDITOR_PLATFORM);
 
@@ -216,9 +221,42 @@ public class UnityProjectImporterWithAsmDef {
             importer.analyzeSourceFiles(project, assemblyContext, registeredFiles);
         }
 
-        LibraryTable libraryTable = LibraryTablesRegistrar.getInstance().getLibraryTable(context.getProject());
+        LibraryTable libraryTable = ProjectLibraryTable.getInstance(context.getProject());
 
         LibraryTable.ModifiableModel librariesModModel = ReadAction.compute(libraryTable::getModifiableModel);
+
+        UnityProjectResolution resolution = null;
+
+        Path projectResolutionJson = Path.of(baseDir.getPath(), "Library/PackageManager/projectResolution.json");
+        if (Files.exists(projectResolutionJson)) {
+            try (Reader reader = Files.newBufferedReader(projectResolutionJson, StandardCharsets.UTF_8)) {
+                resolution = gson.fromJson(reader, UnityProjectResolution.class);
+            }
+            catch (Throwable e) {
+                LOG.warn("Error reading: " + projectResolutionJson);
+            }
+        }
+
+        if (resolution == null) {
+            resolution = new UnityProjectResolution();
+        }
+
+        if (resolution.outputs != null) {
+            for (Map.Entry<String, UnityProjectResolution.OutputPackage> entry : resolution.outputs.entrySet()) {
+                UnityProjectResolution.OutputPackage value = entry.getValue();
+
+                if (Files.exists(Path.of(value.resolvedPath))) {
+                    initializePackageLibraryExternal(
+                        context,
+                        value.name,
+                        value.version,
+                        writeCommits,
+                        asmdefs,
+                        librariesModModel
+                    );
+                }
+            }
+        }
 
         initializePackageLibraries(context, asmdefs, writeCommits, librariesModModel);
 

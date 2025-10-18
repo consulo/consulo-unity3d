@@ -28,6 +28,8 @@ unity.0.sdk.is.not.defined.required.version:
     text: 'Unity by name ''''{0}'''' is missed. Required version: ''''{1}'''''
 unity.debug.attach.configuration.name:
     text: Unity Debug Attach
+unity.import.analyzing.0.task:
+    text: Analyzing {0}
 unity.name:
     text: Unity
 unity.sdk.is.not.defined:
