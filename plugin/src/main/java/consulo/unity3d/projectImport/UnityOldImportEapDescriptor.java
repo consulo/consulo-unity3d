@@ -18,6 +18,7 @@ package consulo.unity3d.projectImport;
 
 import consulo.annotation.component.ExtensionImpl;
 import consulo.application.eap.EarlyAccessProgramDescriptor;
+import consulo.localize.LocalizeValue;
 import jakarta.annotation.Nonnull;
 
 /**
@@ -28,7 +29,7 @@ import jakarta.annotation.Nonnull;
 public class UnityOldImportEapDescriptor extends EarlyAccessProgramDescriptor {
     @Nonnull
     @Override
-    public String getName() {
-        return "Unity: old import";
+    public LocalizeValue getName() {
+        return LocalizeValue.localizeTODO("Unity: old import");
     }
 }
