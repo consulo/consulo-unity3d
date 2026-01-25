@@ -37,6 +37,7 @@ import consulo.util.collection.ContainerUtil;
 import consulo.util.lang.Pair;
 import consulo.util.lang.StringUtil;
 import org.jetbrains.yaml.YAMLElementTypes;
+import org.jetbrains.yaml.YAMLParserDefinition;
 import org.jetbrains.yaml.YAMLTokenTypes;
 import org.jetbrains.yaml.psi.*;
 
@@ -154,7 +155,7 @@ public class Unity3dYMLAssetIndexExtension extends FileBasedIndexExtension<Integ
 
 		LighterASTNode fileAst = ast.getRoot();
 
-		if(fileAst.getTokenType() != YAMLElementTypes.FILE)
+		if(fileAst.getTokenType() != YAMLParserDefinition.FILE)
 		{
 			return Map.of();
 		}

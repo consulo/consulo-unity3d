@@ -32,6 +32,7 @@ import consulo.util.lang.Pair;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 import org.jetbrains.yaml.YAMLElementTypes;
+import org.jetbrains.yaml.YAMLParserDefinition;
 import org.jetbrains.yaml.psi.*;
 
 import java.util.List;
@@ -62,7 +63,7 @@ public class UnityMetadataProvider implements MetadataProvider {
 
         LighterASTNode fileAst = ast.getRoot();
 
-        if (fileAst.getTokenType() != YAMLElementTypes.FILE) {
+        if (fileAst.getTokenType() != YAMLParserDefinition.FILE) {
             return null;
         }
 
