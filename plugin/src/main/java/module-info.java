@@ -22,8 +22,8 @@ module consulo.unity3d
 
     requires consulo.nunit.api;
 
-    requires consulo.javascript.base.api;
-    requires consulo.javascript.json.javascript.impl;
+    requires consulo.json.api;
+    requires consulo.json.jom.api;
 
     requires org.jetbrains.plugins.yaml;
 

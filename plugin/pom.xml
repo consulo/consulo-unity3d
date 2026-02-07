@@ -55,7 +55,7 @@
                         <dependency>consulo.dotnet</dependency>
                         <dependency>consulo.dotnet.mono</dependency>
                         <dependency>consulo.csharp</dependency>
-                        <dependency>consulo.javascript</dependency>
+                        <dependency>consulo.json</dependency>
                         <dependency>consulo.nunit</dependency>
                         <dependency>consulo.game.framework</dependency>
                         <dependency>consulo.audio</dependency>
@@ -147,7 +147,13 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>consulo.javascript</artifactId>
+            <artifactId>consulo.json.api</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>consulo.json.jom.api</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>

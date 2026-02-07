@@ -16,8 +16,8 @@
 
 package consulo.unity3d;
 
+import com.intellij.json.JsonFileType;
 import consulo.annotation.component.ExtensionImpl;
-import consulo.json.JsonFileType;
 import consulo.language.plain.PlainTextFileType;
 import consulo.unity3d.asmdef.AsmDefFileDescriptor;
 import consulo.unity3d.asset.Unity3dBinaryAssetFileType;

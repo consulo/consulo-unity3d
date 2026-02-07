@@ -16,9 +16,9 @@
 
 package consulo.unity3d.projectImport.newImport;
 
+import com.intellij.json.JsonFileType;
 import consulo.annotation.access.RequiredReadAction;
 import consulo.application.ReadAction;
-import consulo.json.JsonFileType;
 import consulo.json.jom.JomElement;
 import consulo.json.jom.JomFileElement;
 import consulo.json.jom.JomManager;

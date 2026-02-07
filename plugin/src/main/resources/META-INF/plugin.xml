@@ -28,7 +28,7 @@
     <depends>consulo.game.framework</depends>
     <depends>consulo.dotnet.mono</depends>
     <depends>consulo.csharp</depends>
-    <depends>consulo.javascript</depends>
+    <depends>consulo.json</depends>
     <depends>consulo.nunit</depends>
     <depends>org.jetbrains.plugins.yaml</depends>
 

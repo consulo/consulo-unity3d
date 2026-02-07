@@ -19,7 +19,6 @@ package consulo.unity3d.projectImport.change;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.csharp.lang.CSharpFileType;
 import consulo.dotnet.dll.DotNetModuleFileType;
-import consulo.javascript.language.JavaScriptFileType;
 import consulo.virtualFileSystem.fileType.FileType;
 
 import java.util.function.Consumer;
@@ -29,13 +28,10 @@ import java.util.function.Consumer;
  * @since 2018-01-12
  */
 @ExtensionImpl
-public class DefaultUnity3dProjectSourceFileTypeFactory implements Unity3dProjectSourceFileTypeFactory
-{
-	@Override
-	public void registerFileTypes(Consumer<FileType> consumer)
-	{
-		consumer.accept(DotNetModuleFileType.INSTANCE);
-		consumer.accept(CSharpFileType.INSTANCE);
-		consumer.accept(JavaScriptFileType.INSTANCE);
-	}
+public class DefaultUnity3dProjectSourceFileTypeFactory implements Unity3dProjectSourceFileTypeFactory {
+    @Override
+    public void registerFileTypes(Consumer<FileType> consumer) {
+        consumer.accept(DotNetModuleFileType.INSTANCE);
+        consumer.accept(CSharpFileType.INSTANCE);
+    }
 }
