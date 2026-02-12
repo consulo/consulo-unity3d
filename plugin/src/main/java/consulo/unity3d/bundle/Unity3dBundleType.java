@@ -30,6 +30,8 @@ import consulo.platform.PlatformOperatingSystem;
 import consulo.platform.os.WindowsOperatingSystem;
 import consulo.ui.image.Image;
 import consulo.unity3d.Unity3dIcons;
+import consulo.unity3d.icon.Unity3dIconGroup;
+import consulo.unity3d.localize.Unity3dLocalize;
 import consulo.util.lang.SystemProperties;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
@@ -73,13 +75,7 @@ public class Unity3dBundleType extends SdkType {
     }
 
     public Unity3dBundleType() {
-        super("UNITY3D");
-    }
-
-    @Nullable
-    @Override
-    public Image getIcon() {
-        return Unity3dIcons.Unity3d;
+        super("UNITY3D", Unity3dLocalize.unityName(),  Unity3dIconGroup.unity3d());
     }
 
     @Nonnull
@@ -187,16 +183,5 @@ public class Unity3dBundleType extends SdkType {
             }
         }
         return builder.toString();
-    }
-
-    @Override
-    public String suggestSdkName(String s, String sdkHome) {
-        return getPresentableName() + " " + getVersionString(sdkHome);
-    }
-
-    @Nonnull
-    @Override
-    public String getPresentableName() {
-        return "Unity3D";
     }
 }
