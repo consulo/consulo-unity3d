@@ -58,7 +58,7 @@ public class UnityRefreshBeforeRunTaskProvider extends BeforeRunTaskProvider<Uni
 
     @Nullable
     @Override
-    public Image getIcon() {
+    public Image getIcon(@Nonnull RunConfiguration configuration) {
         return Unity3dIconGroup.unity3d();
     }
 

@@ -43,7 +43,6 @@ import consulo.unity3d.run.debugger.UnityDebugProcessInfo;
 import consulo.unity3d.run.debugger.UnityExternalDeviceManager;
 import consulo.unity3d.run.debugger.UnityProcessDialog;
 import consulo.util.collection.ContainerUtil;
-import consulo.util.concurrent.AsyncResult;
 import consulo.util.lang.Comparing;
 import consulo.util.lang.StringUtil;
 import jakarta.annotation.Nonnull;
@@ -51,6 +50,7 @@ import jakarta.annotation.Nullable;
 import mono.debugger.VirtualMachine;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * @author VISTALL
@@ -120,10 +120,11 @@ public class Unity3dAttachRunner extends AsyncProgramRunner {
     @Nonnull
     @Override
     @RequiredUIAccess
-    protected AsyncResult<RunContentDescriptor> execute(@Nonnull ExecutionEnvironment environment, @Nonnull RunProfileState state) throws ExecutionException {
+    protected CompletableFuture<RunContentDescriptor> executeImpl(@Nonnull RunProfileState state,
+                                                                  @Nonnull ExecutionEnvironment environment) throws ExecutionException {
         FileDocumentManager.getInstance().saveAllDocuments();
 
-        AsyncResult<RunContentDescriptor> result = AsyncResult.undefined();
+        CompletableFuture<RunContentDescriptor> result = new CompletableFuture<>();
 
         Unity3dAttachConfiguration runProfile = (Unity3dAttachConfiguration) environment.getRunProfile();
 
@@ -150,14 +151,14 @@ public class Unity3dAttachRunner extends AsyncProgramRunner {
                     public void onSuccess() {
                         if (myUnityProcess != null) {
                             try {
-                                result.setDone(runContentDescriptor(executionResult, environment, myUnityProcess, null, true));
+                                result.complete(runContentDescriptor(executionResult, environment, myUnityProcess, null, true));
                             }
                             catch (ExecutionException e) {
-                                result.rejectWithThrowable(e);
+                                result.completeExceptionally(e);
                             }
                         }
                         else {
-                            result.rejectWithThrowable(new ExecutionException("Unity Editor is not running"));
+                            result.completeExceptionally(new ExecutionException("Unity Editor is not running"));
                         }
                     }
                 }.queue();
@@ -195,7 +196,7 @@ public class Unity3dAttachRunner extends AsyncProgramRunner {
 
                     UnityDebugProcessInfo process = ContainerUtil.getFirstItem(unityProcesses);
                     if (process == null) {
-                        result.setDone(null);
+                        result.complete(null);
                         return;
                     }
                     setRunDescriptor(result, environment, executionResult, process);
@@ -206,20 +207,20 @@ public class Unity3dAttachRunner extends AsyncProgramRunner {
     }
 
     @RequiredUIAccess
-    private static void setRunDescriptor(AsyncResult<RunContentDescriptor> result,
+    private static void setRunDescriptor(CompletableFuture<RunContentDescriptor> result,
                                          ExecutionEnvironment environment,
                                          ExecutionResult executionResult,
                                          @Nullable UnityDebugProcessInfo process) {
         if (process == null) {
-            result.rejectWithThrowable(new ExecutionException("Process not find for attach"));
+            result.completeExceptionally(new ExecutionException("Process not find for attach"));
             return;
         }
 
         try {
-            result.setDone(runContentDescriptor(executionResult, environment, process, null, true));
+            result.complete(runContentDescriptor(executionResult, environment, process, null, true));
         }
         catch (ExecutionException e) {
-            result.rejectWithThrowable(e);
+            result.completeExceptionally(e);
         }
     }
 }
