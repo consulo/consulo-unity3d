@@ -41,6 +41,7 @@ import consulo.execution.configuration.ConfigurationFactory;
 import consulo.execution.configuration.RunConfiguration;
 import consulo.language.content.ProductionContentFolderTypeProvider;
 import consulo.language.file.FileTypeManager;
+import consulo.localize.LocalizeValue;
 import consulo.logging.Logger;
 import consulo.module.ModifiableModuleModel;
 import consulo.module.Module;
@@ -288,7 +289,7 @@ public class Unity3dProjectImporter {
         ContainerUtil.addIfNotNull(modules, createAssemblyCSharpModule(newModel, unitySdk, sourceFilesByModule, context));
 
         progressIndicator.setFraction(1);
-        progressIndicator.setText(null);
+        progressIndicator.setText(LocalizeValue.empty());
 
         if (!fromProjectStructure) {
             WriteAction.runAndWait(newModel::commit);
