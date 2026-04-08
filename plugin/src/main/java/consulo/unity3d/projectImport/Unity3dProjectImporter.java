@@ -300,7 +300,7 @@ public class Unity3dProjectImporter {
     private static Module createPackageModule(@Nonnull VirtualFile packageDir, @Nonnull ModifiableModuleModel modifiableModuleModels, @Nonnull UnityProjectImportContext context) {
         String moduleName = packageDir.getName();
 
-        context.getProgressIndicator().setTextValue(Unity3dLocalize.syncing0Module(moduleName));
+        context.getProgressIndicator().setText(Unity3dLocalize.syncing0Module(moduleName));
 
         Module temp = modifiableModuleModels.findModuleByName(moduleName);
         final Module module;
@@ -414,7 +414,7 @@ public class Unity3dProjectImporter {
                                                @Nonnull UnityProjectImportContext context) {
         ProgressIndicator progressIndicator = context.getProgressIndicator();
 
-        progressIndicator.setTextValue(Unity3dLocalize.syncing0Module(moduleName));
+        progressIndicator.setText(Unity3dLocalize.syncing0Module(moduleName));
 
         Module temp = modifiableModuleModels.findModuleByName(moduleName);
         final Module module;
@@ -721,7 +721,7 @@ public class Unity3dProjectImporter {
             rootModule = newModel.newModule(project.getName(), project.getBasePath());
         }
 
-        progressIndicator.setTextValue(Unity3dLocalize.syncing0Module(rootModule.getName()));
+        progressIndicator.setText(Unity3dLocalize.syncing0Module(rootModule.getName()));
 
 
         final ModifiableRootModel modifiableModel = AccessRule.read(() -> ModuleRootManager.getInstance(rootModule).getModifiableModel());
