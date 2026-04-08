@@ -114,7 +114,7 @@ public class UnityProjectImporterWithAsmDef {
 
         VirtualFile assetsDir = baseDir.findChild(Unity3dProjectImporter.ASSETS_DIRECTORY);
         if (assetsDir == null) {
-            progressIndicator.setTextValue(LocalizeValue.empty());
+            progressIndicator.setText(LocalizeValue.empty());
 
             if (!fromProjectStructure) {
                 WriteAction.runAndWait(newModulesModel::commit);
@@ -183,7 +183,7 @@ public class UnityProjectImporterWithAsmDef {
                 continue;
             }
 
-            progressIndicator.setTextValue(Unity3dLocalize.unityImportAnalyzing0Task(assemblyContext.getName()));
+            progressIndicator.setText(Unity3dLocalize.unityImportAnalyzing0Task(assemblyContext.getName()));
 
             //boolean isAllowEditorDir = assemblyContext.getAsmDefElement().getIncludePlatforms().contains(EDITOR_PLATFORM);
 
@@ -366,7 +366,7 @@ public class UnityProjectImporterWithAsmDef {
 
         progressIndicator.setIndeterminate(false);
         progressIndicator.setFraction(1);
-        progressIndicator.setTextValue(LocalizeValue.empty());
+        progressIndicator.setText(LocalizeValue.empty());
 
         if (!fromProjectStructure) {
             writeCommits.add(newModulesModel::commit);
