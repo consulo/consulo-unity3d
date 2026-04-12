@@ -12,4 +12,5 @@ module consulo.unity3d.cg.shader
 	exports consulo.cgshader.completion;
 	exports consulo.cgshader.highlighter;
 	exports consulo.cgshader.lexer;
+	
 }

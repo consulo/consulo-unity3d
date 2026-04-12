@@ -16,29 +16,45 @@
   - limitations under the License.
   -->
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
-		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<groupId>consulo</groupId>
+    <parent>
+        <groupId>consulo</groupId>
         <artifactId>arch.bind.java</artifactId>
         <version>3-SNAPSHOT</version>
-		<relativePath/>
-	</parent>
+        <relativePath/>
+    </parent>
 
-	<repositories>
-		<repository>
-			<id>consulo</id>
-			<url>https://maven.consulo.dev/repository/snapshots/</url>
-			<snapshots>
-				<enabled>true</enabled>
-				<updatePolicy>interval:60</updatePolicy>
-			</snapshots>
-		</repository>
-	</repositories>
+    <repositories>
+        <repository>
+            <id>consulo</id>
+            <url>https://maven.consulo.dev/repository/snapshots/</url>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>interval:60</updatePolicy>
+            </snapshots>
+        </repository>
+    </repositories>
 
-	<groupId>consulo.plugin</groupId>
-	<artifactId>consulo.unity3d-cg.shader</artifactId>
-	<version>3-SNAPSHOT</version>
-	<packaging>jar</packaging>
+    <groupId>consulo.plugin</groupId>
+    <artifactId>consulo.unity3d-cg.shader</artifactId>
+    <version>3-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <dependencies>
+        <dependency>
+            <groupId>consulo</groupId>
+            <artifactId>consulo-language-editor-api</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>consulo</groupId>
+            <artifactId>consulo-language-impl</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
 </project>
