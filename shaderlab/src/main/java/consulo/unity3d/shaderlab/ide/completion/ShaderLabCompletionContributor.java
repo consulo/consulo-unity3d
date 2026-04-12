@@ -101,7 +101,7 @@ public class ShaderLabCompletionContributor extends CompletionContributor
 						final String defaultInsertValue = labRole.getDefaultInsertValue();
 						if(defaultInsertValue == null)
 						{
-							builder = builder.withInsertHandler(SpaceInsertHandler.INSTANCE);
+							builder = builder.withInsertHandler(AddSpaceInsertHandler.INSTANCE);
 						}
 						else
 						{

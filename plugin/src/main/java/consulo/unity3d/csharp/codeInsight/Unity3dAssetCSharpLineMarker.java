@@ -20,7 +20,7 @@ import consulo.annotation.access.RequiredReadAction;
 import consulo.application.AllIcons;
 import consulo.colorScheme.EditorColorsManager;
 import consulo.colorScheme.TextAttributesKey;
-import consulo.csharp.impl.ide.highlight.CSharpHighlightKey;
+import consulo.csharp.editor.highlight.CSharpHighlightKey;
 import consulo.csharp.impl.ide.lineMarkerProvider.CSharpLineMarkerUtil;
 import consulo.csharp.lang.impl.psi.CSharpTypeUtil;
 import consulo.csharp.lang.psi.CSharpEnumConstantDeclaration;

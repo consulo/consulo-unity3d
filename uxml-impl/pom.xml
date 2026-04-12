@@ -22,7 +22,7 @@
 
 	<parent>
 		<groupId>consulo</groupId>
-		<artifactId>arch.ide-api-provided</artifactId>
+		<artifactId>arch.bind.java</artifactId>
 		<version>3-SNAPSHOT</version>
 		<relativePath/>
 	</parent>
@@ -46,7 +46,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>com.intellij.xml</artifactId>
+			<artifactId>com.intellij.xml.api</artifactId>
 			<version>${project.version}</version>
 			<scope>provided</scope>
 		</dependency>

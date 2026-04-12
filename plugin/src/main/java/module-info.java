@@ -2,14 +2,22 @@
  * @author VISTALL
  * @since 18-Sep-22
  */
-module consulo.unity3d
-{
+module consulo.unity3d {
     // TODO remove in future
     requires java.desktop;
+    requires consulo.ui.ex.awt.api;
 
     requires consulo.game.framework.api;
 
     requires consulo.ide.api;
+    
+    requires consulo.language.api;
+
+    requires consulo.project.ui.api;
+
+    requires consulo.builtin.web.server.api;
+
+    requires consulo.module.ui.api;
 
     requires consulo.language.impl;
 
@@ -17,7 +25,6 @@ module consulo.unity3d
 
     requires consulo.unity3d.cg.shader;
 
-    requires consulo.csharp.psi.impl;
     requires consulo.csharp;
 
     requires consulo.nunit.api;

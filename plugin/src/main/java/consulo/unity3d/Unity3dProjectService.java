@@ -61,7 +61,7 @@ public class Unity3dProjectService implements Disposable
 	@Nonnull
 	public static Unity3dProjectService getInstance(@Nonnull Project project)
 	{
-		return ServiceManager.getService(project, Unity3dProjectService.class);
+		return project.getService(Unity3dProjectService.class);
 	}
 
 	private ClearableLazyValue<CacheValue> myValue = new ClearableLazyValue<>()

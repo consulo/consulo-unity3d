@@ -20,7 +20,7 @@ import consulo.annotation.access.RequiredReadAction;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.application.AllIcons;
 import consulo.codeEditor.CaretModel;
-import consulo.csharp.impl.ide.completion.CSharpMemberAddByCompletionContributor;
+import consulo.csharp.editor.completion.CSharpMemberAddByCompletionContributor;
 import consulo.csharp.lang.impl.psi.CSharpTypeRefPresentationUtil;
 import consulo.csharp.lang.impl.psi.source.CSharpBlockStatementImpl;
 import consulo.csharp.lang.psi.CSharpMethodDeclaration;

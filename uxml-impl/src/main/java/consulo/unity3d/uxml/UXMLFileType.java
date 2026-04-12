@@ -18,50 +18,43 @@ package consulo.unity3d.uxml;
 
 import consulo.localize.LocalizeValue;
 import consulo.ui.image.Image;
-import consulo.xml.ide.highlighter.XmlFileType;
-import consulo.xml.ide.highlighter.XmlLikeFileType;
-
 import consulo.xml.language.XMLLanguage;
+import consulo.xml.language.XmlFileType;
+import consulo.xml.language.XmlLikeFileType;
 import jakarta.annotation.Nonnull;
 
 /**
  * @author VISTALL
  * @since 18-Sep-22
  */
-public class UXMLFileType extends XmlLikeFileType
-{
-	public static final UXMLFileType INSTANCE = new UXMLFileType();
+public class UXMLFileType extends XmlLikeFileType {
+    public static final UXMLFileType INSTANCE = new UXMLFileType();
 
-	private UXMLFileType()
-	{
-		super(XMLLanguage.INSTANCE);
-	}
+    private UXMLFileType() {
+        super(XMLLanguage.INSTANCE);
+    }
 
-	@Nonnull
-	@Override
-	public String getDefaultExtension()
-	{
-		return "uxml";
-	}
+    @Nonnull
+    @Override
+    public String getDefaultExtension() {
+        return "uxml";
+    }
 
-	@Nonnull
-	@Override
-	public String getId()
-	{
-		return "UNITY_UXML";
-	}
+    @Nonnull
+    @Override
+    public String getId() {
+        return "UNITY_UXML";
+    }
 
-	@Nonnull
-	@Override
-	public LocalizeValue getDescription()
-	{
-		return LocalizeValue.localizeTODO("Unity Extensible Markup Language");
-	}
+    @Nonnull
+    @Override
+    public LocalizeValue getDescription() {
+        return LocalizeValue.localizeTODO("Unity Extensible Markup Language");
+    }
 
-	@Nonnull
-	@Override
-	public Image getIcon()
-	{
-		return XmlFileType.INSTANCE.getIcon();
-	}
+    @Nonnull
+    @Override
+    public Image getIcon() {
+        return XmlFileType.INSTANCE.getIcon();
+    }
 }

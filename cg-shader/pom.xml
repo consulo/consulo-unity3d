@@ -21,8 +21,8 @@
 
 	<parent>
 		<groupId>consulo</groupId>
-		<artifactId>arch.ide-api-provided</artifactId>
-		<version>3-SNAPSHOT</version>
+        <artifactId>arch.bind.java</artifactId>
+        <version>3-SNAPSHOT</version>
 		<relativePath/>
 	</parent>
 
