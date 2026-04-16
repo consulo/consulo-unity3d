@@ -22,7 +22,7 @@ import consulo.annotation.component.ServiceAPI;
 import consulo.annotation.component.ServiceImpl;
 import consulo.application.util.ClearableLazyValue;
 import consulo.disposer.Disposable;
-import consulo.ide.ServiceManager;
+import consulo.application.Application;
 import consulo.language.util.ModuleUtilCore;
 import consulo.module.Module;
 import consulo.module.ModuleManager;

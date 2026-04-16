@@ -16,6 +16,12 @@ module consulo.unity3d {
     requires consulo.project.ui.api;
 
     requires consulo.builtin.web.server.api;
+    requires consulo.execution.debug.api;
+    requires consulo.execution.test.api;
+    requires consulo.execution.test.sm.api;
+    requires consulo.compiler.api;
+    requires consulo.find.api;
+    requires consulo.http.api;
 
     requires consulo.module.ui.api;
 
@@ -44,6 +50,7 @@ module consulo.unity3d {
 
     requires org.apache.httpcomponents.httpcore;
     requires org.apache.httpcomponents.httpmime;
+    requires org.apache.httpcomponents.httpclient;
 
     requires dd.plist;
 

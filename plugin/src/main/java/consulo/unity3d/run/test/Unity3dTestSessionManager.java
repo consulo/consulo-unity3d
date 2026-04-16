@@ -20,7 +20,7 @@ import consulo.annotation.component.ComponentScope;
 import consulo.annotation.component.ServiceAPI;
 import consulo.annotation.component.ServiceImpl;
 import consulo.execution.test.sm.runner.GeneralTestEventsProcessor;
-import consulo.ide.ServiceManager;
+import consulo.application.Application;
 import consulo.process.ProcessHandler;
 import jakarta.inject.Singleton;
 
@@ -42,7 +42,7 @@ public class Unity3dTestSessionManager
 	@Nonnull
 	public static Unity3dTestSessionManager getInstance()
 	{
-		return ServiceManager.getService(Unity3dTestSessionManager.class);
+		return Application.get().getInstance(Unity3dTestSessionManager.class);
 	}
 
 	private Map<UUID, Unity3dTestSession> mySessions = new ConcurrentHashMap<UUID, Unity3dTestSession>();

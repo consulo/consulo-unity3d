@@ -6,7 +6,7 @@ import consulo.annotation.component.ServiceImpl;
 import consulo.component.persist.PersistentStateComponent;
 import consulo.component.persist.State;
 import consulo.component.persist.Storage;
-import consulo.ide.ServiceManager;
+import consulo.application.Application;
 import consulo.util.xml.serializer.XmlSerializerUtil;
 import jakarta.inject.Singleton;
 
@@ -25,7 +25,7 @@ public class Unity3dAssetUsageSettings implements PersistentStateComponent<Unity
 	@Nonnull
 	public static Unity3dAssetUsageSettings getInstance()
 	{
-		return ServiceManager.getService(Unity3dAssetUsageSettings.class);
+		return Application.get().getInstance(Unity3dAssetUsageSettings.class);
 	}
 
 	public boolean SHOW_USAGES_IN_ASSETS;
