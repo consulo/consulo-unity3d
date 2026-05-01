@@ -17,7 +17,7 @@
 package consulo.unity3d.projectImport;
 
 import consulo.content.bundle.Sdk;
-import consulo.ide.moduleImport.ModuleImportContext;
+import consulo.module.creation.importing.ModuleImportContext;
 import consulo.project.Project;
 import consulo.unity3d.jsonApi.UnityOpenFilePostHandlerRequest;
 

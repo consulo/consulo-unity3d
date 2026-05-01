@@ -22,10 +22,10 @@ import consulo.content.bundle.SdkModificator;
 import consulo.content.bundle.SdkTable;
 import consulo.content.bundle.SdkUtil;
 import consulo.disposer.Disposable;
-import consulo.ide.newModule.ui.UnifiedProjectOrModuleNameStep;
 import consulo.ide.setting.ProjectStructureSettingsUtil;
 import consulo.ide.setting.ShowSettingsUtil;
 import consulo.localize.LocalizeValue;
+import consulo.module.creation.ui.UnifiedProjectOrModuleNameStep;
 import consulo.module.ui.BundleBox;
 import consulo.module.ui.BundleBoxBuilder;
 import consulo.ui.Button;
@@ -38,12 +38,12 @@ import consulo.ui.layout.DockLayout;
 import consulo.ui.model.MutableListModel;
 import consulo.ui.style.StandardColors;
 import consulo.ui.util.FormBuilder;
-import consulo.unity3d.localize.Unity3dLocalize;
 import consulo.unity3d.bundle.Unity3dBundleType;
+import consulo.unity3d.localize.Unity3dLocalize;
 import consulo.unity3d.projectImport.Unity3dProjectImporter;
 import consulo.unity3d.projectImport.UnityModuleImportContext;
-
 import jakarta.annotation.Nonnull;
+
 import javax.swing.*;
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -52,112 +52,99 @@ import java.util.function.Consumer;
  * @author VISTALL
  * @since 01.02.15
  */
-public class Unity3dWizardStep extends UnifiedProjectOrModuleNameStep<UnityModuleImportContext>
-{
-	private final UnityModuleImportContext myContext;
+public class Unity3dWizardStep extends UnifiedProjectOrModuleNameStep<UnityModuleImportContext> {
+    private final UnityModuleImportContext myContext;
 
-	private BundleBox myBundleBox;
+    private BundleBox myBundleBox;
 
-	public Unity3dWizardStep(UnityModuleImportContext context)
-	{
-		super(context);
-		myContext = context;
-	}
+    public Unity3dWizardStep(UnityModuleImportContext context) {
+        super(context);
+        myContext = context;
+    }
 
-	@RequiredUIAccess
-	@Override
-	protected void extend(@Nonnull FormBuilder builder, @Nonnull Disposable uiDisposable)
-	{
-		super.extend(builder, uiDisposable);
+    @RequiredUIAccess
+    @Override
+    protected void extend(@Nonnull FormBuilder builder, @Nonnull Disposable uiDisposable) {
+        super.extend(builder, uiDisposable);
 
-		String requiredVersion = Unity3dProjectImporter.loadVersionFromProject(myContext.getPath());
+        String requiredVersion = Unity3dProjectImporter.loadVersionFromProject(myContext.getPath());
 
-		BundleBoxBuilder boxBuilder = BundleBoxBuilder.create(uiDisposable);
-		boxBuilder.withSdkTypeFilterByType(Unity3dBundleType.getInstance());
+        BundleBoxBuilder boxBuilder = BundleBoxBuilder.create(uiDisposable);
+        boxBuilder.withSdkTypeFilterByType(Unity3dBundleType.getInstance());
 
-		ComboBox<BundleBox.BundleBoxItem> comboBox = (myBundleBox = boxBuilder.build()).getComponent();
-		DockLayout dock = DockLayout.create();
-		dock.center(comboBox);
-		dock.right(Button.create(LocalizeValue.localizeTODO("Select..."), clickEvent ->
-		{
-			JComponent awtComponent = (JComponent) TargetAWT.to(myBundleBox.getComponent());
+        ComboBox<BundleBox.BundleBoxItem> comboBox = (myBundleBox = boxBuilder.build()).getComponent();
+        DockLayout dock = DockLayout.create();
+        dock.center(comboBox);
+        dock.right(Button.create(LocalizeValue.localizeTODO("Select..."), clickEvent ->
+        {
+            JComponent awtComponent = (JComponent) TargetAWT.to(myBundleBox.getComponent());
 
-			showAddSdk(sdk ->
-			{
-				WriteAction.run(() -> SdkTable.getInstance().addSdk(sdk));
+            showAddSdk(sdk ->
+            {
+                WriteAction.run(() -> SdkTable.getInstance().addSdk(sdk));
 
-				MutableListModel<BundleBox.BundleBoxItem> listModel = (MutableListModel<BundleBox.BundleBoxItem>) comboBox.getListModel();
+                MutableListModel<BundleBox.BundleBoxItem> listModel = (MutableListModel<BundleBox.BundleBoxItem>) comboBox.getListModel();
 
-				BundleBox.BaseBundleBoxItem item = new BundleBox.BaseBundleBoxItem(sdk);
+                BundleBox.BaseBundleBoxItem item = new BundleBox.BaseBundleBoxItem(sdk);
 
-				listModel.add(item);
+                listModel.add(item);
 
-				UIAccess.current().give(() -> comboBox.setValue(item));
-			});
-		}));
-		builder.addLabeled(Unity3dLocalize.unityName(), dock);
+                UIAccess.current().give(() -> comboBox.setValue(item));
+            });
+        }));
+        builder.addLabeled(Unity3dLocalize.unityName(), dock);
 
-		if(requiredVersion != null)
-		{
-			for(BundleBox.BundleBoxItem item : comboBox.getListModel())
-			{
-				Sdk bundle = item.getBundle();
+        if (requiredVersion != null) {
+            for (BundleBox.BundleBoxItem item : comboBox.getListModel()) {
+                Sdk bundle = item.getBundle();
 
-				if(bundle != null)
-				{
-					String versionString = bundle.getVersionString();
-					if(Objects.equals(requiredVersion, versionString))
-					{
-						comboBox.setValue(item);
-						break;
-					}
-				}
-			}
-		}
+                if (bundle != null) {
+                    String versionString = bundle.getVersionString();
+                    if (Objects.equals(requiredVersion, versionString)) {
+                        comboBox.setValue(item);
+                        break;
+                    }
+                }
+            }
+        }
 
-		if(comboBox.getValue() == null && comboBox.getListModel().getSize() > 0)
-		{
-			myBundleBox.getComponent().setValueByIndex(0);
-		}
+        if (comboBox.getValue() == null && comboBox.getListModel().getSize() > 0) {
+            myBundleBox.getComponent().setValueByIndex(0);
+        }
 
-		if(requiredVersion != null)
-		{
-			builder.addBottom(Label.create(Unity3dLocalize.requiredUnityVersionIs0(requiredVersion)).withForegroundColor(StandardColors.GRAY));
-		}
-	}
+        if (requiredVersion != null) {
+            builder.addBottom(Label.create(Unity3dLocalize.requiredUnityVersionIs0(requiredVersion)).withForegroundColor(StandardColors.GRAY));
+        }
+    }
 
-	@RequiredUIAccess
-	public static void showAddSdk(@RequiredUIAccess Consumer<Sdk> sdkConsumer)
-	{
-		ProjectStructureSettingsUtil settingsUtil = ShowSettingsUtil.getInstance();
+    @RequiredUIAccess
+    public static void showAddSdk(@RequiredUIAccess Consumer<Sdk> sdkConsumer) {
+        ProjectStructureSettingsUtil settingsUtil = ShowSettingsUtil.getInstance();
 
-		Unity3dBundleType type = Unity3dBundleType.getInstance();
+        Unity3dBundleType type = Unity3dBundleType.getInstance();
 
-		SdkUtil.selectSdkHome(Unity3dBundleType.getInstance(), home ->
-		{
-			String newSdkName = SdkUtil.createUniqueSdkName(type, home, settingsUtil.getSdksModel().getBundles());
-			Sdk newSdk = SdkTable.getInstance().createSdk(newSdkName, type);
+        SdkUtil.selectSdkHome(Unity3dBundleType.getInstance(), home ->
+        {
+            String newSdkName = SdkUtil.createUniqueSdkName(type, home, settingsUtil.getSdksModel().getBundles());
+            Sdk newSdk = SdkTable.getInstance().createSdk(newSdkName, type);
 
-			SdkModificator modificator = newSdk.getSdkModificator();
-			modificator.setHomePath(home);
-			modificator.commitChanges();
+            SdkModificator modificator = newSdk.getSdkModificator();
+            modificator.setHomePath(home);
+            modificator.commitChanges();
 
-			sdkConsumer.accept(newSdk);
-		});
-	}
+            sdkConsumer.accept(newSdk);
+        });
+    }
 
-	@Override
-	public void onStepLeave(@Nonnull UnityModuleImportContext context)
-	{
-		super.onStepLeave(context);
+    @Override
+    public void onStepLeave(@Nonnull UnityModuleImportContext context) {
+        super.onStepLeave(context);
 
-		if(myBundleBox != null)
-		{
-			String selectedBundleName = myBundleBox.getSelectedBundleName();
-			if(selectedBundleName != null)
-			{
-				context.setSdk(SdkTable.getInstance().findSdk(selectedBundleName));
-			}
-		}
-	}
+        if (myBundleBox != null) {
+            String selectedBundleName = myBundleBox.getSelectedBundleName();
+            if (selectedBundleName != null) {
+                context.setSdk(SdkTable.getInstance().findSdk(selectedBundleName));
+            }
+        }
+    }
 }

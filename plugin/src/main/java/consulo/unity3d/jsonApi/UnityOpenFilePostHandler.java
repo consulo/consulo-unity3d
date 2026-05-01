@@ -21,6 +21,7 @@ import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.WinDef;
 import consulo.annotation.component.ExtensionImpl;
+import consulo.application.Application;
 import consulo.application.ui.wm.IdeFocusManager;
 import consulo.builtinWebServer.json.JsonPostRequestHandler;
 import consulo.codeEditor.Editor;
@@ -28,10 +29,10 @@ import consulo.content.bundle.Sdk;
 import consulo.content.bundle.SdkTable;
 import consulo.content.bundle.SdkUtil;
 import consulo.fileEditor.FileEditorManager;
-import consulo.ide.moduleImport.ModuleImportContext;
-import consulo.ide.moduleImport.ModuleImportProcessor;
-import consulo.ide.moduleImport.ModuleImportProvider;
-import consulo.ide.newModule.NewOrImportModuleUtil;
+import consulo.module.creation.ModuleCreationHelper;
+import consulo.module.creation.NewOrImportModuleUtil;
+import consulo.module.creation.importing.ModuleImportContext;
+import consulo.module.creation.importing.ModuleImportProvider;
 import consulo.navigation.OpenFileDescriptor;
 import consulo.navigation.OpenFileDescriptorFactory;
 import consulo.platform.Platform;
@@ -154,7 +155,8 @@ public class UnityOpenFilePostHandler extends JsonPostRequestHandler<UnityOpenFi
 
 						AsyncResult<Pair<ModuleImportContext, ModuleImportProvider<ModuleImportContext>>> result = AsyncResult.undefined();
 
-						ModuleImportProcessor.showImportChooser(null, projectVirtualFile, Collections.singletonList(importProvider), result);
+						Application.get().getInstance(ModuleCreationHelper.class)
+                            .showImportChooser(null, projectVirtualFile, Collections.singletonList(importProvider), result);
 
 						result.doWhenDone(pair ->
 						{

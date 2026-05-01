@@ -24,6 +24,7 @@ module consulo.unity3d {
     requires consulo.http.api;
 
     requires consulo.module.ui.api;
+    requires consulo.module.creation.api;
 
     requires consulo.language.impl;
 
