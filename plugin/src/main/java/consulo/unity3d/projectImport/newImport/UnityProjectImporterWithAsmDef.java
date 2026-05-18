@@ -602,8 +602,8 @@ public class UnityProjectImporterWithAsmDef {
 
             unityAssemblyContext.setLibrary(library);
 
-            modifiableModel.addRoot(asmDirectory, BinariesOrderRootType.getInstance());
-            modifiableModel.addRoot(asmDirectory, SourcesOrderRootType.getInstance());
+            modifiableModel.addRoot(asmDirectory, BinariesOrderRootType.ID);
+            modifiableModel.addRoot(asmDirectory, SourcesOrderRootType.ID);
 
             // we need add exclude roots to skip directories with another asmdefs in same package
             for (UnityAssemblyContext anotherAssembly : assemblies.values()) {

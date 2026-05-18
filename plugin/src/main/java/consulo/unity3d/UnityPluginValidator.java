@@ -133,7 +133,7 @@ public class UnityPluginValidator implements BackgroundStartupActivity {
                 for (ModuleRootLayer layer : modifiableModel.getLayers().values()) {
                     LibraryTable moduleLibraryTable = ((ModifiableModuleRootLayer) layer).getModuleLibraryTable();
                     for (Library library : moduleLibraryTable.getLibraries()) {
-                        String[] files = library.getUrls(BinariesOrderRootType.getInstance());
+                        String[] files = library.getUrls(BinariesOrderRootType.ID);
                         for (String url : files) {
                             String localPath = PathUtil.getFileName(url);
                             if (StringUtil.startsWith(localPath, "UnityEditorConsuloPlugin")) {

@@ -37,236 +37,200 @@ import consulo.virtualFileSystem.LocalFileSystem;
 import consulo.virtualFileSystem.VirtualFile;
 import consulo.virtualFileSystem.VirtualFileManager;
 import consulo.virtualFileSystem.archive.ArchiveVfsUtil;
-import consulo.virtualFileSystem.pointer.VirtualFilePointer;
 import consulo.virtualFileSystem.util.VirtualFileUtil;
-
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
+
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * @author VISTALL
  * @since 2018-09-19
  */
-public class Unity3dPackageOrderEntryModel implements CustomOrderEntryModel
-{
-	private RootProvider myRootProvider = new RootProviderBase()
-	{
-		@Nonnull
-		@Override
-		@RequiredReadAction
-		public String[] getUrls(@Nonnull OrderRootType rootType)
-		{
-			VirtualFile[] files = getFiles(rootType);
-			return Arrays.stream(files).map(VirtualFile::getUrl).toArray(String[]::new);
-		}
+public class Unity3dPackageOrderEntryModel implements CustomOrderEntryModel {
+    private static final Set<String> ACCEPTED_ROOT_TYPE_IDS = Set.of(
+        BinariesOrderRootType.ID,
+        SourcesOrderRootType.ID
+    );
 
-		@Nonnull
-		@Override
-		@RequiredReadAction
-		public VirtualFile[] getFiles(@Nonnull OrderRootType rootType)
-		{
-			List<VirtualFile> files = new ArrayList<>();
+    private RootProvider myRootProvider = new RootProviderBase() {
+        @Nonnull
+        @Override
+        @RequiredReadAction
+        public String[] getUrls(@Nonnull String rootType) {
+            VirtualFile[] files = getFiles(rootType);
+            return Arrays.stream(files).map(VirtualFile::getUrl).toArray(String[]::new);
+        }
 
-			if(myVersion != null)
-			{
-				String nameWithVersion = myName + "@" + myVersion;
+        @Nonnull
+        @Override
+        @RequiredReadAction
+        public VirtualFile[] getFiles(@Nonnull String rootType) {
+            List<VirtualFile> files = new ArrayList<>();
 
-				if(rootType == BinariesOrderRootType.getInstance() || rootType == SourcesOrderRootType.getInstance())
-				{
-					LocalFileSystem localFileSystem = LocalFileSystem.getInstance();
+            if (myVersion != null) {
+                String nameWithVersion = myName + "@" + myVersion;
 
-					// moved to project files
-					String projectPackageCache = getProjectPackageCache();
-					VirtualFile localFile = localFileSystem.findFileByIoFile(new File(projectPackageCache, nameWithVersion));
-					addDotNetModulesInsideLibrary(files, localFile);
+                if (ACCEPTED_ROOT_TYPE_IDS.contains(rootType)) {
+                    LocalFileSystem localFileSystem = LocalFileSystem.getInstance();
 
-					if(files.isEmpty())
-					{
-						Unity3dPackageWatcher watcher = Unity3dPackageWatcher.getInstance();
-						for(String path : watcher.getPackageDirPaths())
-						{
-							VirtualFile file = localFileSystem.findFileByIoFile(new File(path, nameWithVersion));
-							addDotNetModulesInsideLibrary(files, file);
-						}
-					}
-				}
-			}
+                    // moved to project files
+                    String projectPackageCache = getProjectPackageCache();
+                    VirtualFile localFile = localFileSystem.findFileByIoFile(new File(projectPackageCache, nameWithVersion));
+                    addDotNetModulesInsideLibrary(files, localFile);
 
-			if(myFileUrl != null)
-			{
-				VirtualFile file = VirtualFileManager.getInstance().findFileByUrl(myFileUrl);
-				if(file != null)
-				{
-					files.add(file);
-				}
-			}
+                    if (files.isEmpty()) {
+                        Unity3dPackageWatcher watcher = Unity3dPackageWatcher.getInstance();
+                        for (String path : watcher.getPackageDirPaths()) {
+                            VirtualFile file = localFileSystem.findFileByIoFile(new File(path, nameWithVersion));
+                            addDotNetModulesInsideLibrary(files, file);
+                        }
+                    }
+                }
+            }
 
-			if(files.isEmpty())
-			{
-				Sdk sdk = getSdk();
-				if(sdk != null)
-				{
-					String path = Unity3dPackageWatcher.getInstance().getBuiltInPackagesPath(sdk);
-					VirtualFile builtInPackageDir = LocalFileSystem.getInstance().findFileByPath(path);
-					if(builtInPackageDir != null)
-					{
-						VirtualFile packageDirectory = builtInPackageDir.findChild(myName);
-						ContainerUtil.addIfNotNull(files, packageDirectory);
-					}
-				}
-			}
-			return VirtualFileUtil.toVirtualFileArray(files);
-		}
+            if (myFileUrl != null) {
+                VirtualFile file = VirtualFileManager.getInstance().findFileByUrl(myFileUrl);
+                if (file != null) {
+                    files.add(file);
+                }
+            }
 
-		private void addDotNetModulesInsideLibrary(@Nonnull List<VirtualFile> result, @Nullable VirtualFile virtualFile)
-		{
-			if(virtualFile == null)
-			{
-				return;
-			}
+            if (files.isEmpty()) {
+                Sdk sdk = getSdk();
+                if (sdk != null) {
+                    String path = Unity3dPackageWatcher.getInstance().getBuiltInPackagesPath(sdk);
+                    VirtualFile builtInPackageDir = LocalFileSystem.getInstance().findFileByPath(path);
+                    if (builtInPackageDir != null) {
+                        VirtualFile packageDirectory = builtInPackageDir.findChild(myName);
+                        ContainerUtil.addIfNotNull(files, packageDirectory);
+                    }
+                }
+            }
+            return VirtualFileUtil.toVirtualFileArray(files);
+        }
 
-			result.add(virtualFile);
+        private void addDotNetModulesInsideLibrary(@Nonnull List<VirtualFile> result, @Nullable VirtualFile virtualFile) {
+            if (virtualFile == null) {
+                return;
+            }
 
-			boolean isEditor = StringUtil.contains(myModuleRootLayer.getModule().getName(), "Editor");
-			if(virtualFile.isDirectory())
-			{
-				addChildrenNetModules(virtualFile, result);
+            result.add(virtualFile);
 
-				if(isEditor)
-				{
-					VirtualFile editorDirectory = virtualFile.findChild("Editor");
-					if(editorDirectory != null)
-					{
-						addChildrenNetModules(editorDirectory, result);
-					}
-				}
-			}
-		}
+            boolean isEditor = StringUtil.contains(myModuleRootLayer.getModule().getName(), "Editor");
+            if (virtualFile.isDirectory()) {
+                addChildrenNetModules(virtualFile, result);
 
-		private void addChildrenNetModules(VirtualFile virtualFile, List<VirtualFile> result)
-		{
-			for(VirtualFile fileOrDir : virtualFile.getChildren())
-			{
-				// more faster check - and it will SOE if file type is unknown
-				if(DotNetModuleFileType.isDllFile(fileOrDir.getName()))
-				{
-					VirtualFile archiveRoot = ArchiveVfsUtil.getArchiveRootForLocalFile(fileOrDir);
-					if(archiveRoot != null)
-					{
-						result.add(archiveRoot);
-					}
-				}
-			}
-		}
+                if (isEditor) {
+                    VirtualFile editorDirectory = virtualFile.findChild("Editor");
+                    if (editorDirectory != null) {
+                        addChildrenNetModules(editorDirectory, result);
+                    }
+                }
+            }
+        }
 
-		@Nonnull
-		private String getProjectPackageCache()
-		{
-			return myModuleRootLayer.getProject().getBasePath() + "/Library/PackageCache";
-		}
+        private void addChildrenNetModules(VirtualFile virtualFile, List<VirtualFile> result) {
+            for (VirtualFile fileOrDir : virtualFile.getChildren()) {
+                // more faster check - and it will SOE if file type is unknown
+                if (DotNetModuleFileType.isDllFile(fileOrDir.getName())) {
+                    VirtualFile archiveRoot = ArchiveVfsUtil.getArchiveRootForLocalFile(fileOrDir);
+                    if (archiveRoot != null) {
+                        result.add(archiveRoot);
+                    }
+                }
+            }
+        }
 
-		@Nullable
-		@RequiredReadAction
-		private Sdk getSdk()
-		{
-			// FIXME [VISTALL] we can't access to another module from roots and we don't need target module for UI, that mean we don't care about then we call that code
-			Unity3dRootModuleExtension extension = Unity3dModuleExtensionUtil.getRootModuleExtension(myModuleRootLayer.getProject());
-			if(extension == null)
-			{
-				return null;
-			}
-			return extension.getSdk();
-		}
-	};
+        @Nonnull
+        private String getProjectPackageCache() {
+            return myModuleRootLayer.getProject().getBasePath() + "/Library/PackageCache";
+        }
 
-	private ModuleRootLayer myModuleRootLayer;
+        @Nullable
+        @RequiredReadAction
+        private Sdk getSdk() {
+            // FIXME [VISTALL] we can't access to another module from roots and we don't need target module for UI, that mean we don't care about then we call that code
+            Unity3dRootModuleExtension extension = Unity3dModuleExtensionUtil.getRootModuleExtension(myModuleRootLayer.getProject());
+            if (extension == null) {
+                return null;
+            }
+            return extension.getSdk();
+        }
+    };
 
-	private String myName;
-	@Nullable
-	private String myVersion;
-	@Nullable
-	private String myFileUrl;
+    private ModuleRootLayer myModuleRootLayer;
 
-	public Unity3dPackageOrderEntryModel(String name, @Nullable String version, @Nullable String url)
-	{
-		myName = name;
-		myVersion = version;
-		myFileUrl = url;
-	}
+    private String myName;
+    @Nullable
+    private String myVersion;
+    @Nullable
+    private String myFileUrl;
 
-	@Nullable
-	@Override
-	public Object getEqualObject()
-	{
-		Unity3dRootModuleExtension extension = myModuleRootLayer.getExtension(Unity3dRootModuleExtension.class);
-		if(extension == null)
-		{
-			return ObjectUtil.NULL;
-		}
-		return extension.getSdk();
-	}
+    public Unity3dPackageOrderEntryModel(String name, @Nullable String version, @Nullable String url) {
+        myName = name;
+        myVersion = version;
+        myFileUrl = url;
+    }
 
-	@Nonnull
-	@Override
-	public RootProvider getRootProvider()
-	{
-		return myRootProvider;
-	}
+    @Nullable
+    @Override
+    public Object getEqualObject() {
+        Unity3dRootModuleExtension extension = myModuleRootLayer.getExtension(Unity3dRootModuleExtension.class);
+        if (extension == null) {
+            return ObjectUtil.NULL;
+        }
+        return extension.getSdk();
+    }
 
-	@Override
-	public void bind(@Nonnull ModuleRootLayer moduleRootLayer)
-	{
-		myModuleRootLayer = moduleRootLayer;
-	}
+    @Nonnull
+    @Override
+    public RootProvider getRootProvider() {
+        return myRootProvider;
+    }
 
-	@Nonnull
-	@Override
-	public String getPresentableName()
-	{
-		return myName;
-	}
+    @Override
+    public void bind(@Nonnull ModuleRootLayer moduleRootLayer) {
+        myModuleRootLayer = moduleRootLayer;
+    }
 
-	@Nullable
-	public String getFileUrl()
-	{
-		return myFileUrl;
-	}
+    @Nonnull
+    @Override
+    public String getPresentableName() {
+        return myName;
+    }
 
-	@Nullable
-	public String getVersion()
-	{
-		return myVersion;
-	}
+    @Nullable
+    public String getFileUrl() {
+        return myFileUrl;
+    }
 
-	@Override
-	public boolean isValid()
-	{
-		return myModuleRootLayer.getExtension(Unity3dChildModuleExtension.class) != null;
-	}
+    @Nullable
+    public String getVersion() {
+        return myVersion;
+    }
 
-	@Override
-	public boolean isEquivalentTo(@Nonnull CustomOrderEntryModel model)
-	{
-		return model instanceof Unity3dPackageOrderEntryModel && Objects.equals(myName, model.getPresentableName()) &&
-				Objects.equals(myVersion, ((Unity3dPackageOrderEntryModel) model).getVersion()) &&
-				Objects.equals(getFileUrl(), ((Unity3dPackageOrderEntryModel) model).getFileUrl());
-	}
+    @Override
+    public boolean isValid() {
+        return myModuleRootLayer.getExtension(Unity3dChildModuleExtension.class) != null;
+    }
 
-	@Override
-	public boolean isSynthetic()
-	{
-		return false;
-	}
+    @Override
+    public boolean isEquivalentTo(@Nonnull CustomOrderEntryModel model) {
+        return model instanceof Unity3dPackageOrderEntryModel && Objects.equals(myName, model.getPresentableName()) &&
+            Objects.equals(myVersion, ((Unity3dPackageOrderEntryModel) model).getVersion()) &&
+            Objects.equals(getFileUrl(), ((Unity3dPackageOrderEntryModel) model).getFileUrl());
+    }
 
-	@Nonnull
-	@Override
-	public Unity3dPackageOrderEntryModel clone()
-	{
-		return new Unity3dPackageOrderEntryModel(myName, myVersion, getFileUrl());
-	}
+    @Override
+    public boolean isSynthetic() {
+        return false;
+    }
+
+    @Nonnull
+    @Override
+    public Unity3dPackageOrderEntryModel clone() {
+        return new Unity3dPackageOrderEntryModel(myName, myVersion, getFileUrl());
+    }
 }

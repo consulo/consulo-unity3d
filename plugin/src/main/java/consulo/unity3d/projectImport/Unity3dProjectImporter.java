@@ -674,10 +674,10 @@ public class Unity3dProjectImporter {
             if (archiveRootForLocalFile != null) {
                 Library library = layer.getModuleLibraryTable().createLibrary();
                 Library.ModifiableModel modifiableModel = library.getModifiableModel();
-                modifiableModel.addRoot(archiveRootForLocalFile, BinariesOrderRootType.getInstance());
+                modifiableModel.addRoot(archiveRootForLocalFile, BinariesOrderRootType.ID);
                 VirtualFile docFile = virtualFile.getParent().findChild(virtualFile.getNameWithoutExtension() + ".xml");
                 if (docFile != null) {
-                    modifiableModel.addRoot(docFile, DocumentationOrderRootType.getInstance());
+                    modifiableModel.addRoot(docFile, DocumentationOrderRootType.ID);
                 }
                 modifiableModel.commit();
 
