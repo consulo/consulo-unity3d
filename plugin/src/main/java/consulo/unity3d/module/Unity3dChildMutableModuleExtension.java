@@ -22,7 +22,6 @@ import consulo.module.content.layer.ModuleRootLayer;
 import consulo.module.extension.MutableModuleInheritableNamedPointer;
 import consulo.ui.Component;
 import consulo.ui.annotation.RequiredUIAccess;
-
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
@@ -30,37 +29,31 @@ import jakarta.annotation.Nullable;
  * @author VISTALL
  * @since 29.03.2015
  */
-public class Unity3dChildMutableModuleExtension extends Unity3dChildModuleExtension implements Unity3dMutableModuleExtension<Unity3dChildModuleExtension>
-{
-	public Unity3dChildMutableModuleExtension(@Nonnull String id, @Nonnull ModuleRootLayer moduleRootLayer)
-	{
-		super(id, moduleRootLayer);
-	}
+public class Unity3dChildMutableModuleExtension extends Unity3dChildModuleExtension implements Unity3dMutableModuleExtension<Unity3dChildModuleExtension> {
+    public Unity3dChildMutableModuleExtension(@Nonnull String id, @Nonnull ModuleRootLayer moduleRootLayer) {
+        super(id, moduleRootLayer);
+    }
 
-	@Nonnull
-	@Override
-	public MutableModuleInheritableNamedPointer<Sdk> getInheritableSdk()
-	{
-		return (MutableModuleInheritableNamedPointer<Sdk>) super.getInheritableSdk();
-	}
+    @Nonnull
+    @Override
+    public MutableModuleInheritableNamedPointer<Sdk> getInheritableSdk() {
+        return (MutableModuleInheritableNamedPointer<Sdk>) super.getInheritableSdk();
+    }
 
-	@RequiredUIAccess
-	@Nullable
-	@Override
-	public Component createConfigurationComponent(@Nonnull Disposable disposable, @Nonnull Runnable runnable)
-	{
-		return null;
-	}
+    @RequiredUIAccess
+    @Nullable
+    @Override
+    public Component createConfigurationComponent(@Nonnull Disposable disposable, @Nonnull Runnable runnable) {
+        return null;
+    }
 
-	@Override
-	public void setEnabled(boolean val)
-	{
-		myIsEnabled = val;
-	}
+    @Override
+    public void setEnabled(boolean val) {
+        myIsEnabled = val;
+    }
 
-	@Override
-	public boolean isModified(@Nonnull Unity3dChildModuleExtension originalExtension)
-	{
-		return myIsEnabled != originalExtension.isEnabled();
-	}
+    @Override
+    public boolean isModified(@Nonnull Unity3dChildModuleExtension originalExtension) {
+        return myIsEnabled != originalExtension.isEnabled();
+    }
 }
