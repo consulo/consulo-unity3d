@@ -9,23 +9,23 @@ empty.magic.method.inspection.message:
 inspection.unity.group.name:
     text: Unity (Game Engine)
 new.mono.behaviour.inspection.message:
-    text: Creating MonoBehaviour's using the 'new' keyword is not allowed. MonoBehaviours can only be added using AddComponent(). Alternatively, your script can inherit from ScriptableObject or no base class at all
+    text: "Creating MonoBehaviour's using the 'new' keyword is not allowed. MonoBehaviours can only be added using AddComponent(). Alternatively, your script can inherit from ScriptableObject or no base class at all"
 ongui.method.inspection.message:
     text: Using OnGUI causes allocations and GC spikes
 plugin.name:
     text: Unity (Game Engine)
 required.unity.version.is.0:
-    text: 'NOTE: Target project require Unity ''''{0}'''''
+    text: "NOTE: Target project require Unity ''{0}''"
 syncing.0.module:
-    text: Syncing ''{0}'' module
+    text: "Syncing ''{0}'' module"
 unity.0.sdk.is.broken:
-    text: Unity by name ''{0}'' is broken.
+    text: "Unity by name ''{0}'' is broken."
 unity.0.sdk.is.broken.required.version:
-    text: 'Unity by name ''''{0}'''' is broken. Required version: ''''{1}'''''
+    text: "Unity by name ''{0}'' is broken. Required version: ''{1}''"
 unity.0.sdk.is.not.defined:
-    text: Unity by name ''{0}'' is missed.
+    text: "Unity by name ''{0}'' is missed."
 unity.0.sdk.is.not.defined.required.version:
-    text: 'Unity by name ''''{0}'''' is missed. Required version: ''''{1}'''''
+    text: "Unity by name ''{0}'' is missed. Required version: ''{1}''"
 unity.debug.attach.configuration.name:
     text: Unity Debug Attach
 unity.import.analyzing.0.task:
@@ -35,6 +35,6 @@ unity.name:
 unity.sdk.is.not.defined:
     text: Unity is not selected.
 unity.sdk.is.not.defined.required.version:
-    text: 'Unity is not selected. Required version: ''''{0}'''''
+    text: "Unity is not selected. Required version: ''{0}''"
 unity.test.configuration.name:
     text: Unity Test

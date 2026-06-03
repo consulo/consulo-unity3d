@@ -1,0 +1,23 @@
+{
+  "lockVersion" : 1,
+  "server" : "https://i.verbaria.org/",
+  "project" : "consulo-unity3d",
+  "projectVersion" : "master",
+  "generatedAt" : "2026-06-03T18:26:07.717703431Z",
+  "documents" : {
+    "consulo.unity3d.Unity3dLocalize" : {
+      "source" : {
+        "revision" : 1,
+        "sig" : "782259d1d3470c9494562253c5657182"
+      },
+      "translations" : {
+        "en-US" : {
+          "sig" : "6b715e230421f13063ef71c66cee00c0",
+          "state" : "Approved",
+          "total" : 20,
+          "translators" : [ "Valery Semenchuk <vistall.valeriy@gmail.com>" ]
+        }
+      }
+    }
+  }
+}

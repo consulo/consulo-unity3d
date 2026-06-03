@@ -1,0 +1,12 @@
+{
+    "url": "https://i.verbaria.org/",
+    "project": "consulo-unity3d",
+    "projectVersion": "master",
+    "projectType": "consulo",
+    "srcDir": ".",
+    "targetLocales": [
+        "en-US"
+    ],
+    "includes": "**/src/main/resources/LOCALIZE-LIB/en_US/**/*",
+    "excludes": "**/target/**"
+}
