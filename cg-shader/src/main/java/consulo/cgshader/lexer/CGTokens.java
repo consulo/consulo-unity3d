@@ -18,26 +18,25 @@ package consulo.cgshader.lexer;
 
 import consulo.cgshader.CGLanguage;
 import consulo.language.ast.IElementType;
-import consulo.language.ast.TokenType;
+import consulo.language.ast.StandardTokenTypes;
 
 /**
  * @author VISTALL
  * @since 11.10.2015
  */
-public interface CGTokens extends TokenType
-{
-	IElementType LINE_COMMENT = new IElementType("CG_LINE_COMMENT", CGLanguage.INSTANCE);
-	IElementType BLOCK_COMMENT = new IElementType("CG_BLOCK_COMMENT", CGLanguage.INSTANCE);
+public interface CGTokens extends StandardTokenTypes {
+    IElementType LINE_COMMENT = new IElementType("CG_LINE_COMMENT", CGLanguage.INSTANCE);
+    IElementType BLOCK_COMMENT = new IElementType("CG_BLOCK_COMMENT", CGLanguage.INSTANCE);
 
-	IElementType LBRACE = new IElementType("CG_LBRACE", CGLanguage.INSTANCE);
-	IElementType RBRACE = new IElementType("CG_RBRACE", CGLanguage.INSTANCE);
-	IElementType LPAR = new IElementType("CG_LPAR", CGLanguage.INSTANCE);
-	IElementType RPAR = new IElementType("CG_RPAR", CGLanguage.INSTANCE);
-	IElementType LBRACKET = new IElementType("CG_LBRACKET", CGLanguage.INSTANCE);
-	IElementType RBRACKET = new IElementType("CG_RBRACKET", CGLanguage.INSTANCE);
-	IElementType KEYWORD = new IElementType("CG_KEYWORD", CGLanguage.INSTANCE);
-	IElementType STRING_LITERAL = new IElementType("CG_STRING_LITERAL", CGLanguage.INSTANCE);
-	IElementType NUMBER_LITERAL = new IElementType("CG_NUMBER_LITERAL", CGLanguage.INSTANCE);
-	IElementType MACRO_KEYWORD = new IElementType("CG_MACRO_KEYWORD", CGLanguage.INSTANCE);
-	IElementType TEXT = new IElementType("CG_TEXT", CGLanguage.INSTANCE);
+    IElementType LBRACE = new IElementType("CG_LBRACE", CGLanguage.INSTANCE);
+    IElementType RBRACE = new IElementType("CG_RBRACE", CGLanguage.INSTANCE);
+    IElementType LPAR = new IElementType("CG_LPAR", CGLanguage.INSTANCE);
+    IElementType RPAR = new IElementType("CG_RPAR", CGLanguage.INSTANCE);
+    IElementType LBRACKET = new IElementType("CG_LBRACKET", CGLanguage.INSTANCE);
+    IElementType RBRACKET = new IElementType("CG_RBRACKET", CGLanguage.INSTANCE);
+    IElementType KEYWORD = new IElementType("CG_KEYWORD", CGLanguage.INSTANCE);
+    IElementType STRING_LITERAL = new IElementType("CG_STRING_LITERAL", CGLanguage.INSTANCE);
+    IElementType NUMBER_LITERAL = new IElementType("CG_NUMBER_LITERAL", CGLanguage.INSTANCE);
+    IElementType MACRO_KEYWORD = new IElementType("CG_MACRO_KEYWORD", CGLanguage.INSTANCE);
+    IElementType TEXT = new IElementType("CG_TEXT", CGLanguage.INSTANCE);
 }
