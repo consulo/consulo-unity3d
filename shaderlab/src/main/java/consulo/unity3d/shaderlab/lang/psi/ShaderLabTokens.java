@@ -17,46 +17,45 @@
 package consulo.unity3d.shaderlab.lang.psi;
 
 import consulo.language.ast.IElementType;
-import consulo.language.ast.TokenType;
+import consulo.language.ast.StandardTokenTypes;
 import consulo.unity3d.shaderlab.lang.ShaderLabLanguage;
 
 /**
  * @author VISTALL
  * @since 08.05.2015
  */
-public interface ShaderLabTokens extends TokenType
-{
-	IElementType IDENTIFIER = new IElementType("IDENTIFIER", ShaderLabLanguage.INSTANCE);
+public interface ShaderLabTokens extends StandardTokenTypes {
+    IElementType IDENTIFIER = new IElementType("IDENTIFIER", ShaderLabLanguage.INSTANCE);
 
-	IElementType LINE_COMMENT = new IElementType("LINE_COMMENT", ShaderLabLanguage.INSTANCE);
+    IElementType LINE_COMMENT = new IElementType("LINE_COMMENT", ShaderLabLanguage.INSTANCE);
 
-	IElementType BLOCK_COMMENT = new IElementType("BLOCK_COMMENT", ShaderLabLanguage.INSTANCE);
+    IElementType BLOCK_COMMENT = new IElementType("BLOCK_COMMENT", ShaderLabLanguage.INSTANCE);
 
-	IElementType INTEGER_LITERAL = new IElementType("INTEGER_LITERAL", ShaderLabLanguage.INSTANCE);
+    IElementType INTEGER_LITERAL = new IElementType("INTEGER_LITERAL", ShaderLabLanguage.INSTANCE);
 
-	IElementType STRING_LITERAL = new IElementType("STRING_LITERAL", ShaderLabLanguage.INSTANCE);
+    IElementType STRING_LITERAL = new IElementType("STRING_LITERAL", ShaderLabLanguage.INSTANCE);
 
-	IElementType COMMA = new IElementType("COMMA", ShaderLabLanguage.INSTANCE);
+    IElementType COMMA = new IElementType("COMMA", ShaderLabLanguage.INSTANCE);
 
-	IElementType LBRACE = new IElementType("LBRACE", ShaderLabLanguage.INSTANCE);
+    IElementType LBRACE = new IElementType("LBRACE", ShaderLabLanguage.INSTANCE);
 
-	IElementType RBRACE = new IElementType("RBRACE", ShaderLabLanguage.INSTANCE);
+    IElementType RBRACE = new IElementType("RBRACE", ShaderLabLanguage.INSTANCE);
 
-	IElementType EQ = new IElementType("EQ", ShaderLabLanguage.INSTANCE);
+    IElementType EQ = new IElementType("EQ", ShaderLabLanguage.INSTANCE);
 
-	IElementType LPAR = new IElementType("LPAR", ShaderLabLanguage.INSTANCE);
+    IElementType LPAR = new IElementType("LPAR", ShaderLabLanguage.INSTANCE);
 
-	IElementType RPAR = new IElementType("RPAR", ShaderLabLanguage.INSTANCE);
+    IElementType RPAR = new IElementType("RPAR", ShaderLabLanguage.INSTANCE);
 
-	IElementType LBRACKET = new IElementType("LBRACKET", ShaderLabLanguage.INSTANCE);
+    IElementType LBRACKET = new IElementType("LBRACKET", ShaderLabLanguage.INSTANCE);
 
-	IElementType RBRACKET = new IElementType("RBRACKET", ShaderLabLanguage.INSTANCE);
+    IElementType RBRACKET = new IElementType("RBRACKET", ShaderLabLanguage.INSTANCE);
 
-	IElementType CGPROGRAM_KEYWORD = new IElementType("CGPROGRAM_KEYWORD", ShaderLabLanguage.INSTANCE);
+    IElementType CGPROGRAM_KEYWORD = new IElementType("CGPROGRAM_KEYWORD", ShaderLabLanguage.INSTANCE);
 
-	IElementType CGINCLUDE_KEYWORD = new IElementType("CGINCLUDE_KEYWORD", ShaderLabLanguage.INSTANCE);
+    IElementType CGINCLUDE_KEYWORD = new IElementType("CGINCLUDE_KEYWORD", ShaderLabLanguage.INSTANCE);
 
-	IElementType ENDCG_KEYWORD = new IElementType("ENDCG_KEYWORD", ShaderLabLanguage.INSTANCE);
+    IElementType ENDCG_KEYWORD = new IElementType("ENDCG_KEYWORD", ShaderLabLanguage.INSTANCE);
 
-	IElementType SHADERSCRIPT = new IElementType("SHADERSCRIPT", ShaderLabLanguage.INSTANCE);
+    IElementType SHADERSCRIPT = new IElementType("SHADERSCRIPT", ShaderLabLanguage.INSTANCE);
 }
