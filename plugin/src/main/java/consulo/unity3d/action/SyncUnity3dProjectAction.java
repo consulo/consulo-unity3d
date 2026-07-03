@@ -20,15 +20,14 @@ import consulo.annotation.component.ActionImpl;
 import consulo.language.editor.CommonDataKeys;
 import consulo.project.Project;
 import consulo.ui.annotation.RequiredUIAccess;
-import consulo.ui.ex.action.AnAction;
-import consulo.ui.ex.action.AnActionEvent;
-import consulo.ui.ex.action.Presentation;
+import consulo.ui.ex.action.*;
+import consulo.ui.ex.action.coroutine.ActionSafeReadLock;
 import consulo.unity3d.Unity3dIcons;
 import consulo.unity3d.module.Unity3dModuleExtensionUtil;
 import consulo.unity3d.module.Unity3dRootModuleExtension;
 import consulo.unity3d.projectImport.Unity3dProjectImporter;
+import consulo.util.concurrent.coroutine.Coroutine;
 import consulo.virtualFileSystem.VirtualFile;
-
 import jakarta.annotation.Nonnull;
 
 /**
@@ -36,54 +35,45 @@ import jakarta.annotation.Nonnull;
  * @since 03.04.2015
  */
 @ActionImpl(id = "SyncUnity3dProject")
-public class SyncUnity3dProjectAction extends AnAction
-{
-	public SyncUnity3dProjectAction()
-	{
-		super(Unity3dIcons.Unity3d);
-	}
+public class SyncUnity3dProjectAction extends AnAction implements AnActionWithAsyncUpdate {
+    public SyncUnity3dProjectAction() {
+        super(Unity3dIcons.Unity3d);
+    }
 
-	@Override
-	@RequiredUIAccess
-	public void actionPerformed(@Nonnull AnActionEvent anActionEvent)
-	{
-		final Project project = anActionEvent.getData(Project.KEY);
-		if(project == null)
-		{
-			return;
-		}
-		final Unity3dRootModuleExtension rootModuleExtension = Unity3dModuleExtensionUtil.getRootModuleExtension(project);
-		if(rootModuleExtension == null)
-		{
-			return;
-		}
+    @Override
+    @RequiredUIAccess
+    public void actionPerformed(@Nonnull AnActionEvent anActionEvent) {
+        final Project project = anActionEvent.getData(Project.KEY);
+        if (project == null) {
+            return;
+        }
+        final Unity3dRootModuleExtension rootModuleExtension = Unity3dModuleExtensionUtil.getRootModuleExtension(project);
+        if (rootModuleExtension == null) {
+            return;
+        }
 
-		Unity3dProjectImporter.syncProjectStep(project, rootModuleExtension.getSdk(), null, true);
-	}
+        Unity3dProjectImporter.syncProjectStep(project, rootModuleExtension.getSdk(), null, true);
+    }
 
-	@RequiredUIAccess
-	@Override
-	public void update(@Nonnull AnActionEvent e)
-	{
-		Presentation presentation = e.getPresentation();
-		Project project = e.getData(Project.KEY);
-		if(project == null || Unity3dModuleExtensionUtil.getRootModuleExtension(project) == null)
-		{
-			presentation.setEnabledAndVisible(false);
-			return;
-		}
+    @Override
+    public Coroutine<?, ?> updateAsync(AnActionEvent e) {
+        return ActionSafeReadLock.run(e, presentation -> {
+            Project project = e.getData(Project.KEY);
+            if (project == null || Unity3dModuleExtensionUtil.getRootModuleExtension(project) == null) {
+                presentation.setEnabledAndVisible(false);
+                return;
+            }
 
-		VirtualFile virtualFile = e.getData(CommonDataKeys.VIRTUAL_FILE);
-		if(virtualFile == null || !virtualFile.equals(project.getBaseDir()))
-		{
-			presentation.setEnabledAndVisible(false);
-			return;
-		}
+            VirtualFile virtualFile = e.getData(VirtualFile.KEY);
+            if (virtualFile == null || !virtualFile.equals(project.getBaseDir())) {
+                presentation.setEnabledAndVisible(false);
+                return;
+            }
 
-		if(project.getUserData(Unity3dProjectImporter.ourInProgressFlag) == Boolean.TRUE)
-		{
-			presentation.setEnabled(false);
-			presentation.setVisible(true);
-		}
-	}
+            if (project.getUserData(Unity3dProjectImporter.ourInProgressFlag) == Boolean.TRUE) {
+                presentation.setEnabled(false);
+                presentation.setVisible(true);
+            }
+        }).toCoroutine();
+    }
 }
