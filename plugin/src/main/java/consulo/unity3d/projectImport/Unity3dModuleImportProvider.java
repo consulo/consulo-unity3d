@@ -18,12 +18,14 @@ package consulo.unity3d.projectImport;
 
 import consulo.annotation.access.RequiredReadAction;
 import consulo.annotation.component.ExtensionImpl;
+import consulo.application.concurrent.coroutine.ReadLock;
 import consulo.content.bundle.Sdk;
 import consulo.localize.LocalizeValue;
 import consulo.module.ModifiableModuleModel;
 import consulo.module.Module;
 import consulo.module.creation.importing.ModuleImportProvider;
 import consulo.project.Project;
+import consulo.project.ProjectRunOneService;
 import consulo.project.startup.StartupManager;
 import consulo.ui.ex.wizard.WizardStep;
 import consulo.ui.image.Image;
@@ -31,6 +33,7 @@ import consulo.unity3d.icon.Unity3dIconGroup;
 import consulo.unity3d.jsonApi.UnityOpenFilePostHandlerRequest;
 import consulo.unity3d.localize.Unity3dLocalize;
 import consulo.unity3d.projectImport.ui.Unity3dWizardStep;
+import consulo.util.concurrent.coroutine.Coroutine;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 import jakarta.inject.Inject;
@@ -84,19 +87,21 @@ public class Unity3dModuleImportProvider implements ModuleImportProvider<UnityMo
         return fileOrDirectory.isDirectory() && new File(fileOrDirectory, "ProjectSettings/ProjectSettings.asset").exists();
     }
 
-    @RequiredReadAction
     @Override
-    public void process(@Nonnull UnityModuleImportContext context, @Nonnull Project project, @Nonnull ModifiableModuleModel model, @Nonnull Consumer<Module> newModuleConsumer) {
-        Sdk unitySdk = context.getSdk();
-        UnityOpenFilePostHandlerRequest requestor = context.getRequestor();
+    public Coroutine<Object, Object> process(@Nonnull UnityModuleImportContext context, @Nonnull Project project, @Nonnull ModifiableModuleModel model, @Nonnull Consumer<Module> newModuleConsumer) {
+        return ReadLock.apply(i -> {
+            Sdk unitySdk = context.getSdk();
 
-        Module rootModule = model.newModule(project.getName(), project.getBasePath());
+            UnityOpenFilePostHandlerRequest requestor = context.getRequestor();
 
-        newModuleConsumer.accept(rootModule);
+            Module rootModule = model.newModule(project.getName(), project.getBasePath());
 
-        StartupManager.getInstance(project).registerPostStartupActivity(() -> Unity3dProjectImporter.syncProjectStep(project, unitySdk, requestor, true));
+            newModuleConsumer.accept(rootModule);
 
-    }
+            project.getInstance(ProjectRunOneService.class).register(UnityRunOneExtension.ID, new UnityRunOneExtension.Data(unitySdk == null ? null : unitySdk.getName(), requestor));
+            return null;
+        }).toCoroutine();
+     }
 
     @Override
     public void buildSteps(@Nonnull Consumer<WizardStep<UnityModuleImportContext>> consumer, @Nonnull UnityModuleImportContext context) {
