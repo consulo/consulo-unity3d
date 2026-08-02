@@ -35,7 +35,7 @@ import consulo.ui.UIAccess;
 import consulo.ui.annotation.RequiredUIAccess;
 import consulo.ui.ex.awtUnsafe.TargetAWT;
 import consulo.ui.layout.DockLayout;
-import consulo.ui.model.MutableListModel;
+import consulo.ui.model.MutableFlatDataModel;
 import consulo.ui.style.StandardColors;
 import consulo.ui.util.FormBuilder;
 import consulo.unity3d.bundle.Unity3dBundleType;
@@ -83,7 +83,7 @@ public class Unity3dWizardStep extends UnifiedProjectOrModuleNameStep<UnityModul
             {
                 WriteAction.run(() -> SdkTable.getInstance().addSdk(sdk));
 
-                MutableListModel<BundleBox.BundleBoxItem> listModel = (MutableListModel<BundleBox.BundleBoxItem>) comboBox.getListModel();
+                MutableFlatDataModel<BundleBox.BundleBoxItem> listModel = (MutableFlatDataModel<BundleBox.BundleBoxItem>) comboBox.getDataModel();
 
                 BundleBox.BaseBundleBoxItem item = new BundleBox.BaseBundleBoxItem(sdk);
 
@@ -95,7 +95,7 @@ public class Unity3dWizardStep extends UnifiedProjectOrModuleNameStep<UnityModul
         builder.addLabeled(Unity3dLocalize.unityName(), dock);
 
         if (requiredVersion != null) {
-            for (BundleBox.BundleBoxItem item : comboBox.getListModel()) {
+            for (BundleBox.BundleBoxItem item : comboBox.getDataModel()) {
                 Sdk bundle = item.getBundle();
 
                 if (bundle != null) {
@@ -108,7 +108,7 @@ public class Unity3dWizardStep extends UnifiedProjectOrModuleNameStep<UnityModul
             }
         }
 
-        if (comboBox.getValue() == null && comboBox.getListModel().getSize() > 0) {
+        if (comboBox.getValue() == null && comboBox.getDataModel().getSize() > 0) {
             myBundleBox.getComponent().setValueByIndex(0);
         }
 
@@ -123,8 +123,7 @@ public class Unity3dWizardStep extends UnifiedProjectOrModuleNameStep<UnityModul
 
         Unity3dBundleType type = Unity3dBundleType.getInstance();
 
-        SdkUtil.selectSdkHome(Unity3dBundleType.getInstance(), home ->
-        {
+        SdkUtil.selectSdkHome(Unity3dBundleType.getInstance(), home -> {
             String newSdkName = SdkUtil.createUniqueSdkName(type, home, settingsUtil.getSdksModel().getBundles());
             Sdk newSdk = SdkTable.getInstance().createSdk(newSdkName, type);
 
