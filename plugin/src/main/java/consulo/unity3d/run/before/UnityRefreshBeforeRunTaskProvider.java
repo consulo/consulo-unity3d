@@ -42,6 +42,9 @@ import consulo.util.lang.TimeoutUtil;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.CompletableFuture;
+
 /**
  * @author VISTALL
  * @since 21.01.2016
@@ -82,17 +85,16 @@ public class UnityRefreshBeforeRunTaskProvider extends BeforeRunTaskProvider<Uni
     @RequiredUIAccess
     @Nonnull
     @Override
-    public AsyncResult<Void> configureTask(RunConfiguration runConfiguration, UnityRefreshBeforeRunTask task) {
-        return AsyncResult.rejected();
+    public CompletableFuture<Void> configureTask(RunConfiguration runConfiguration, UnityRefreshBeforeRunTask task) {
+        return CompletableFuture.failedFuture(new CancellationException());
     }
 
     @Nonnull
     @Override
-    public AsyncResult<Void> executeTaskAsync(UIAccess uiAccess, DataContext context, RunConfiguration configuration, ExecutionEnvironment env, UnityRefreshBeforeRunTask task) {
-        AsyncResult<Void> result = AsyncResult.undefined();
+    public CompletableFuture<Void> executeTaskAsync(UIAccess uiAccess, DataContext context, RunConfiguration configuration, ExecutionEnvironment env, UnityRefreshBeforeRunTask task) {
+        CompletableFuture<Void> result = new CompletableFuture<>();
 
-        uiAccess.give(() ->
-        {
+        uiAccess.give(() -> {
             FileDocumentManager.getInstance().saveAllDocuments();
 
             Task.Backgroundable.queue(env.getProject(), "Queue UnityEditor refresh", true, indicator -> {
@@ -102,10 +104,10 @@ public class UnityRefreshBeforeRunTaskProvider extends BeforeRunTaskProvider<Uni
 
                 UnityPingPong.Token<Boolean> accessToken = UnityPingPong.wantReply(postObject.uuid, o -> {
                     if (o) {
-                        result.setDone();
+                        result.complete(null);
                     }
                     else {
-                        result.setRejected();
+                        result.completeExceptionally(new CancellationException());
                     }
                     receiveData[0] = o;
                 });
@@ -127,7 +129,7 @@ public class UnityRefreshBeforeRunTaskProvider extends BeforeRunTaskProvider<Uni
                     TimeoutUtil.sleep(500L);
                 }
             });
-        }).doWhenRejectedWithThrowable(result::rejectWithThrowable);
+        });
 
         return result;
     }

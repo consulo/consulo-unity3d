@@ -150,12 +150,16 @@ public class UnityOpenFilePostHandler extends JsonPostRequestHandler<UnityOpenFi
 
                         Unity3dModuleImportProvider importProvider = new Unity3dModuleImportProvider(targetSdk, body);
 
-                        AsyncResult<Pair<ModuleImportContext, ModuleImportProvider<ModuleImportContext>>> result = AsyncResult.undefined();
+                        CompletableFuture<Pair<ModuleImportContext, ModuleImportProvider<ModuleImportContext>>> result = new CompletableFuture<>();
 
                         myApplication.getInstance(ModuleCreationHelper.class)
                             .showImportChooser(null, projectVirtualFile, Collections.singletonList(importProvider), result);
 
-                        result.doWhenDone(pair -> {
+                        result.whenComplete((pair, e) -> {
+                            if (pair == null) {
+                                return;
+                            }
+
                             ModuleImportContext context = pair.getFirst();
 
                             ModuleImportProvider<ModuleImportContext> provider = pair.getSecond();
