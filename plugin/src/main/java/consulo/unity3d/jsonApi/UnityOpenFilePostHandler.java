@@ -22,15 +22,14 @@ import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.WinDef;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.application.Application;
-import consulo.application.concurrent.coroutine.WriteLock;
 import consulo.application.ui.wm.IdeFocusManager;
 import consulo.builtinWebServer.json.JsonPostRequestHandler;
 import consulo.codeEditor.Editor;
 import consulo.content.bundle.Sdk;
 import consulo.content.bundle.SdkTable;
 import consulo.content.bundle.SdkUtil;
-import consulo.disposer.Disposer;
 import consulo.fileEditor.FileEditorManager;
+import consulo.localize.LocalizeValue;
 import consulo.module.creation.ModuleCreationHelper;
 import consulo.module.creation.NewOrImportModuleUtil;
 import consulo.module.creation.importing.ModuleImportContext;
@@ -46,13 +45,14 @@ import consulo.project.startup.StartupManager;
 import consulo.project.ui.wm.IdeFrame;
 import consulo.project.ui.wm.WindowManager;
 import consulo.project.util.ProjectUtil;
+import consulo.ui.Alert;
+import consulo.ui.Alerts;
 import consulo.ui.UIAccess;
+import consulo.ui.UIAction;
 import consulo.ui.ex.awt.Messages;
-import consulo.ui.ex.awt.UIUtil;
 import consulo.ui.ex.awtUnsafe.TargetAWT;
 import consulo.unity3d.bundle.Unity3dBundleType;
 import consulo.unity3d.projectImport.Unity3dModuleImportProvider;
-import consulo.util.concurrent.AsyncResult;
 import consulo.util.concurrent.coroutine.Coroutine;
 import consulo.util.concurrent.coroutine.CoroutineScope;
 import consulo.util.concurrent.coroutine.step.CodeExecution;
@@ -68,6 +68,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
@@ -79,11 +80,13 @@ import java.util.concurrent.CompletableFuture;
 public class UnityOpenFilePostHandler extends JsonPostRequestHandler<UnityOpenFilePostHandlerRequest> {
     private static final Set<String> ourSupportedContentTypes = Set.of("UnityEditor.MonoScript", "UnityEngine.Shader");
     private final Application myApplication;
+    private final SdkTable mySdkTable;
 
     @Inject
-    public UnityOpenFilePostHandler(Application application) {
+    public UnityOpenFilePostHandler(Application application, SdkTable sdkTable) {
         super("unityOpenFile", UnityOpenFilePostHandlerRequest.class);
         myApplication = application;
+        mySdkTable = sdkTable;
     }
 
     @Nonnull
@@ -95,121 +98,145 @@ public class UnityOpenFilePostHandler extends JsonPostRequestHandler<UnityOpenFi
             return JsonResponse.asError("unsupported-content-type");
         }
 
-        UIUtil.invokeLaterIfNeeded(() ->
-        {
-            UIAccess uiAccess = UIAccess.current();
+        VirtualFile projectVirtualFile = LocalFileSystem.getInstance().findFileByPath(body.projectPath);
+        if (projectVirtualFile == null) {
+            return JsonResponse.asError("project-dir-not-exists");
+        }
 
-            VirtualFile projectVirtualFile = LocalFileSystem.getInstance().findFileByPath(body.projectPath);
-            if (projectVirtualFile != null) {
-                Project targetProject = null;
-                Project[] openProjects = ProjectManager.getInstance().getOpenProjects();
-                for (Project openProject : openProjects) {
-                    if (ProjectUtil.isSameProject(body.projectPath, openProject)) {
-                        targetProject = openProject;
-                        break;
-                    }
+        Project targetProject = null;
+        Project[] openProjects = ProjectManager.getInstance().getOpenProjects();
+        for (Project openProject : openProjects) {
+            if (ProjectUtil.isSameProject(body.projectPath, openProject)) {
+                targetProject = openProject;
+                break;
+            }
+        }
+
+        if (targetProject != null) {
+            final Project finalTargetProject = targetProject;
+            StartupManager.getInstance(targetProject).runWhenProjectIsInitialized(() -> {
+                postOpenFileRequest(finalTargetProject, finalTargetProject.getUIAccess(), body);
+            });
+            return JsonResponse.asSuccess(null);
+        }
+
+        if (!new File(projectVirtualFile.getPath(), Project.DIRECTORY_STORE_FOLDER).exists()) {
+            String sdkPath = Platform.current().os().isMac() ? body.editorPath : new File(body.editorPath).getParentFile().getParentFile().getPath();
+
+            VirtualFile sdkFileHome = LocalFileSystem.getInstance().findFileByPath(sdkPath);
+            if (sdkFileHome == null) {
+                IdeFrame frame = WindowManager.getInstance().findVisibleIdeFrame();
+                if (frame != null) {
+                    frame.activate();
                 }
+                myApplication.invokeLater(() -> Alerts.okError(LocalizeValue.localizeTODO("Unity path is not resolved: " + sdkPath)).showAsync());
+                return JsonResponse.asError("unity-sdk-not-found");
+            }
 
-                if (targetProject == null) {
-                    if (!new File(projectVirtualFile.getPath(), Project.DIRECTORY_STORE_FOLDER).exists()) {
-                        String sdkPath = Platform.current().os().isMac() ? body.editorPath : new File(body.editorPath).getParentFile().getParentFile().getPath();
-
-                        VirtualFile sdkFileHome = LocalFileSystem.getInstance().findFileByPath(sdkPath);
-                        if (sdkFileHome == null) {
-                            IdeFrame frame = WindowManager.getInstance().findVisibleIdeFrame();
-                            if (frame != null) {
-                                frame.activate();
-                            }
-                            Messages.showErrorDialog("Unity path is not resolved: " + sdkPath, "Consulo");
-                            return;
-                        }
-
-                        Sdk targetSdk = null;
-                        List<Sdk> sdksOfType = SdkTable.getInstance().getSdksOfType(Unity3dBundleType.getInstance());
-                        for (Sdk sdk : sdksOfType) {
-                            VirtualFile homeDirectory = sdk.getHomeDirectory();
-                            if (sdkFileHome.equals(homeDirectory)) {
-                                targetSdk = sdk;
-                                break;
-                            }
-                        }
-
-                        if (targetSdk == null) {
-                            targetSdk = SdkUtil.createAndAddSDK(sdkPath, Unity3dBundleType.getInstance(), uiAccess);
-                        }
-
-                        if (targetSdk == null) {
-                            IdeFrame frame = WindowManager.getInstance().findVisibleIdeFrame();
-                            if (frame != null) {
-                                frame.activate();
-                            }
-                            Messages.showErrorDialog("Unity SDK cant add by path: " + sdkPath, "Consulo");
-                            return;
-                        }
-
-
-                        Unity3dModuleImportProvider importProvider = new Unity3dModuleImportProvider(targetSdk, body);
-
-                        CompletableFuture<Pair<ModuleImportContext, ModuleImportProvider<ModuleImportContext>>> result = new CompletableFuture<>();
-
-                        myApplication.getInstance(ModuleCreationHelper.class)
-                            .showImportChooser(null, projectVirtualFile, Collections.singletonList(importProvider), result);
-
-                        result.whenComplete((pair, e) -> {
-                            if (pair == null) {
-                                return;
-                            }
-
-                            ModuleImportContext context = pair.getFirst();
-
-                            ModuleImportProvider<ModuleImportContext> provider = pair.getSecond();
-
-                            Coroutine<Void, Project> importProjectAsync = NewOrImportModuleUtil.importProject(context, provider, uiAccess);
-
-                            CoroutineScope scope = CoroutineScope.of(myApplication.coroutineContext());
-                            scope.putCopyableUserData(UIAccess.KEY, uiAccess);
-
-                            importProjectAsync
-                                .then(WriteLock.apply((project, continuation) -> {
-                                    String basePath = project.getBasePath();
-                                    Disposer.dispose(project);
-                                    return basePath;
-                                }))
-                                .then(CompletableFutureStep.await(path -> {
-                                    return ProjectManager.getInstance().openProjectAsync(Path.of(path), uiAccess, new ProjectOpenContext());
-                                }))
-                                .then(CodeExecution.consume((project, continuation) -> {
-                                    if (project != null) {
-                                        postOpenFileRequest(project, uiAccess, body);
-                                    }
-                                }));
-
-                            importProjectAsync.runAsync(scope, null);
-                        });
-                    }
-                    else {
-                        CompletableFuture<Project> result = ProjectManager.getInstance()
-                            .openProjectAsync(projectVirtualFile.toNioPath(), uiAccess, new ProjectOpenContext());
-
-                        result.whenComplete((project, t) -> {
-                            if (project != null) {
-                                postOpenFileRequest(project, uiAccess, body);
-                            }
-                        });
-                    }
-                }
-                else {
-                    final Project project = targetProject;
-                    StartupManager.getInstance(project).runWhenProjectIsInitialized(() -> postOpenFileRequest(project, uiAccess, body));
+            Sdk targetSdk = null;
+            List<Sdk> sdksOfType = mySdkTable.getSdksOfType(Unity3dBundleType.getInstance());
+            for (Sdk sdk : sdksOfType) {
+                VirtualFile homeDirectory = sdk.getHomeDirectory();
+                if (sdkFileHome.equals(homeDirectory)) {
+                    targetSdk = sdk;
+                    break;
                 }
             }
-        });
+
+            Coroutine<?, Sdk> coroutineStep;
+            if (targetSdk == null) {
+                coroutineStep = UIAction.apply((i, continuation) -> {
+                    UIAccess uiAccess = Objects.requireNonNull(continuation.getConfiguration(UIAccess.KEY));
+                    return SdkUtil.createAndAddSDK(sdkPath, Unity3dBundleType.getInstance(), uiAccess);
+                }).toCoroutine();
+            }
+            else {
+                final Sdk finalTargetSdk = targetSdk;
+                coroutineStep = CodeExecution.apply(i -> finalTargetSdk).toCoroutine();
+            }
+
+            coroutineStep = coroutineStep.then(UIAction.apply((sdk, continuation) -> {
+                if (sdk == null) {
+                    IdeFrame frame = WindowManager.getInstance().findVisibleIdeFrame();
+                    if (frame != null) {
+                        frame.activate();
+                    }
+                    Alerts.okError(LocalizeValue.localizeTODO("Unity SDK cant add by path: " + sdkPath)).showAsync();
+                    continuation.cancel();
+                    return null;
+                }
+
+                return sdk;
+            }));
+
+            Coroutine<?, Pair<ModuleImportContext, ModuleImportProvider<ModuleImportContext>>> next = coroutineStep.then(CompletableFutureStep.await((sdk, continuation) -> {
+                Unity3dModuleImportProvider importProvider = new Unity3dModuleImportProvider(sdk, body);
+
+                CompletableFuture<Pair<ModuleImportContext, ModuleImportProvider<ModuleImportContext>>> result = new CompletableFuture<>();
+
+                UIAccess uiAccess = Objects.requireNonNull(continuation.getConfiguration(UIAccess.KEY));
+
+                uiAccess.give(() -> {
+                    myApplication.getInstance(ModuleCreationHelper.class)
+                        .showImportChooser(null, projectVirtualFile, Collections.singletonList(importProvider), result);
+                });
+
+                return result;
+            }));
+
+            next = next.then(CodeExecution.apply((pair, continuation) -> {
+                UIAccess uiAccess = Objects.requireNonNull(continuation.getConfiguration(UIAccess.KEY));
+
+                ModuleImportContext context = pair.getFirst();
+
+                ModuleImportProvider<ModuleImportContext> provider = pair.getSecond();
+
+                Coroutine<Void, Project> importProjectAsync = NewOrImportModuleUtil.importProject(context, provider, uiAccess);
+
+                CoroutineScope scope = CoroutineScope.of(myApplication.coroutineContext());
+                scope.putCopyableUserData(UIAccess.KEY, uiAccess);
+
+                importProjectAsync = importProjectAsync
+                    .then(CompletableFutureStep.await(project -> {
+                        ProjectOpenContext openContext = new ProjectOpenContext();
+                        openContext.putUserData(ProjectOpenContext.ACTIVE_PROJECT, project);
+
+                        return ProjectManager.getInstance().openProjectAsync(Path.of(project.getBasePath()), uiAccess, openContext);
+                    }))
+                    .then(CodeExecution.consume((project, c) -> {
+                        if (project != null) {
+                            postOpenFileRequest(project, uiAccess, body);
+                        }
+                    }));
+
+                importProjectAsync.runAsync(scope, null);
+
+                return null;
+            }));
+
+            CoroutineScope scope = CoroutineScope.of(myApplication.coroutineContext());
+            scope.putCopyableUserData(UIAccess.KEY, myApplication.getLastUIAccess());
+
+            next.runAsync(scope, null);
+        }
+        else {
+            UIAccess uiAccess = myApplication.getLastUIAccess();
+
+            CompletableFuture<Project> result = ProjectManager.getInstance()
+                .openProjectAsync(projectVirtualFile.toNioPath(), uiAccess, new ProjectOpenContext());
+
+            result.whenComplete((project, t) -> {
+                if (project != null) {
+                    postOpenFileRequest(project, uiAccess, body);
+                }
+            });
+        }
+
         return JsonResponse.asSuccess(null);
     }
 
     private void postOpenFileRequest(@Nullable Project project, @Nonnull UIAccess uiAccess, @Nonnull UnityOpenFilePostHandlerRequest body) {
-        uiAccess.give(() ->
-        {
+        uiAccess.give(() -> {
             activateFrame(project, body);
 
             openFile(project, body);
@@ -243,9 +270,13 @@ public class UnityOpenFilePostHandler extends JsonPostRequestHandler<UnityOpenFi
             return;
         }
 
-        VirtualFile fileByPath = LocalFileSystem.getInstance().findFileByPath(body.filePath);
+        VirtualFile fileByPath = LocalFileSystem.getInstance().findFileByPathIfCached(body.filePath);
         if (fileByPath != null) {
-            OpenFileDescriptor descriptor = OpenFileDescriptorFactory.getInstance(openedProject).builder(fileByPath).line(body.line - 1).build();
+            OpenFileDescriptor descriptor = OpenFileDescriptorFactory.getInstance(openedProject)
+                .newBuilder(fileByPath)
+                .line(body.line - 1)
+                .build();
+
             Editor editor = FileEditorManager.getInstance(openedProject).openTextEditor(descriptor, true);
 
             if (editor != null) {
