@@ -18,7 +18,9 @@ package consulo.unity3d.csharp.codeInsight;
 
 import consulo.annotation.access.RequiredReadAction;
 import consulo.application.AllIcons;
+import consulo.application.Application;
 import consulo.colorScheme.EditorColorsManager;
+import consulo.colorScheme.TextAttributes;
 import consulo.colorScheme.TextAttributesKey;
 import consulo.csharp.editor.highlight.CSharpHighlightKey;
 import consulo.csharp.impl.ide.lineMarkerProvider.CSharpLineMarkerUtil;
@@ -31,16 +33,16 @@ import consulo.dotnet.psi.DotNetTypeDeclaration;
 import consulo.dotnet.psi.resolve.DotNetTypeRef;
 import consulo.dotnet.util.ArrayUtil2;
 import consulo.language.editor.gutter.GutterIconNavigationHandler;
-import consulo.language.editor.ui.PsiElementListNavigator;
-import consulo.language.psi.NavigatablePsiElement;
+import consulo.language.editor.ui.navigation.PsiTargetNavigationService;
+import consulo.language.editor.ui.navigation.TargetPresentationProvider;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiUtilCore;
 import consulo.language.psi.util.PsiTreeUtil;
+import consulo.localize.LocalizeValue;
+import consulo.navigation.NavigationService;
+import consulo.navigation.TargetPresentation;
 import consulo.project.Project;
-import consulo.ui.annotation.RequiredUIAccess;
-import consulo.ui.ex.SimpleTextAttributes;
-import consulo.ui.ex.awt.ColoredListCellRenderer;
-import consulo.ui.ex.util.TextAttributesUtil;
+import consulo.ui.TextAttribute;
 import consulo.ui.image.Image;
 import consulo.unity3d.Unity3dIcons;
 import consulo.unity3d.asset.Unity3dAssetUtil;
@@ -56,9 +58,8 @@ import consulo.util.lang.Pair;
 import consulo.util.lang.StringUtil;
 import consulo.virtualFileSystem.VirtualFile;
 import consulo.virtualFileSystem.util.VirtualFileUtil;
-
 import jakarta.annotation.Nonnull;
-import javax.swing.*;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -69,350 +70,253 @@ import java.util.function.Function;
  * @author VISTALL
  * @since 30-Aug-17
  */
-public enum Unity3dAssetCSharpLineMarker
-{
-	Type(CSharpTypeDeclaration.class, Unity3dIcons.Unity3dLineMarker)
-			{
-				@Nonnull
-				@Override
-				public GutterIconNavigationHandler<PsiElement> createNavigationHandler()
-				{
-					return (mouseEvent, element) ->
-					{
-						CSharpTypeDeclaration type = CSharpLineMarkerUtil.getNameIdentifierAs(element, CSharpTypeDeclaration.class);
-						if(type != null)
-						{
-							MultiMap<VirtualFile, Unity3dYMLAsset> files = Unity3dYMLAsset.findAssetAsAttach(type.getProject(), PsiUtilCore.getVirtualFile(type));
-							if(files.isEmpty())
-							{
-								return;
-							}
+public enum Unity3dAssetCSharpLineMarker {
+    Type(CSharpTypeDeclaration.class, Unity3dIcons.Unity3dLineMarker) {
+        @Nonnull
+        @Override
+        public GutterIconNavigationHandler<PsiElement> createNavigationHandler() {
+            return (mouseEvent, element) ->
+            {
+                CSharpTypeDeclaration type = CSharpLineMarkerUtil.getNameIdentifierAs(element, CSharpTypeDeclaration.class);
+                if (type != null) {
+                    MultiMap<VirtualFile, Unity3dYMLAsset> files = Unity3dYMLAsset.findAssetAsAttach(type.getProject(), PsiUtilCore.getVirtualFile(type));
+                    if (files.isEmpty()) {
+                        return;
+                    }
 
-							List<UnityAssetWrapper> list = new ArrayList<>();
-							for(Map.Entry<VirtualFile, Collection<Unity3dYMLAsset>> entry : files.entrySet())
-							{
-								for(Unity3dYMLAsset asset : entry.getValue())
-								{
-									String gameObjectName = asset.getGameObjectName();
-									if(gameObjectName == null)
-									{
-										continue;
-									}
+                    List<UnityAssetWrapper> list = new ArrayList<>();
+                    for (Map.Entry<VirtualFile, Collection<Unity3dYMLAsset>> entry : files.entrySet()) {
+                        for (Unity3dYMLAsset asset : entry.getValue()) {
+                            String gameObjectName = asset.getGameObjectName();
+                            if (gameObjectName == null) {
+                                continue;
+                            }
 
-									list.add(new UnityAssetWrapper(entry.getKey(), asset, asset.getStartOffset(), null, type.getProject()));
-								}
-							}
+                            list.add(new UnityAssetWrapper(entry.getKey(), asset, asset.getStartOffset(), null, type.getProject()));
+                        }
+                    }
 
-							list.sort((o1, o2) -> StringUtil.naturalCompare(o1.getVirtualFile().getPath(), o2.getVirtualFile().getPath()));
+                    list.sort((o1, o2) -> StringUtil.naturalCompare(o1.getVirtualFile().getPath(), o2.getVirtualFile().getPath()));
 
-							PsiElementListNavigator.openTargets(mouseEvent, list.toArray(new NavigatablePsiElement[list.size()]), "Unity scenes", null, new UnityListViewRender()
-							{
-								@Override
-								protected ColoredListCellRenderer<UnityAssetWrapper> createLeft()
-								{
-									return new ColoredListCellRenderer<UnityAssetWrapper>()
-									{
-										@Override
-										protected void customizeCellRenderer(@Nonnull JList<? extends UnityAssetWrapper> jList, UnityAssetWrapper unityAssetWrapper, int i, boolean b, boolean b1)
-										{
-											setIcon(ShaderLabIconGroup.shader());
+                    Application application = Application.get();
+                    application.getInstance(PsiTargetNavigationService.class)
+                        .newNavigator(() -> list)
+                        .presentationProvider((TargetPresentationProvider<UnityAssetWrapper>) wrapper -> application.getInstance(NavigationService.class)
+                            .presentationBuilder(LocalizeValue.of(wrapper.getAsset().getGameObjectName()))
+                            .withIcon(ShaderLabIconGroup.shader())
+                            .withLocationText(LocalizeValue.of(VirtualFileUtil.getRelativePath(wrapper.getVirtualFile(), type.getProject().getBaseDir())))
+                            .build())
+                        .title(LocalizeValue.localizeTODO("Unity scenes"))
+                        .navigate(mouseEvent, type.getProject());
+                }
+            };
+        }
 
-											append(unityAssetWrapper.getAsset().getGameObjectName());
-										}
-									};
-								}
+        @Nonnull
+        @Override
+        public Function<PsiElement, String> createTooltipFunction() {
+            return element -> "Attached to unity scene. Click for view";
+        }
 
-								@Override
-								protected ColoredListCellRenderer<UnityAssetWrapper> createRight()
-								{
-									return new ColoredListCellRenderer<UnityAssetWrapper>()
-									{
-										@Override
-										protected void customizeCellRenderer(@Nonnull JList<? extends UnityAssetWrapper> jList, UnityAssetWrapper unityAssetWrapper, int i, boolean b, boolean b1)
-										{
-											String relativePath = VirtualFileUtil.getRelativePath(unityAssetWrapper.getVirtualFile(), type.getProject().getBaseDir());
+        @RequiredReadAction
+        @Override
+        public boolean isAvailable(@Nonnull PsiElement element) {
+            if (!Unity3dAssetUtil.isPrimaryType(element)) {
+                return false;
+            }
 
-											append(relativePath, SimpleTextAttributes.GRAY_ATTRIBUTES);
-										}
-									};
-								}
-							});
-						}
-					};
-				}
+            MultiMap<VirtualFile, Unity3dYMLAsset> temp = Unity3dYMLAsset.findAssetAsAttach(element.getProject(), PsiUtilCore.getVirtualFile(element));
+            return !temp.isEmpty();
+        }
+    },
+    Field(CSharpFieldDeclaration.class, AllIcons.Gutter.WriteAccess) {
+        @Nonnull
+        @Override
+        public GutterIconNavigationHandler<PsiElement> createNavigationHandler() {
+            return (mouseEvent, element) ->
+            {
+                final CSharpFieldDeclaration field = CSharpLineMarkerUtil.getNameIdentifierAs(element, CSharpFieldDeclaration.class);
+                if (field != null) {
+                    MultiMap<VirtualFile, Unity3dYMLAsset> files = Unity3dYMLAsset.findAssetAsAttach(field.getProject(), PsiUtilCore.getVirtualFile(field));
 
-				@Nonnull
-				@Override
-				public Function<PsiElement, String> createTooltipFunction()
-				{
-					return element -> "Attached to unity scene. Click for view";
-				}
+                    if (files.isEmpty()) {
+                        return;
+                    }
 
-				@RequiredReadAction
-				@Override
-				public boolean isAvailable(@Nonnull PsiElement element)
-				{
-					if(!Unity3dAssetUtil.isPrimaryType(element))
-					{
-						return false;
-					}
+                    Project project = field.getProject();
+                    String name = field.getName();
 
-					MultiMap<VirtualFile, Unity3dYMLAsset> temp = Unity3dYMLAsset.findAssetAsAttach(element.getProject(), PsiUtilCore.getVirtualFile(element));
-					return !temp.isEmpty();
-				}
-			},
-	Field(CSharpFieldDeclaration.class, AllIcons.Gutter.WriteAccess)
-			{
-				@Nonnull
-				@Override
-				public GutterIconNavigationHandler<PsiElement> createNavigationHandler()
-				{
-					return (mouseEvent, element) ->
-					{
-						final CSharpFieldDeclaration field = CSharpLineMarkerUtil.getNameIdentifierAs(element, CSharpFieldDeclaration.class);
-						if(field != null)
-						{
-							MultiMap<VirtualFile, Unity3dYMLAsset> files = Unity3dYMLAsset.findAssetAsAttach(field.getProject(), PsiUtilCore.getVirtualFile(field));
+                    List<UnityAssetWrapper> list = new ArrayList<>();
+                    for (Map.Entry<VirtualFile, Collection<Unity3dYMLAsset>> entry : files.entrySet()) {
+                        for (Unity3dYMLAsset asset : entry.getValue()) {
+                            for (Unity3dYMLField yamlField : asset.getValues()) {
+                                if (Comparing.equal(yamlField.getName(), name)) {
+                                    list.add(new UnityAssetWrapper(entry.getKey(), asset, yamlField, project));
+                                }
+                            }
+                        }
+                    }
 
-							if(files.isEmpty())
-							{
-								return;
-							}
+                    list.sort((o1, o2) -> StringUtil.naturalCompare(o1.getField().getValue(), o2.getField().getValue()));
 
-							Project project = field.getProject();
-							String name = field.getName();
+                    Application.get().getInstance(PsiTargetNavigationService.class)
+                        .newNavigator(() -> list)
+                        .presentationProvider((TargetPresentationProvider<UnityAssetWrapper>) wrapper -> fieldPresentation(field, project, wrapper))
+                        .title(LocalizeValue.localizeTODO("Scene field initialize"))
+                        .navigate(mouseEvent, project);
+                }
 
-							List<UnityAssetWrapper> list = new ArrayList<>();
-							for(Map.Entry<VirtualFile, Collection<Unity3dYMLAsset>> entry : files.entrySet())
-							{
-								for(Unity3dYMLAsset asset : entry.getValue())
-								{
-									for(Unity3dYMLField yamlField : asset.getValues())
-									{
-										if(Comparing.equal(yamlField.getName(), name))
-										{
-											list.add(new UnityAssetWrapper(entry.getKey(), asset, yamlField, project));
-										}
-									}
-								}
-							}
+            };
+        }
 
-							list.sort((o1, o2) -> StringUtil.naturalCompare(o1.getField().getValue(), o2.getField().getValue()));
+        @Nonnull
+        @Override
+        public Function<PsiElement, String> createTooltipFunction() {
+            return element -> "Scene view initialize. Click for view";
+        }
 
-							NavigatablePsiElement[] ts = list.toArray(new NavigatablePsiElement[list.size()]);
-							PsiElementListNavigator.openTargets(mouseEvent, ts, "Scene field initialize", null, new UnityListViewRender()
-							{
-								private String[] myNumberTypes = new String[]{
-										DotNetTypes.System.Byte,
-										DotNetTypes.System.SByte,
-										DotNetTypes.System.Int16,
-										DotNetTypes.System.UInt16,
-										DotNetTypes.System.Int32,
-										DotNetTypes.System.UInt32,
-										DotNetTypes.System.Int64,
-										DotNetTypes.System.UInt64,
-										DotNetTypes.System.Decimal,
-										DotNetTypes.System.Single,
-										DotNetTypes.System.Double,
-								};
+        @RequiredReadAction
+        @Override
+        public boolean isAvailable(@Nonnull PsiElement element) {
+            CSharpFieldDeclaration field = (CSharpFieldDeclaration) element;
+            if (!Unity3dAssetUtil.isPrimaryType(field.getParent())) {
+                return false;
+            }
 
-								@Override
-								protected ColoredListCellRenderer<UnityAssetWrapper> createLeft()
-								{
-									return new ColoredListCellRenderer<UnityAssetWrapper>()
-									{
-										@Override
-										@RequiredUIAccess
-										protected void customizeCellRenderer(@Nonnull JList<? extends UnityAssetWrapper> jList, UnityAssetWrapper unityAssetWrapper, int i, boolean b, boolean b1)
-										{
-											setIcon(ShaderLabIconGroup.shader());
+            MultiMap<VirtualFile, Unity3dYMLAsset> files = Unity3dYMLAsset.findAssetAsAttach(field.getProject(), PsiUtilCore.getVirtualFile(field));
 
-											String prefix = null;
-											TextAttributesKey prefixKey = null;
-											String value = unityAssetWrapper.getField().getValue();
+            if (files.isEmpty()) {
+                return false;
+            }
 
-											TextAttributesKey key = null;
-											DotNetTypeRef typeRef = field.toTypeRef(true);
+            String name = field.getName();
 
-											Pair<String, DotNetTypeDeclaration> typeElement = CSharpTypeUtil.resolveTypeElement(typeRef);
-											if(typeElement != null)
-											{
-												if(DotNetTypes.System.String.equals(typeElement.getFirst()))
-												{
-													key = CSharpHighlightKey.STRING;
-												}
+            for (Map.Entry<VirtualFile, Collection<Unity3dYMLAsset>> entry : files.entrySet()) {
+                for (Unity3dYMLAsset unity3dYMLAsset : entry.getValue()) {
+                    for (Unity3dYMLField yamlField : unity3dYMLAsset.values()) {
+                        if (yamlField.name().equals(name)) {
+                            return true;
+                        }
+                    }
+                }
+            }
 
-												if(DotNetTypes.System.Char.equals(typeElement.getFirst()))
-												{
-													key = CSharpHighlightKey.STRING;
-												}
+            return false;
+        }
+    };
 
-												if(ArrayUtil.contains(typeElement.getFirst(), myNumberTypes))
-												{
-													key = CSharpHighlightKey.NUMBER;
-												}
+    private static final String[] ourNumberTypes = new String[]{
+        DotNetTypes.System.Byte,
+        DotNetTypes.System.SByte,
+        DotNetTypes.System.Int16,
+        DotNetTypes.System.UInt16,
+        DotNetTypes.System.Int32,
+        DotNetTypes.System.UInt32,
+        DotNetTypes.System.Int64,
+        DotNetTypes.System.UInt64,
+        DotNetTypes.System.Decimal,
+        DotNetTypes.System.Single,
+        DotNetTypes.System.Double,
+    };
 
-												if(DotNetTypes.System.Boolean.equals(typeElement.getFirst()))
-												{
-													key = CSharpHighlightKey.KEYWORD;
-													value = String.valueOf(StringUtil.parseInt(value, 0) == 1);
-												}
+    @RequiredReadAction
+    private static TargetPresentation fieldPresentation(CSharpFieldDeclaration field, Project project, UnityAssetWrapper wrapper) {
+        String prefix = null;
+        String value = wrapper.getField().getValue();
 
-												DotNetTypeDeclaration typeDeclaration = typeElement.getSecond();
-												if(typeDeclaration.isEnum())
-												{
-													int index = StringUtil.parseInt(value, 0);
+        TextAttributesKey key = null;
+        DotNetTypeRef typeRef = field.toTypeRef(true);
 
-													CSharpEnumConstantDeclaration[] constants = PsiTreeUtil.getChildrenOfType(typeDeclaration, CSharpEnumConstantDeclaration.class);
+        Pair<String, DotNetTypeDeclaration> typeElement = CSharpTypeUtil.resolveTypeElement(typeRef);
+        if (typeElement != null) {
+            if (DotNetTypes.System.String.equals(typeElement.getFirst())) {
+                key = CSharpHighlightKey.STRING;
+            }
 
-													CSharpEnumConstantDeclaration declaration = ArrayUtil2.safeGet(constants, index);
-													value = declaration == null ? value : declaration.getName();
-													if(declaration != null)
-													{
-														prefix = typeDeclaration.getPresentableQName() + ".";
-														key = CSharpHighlightKey.CONSTANT;
-													}
-												}
+            if (DotNetTypes.System.Char.equals(typeElement.getFirst())) {
+                key = CSharpHighlightKey.STRING;
+            }
 
-												if(key == null && typeDeclaration.isStruct())
-												{
-													prefix = "new ";
-													prefixKey = CSharpHighlightKey.KEYWORD;
+            if (ArrayUtil.contains(typeElement.getFirst(), ourNumberTypes)) {
+                key = CSharpHighlightKey.NUMBER;
+            }
 
-													value = typeDeclaration.getPresentableQName() + "()" + value;
-												}
-											}
+            if (DotNetTypes.System.Boolean.equals(typeElement.getFirst())) {
+                key = CSharpHighlightKey.KEYWORD;
+                value = String.valueOf(StringUtil.parseInt(value, 0) == 1);
+            }
 
-											SimpleTextAttributes textAttributes = SimpleTextAttributes.REGULAR_ATTRIBUTES;
-											SimpleTextAttributes prefixAttributes = SimpleTextAttributes.REGULAR_ATTRIBUTES;
-											if(key != null)
-											{
-												textAttributes = TextAttributesUtil.fromTextAttributes(EditorColorsManager.getInstance().getGlobalScheme().getAttributes(key));
-											}
+            DotNetTypeDeclaration typeDeclaration = typeElement.getSecond();
+            if (typeDeclaration.isEnum()) {
+                int index = StringUtil.parseInt(value, 0);
 
-											if(prefixKey != null)
-											{
-												prefixAttributes = TextAttributesUtil.fromTextAttributes(EditorColorsManager.getInstance().getGlobalScheme().getAttributes(prefixKey));
-											}
+                CSharpEnumConstantDeclaration[] constants = PsiTreeUtil.getChildrenOfType(typeDeclaration, CSharpEnumConstantDeclaration.class);
 
-											if(value.startsWith(Unity3dYMLAssetIndexExtension.ourCustomGUIDPrefix))
-											{
-												String guid = value.substring(Unity3dYMLAssetIndexExtension.ourCustomGUIDPrefix.length(), value.length());
+                CSharpEnumConstantDeclaration declaration = ArrayUtil2.safeGet(constants, index);
+                value = declaration == null ? value : declaration.getName();
+                if (declaration != null) {
+                    prefix = typeDeclaration.getPresentableQName() + ".";
+                    key = CSharpHighlightKey.CONSTANT;
+                }
+            }
 
-												VirtualFile fileByGUID = Unity3dMetaManager.getInstance(project).findFileByGUID(guid);
-												if(fileByGUID != null)
-												{
-													value = VirtualFileUtil.getRelativePath(fileByGUID, field.getProject().getBaseDir());
-												}
-												else
-												{
-													value = "guid: " + guid;
-												}
-											}
+            if (key == null && typeDeclaration.isStruct()) {
+                prefix = "new ";
 
-											if(prefix != null)
-											{
-												append(prefix, prefixAttributes);
-											}
+                value = typeDeclaration.getPresentableQName() + "()" + value;
+            }
+        }
 
-											append(value, textAttributes);
+        if (value.startsWith(Unity3dYMLAssetIndexExtension.ourCustomGUIDPrefix)) {
+            String guid = value.substring(Unity3dYMLAssetIndexExtension.ourCustomGUIDPrefix.length());
 
-											append(" " + unityAssetWrapper.getAsset().getGameObjectName(), SimpleTextAttributes.GRAY_ATTRIBUTES);
-										}
-									};
-								}
+            VirtualFile fileByGUID = Unity3dMetaManager.getInstance(project).findFileByGUID(guid);
+            value = fileByGUID != null
+                ? VirtualFileUtil.getRelativePath(fileByGUID, project.getBaseDir())
+                : "guid: " + guid;
+        }
 
-								@Override
-								protected ColoredListCellRenderer<UnityAssetWrapper> createRight()
-								{
-									return new ColoredListCellRenderer<UnityAssetWrapper>()
-									{
-										@Override
-										protected void customizeCellRenderer(@Nonnull JList<? extends UnityAssetWrapper> jList, UnityAssetWrapper unityAssetWrapper, int i, boolean b, boolean b1)
-										{
-											String relativePath = VirtualFileUtil.getRelativePath(unityAssetWrapper.getVirtualFile(), field.getProject().getBaseDir());
+        TextAttribute attribute = null;
+        if (key != null) {
+            TextAttributes attributes = EditorColorsManager.getInstance().getGlobalScheme().getAttributes(key);
+            if (attributes != null) {
+                attribute = new TextAttribute(attributes.getFontType(), attributes.getForegroundColor());
+            }
+        }
 
-											append(relativePath, SimpleTextAttributes.GRAY_ATTRIBUTES);
-										}
-									};
-								}
-							});
-						}
+        return Application.get().getInstance(NavigationService.class)
+            .presentationBuilder(LocalizeValue.of(prefix == null ? value : prefix + value))
+            .withPresentableTextAttribute(attribute)
+            .withIcon(ShaderLabIconGroup.shader())
+            .withContainerText(LocalizeValue.of(wrapper.getAsset().getGameObjectName()))
+            .withLocationText(LocalizeValue.of(VirtualFileUtil.getRelativePath(wrapper.getVirtualFile(), project.getBaseDir())))
+            .build();
+    }
 
-					};
-				}
+    private final Class<? extends PsiElement> myElementClass;
+    private final Image myIcon;
 
-				@Nonnull
-				@Override
-				public Function<PsiElement, String> createTooltipFunction()
-				{
-					return element -> "Scene view initialize. Click for view";
-				}
+    private Unity3dAssetCSharpLineMarker(Class<? extends PsiElement> elementClass, Image icon) {
+        myElementClass = elementClass;
+        myIcon = icon;
+    }
 
-				@RequiredReadAction
-				@Override
-				public boolean isAvailable(@Nonnull PsiElement element)
-				{
-					CSharpFieldDeclaration field = (CSharpFieldDeclaration) element;
-					if(!Unity3dAssetUtil.isPrimaryType(field.getParent()))
-					{
-						return false;
-					}
+    @Nonnull
+    public Image getIcon() {
+        return myIcon;
+    }
 
-					MultiMap<VirtualFile, Unity3dYMLAsset> files = Unity3dYMLAsset.findAssetAsAttach(field.getProject(), PsiUtilCore.getVirtualFile(field));
+    @Nonnull
+    public Class<? extends PsiElement> getElementClass() {
+        return myElementClass;
+    }
 
-					if(files.isEmpty())
-					{
-						return false;
-					}
+    @Nonnull
+    public abstract GutterIconNavigationHandler<PsiElement> createNavigationHandler();
 
-					String name = field.getName();
+    @Nonnull
+    public abstract Function<PsiElement, String> createTooltipFunction();
 
-					for(Map.Entry<VirtualFile, Collection<Unity3dYMLAsset>> entry : files.entrySet())
-					{
-						for(Unity3dYMLAsset unity3dYMLAsset : entry.getValue())
-						{
-							for(Unity3dYMLField yamlField : unity3dYMLAsset.getValues())
-							{
-								if(yamlField.getName().equals(name))
-								{
-									return true;
-								}
-							}
-						}
-					}
-
-					return false;
-				}
-			};
-
-	private final Class<? extends PsiElement> myElementClass;
-	private final Image myIcon;
-
-	private Unity3dAssetCSharpLineMarker(Class<? extends PsiElement> elementClass, Image icon)
-	{
-		myElementClass = elementClass;
-		myIcon = icon;
-	}
-
-	@Nonnull
-	public Image getIcon()
-	{
-		return myIcon;
-	}
-
-	@Nonnull
-	public Class<? extends PsiElement> getElementClass()
-	{
-		return myElementClass;
-	}
-
-	@Nonnull
-	public abstract GutterIconNavigationHandler<PsiElement> createNavigationHandler();
-
-	@Nonnull
-	public abstract Function<PsiElement, String> createTooltipFunction();
-
-	@RequiredReadAction
-	public abstract boolean isAvailable(@Nonnull PsiElement element);
+    @RequiredReadAction
+    public abstract boolean isAvailable(@Nonnull PsiElement element);
 }

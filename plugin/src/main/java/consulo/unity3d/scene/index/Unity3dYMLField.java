@@ -20,23 +20,19 @@ package consulo.unity3d.scene.index;
  * @author VISTALL
  * @since 04-Sep-17
  */
-public record Unity3dYMLField(String name, String value, int offset)
-{
-	@Deprecated
-	public String getName()
-	{
-		return name();
-	}
+public record Unity3dYMLField(String name, String value, int offset) {
+    @Deprecated
+    public String getName() {
+        return name();
+    }
 
-	@Deprecated
-	public String getValue()
-	{
-		return value();
-	}
+    @Deprecated
+    public String getValue() {
+        return value();
+    }
 
-	@Deprecated
-	public int getOffset()
-	{
-		return offset();
-	}
+    @Deprecated
+    public int getOffset() {
+        return offset();
+    }
 }
