@@ -18,92 +18,85 @@ package consulo.unity3d.run;
 
 import consulo.configurable.ConfigurationException;
 import consulo.execution.configuration.ui.SettingsEditor;
-import consulo.ui.*;
+import consulo.localize.LocalizeValue;
+import consulo.ui.Component;
+import consulo.ui.RadioButton;
+import consulo.ui.RadioGroup;
+import consulo.ui.TextBox;
 import consulo.ui.annotation.RequiredUIAccess;
 import consulo.ui.layout.LabeledLayout;
 import consulo.ui.layout.VerticalLayout;
+import consulo.ui.util.Indenter;
+import consulo.ui.util.LabeledBuilder;
 import consulo.ui.util.LabeledComponents;
-
 import jakarta.annotation.Nullable;
 
 /**
  * @author VISTALL
  * @since 10.11.14
  */
-public class Unity3dConfigurationEditor extends SettingsEditor<Unity3dAttachConfiguration>
-{
-	private RadioButton myUnityEditorButton;
-	private RadioButton myProcessWithNameButton;
-	private RadioButton mySelectFromDialogButton;
-	private TextBox myNameTextField;
+public class Unity3dConfigurationEditor extends SettingsEditor<Unity3dAttachConfiguration> {
+    private RadioButton myUnityEditorButton;
+    private RadioButton myProcessWithNameButton;
+    private RadioButton mySelectFromDialogButton;
+    private TextBox myNameTextField;
 
-	@Override
-	@RequiredUIAccess
-	protected void resetEditorFrom(Unity3dAttachConfiguration runConfiguration)
-	{
-		selectRadioButton(runConfiguration.getAttachTarget()).setValue(true);
-		myNameTextField.setValue(runConfiguration.getProcessName());
-	}
+    private RadioGroup<Unity3dAttachConfiguration.AttachTarget> myAttachGroup;
 
-	@Override
-	@RequiredUIAccess
-	protected void applyEditorTo(Unity3dAttachConfiguration runConfiguration) throws ConfigurationException
-	{
-		for(Unity3dAttachConfiguration.AttachTarget target : Unity3dAttachConfiguration.AttachTarget.values())
-		{
-			RadioButton radioButton = selectRadioButton(target);
-			if(radioButton.getValue())
-			{
-				runConfiguration.setAttachTarget(target);
-				break;
-			}
-		}
-		runConfiguration.setProcessName(myNameTextField.getValue());
-	}
+    @Override
+    @RequiredUIAccess
+    protected void resetEditorFrom(Unity3dAttachConfiguration runConfiguration) {
+        selectRadioButton(runConfiguration.getAttachTarget()).setValue(true);
+        myNameTextField.setValue(runConfiguration.getProcessName());
+    }
 
-	@Nullable
-	@Override
-	@RequiredUIAccess
-	protected Component createUIComponent()
-	{
-		LabeledLayout layout = LabeledLayout.create("Attach to");
+    @Override
+    @RequiredUIAccess
+    protected void applyEditorTo(Unity3dAttachConfiguration runConfiguration) throws ConfigurationException {
+        for (Unity3dAttachConfiguration.AttachTarget target : Unity3dAttachConfiguration.AttachTarget.values()) {
+            RadioButton radioButton = selectRadioButton(target);
+            if (radioButton.getValue()) {
+                runConfiguration.setAttachTarget(target);
+                break;
+            }
+        }
+        runConfiguration.setProcessName(myNameTextField.getValue());
+    }
 
-		ValueGroup<Boolean> group = ValueGroups.boolGroup();
-		VerticalLayout vertical = VerticalLayout.create();
-		layout.set(vertical);
+    @Nullable
+    @Override
+    @RequiredUIAccess
+    protected Component createUIComponent() {
+        LabeledLayout layout = LabeledLayout.create("Attach to");
 
-		myUnityEditorButton = RadioButton.create("Unity Editor");
-		vertical.add(myUnityEditorButton);
-		group.add(myUnityEditorButton);
+        myAttachGroup = RadioGroup.create();
 
-		myProcessWithNameButton = RadioButton.create("Process");
-		vertical.add(myProcessWithNameButton);
-		group.add(myProcessWithNameButton);
+        VerticalLayout vertical = VerticalLayout.create();
+        layout.set(vertical);
 
-		myNameTextField = TextBox.create();
-		myNameTextField.setEnabled(false);
-		vertical.add(LabeledComponents.leftFilled("Name", myNameTextField));
-		myProcessWithNameButton.addValueListener(valueEvent -> myNameTextField.setEnabled(valueEvent.getValue()));
+        myUnityEditorButton = myAttachGroup.newButton(LocalizeValue.localizeTODO("Unity Editor"), Unity3dAttachConfiguration.AttachTarget.UNITY_EDITOR);
+        vertical.add(myUnityEditorButton);
 
-		mySelectFromDialogButton = RadioButton.create("Selected process in dialog");
-		vertical.add(mySelectFromDialogButton);
-		group.add(mySelectFromDialogButton);
+        myProcessWithNameButton = myAttachGroup.newButton(LocalizeValue.localizeTODO("Process"), Unity3dAttachConfiguration.AttachTarget.BY_NAME);
+        vertical.add(myProcessWithNameButton);
 
-		return layout;
-	}
+        myNameTextField = TextBox.create();
+        myNameTextField.setEnabled(false);
+        vertical.add(Indenter.indent(LabeledBuilder.filled(LocalizeValue.localizeTODO("Name"), myNameTextField)));
+        myProcessWithNameButton.addValueListener(valueEvent -> myNameTextField.setEnabled(valueEvent.getValue()));
 
-	private RadioButton selectRadioButton(Unity3dAttachConfiguration.AttachTarget target)
-	{
-		switch(target)
-		{
-			case UNITY_EDITOR:
-				return myUnityEditorButton;
-			case BY_NAME:
-				return myProcessWithNameButton;
-			case FROM_DIALOG:
-				return mySelectFromDialogButton;
-			default:
-				throw new IllegalArgumentException(target.name());
-		}
-	}
+        mySelectFromDialogButton = myAttachGroup.newButton(LocalizeValue.localizeTODO("Selected process in dialog"), Unity3dAttachConfiguration.AttachTarget.FROM_DIALOG);
+        vertical.add(mySelectFromDialogButton);
+
+        return layout;
+    }
+
+    private RadioButton selectRadioButton(Unity3dAttachConfiguration.AttachTarget target) {
+        return switch (target) {
+            case UNITY_EDITOR -> myUnityEditorButton;
+            case BY_NAME -> myProcessWithNameButton;
+            case FROM_DIALOG -> mySelectFromDialogButton;
+            default -> throw new IllegalArgumentException(target.name());
+        };
+    }
 }
