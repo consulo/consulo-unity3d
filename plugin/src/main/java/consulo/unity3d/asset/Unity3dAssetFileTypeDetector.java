@@ -16,6 +16,7 @@
 
 package consulo.unity3d.asset;
 
+import consulo.unity3d.base.fileType.Unity3dYMLAssetFileType;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.unity3d.asset.binary.AssetHeaderReader;
 import consulo.util.io.ByteSequence;

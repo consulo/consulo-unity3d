@@ -16,6 +16,8 @@
 
 package consulo.unity3d.jsonApi;
 
+import consulo.unity3d.base.jsonApi.UnityOpenFilePostHandlerRequest;
+import consulo.unity3d.base.UnityFileOpener;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.User32;
@@ -51,8 +53,8 @@ import consulo.ui.UIAccess;
 import consulo.ui.UIAction;
 import consulo.ui.ex.awt.Messages;
 import consulo.ui.ex.awtUnsafe.TargetAWT;
-import consulo.unity3d.bundle.Unity3dBundleType;
-import consulo.unity3d.projectImport.Unity3dModuleImportProvider;
+import consulo.unity3d.base.bundle.Unity3dBundleType;
+import consulo.unity3d.importing.Unity3dModuleImportProvider;
 import consulo.util.concurrent.coroutine.Coroutine;
 import consulo.util.concurrent.coroutine.CoroutineScope;
 import consulo.util.concurrent.coroutine.step.CodeExecution;
@@ -239,7 +241,7 @@ public class UnityOpenFilePostHandler extends JsonPostRequestHandler<UnityOpenFi
         uiAccess.give(() -> {
             activateFrame(project, body);
 
-            openFile(project, body);
+            UnityFileOpener.openFile(project, body);
         });
     }
 
@@ -265,23 +267,4 @@ public class UnityOpenFilePostHandler extends JsonPostRequestHandler<UnityOpenFi
         }
     }
 
-    public static void openFile(@Nullable Project openedProject, @Nonnull UnityOpenFilePostHandlerRequest body) {
-        if (openedProject == null) {
-            return;
-        }
-
-        VirtualFile fileByPath = LocalFileSystem.getInstance().findFileByPathIfCached(body.filePath);
-        if (fileByPath != null) {
-            OpenFileDescriptor descriptor = OpenFileDescriptorFactory.getInstance(openedProject)
-                .newBuilder(fileByPath)
-                .line(body.line - 1)
-                .build();
-
-            Editor editor = FileEditorManager.getInstance(openedProject).openTextEditor(descriptor, true);
-
-            if (editor != null) {
-                IdeFocusManager.getGlobalInstance().doWhenFocusSettlesDown(() -> editor.getComponent().grabFocus());
-            }
-        }
-    }
 }

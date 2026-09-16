@@ -24,7 +24,7 @@ import consulo.project.Project;
 import consulo.ui.ex.awt.ChooseElementsDialog;
 import consulo.ui.ex.awt.UIUtil;
 import consulo.ui.image.Image;
-import consulo.unity3d.Unity3dIcons;
+import consulo.unity3d.base.Unity3dIcons;
 import consulo.util.collection.ContainerUtil;
 import consulo.util.lang.StringUtil;
 

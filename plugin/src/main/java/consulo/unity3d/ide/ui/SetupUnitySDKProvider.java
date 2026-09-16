@@ -39,12 +39,12 @@ import consulo.ui.ex.action.AnActionEvent;
 import consulo.ui.ex.action.AnSeparator;
 import consulo.ui.ex.action.DumbAwareAction;
 import consulo.ui.ex.popup.JBPopupFactory;
-import consulo.unity3d.bundle.Unity3dBundleType;
+import consulo.unity3d.base.bundle.Unity3dBundleType;
 import consulo.unity3d.localize.Unity3dLocalize;
-import consulo.unity3d.module.Unity3dModuleExtensionUtil;
-import consulo.unity3d.module.Unity3dRootModuleExtension;
-import consulo.unity3d.projectImport.Unity3dProjectImporter;
-import consulo.unity3d.projectImport.ui.Unity3dWizardStep;
+import consulo.unity3d.base.module.Unity3dModuleExtensionUtil;
+import consulo.unity3d.base.module.Unity3dRootModuleExtension;
+import consulo.unity3d.importing.Unity3dProjectImporter;
+import consulo.unity3d.importing.ui.Unity3dWizardStep;
 import consulo.virtualFileSystem.VirtualFile;
 import jakarta.inject.Inject;
 

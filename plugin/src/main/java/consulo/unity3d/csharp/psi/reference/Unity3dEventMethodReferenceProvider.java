@@ -35,7 +35,7 @@ import consulo.language.pattern.StandardPatterns;
 import consulo.language.psi.*;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.language.util.ProcessingContext;
-import consulo.unity3d.Unity3dTypes;
+import consulo.unity3d.base.Unity3dTypes;
 import consulo.util.collection.ArrayUtil;
 
 import jakarta.annotation.Nonnull;

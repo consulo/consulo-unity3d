@@ -29,7 +29,7 @@ import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiUtilCore;
 import consulo.localize.LocalizeValue;
 import consulo.ui.image.Image;
-import consulo.unity3d.Unity3dIcons;
+import consulo.unity3d.base.Unity3dIcons;
 import consulo.unity3d.asset.Unity3dAssetUtil;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;

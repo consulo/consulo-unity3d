@@ -23,7 +23,7 @@ import consulo.language.psi.PsiFile;
 import consulo.language.psi.PsiManager;
 import consulo.language.psi.PsiRecursiveElementWalkingVisitor;
 import consulo.project.Project;
-import consulo.unity3d.scene.Unity3dMetaManager;
+import consulo.unity3d.base.scene.Unity3dMetaManager;
 import consulo.util.collection.ContainerUtil;
 import consulo.util.lang.ref.Ref;
 import consulo.virtualFileSystem.VirtualFile;

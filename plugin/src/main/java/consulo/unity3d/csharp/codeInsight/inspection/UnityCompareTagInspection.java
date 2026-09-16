@@ -35,8 +35,8 @@ import consulo.language.psi.PsiFile;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.localize.LocalizeValue;
 import consulo.project.Project;
-import consulo.unity3d.Unity3dTypes;
-import consulo.unity3d.module.Unity3dModuleExtensionUtil;
+import consulo.unity3d.base.Unity3dTypes;
+import consulo.unity3d.base.module.Unity3dModuleExtensionUtil;
 import jakarta.annotation.Nonnull;
 
 /**

@@ -28,9 +28,9 @@ import consulo.module.Module;
 import consulo.module.content.ProjectFileIndex;
 import consulo.msil.impl.representation.fileSystem.MsilFileRepresentationVirtualFile;
 import consulo.project.Project;
-import consulo.unity3d.module.Unity3dModuleExtensionUtil;
-import consulo.unity3d.module.Unity3dRootModuleExtension;
-import consulo.unity3d.projectImport.Unity3dProjectImporter;
+import consulo.unity3d.base.module.Unity3dModuleExtensionUtil;
+import consulo.unity3d.base.module.Unity3dRootModuleExtension;
+import consulo.unity3d.importing.Unity3dProjectImporter;
 import consulo.virtualFileSystem.VirtualFile;
 import jakarta.inject.Inject;
 

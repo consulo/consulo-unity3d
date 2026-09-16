@@ -48,7 +48,7 @@ import consulo.language.psi.resolve.ResolveState;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.localize.LocalizeValue;
 import consulo.ui.image.Image;
-import consulo.unity3d.Unity3dTypes;
+import consulo.unity3d.base.Unity3dTypes;
 import consulo.util.collection.ArrayUtil;
 import consulo.util.lang.StringUtil;
 

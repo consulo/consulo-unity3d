@@ -16,6 +16,7 @@
 
 package consulo.unity3d.meta;
 
+import consulo.unity3d.base.fileType.Unity3dMetaFileType;
 import consulo.annotation.access.RequiredReadAction;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.gameFramework.meta.MetadataFileType;
@@ -25,8 +26,8 @@ import consulo.language.ast.LighterASTNode;
 import consulo.language.psi.PsiFile;
 import consulo.language.psi.stub.PsiDependentFileContent;
 import consulo.project.Project;
-import consulo.unity3d.module.Unity3dModuleExtensionUtil;
-import consulo.unity3d.scene.Unity3dMetaManager;
+import consulo.unity3d.base.module.Unity3dModuleExtensionUtil;
+import consulo.unity3d.base.scene.Unity3dMetaManager;
 import consulo.unity3d.scene.index.Unity3dYMLAssetIndexExtension;
 import consulo.util.lang.Pair;
 import jakarta.annotation.Nonnull;

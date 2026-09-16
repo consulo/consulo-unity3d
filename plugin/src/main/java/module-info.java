@@ -28,6 +28,9 @@ module consulo.unity3d {
 
     requires consulo.language.impl;
 
+    requires transitive consulo.unity3d.base;
+    requires transitive consulo.unity3d.importing;
+
     requires consulo.unity3d.shaderlab;
 
     requires consulo.unity3d.cg.shader;
@@ -58,8 +61,5 @@ module consulo.unity3d {
     opens consulo.unity3d.usages to consulo.util.xml.serializer;
     opens consulo.unity3d.run to consulo.util.xml.serializer;
     opens consulo.unity3d.editor to com.google.gson;
-    opens consulo.unity3d.packages to com.google.gson, consulo.application.impl;
     opens consulo.unity3d.jsonApi to com.google.gson;
-    opens consulo.unity3d.projectImport.newImport to com.google.gson;
-    opens consulo.unity3d.projectImport to com.google.gson;
 }

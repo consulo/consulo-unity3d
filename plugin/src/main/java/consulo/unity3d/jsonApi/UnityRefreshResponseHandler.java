@@ -18,7 +18,7 @@ package consulo.unity3d.jsonApi;
 
 import consulo.annotation.component.ExtensionImpl;
 import consulo.builtinWebServer.json.JsonPostRequestHandler;
-
+import consulo.unity3d.base.jsonApi.UnityPingPong;
 import jakarta.annotation.Nonnull;
 
 /**
@@ -26,19 +26,16 @@ import jakarta.annotation.Nonnull;
  * @since 21.01.2016
  */
 @ExtensionImpl
-public class UnityRefreshResponseHandler extends JsonPostRequestHandler<UnityRefreshResponse>
-{
-	public UnityRefreshResponseHandler()
-	{
-		super("unityRefreshResponse", UnityRefreshResponse.class);
-	}
+public class UnityRefreshResponseHandler extends JsonPostRequestHandler<UnityRefreshResponse> {
+    public UnityRefreshResponseHandler() {
+        super("unityRefreshResponse", UnityRefreshResponse.class);
+    }
 
-	@Nonnull
-	@Override
-	public JsonResponse handle(@Nonnull UnityRefreshResponse unityRefreshResponse)
-	{
-		UnityPingPong.replyReceived(unityRefreshResponse.uuid, Boolean.TRUE);
+    @Nonnull
+    @Override
+    public JsonResponse handle(@Nonnull UnityRefreshResponse unityRefreshResponse) {
+        UnityPingPong.replyReceived(unityRefreshResponse.uuid, Boolean.TRUE);
 
-		return JsonResponse.asSuccess(null);
-	}
+        return JsonResponse.asSuccess(null);
+    }
 }

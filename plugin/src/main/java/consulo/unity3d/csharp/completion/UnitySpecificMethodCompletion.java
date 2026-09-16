@@ -41,9 +41,9 @@ import consulo.language.psi.util.PsiTreeUtil;
 import consulo.language.util.ModuleUtilCore;
 import consulo.language.util.ProcessingContext;
 import consulo.ui.annotation.RequiredUIAccess;
-import consulo.unity3d.Unity3dIcons;
+import consulo.unity3d.base.Unity3dIcons;
 import consulo.unity3d.csharp.UnityFunctionManager;
-import consulo.unity3d.module.Unity3dModuleExtension;
+import consulo.unity3d.base.module.Unity3dModuleExtension;
 
 import jakarta.annotation.Nonnull;
 import java.util.Map;

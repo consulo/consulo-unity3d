@@ -16,6 +16,8 @@
 
 package consulo.unity3d.scene.index;
 
+import consulo.unity3d.base.scene.Unity3dYMLField;
+import consulo.unity3d.base.scene.Unity3dYMLAsset;
 import consulo.annotation.DeprecationInfo;
 import consulo.annotation.access.RequiredReadAction;
 import consulo.annotation.component.ExtensionImpl;
@@ -31,8 +33,8 @@ import consulo.language.ast.TokenSet;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
 import consulo.language.psi.stub.*;
-import consulo.unity3d.scene.Unity3dMetaManager;
-import consulo.unity3d.asset.Unity3dYMLAssetFileType;
+import consulo.unity3d.base.scene.Unity3dMetaManager;
+import consulo.unity3d.base.fileType.Unity3dYMLAssetFileType;
 import consulo.util.collection.ContainerUtil;
 import consulo.util.lang.Pair;
 import consulo.util.lang.StringUtil;

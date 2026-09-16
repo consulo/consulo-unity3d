@@ -39,7 +39,7 @@ import consulo.language.psi.util.PsiTreeUtil;
 import consulo.ui.color.ColorValue;
 import consulo.ui.color.RGBColor;
 import consulo.ui.style.StandardColors;
-import consulo.unity3d.Unity3dTypes;
+import consulo.unity3d.base.Unity3dTypes;
 import consulo.util.lang.ObjectUtil;
 import consulo.util.lang.StringUtil;
 import jakarta.annotation.Nonnull;

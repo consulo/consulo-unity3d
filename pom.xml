@@ -42,6 +42,8 @@
 	<packaging>pom</packaging>
 
 	<modules>
+		<module>base</module>
+		<module>importing</module>
 		<module>plugin</module>
 		<module>cg-shader</module>
 		<module>shaderlab</module>

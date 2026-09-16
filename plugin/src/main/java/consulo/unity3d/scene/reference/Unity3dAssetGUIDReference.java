@@ -22,7 +22,7 @@ import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiManager;
 import consulo.project.DumbService;
 import consulo.project.Project;
-import consulo.unity3d.scene.Unity3dMetaManager;
+import consulo.unity3d.base.scene.Unity3dMetaManager;
 import consulo.util.lang.StringUtil;
 import consulo.virtualFileSystem.VirtualFile;
 import org.jetbrains.yaml.psi.YAMLKeyValue;

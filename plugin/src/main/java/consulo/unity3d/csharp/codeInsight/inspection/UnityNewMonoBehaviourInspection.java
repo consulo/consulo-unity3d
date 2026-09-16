@@ -27,9 +27,9 @@ import consulo.dotnet.psi.resolve.DotNetTypeRef;
 import consulo.language.editor.inspection.ProblemsHolder;
 import consulo.language.psi.PsiElementVisitor;
 import consulo.localize.LocalizeValue;
-import consulo.unity3d.Unity3dTypes;
+import consulo.unity3d.base.Unity3dTypes;
 import consulo.unity3d.localize.Unity3dLocalize;
-import consulo.unity3d.module.Unity3dModuleExtensionUtil;
+import consulo.unity3d.base.module.Unity3dModuleExtensionUtil;
 import jakarta.annotation.Nonnull;
 
 /**

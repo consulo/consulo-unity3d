@@ -16,6 +16,8 @@
 
 package consulo.unity3d.jsonApi;
 
+import consulo.unity3d.base.jsonApi.UnitySetDefines;
+import consulo.unity3d.base.jsonApi.UnityPingPong;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.application.Application;
 import consulo.application.ApplicationManager;
@@ -29,9 +31,9 @@ import consulo.project.Project;
 import consulo.project.ProjectManager;
 import consulo.project.ui.notification.Notification;
 import consulo.project.ui.notification.NotificationType;
-import consulo.unity3d.UnityNotificationGroup;
-import consulo.unity3d.module.Unity3dModuleExtensionUtil;
-import consulo.unity3d.module.Unity3dRootMutableModuleExtension;
+import consulo.unity3d.base.UnityNotificationGroup;
+import consulo.unity3d.base.module.Unity3dModuleExtensionUtil;
+import consulo.unity3d.base.module.Unity3dRootMutableModuleExtension;
 import consulo.virtualFileSystem.LocalFileSystem;
 import consulo.virtualFileSystem.VirtualFile;
 

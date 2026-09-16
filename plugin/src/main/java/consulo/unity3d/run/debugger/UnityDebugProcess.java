@@ -28,7 +28,7 @@ import consulo.execution.ui.console.ConsoleView;
 import consulo.execution.ui.console.ConsoleViewContentType;
 import consulo.execution.ui.console.TextConsoleBuilderFactory;
 import consulo.ui.ex.MessageCategory;
-import consulo.unity3d.Unity3dTypes;
+import consulo.unity3d.base.Unity3dTypes;
 import consulo.unity3d.console.Unity3dConsoleManager;
 import consulo.unity3d.jsonApi.UnityLogPostHandlerRequest;
 import consulo.util.lang.StringUtil;

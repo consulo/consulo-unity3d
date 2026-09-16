@@ -16,6 +16,7 @@
 
 package consulo.unity3d;
 
+import consulo.unity3d.base.Unity3dPaths;
 import consulo.annotation.access.RequiredReadAction;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.language.icon.IconDescriptor;
@@ -26,8 +27,7 @@ import consulo.module.Module;
 import consulo.project.Project;
 import consulo.ui.image.Image;
 import consulo.unity3d.icon.Unity3dIconGroup;
-import consulo.unity3d.module.Unity3dModuleExtensionUtil;
-import consulo.unity3d.projectImport.Unity3dProjectImporter;
+import consulo.unity3d.base.module.Unity3dModuleExtensionUtil;
 import consulo.util.collection.HashingStrategy;
 import consulo.util.collection.Maps;
 import consulo.virtualFileSystem.VirtualFile;
@@ -78,7 +78,7 @@ public class UnityDirectoryIconDescriptorUpdater implements IconDescriptorUpdate
 
 		VirtualFile baseDir = project.getBaseDir();
 		assert baseDir != null;
-		VirtualFile assetsDirectory = baseDir.findChild(Unity3dProjectImporter.ASSETS_DIRECTORY);
+		VirtualFile assetsDirectory = baseDir.findChild(Unity3dPaths.ASSETS_DIRECTORY);
 		if(assetsDirectory == null)
 		{
 			return;

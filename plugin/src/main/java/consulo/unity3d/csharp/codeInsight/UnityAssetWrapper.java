@@ -24,8 +24,8 @@ import consulo.navigation.Navigatable;
 import consulo.navigation.OpenFileDescriptor;
 import consulo.navigation.OpenFileDescriptorFactory;
 import consulo.project.Project;
-import consulo.unity3d.scene.index.Unity3dYMLAsset;
-import consulo.unity3d.scene.index.Unity3dYMLField;
+import consulo.unity3d.base.scene.Unity3dYMLAsset;
+import consulo.unity3d.base.scene.Unity3dYMLField;
 import consulo.virtualFileSystem.VirtualFile;
 
 import jakarta.annotation.Nonnull;

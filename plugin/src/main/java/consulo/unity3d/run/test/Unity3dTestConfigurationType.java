@@ -26,9 +26,9 @@ import consulo.execution.configuration.ConfigurationTypeBase;
 import consulo.execution.configuration.RunConfiguration;
 import consulo.project.Project;
 import consulo.ui.image.ImageEffects;
-import consulo.unity3d.Unity3dIcons;
+import consulo.unity3d.base.Unity3dIcons;
 import consulo.unity3d.localize.Unity3dLocalize;
-import consulo.unity3d.module.Unity3dModuleExtensionUtil;
+import consulo.unity3d.base.module.Unity3dModuleExtensionUtil;
 import jakarta.annotation.Nonnull;
 
 /**
