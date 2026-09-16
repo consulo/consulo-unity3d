@@ -33,18 +33,16 @@ import consulo.ui.ComboBox;
 import consulo.ui.Label;
 import consulo.ui.UIAccess;
 import consulo.ui.annotation.RequiredUIAccess;
-import consulo.ui.ex.awtUnsafe.TargetAWT;
 import consulo.ui.layout.DockLayout;
 import consulo.ui.model.MutableFlatDataModel;
 import consulo.ui.style.StandardColors;
 import consulo.ui.util.FormBuilder;
 import consulo.unity3d.base.bundle.Unity3dBundleType;
-import consulo.unity3d.localize.Unity3dLocalize;
 import consulo.unity3d.importing.Unity3dProjectImporter;
 import consulo.unity3d.importing.UnityModuleImportContext;
+import consulo.unity3d.localize.Unity3dLocalize;
 import jakarta.annotation.Nonnull;
 
-import javax.swing.*;
 import java.util.Objects;
 import java.util.function.Consumer;
 
@@ -75,12 +73,8 @@ public class Unity3dWizardStep extends UnifiedProjectOrModuleNameStep<UnityModul
         ComboBox<BundleBox.BundleBoxItem> comboBox = (myBundleBox = boxBuilder.build()).getComponent();
         DockLayout dock = DockLayout.create();
         dock.center(comboBox);
-        dock.right(Button.create(LocalizeValue.localizeTODO("Select..."), clickEvent ->
-        {
-            JComponent awtComponent = (JComponent) TargetAWT.to(myBundleBox.getComponent());
-
-            showAddSdk(sdk ->
-            {
+        dock.right(Button.create(LocalizeValue.localizeTODO("Select..."), clickEvent -> {
+            showAddSdk(sdk -> {
                 WriteAction.run(() -> SdkTable.getInstance().addSdk(sdk));
 
                 MutableFlatDataModel<BundleBox.BundleBoxItem> listModel = (MutableFlatDataModel<BundleBox.BundleBoxItem>) comboBox.getDataModel();
