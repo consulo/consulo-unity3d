@@ -44,6 +44,7 @@ import consulo.language.file.FileTypeManager;
 import consulo.localize.LocalizeValue;
 import consulo.logging.Logger;
 import consulo.module.ModifiableModuleModel;
+import consulo.module.ModuleWithNameAlreadyExistsException;
 import consulo.module.Module;
 import consulo.module.ModuleManager;
 import consulo.module.content.ModuleRootManager;
@@ -676,6 +677,19 @@ public class Unity3dProjectImporter {
             namespacePrefix.set(rootModuleExtension.getNamespacePrefix());
 
             rootModule = rootModuleExtension.getModule();
+
+            // projects imported before the root module got its suffix still hold the bare project name, which
+            // blocks an assembly definition of that name. migrate them, so the asmdef can have it back
+            String expectedName = getRootModuleName(project);
+            if (!expectedName.equals(rootModule.getName())) {
+                try {
+                    newModel.renameModule(rootModule, expectedName);
+                }
+                catch (ModuleWithNameAlreadyExistsException e) {
+                    LOG.warn("Can't rename root module to " + expectedName, e);
+                }
+            }
+
             AccessRule.read(() ->
             {
                 ContentFolder[] contentFolders = ModuleRootManager.getInstance(rootModule).getContentFolders(ContentFolderTypeProvider.onlyExcluded());

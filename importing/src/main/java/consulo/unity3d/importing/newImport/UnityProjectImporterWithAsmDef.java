@@ -354,7 +354,7 @@ public class UnityProjectImporterWithAsmDef {
             writeCommits.add(rootModel::commit);
         }
 
-        for (UnityAssemblyContext assemblyContext : asmdefs.values()) {
+        for (UnityAssemblyContext assemblyContext : new LinkedHashSet<>(asmdefs.values())) {
             UnityAssemblyType type = assemblyContext.getType();
             if (type == UnityAssemblyType.FROM_EXTERNAL_PACKAGE || type == UnityAssemblyType.STANDARD) {
                 // it's library not module or non asm module
@@ -364,8 +364,13 @@ public class UnityProjectImporterWithAsmDef {
             analyzeAndAddDependencyTree(assemblyContext, asmdefs);
         }
 
-        for (UnityAssemblyContext assemblyContext : asmdefs.values()) {
+        for (UnityAssemblyContext assemblyContext : new LinkedHashSet<>(asmdefs.values())) {
             ModifiableModuleRootLayer rootLayer = moduleLayers.get(assemblyContext);
+            if (rootLayer == null) {
+                // no module was built for this context - an external package contributes a library rather than
+                // a module, and an assembly whose name collided with a reserved one was skipped outright
+                continue;
+            }
 
             for (UnityAssemblyContext dependency : assemblyContext.getDependencies()) {
                 addAsDependency(dependency, rootLayer);
@@ -375,9 +380,6 @@ public class UnityProjectImporterWithAsmDef {
                 Unity3dProjectImporter.addAsLibrary(libFile, rootLayer);
             }
         }
-
-        // todo
-
 
         progressIndicator.setIndeterminate(false);
         progressIndicator.setFraction(1);
