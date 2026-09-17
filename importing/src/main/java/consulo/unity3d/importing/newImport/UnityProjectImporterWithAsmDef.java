@@ -127,6 +127,10 @@ public class UnityProjectImporterWithAsmDef {
 
         List<Runnable> writeCommits = new ArrayList<>();
 
+        // managed plugins anywhere under Assets - unity references these into assemblies without them ever
+        // appearing in an asmdef's own directory
+        Map<String, VirtualFile> managedPlugins = collectManagedPlugins(assetsDir);
+
         Map<String, UnityAssemblyContext> asmdefs = new TreeMap<>();
         // standard modules
         for (StandardModuleImporter importer : ourStandardModuleImporters) {
@@ -379,6 +383,8 @@ public class UnityProjectImporterWithAsmDef {
             for (VirtualFile libFile : assemblyContext.getAssemblies()) {
                 Unity3dProjectImporter.addAsLibrary(libFile, rootLayer);
             }
+
+            addManagedPluginReferences(assemblyContext, managedPlugins, rootLayer);
         }
 
         progressIndicator.setIndeterminate(false);
@@ -448,6 +454,96 @@ public class UnityProjectImporterWithAsmDef {
         }
         else {
             throw new UnsupportedOperationException("unsupported dependency: " + asmContext.getType());
+        }
+    }
+
+    /**
+     * Managed plugin dlls dropped anywhere under {@code Assets}, keyed by file name - which is how
+     * {@code precompiledReferences} names them.
+     */
+    @Nonnull
+    static Map<String, VirtualFile> collectManagedPlugins(@Nonnull VirtualFile assetsDir) {
+        FileTypeManager fileTypeManager = FileTypeManager.getInstance();
+
+        Map<String, VirtualFile> plugins = new LinkedHashMap<>();
+        VirtualFileUtil.visitChildrenRecursively(assetsDir, new VirtualFileVisitor() {
+            @Override
+            public boolean visitFile(@Nonnull VirtualFile file) {
+                if (fileTypeManager.isFileIgnored(file)) {
+                    return false;
+                }
+
+                // by name rather than by file type - content based detection would read every file in Assets,
+                // and it needs the dotnet detector which is not always available
+                if (!file.isDirectory() && DotNetModuleFileType.isDllFile(file.getName())) {
+                    plugins.putIfAbsent(file.getName(), file);
+                }
+                return true;
+            }
+        });
+        return plugins;
+    }
+
+    /**
+     * Unity auto references managed plugins into every assembly, unless the plugin opts out with
+     * {@code isExplicitlyReferenced} or the assembly opts out with {@code overrideReferences} - in which case only
+     * the dlls named in {@code precompiledReferences} are visible.
+     */
+    private static void addManagedPluginReferences(@Nonnull UnityAssemblyContext assemblyContext,
+                                                   @Nonnull Map<String, VirtualFile> managedPlugins,
+                                                   @Nonnull ModifiableModuleRootLayer layer) {
+        for (VirtualFile dll : resolvePluginReferences(assemblyContext, managedPlugins)) {
+            Unity3dProjectImporter.addAsLibrary(dll, layer);
+        }
+    }
+
+    /**
+     * Which managed plugins an assembly can see. Split out from the attaching so it can be tested without a
+     * module model.
+     */
+    @Nonnull
+    static List<VirtualFile> resolvePluginReferences(@Nonnull UnityAssemblyContext assemblyContext,
+                                                     @Nonnull Map<String, VirtualFile> managedPlugins) {
+        if (managedPlugins.isEmpty()) {
+            return List.of();
+        }
+
+        AsmDefDescriptor def = assemblyContext.getAsmDefElement();
+        Set<VirtualFile> alreadyAttached = assemblyContext.getAssemblies();
+
+        List<VirtualFile> result = new ArrayList<>();
+
+        if (def != null && def.overrideReferences) {
+            for (String reference : def.getPrecompiledReferences()) {
+                VirtualFile dll = managedPlugins.get(reference);
+                if (dll != null && !alreadyAttached.contains(dll)) {
+                    result.add(dll);
+                }
+            }
+            return result;
+        }
+
+        for (VirtualFile dll : managedPlugins.values()) {
+            if (!alreadyAttached.contains(dll) && isAutoReferenced(dll)) {
+                result.add(dll);
+            }
+        }
+        return result;
+    }
+
+    private static boolean isAutoReferenced(@Nonnull VirtualFile dll) {
+        VirtualFile parent = dll.getParent();
+        VirtualFile meta = parent == null ? null : parent.findChild(dll.getName() + ".meta");
+        if (meta == null) {
+            return true;
+        }
+
+        try {
+            return !new String(meta.contentsToByteArray(), StandardCharsets.UTF_8).contains("isExplicitlyReferenced: 1");
+        }
+        catch (IOException e) {
+            LOG.warn("Can't read " + meta.getPath(), e);
+            return true;
         }
     }
 
