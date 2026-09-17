@@ -16,7 +16,10 @@
 package consulo.unity3d.importing;
 
 import consulo.application.Application;
+import consulo.project.DumbService;
 import consulo.project.Project;
+import consulo.project.impl.internal.DumbServiceImpl;
+import consulo.project.internal.UnindexedFilesScannerExecutor;
 import consulo.project.ProjectManager;
 import consulo.project.ProjectOpenContext;
 import consulo.virtualFileSystem.LocalFileSystem;
@@ -24,7 +27,9 @@ import consulo.virtualFileSystem.VirtualFile;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.function.BooleanSupplier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -51,7 +56,40 @@ public final class UnityImportTestSupport {
         if (project.isDisposed()) {
             return;
         }
+
+        // background scanning and dumb tasks keep touching the project; closing underneath them makes services
+        // log "Already disposed" and fails whichever test happens to be running. Let them finish first.
+        awaitIdle(project);
+
         ProjectManager.getInstance().closeAndDisposeAsync(project, project.getUIAccess()).get(TIMEOUT_SECONDS, TimeUnit.SECONDS);
+    }
+
+    /**
+     * Waits until the project reaches smart mode and its scanning and dumb queues are empty.
+     */
+    public static void awaitIdle(Project project) throws Exception {
+        DumbServiceImpl dumbService = (DumbServiceImpl) DumbService.getInstance(project);
+
+        CountDownLatch smart = new CountDownLatch(1);
+        dumbService.runWhenSmart(smart::countDown);
+        smart.await(TIMEOUT_SECONDS, TimeUnit.SECONDS);
+
+        UnindexedFilesScannerExecutor executor = UnindexedFilesScannerExecutor.getInstance(project);
+        waitFor(() -> !executor.isRunning().get()
+            && !executor.hasQueuedTasks()
+            && !dumbService.hasScheduledTasks()
+            && !dumbService.isRunning()
+            && !dumbService.isDumb());
+    }
+
+    private static void waitFor(BooleanSupplier condition) throws Exception {
+        long deadline = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(TIMEOUT_SECONDS);
+        while (System.currentTimeMillis() < deadline) {
+            if (condition.getAsBoolean()) {
+                return;
+            }
+            Thread.sleep(20);
+        }
     }
 
     /**
