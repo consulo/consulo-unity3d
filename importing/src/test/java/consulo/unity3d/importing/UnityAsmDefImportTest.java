@@ -26,6 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @AllowWriteLockUnderUIThread
 @AllowLogError({
     "consulo.virtualFileSystem.internal.BaseVirtualFileManager",
+    "consulo.component.impl.internal.inject.BaseComponentAdapter",
     "consulo.component.impl.internal.messagebus.MessageBusImpl",
     "consulo.project.impl.internal.StartupManagerImpl",
     "consulo.application.impl.internal.BaseApplication",
