@@ -19,10 +19,10 @@ package consulo.unity3d.run.debugger.attach;
 import consulo.execution.ProgramRunnerUtil;
 import consulo.execution.RunManager;
 import consulo.execution.RunnerAndConfigurationSettings;
+import consulo.execution.attach.XAttachHost;
 import consulo.execution.configuration.ConfigurationFactory;
 import consulo.execution.debug.DefaultDebugExecutor;
 import consulo.execution.debug.attach.XAttachDebugger;
-import consulo.execution.debug.attach.XAttachHost;
 import consulo.platform.ProcessInfo;
 import consulo.process.ExecutionException;
 import consulo.project.Project;
@@ -30,40 +30,35 @@ import consulo.unity3d.run.Unity3dAttachApplicationType;
 import consulo.unity3d.run.Unity3dAttachConfiguration;
 import consulo.unity3d.run.debugger.UnityDebugProcessInfo;
 import consulo.unity3d.run.debugger.UnityProcessDialog;
-
 import jakarta.annotation.Nonnull;
 
 /**
  * @author VISTALL
  * @since 09/01/2021
  */
-public class UnityAttachDebugger implements XAttachDebugger
-{
-	public static final UnityAttachDebugger INSTANCE = new UnityAttachDebugger();
+public class UnityAttachDebugger implements XAttachDebugger {
+    public static final UnityAttachDebugger INSTANCE = new UnityAttachDebugger();
 
-	@Nonnull
-	@Override
-	public String getDebuggerDisplayName()
-	{
-		return "Unity Debugger";
-	}
+    @Nonnull
+    @Override
+    public String getDebuggerDisplayName() {
+        return "Unity Debugger";
+    }
 
-	@Override
-	public void attachDebugSession(@Nonnull Project project, @Nonnull XAttachHost hostInfo, @Nonnull ProcessInfo info) throws ExecutionException
-	{
-		UnityDebugProcessInfo unityProcess = UnityProcessDialog.tryParseIfUnityProcess(info);
-		if(unityProcess == null)
-		{
-			throw new ExecutionException("Target not found");
-		}
+    @Override
+    public void attachDebugSession(@Nonnull Project project, @Nonnull XAttachHost hostInfo, @Nonnull ProcessInfo info) throws ExecutionException {
+        UnityDebugProcessInfo unityProcess = UnityProcessDialog.tryParseIfUnityProcess(info);
+        if (unityProcess == null) {
+            throw new ExecutionException("Target not found");
+        }
 
-		ConfigurationFactory factory = Unity3dAttachApplicationType.getInstance().getConfigurationFactories()[0];
+        ConfigurationFactory factory = Unity3dAttachApplicationType.getInstance().getConfigurationFactories()[0];
 
-		Unity3dAttachConfiguration configuration = new Unity3dAttachConfiguration(project, unityProcess.getName(), factory);
-		configuration.setForceUnityProcess(unityProcess);
+        Unity3dAttachConfiguration configuration = new Unity3dAttachConfiguration(project, unityProcess.getName(), factory);
+        configuration.setForceUnityProcess(unityProcess);
 
-		RunnerAndConfigurationSettings runSettings = RunManager.getInstance(project).createConfiguration(configuration, factory);
+        RunnerAndConfigurationSettings runSettings = RunManager.getInstance(project).createConfiguration(configuration, factory);
 
-		ProgramRunnerUtil.executeConfiguration(runSettings, DefaultDebugExecutor.getDebugExecutorInstance());
-	}
+        ProgramRunnerUtil.executeConfiguration(runSettings, DefaultDebugExecutor.getDebugExecutorInstance());
+    }
 }
