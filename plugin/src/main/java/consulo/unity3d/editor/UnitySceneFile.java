@@ -20,70 +20,61 @@ import consulo.language.Language;
 import consulo.language.impl.psi.LightElement;
 import consulo.language.psi.NavigatablePsiElement;
 import consulo.language.psi.PsiManager;
+import consulo.localize.LocalizeValue;
 import consulo.navigation.ItemPresentation;
 import consulo.project.Project;
 import consulo.ui.image.Image;
 import consulo.virtualFileSystem.VirtualFile;
 import consulo.virtualFileSystem.util.VirtualFileUtil;
-
+import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
 /**
  * @author VISTALL
  * @since 17.01.2016
  */
-public class UnitySceneFile extends LightElement implements NavigatablePsiElement
-{
-	private VirtualFile myVirtualFile;
+public class UnitySceneFile extends LightElement implements NavigatablePsiElement {
+    private VirtualFile myVirtualFile;
 
-	public UnitySceneFile(Project project, VirtualFile virtualFile)
-	{
-		super(PsiManager.getInstance(project), Language.ANY);
-		myVirtualFile = virtualFile;
-	}
+    public UnitySceneFile(Project project, VirtualFile virtualFile) {
+        super(PsiManager.getInstance(project), Language.ANY);
+        myVirtualFile = virtualFile;
+    }
 
-	@Override
-	public void navigate(boolean requestFocus)
-	{
-		if("unity".equals(myVirtualFile.getName()))
-		{
-			return;
-		}
-		UnityOpenScene p = new UnityOpenScene(myVirtualFile.getPath());
-		UnityEditorCommunication.request(getProject(), p, false);
-	}
+    @Override
+    public void navigate(boolean requestFocus) {
+        if ("unity".equals(myVirtualFile.getName())) {
+            return;
+        }
+        UnityOpenScene p = new UnityOpenScene(myVirtualFile.getPath());
+        UnityEditorCommunication.request(getProject(), p, false);
+    }
 
-	@Override
-	public ItemPresentation getPresentation()
-	{
-		return new ItemPresentation()
-		{
-			@Nullable
-			@Override
-			public String getPresentableText()
-			{
-				return VirtualFileUtil.getRelativePath(myVirtualFile, getProject().getBaseDir());
-			}
+    @Override
+    public ItemPresentation getPresentation() {
+        return new ItemPresentation() {
+            @Nonnull
+            @Override
+            public LocalizeValue getPresentableText() {
+                return LocalizeValue.ofNullable(VirtualFileUtil.getRelativePath(myVirtualFile, getProject().getBaseDir()));
+            }
 
-			@Nullable
-			@Override
-			public String getLocationString()
-			{
-				return null;
-			}
+            @Nullable
+            @Override
+            public String getLocationString() {
+                return null;
+            }
 
-			@Nullable
-			@Override
-			public Image getIcon()
-			{
-				return myVirtualFile.getFileType().getIcon();
-			}
-		};
-	}
+            @Nonnull
+            @Override
+            public Image getIcon() {
+                return myVirtualFile.getFileType().getIcon();
+            }
+        };
+    }
 
-	@Override
-	public String toString()
-	{
-		return "SceneFile: " + myVirtualFile;
-	}
+    @Override
+    public String toString() {
+        return "SceneFile: " + myVirtualFile;
+    }
 }
