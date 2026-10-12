@@ -22,14 +22,11 @@ import consulo.content.library.ui.LibraryEditorComponent;
 import consulo.content.library.ui.LibraryPropertiesEditor;
 import consulo.module.content.layer.ModuleRootLayer;
 import consulo.module.content.library.ModuleAwareLibraryType;
-import consulo.project.Project;
 import consulo.ui.image.Image;
 import consulo.unity3d.icon.Unity3dIconGroup;
-import consulo.virtualFileSystem.VirtualFile;
 
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
-import javax.swing.*;
 
 /**
  * @author VISTALL
@@ -56,13 +53,6 @@ public class UnityPackageLibraryType extends ModuleAwareLibraryType<LibraryPrope
 	@Nullable
 	@Override
 	public String getCreateActionName()
-	{
-		return null;
-	}
-
-	@Nullable
-	@Override
-	public NewLibraryConfiguration createNewLibrary(@Nonnull JComponent parentComponent, @Nullable VirtualFile contextDirectory, @Nonnull Project project)
 	{
 		return null;
 	}

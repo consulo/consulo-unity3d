@@ -16,115 +16,54 @@
 
 package consulo.unity3d.base.module.ui;
 
-import consulo.dotnet.DotNetBundle;
-import consulo.module.ui.extension.ModuleExtensionSdkBoxBuilder;
+import consulo.disposer.Disposable;
+import consulo.dotnet.module.extension.DotNetConfigurationPanel;
+import consulo.module.ui.extension.ModuleExtensionBundleBoxBuilder;
+import consulo.ui.Component;
+import consulo.ui.TextBox;
 import consulo.ui.annotation.RequiredUIAccess;
-import consulo.ui.ex.InputValidator;
-import consulo.ui.ex.awt.*;
-import consulo.ui.ex.awt.event.DocumentAdapter;
+import consulo.ui.layout.DockLayout;
+import consulo.ui.layout.VerticalLayout;
+import consulo.ui.util.FormBuilder;
 import consulo.unity3d.base.module.Unity3dRootMutableModuleExtension;
-import consulo.util.lang.StringUtil;
+import consulo.unity3d.localize.Unity3dLocalize;
 
-import jakarta.annotation.Nonnull;
-import javax.swing.*;
-import javax.swing.event.DocumentEvent;
 import java.util.List;
 
 /**
  * @author VISTALL
- * @see consulo.dotnet.module.extension.DotNetConfigurationPanel
+ * @see DotNetConfigurationPanel
  * @since 27.10.14
  */
-public class UnityConfigurationPanel extends JPanel
-{
-	@RequiredUIAccess
-	public UnityConfigurationPanel(final Unity3dRootMutableModuleExtension extension, final List<String> variables, final Runnable updater)
-	{
-		super(new VerticalFlowLayout(true, true));
-		ModuleExtensionSdkBoxBuilder<Unity3dRootMutableModuleExtension> sdkBoxBuilder = ModuleExtensionSdkBoxBuilder.create(extension, updater);
-		sdkBoxBuilder.sdkTypeClass(extension.getSdkTypeClass());
-		sdkBoxBuilder.sdkPointerFunc(Unity3dRootMutableModuleExtension::getInheritableSdk);
-		add(sdkBoxBuilder.build());
+public final class UnityConfigurationPanel {
+    private UnityConfigurationPanel() {
+    }
 
-		final CollectionListModel<String> dataModel = new CollectionListModel<String>(variables)
-		{
-			@Override
-			public int getSize()
-			{
-				return variables.size();
-			}
+    @RequiredUIAccess
+    public static Component create(
+        Unity3dRootMutableModuleExtension extension,
+        List<String> variables,
+        Disposable uiDisposable,
+        Runnable updater
+    ) {
+        ModuleExtensionBundleBoxBuilder<Unity3dRootMutableModuleExtension> sdkBoxBuilder =
+            ModuleExtensionBundleBoxBuilder.create(extension, uiDisposable, updater);
+        sdkBoxBuilder.sdkTypeClass(extension.getSdkTypeClass());
+        sdkBoxBuilder.sdkPointerFunc(Unity3dRootMutableModuleExtension::getInheritableSdk);
 
-			@Override
-			public String getElementAt(int index)
-			{
-				return variables.get(index);
-			}
+        TextBox namespacePrefixBox = TextBox.create(extension.getNamespacePrefix());
+        namespacePrefixBox.addValueListener(event -> extension.setNamespacePrefix(event.getValue()));
 
-			@Override
-			public void add(final String element)
-			{
-				int i = variables.size();
-				variables.add(element);
-				fireIntervalAdded(this, i, i);
-			}
+        FormBuilder formBuilder = FormBuilder.create();
+        formBuilder.addLabeled(Unity3dLocalize.namespacePrefixLabel(), namespacePrefixBox);
 
-			@Override
-			public void remove(@Nonnull final String element)
-			{
-				int i = variables.indexOf(element);
-				variables.remove(element);
-				fireIntervalRemoved(this, i, i);
-			}
+        VerticalLayout topLayout = VerticalLayout.create();
+        topLayout.add(sdkBoxBuilder.build());
+        topLayout.add(formBuilder.build());
 
-			@Override
-			public void remove(int index)
-			{
-				variables.remove(index);
-				fireIntervalRemoved(this, index, index);
-			}
-		};
-
-		final JBTextField namespacePrefixField = new JBTextField(extension.getNamespacePrefix());
-		namespacePrefixField.getDocument().addDocumentListener(new DocumentAdapter()
-		{
-			@Override
-			protected void textChanged(DocumentEvent documentEvent)
-			{
-				extension.setNamespacePrefix(namespacePrefixField.getText());
-			}
-		});
-
-		add(LabeledComponent.create(namespacePrefixField, "Namespace Prefix:"));
-
-		final JBList variableList = new JBList(dataModel);
-		ToolbarDecorator variableDecorator = ToolbarDecorator.createDecorator(variableList);
-		variableDecorator.setAddAction(anActionButton -> {
-			String name1 = Messages.showInputDialog(UnityConfigurationPanel.this, DotNetBundle.message("new.variable.message"), DotNetBundle.message("new.variable.title"), null, null,
-					new InputValidator()
-			{
-				@RequiredUIAccess
-				@Override
-				public boolean checkInput(String s)
-				{
-					return !variables.contains(s);
-				}
-
-				@RequiredUIAccess
-				@Override
-				public boolean canClose(String s)
-				{
-					return true;
-				}
-			});
-
-			if(StringUtil.isEmpty(name1))
-			{
-				return;
-			}
-
-			dataModel.add(name1);
-		});
-		add(new JBLabel("Preprocessor variables:"));
-		add(variableDecorator.createPanel());
-	}
+        DockLayout layout = DockLayout.create();
+        layout.top(topLayout);
+        layout.center(DotNetConfigurationPanel.createVariableList(variables));
+        return layout;
+    }
 }

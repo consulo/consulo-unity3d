@@ -8,6 +8,8 @@ empty.magic.method.inspection.message:
     text: Empty MonoBehaviour methods are executed and incur a small overhead
 inspection.unity.group.name:
     text: Unity (Game Engine)
+namespace.prefix.label:
+    text: 'Namespace Prefix:'
 new.mono.behaviour.inspection.message:
     text: "Creating MonoBehaviour's using the 'new' keyword is not allowed. MonoBehaviours can only be added using AddComponent(). Alternatively, your script can inherit from ScriptableObject or no base class at all"
 ongui.method.inspection.message:

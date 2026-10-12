@@ -21,71 +21,50 @@ import consulo.disposer.Disposable;
 import consulo.dotnet.module.extension.DotNetSimpleMutableModuleExtension;
 import consulo.module.content.layer.ModuleRootLayer;
 import consulo.module.extension.MutableModuleInheritableNamedPointer;
-import consulo.module.extension.swing.SwingMutableModuleExtension;
 import consulo.ui.Component;
-import consulo.ui.Label;
 import consulo.ui.annotation.RequiredUIAccess;
-import consulo.ui.layout.VerticalLayout;
 import consulo.unity3d.base.module.ui.UnityConfigurationPanel;
 import consulo.util.lang.Comparing;
-
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
-import javax.swing.*;
 
 /**
  * @author VISTALL
  * @since 27.10.14
  */
-public class Unity3dRootMutableModuleExtension extends Unity3dRootModuleExtension implements DotNetSimpleMutableModuleExtension<Unity3dRootModuleExtension>, SwingMutableModuleExtension
-{
-	public Unity3dRootMutableModuleExtension(@Nonnull String id, @Nonnull ModuleRootLayer rootModel)
-	{
-		super(id, rootModel);
-	}
+public class Unity3dRootMutableModuleExtension extends Unity3dRootModuleExtension implements DotNetSimpleMutableModuleExtension<Unity3dRootModuleExtension> {
+    public Unity3dRootMutableModuleExtension(@Nonnull String id, @Nonnull ModuleRootLayer rootModel) {
+        super(id, rootModel);
+    }
 
-	public void setNamespacePrefix(@Nullable String prefix)
-	{
-		myNamespacePrefix = prefix;
-	}
+    public void setNamespacePrefix(@Nullable String prefix) {
+        myNamespacePrefix = prefix;
+    }
 
-	public void setScriptRuntimeVersion(int version)
-	{
-		scriptRuntimeVersion = version;
-	}
+    public void setScriptRuntimeVersion(int version) {
+        scriptRuntimeVersion = version;
+    }
 
-	@Nonnull
-	@Override
-	public MutableModuleInheritableNamedPointer<Sdk> getInheritableSdk()
-	{
-		return (MutableModuleInheritableNamedPointer<Sdk>) super.getInheritableSdk();
-	}
+    @Nonnull
+    @Override
+    public MutableModuleInheritableNamedPointer<Sdk> getInheritableSdk() {
+        return (MutableModuleInheritableNamedPointer<Sdk>) super.getInheritableSdk();
+    }
 
-	@RequiredUIAccess
-	@Nullable
-	@Override
-	public Component createConfigurationComponent(@Nonnull Disposable disposable, @Nonnull Runnable runnable)
-	{
-		return VerticalLayout.create().add(Label.create("Unsupported UI"));
-	}
+    @RequiredUIAccess
+    @Nullable
+    @Override
+    public Component createConfigurationComponent(@Nonnull Disposable disposable, @Nonnull Runnable runnable) {
+        return UnityConfigurationPanel.create(this, getVariables(), disposable, runnable);
+    }
 
-	@RequiredUIAccess
-	@Nullable
-	@Override
-	public JComponent createConfigurablePanel(@Nonnull Disposable disposable, @Nonnull Runnable runnable)
-	{
-		return new UnityConfigurationPanel(this, getVariables(), runnable);
-	}
+    @Override
+    public void setEnabled(boolean b) {
+        myIsEnabled = b;
+    }
 
-	@Override
-	public void setEnabled(boolean b)
-	{
-		myIsEnabled = b;
-	}
-
-	@Override
-	public boolean isModified(@Nonnull Unity3dRootModuleExtension ex)
-	{
-		return isModifiedImpl(ex) || !Comparing.equal(getNamespacePrefix(), ex.getNamespacePrefix()) || scriptRuntimeVersion != ex.scriptRuntimeVersion;
-	}
+    @Override
+    public boolean isModified(@Nonnull Unity3dRootModuleExtension ex) {
+        return isModifiedImpl(ex) || !Comparing.equal(getNamespacePrefix(), ex.getNamespacePrefix()) || scriptRuntimeVersion != ex.scriptRuntimeVersion;
+    }
 }
