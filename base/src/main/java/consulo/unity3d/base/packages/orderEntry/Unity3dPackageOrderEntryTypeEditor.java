@@ -13,16 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package consulo.unity3d.base.packages.orderEntry;
 
 import consulo.annotation.component.ExtensionImpl;
 import consulo.ide.setting.module.CustomOrderEntryTypeEditor;
 import consulo.module.content.layer.orderEntry.CustomOrderEntry;
 import consulo.ui.ex.ColoredTextContainer;
-import consulo.unity3d.base.Unity3dIcons;
 
 import jakarta.annotation.Nonnull;
+
 import java.util.function.Consumer;
 
 /**
@@ -30,24 +29,20 @@ import java.util.function.Consumer;
  * @since 2018-09-19
  */
 @ExtensionImpl
-public class Unity3dPackageOrderEntryTypeEditor implements CustomOrderEntryTypeEditor<Unity3dPackageOrderEntryModel>
-{
-	@Nonnull
-	@Override
-	public Consumer<ColoredTextContainer> getRender(@Nonnull CustomOrderEntry<Unity3dPackageOrderEntryModel> orderEntry)
-	{
-		return render ->
-		{
-			render.append(orderEntry.getPresentableName());
-			render.setIcon(Unity3dIcons.Unity3d);
-		};
-	}
+public class Unity3dPackageOrderEntryTypeEditor implements CustomOrderEntryTypeEditor<Unity3dPackageOrderEntryModel> {
+    @Nonnull
+    @Override
+    public Consumer<ColoredTextContainer> getRenderer(@Nonnull CustomOrderEntry<Unity3dPackageOrderEntryModel> orderEntry) {
+        return render -> {
+            render.append(orderEntry.getPresentableName());
+            render.setIcon(Unity3dIconGroup.unity3d());
+        };
+    }
 
-	@Nonnull
-	@Override
-	public String getOrderTypeId()
-	{
-		return Unity3dPackageOrderEntryType.ID;
-	}
+    @Nonnull
+    @Override
+    public String getOrderTypeId() {
+        return Unity3dPackageOrderEntryType.ID;
+    }
 }
 
