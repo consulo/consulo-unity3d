@@ -20,6 +20,7 @@ import consulo.ide.setting.module.CustomOrderEntryTypeEditor;
 import consulo.module.content.layer.orderEntry.CustomOrderEntry;
 import consulo.ui.ex.ColoredTextContainer;
 
+import consulo.unity3d.icon.Unity3dIconGroup;
 import jakarta.annotation.Nonnull;
 
 import java.util.function.Consumer;
