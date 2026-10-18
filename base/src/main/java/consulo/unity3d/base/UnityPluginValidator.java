@@ -40,7 +40,7 @@ import consulo.project.Project;
 import consulo.project.startup.BackgroundStartupActivity;
 import consulo.project.ui.notification.Notification;
 import consulo.project.ui.notification.NotificationAction;
-import consulo.project.ui.notification.NotificationType;
+import consulo.project.ui.notification.NotificationService;
 import consulo.ui.UIAccess;
 import consulo.ui.annotation.RequiredUIAccess;
 import consulo.ui.ex.action.AnActionEvent;
@@ -103,25 +103,30 @@ public class UnityPluginValidator implements BackgroundStartupActivity {
         }
 
         if (ver == null) {
-            showNotify(project, "Consulo plugin for UnityEditor is missing", LocalizeValue.localizeTODO("Install via manifest"), false);
+            showNotify(project, LocalizeValue.localizeTODO("Consulo plugin for UnityEditor is missing"), LocalizeValue.localizeTODO("Install via manifest"), false);
         }
         else {
-            showNotify(project, "Outdated Consulo plugin for UnityEditor", LocalizeValue.localizeTODO("Update via manifest"), true);
+            showNotify(project, LocalizeValue.localizeTODO("Outdated Consulo plugin for UnityEditor"), LocalizeValue.localizeTODO("Update via manifest"), true);
         }
     }
 
-    private static void showNotify(final Project project, @Nonnull String text, @Nonnull LocalizeValue actionName, boolean update) {
-        Notification notification = new Notification(UnityNotificationGroup.INSTANCE, "Unity3D Plugin", text, update ? NotificationType.WARNING : NotificationType.INFORMATION);
-        notification.addAction(new NotificationAction(actionName) {
+    private static void showNotify(final Project project, @Nonnull LocalizeValue text, @Nonnull LocalizeValue actionName, boolean update) {
+        NotificationService notificationService = NotificationService.getInstance();
+
+        Notification.Builder builder = update ? notificationService.newWarn(UnityNotificationGroup.INSTANCE) : notificationService.newInfo(UnityNotificationGroup.INSTANCE);
+
+        builder = builder.title(LocalizeValue.localizeTODO("Unity3D Plugin"));
+        builder = builder.content(text);
+        builder = builder.addAction(new NotificationAction(actionName) {
             @RequiredUIAccess
             @Override
-            public void actionPerformed(@Nonnull AnActionEvent anActionEvent, @Nonnull Notification notification) {
+            public void actionPerformed(AnActionEvent anActionEvent, Notification notification) {
                 notification.expire();
                 updatePlugin(project);
-
             }
         });
-        notification.notify(project);
+
+        builder.notify(project);
     }
 
     private static void updatePlugin(@Nonnull final Project project) {
@@ -161,7 +166,7 @@ public class UnityPluginValidator implements BackgroundStartupActivity {
             // drop old plugins
             for (VirtualFile oldPluginFile : oldPluginFiles) {
                 try {
-                    WriteAction.run(() ->{
+                    WriteAction.run(() -> {
                         oldPluginFile.delete(null);
 
                         doActionOnSuffixFile(oldPluginFile, virtualFile -> virtualFile.delete(null), ".mdb");

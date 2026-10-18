@@ -16,6 +16,7 @@
 
 package consulo.unity3d.importing.change;
 
+import consulo.project.ui.notification.NotificationService;
 import consulo.unity3d.base.Unity3dPaths;
 import consulo.annotation.access.RequiredReadAction;
 import consulo.annotation.component.ComponentScope;
@@ -184,8 +185,10 @@ public class Unity3dProjectChangeListener implements Disposable {
             }
 
             if (needNotification) {
-                Notification notification = new Notification(UnityNotificationGroup.INSTANCE, Application.get().getName().get(), "Unity project structure changed", NotificationType.INFORMATION);
-                notification.addAction(new NotificationAction(LocalizeValue.localizeTODO("Rebuild Project")) {
+                NotificationService.getInstance().newInfo(UnityNotificationGroup.INSTANCE)
+                    .title(myProject.getApplication().getName())
+                    .content(LocalizeValue.localizeTODO("Unity project structure changed"))
+                    .addAction(new NotificationAction(LocalizeValue.localizeTODO("Rebuild Project")) {
                     @RequiredUIAccess
                     @Override
                     public void actionPerformed(@Nonnull AnActionEvent anActionEvent, @Nonnull Notification notification) {
@@ -196,8 +199,8 @@ public class Unity3dProjectChangeListener implements Disposable {
 
                         Unity3dProjectImporter.syncProjectStep(myProject, rootModuleExtension.getSdk(), null, true);
                     }
-                });
-                notification.notify(myProject);
+                })
+                .notify(myProject);
             }
         });
     }

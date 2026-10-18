@@ -26,6 +26,7 @@ import consulo.execution.configuration.RunConfiguration;
 import consulo.execution.runner.ExecutionEnvironment;
 import consulo.localize.LocalizeValue;
 import consulo.project.ui.notification.Notification;
+import consulo.project.ui.notification.NotificationService;
 import consulo.project.ui.notification.NotificationType;
 import consulo.ui.UIAccess;
 import consulo.ui.annotation.RequiredUIAccess;
@@ -114,7 +115,10 @@ public class UnityRefreshBeforeRunTaskProvider extends BeforeRunTaskProvider<Uni
 
                 boolean request = UnityEditorCommunication.request(env.getProject(), postObject, true);
                 if (!request) {
-                    new Notification(UnityNotificationGroup.INSTANCE, Application.get().getName().get(), "UnityEditor is not responding", NotificationType.INFORMATION).notify(env.getProject());
+                    NotificationService.getInstance().newInfo(UnityNotificationGroup.INSTANCE)
+                        .title(Application.get().getName())
+                        .content(LocalizeValue.localizeTODO("UnityEditor is not responding"))
+                        .notify(env.getProject());
 
                     accessToken.finish(Boolean.FALSE);
                     return;

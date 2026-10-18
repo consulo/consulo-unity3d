@@ -16,6 +16,7 @@
 
 package consulo.unity3d.importing;
 
+import consulo.project.ui.notification.NotificationService;
 import consulo.unity3d.base.run.UnityRunConfigurationCreator;
 import consulo.unity3d.base.editor.UnityEditorCommunicator;
 import consulo.unity3d.base.UnityFileOpener;
@@ -177,9 +178,10 @@ public class Unity3dProjectImporter {
     }
 
     private static void notifyAboutUnityEditorProblem(Project project) {
-        UIUtil.invokeLaterIfNeeded(() -> new Notification(UnityNotificationGroup.INSTANCE, project.getApplication().getName().get(), "UnityEditor is not responding.<br>Defines is not resolved.",
-            NotificationType
-                .INFORMATION).notify(project));
+        NotificationService.getInstance().newInfo(UnityNotificationGroup.INSTANCE)
+            .title(project.getApplication().getName())
+            .content(LocalizeValue.localizeTODO("UnityEditor is not responding.<br>Defines is not resolved."))
+            .notify(project);
     }
 
     /**
