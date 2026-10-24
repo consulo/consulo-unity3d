@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package consulo.unity3d.run.before;
 
 import consulo.annotation.component.ExtensionImpl;
@@ -21,78 +20,71 @@ import consulo.application.Application;
 import consulo.application.progress.Task;
 import consulo.dataContext.DataContext;
 import consulo.document.FileDocumentManager;
-import consulo.execution.BeforeRunTaskProvider;
+import consulo.execution.BeforeRunFragment;
 import consulo.execution.configuration.RunConfiguration;
 import consulo.execution.runner.ExecutionEnvironment;
 import consulo.localize.LocalizeValue;
-import consulo.project.ui.notification.Notification;
 import consulo.project.ui.notification.NotificationService;
-import consulo.project.ui.notification.NotificationType;
 import consulo.ui.UIAccess;
-import consulo.ui.annotation.RequiredUIAccess;
 import consulo.ui.image.Image;
 import consulo.unity3d.base.UnityNotificationGroup;
+import consulo.unity3d.base.jsonApi.UnityPingPong;
 import consulo.unity3d.editor.UnityEditorCommunication;
 import consulo.unity3d.editor.UnityRefresh;
 import consulo.unity3d.icon.Unity3dIconGroup;
-import consulo.unity3d.base.jsonApi.UnityPingPong;
 import consulo.unity3d.run.test.Unity3dTestConfiguration;
-import consulo.util.concurrent.AsyncResult;
-import consulo.util.dataholder.Key;
 import consulo.util.lang.TimeoutUtil;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
 
 /**
+ * Refreshes the Unity Editor before a Unity test configuration runs.
+ *
  * @author VISTALL
  * @since 21.01.2016
  */
 @ExtensionImpl
-public class UnityRefreshBeforeRunTaskProvider extends BeforeRunTaskProvider<UnityRefreshBeforeRunTask> {
-    private static final Key<UnityRefreshBeforeRunTask> ourKey = Key.create("unity.refresh.task");
+public class UnityRefreshBeforeRunFragment implements BeforeRunFragment<UnityRefreshBeforeRunTask> {
+    public static final String ID = "unity.refresh.task";
 
-    @Nonnull
     @Override
-    public Key<UnityRefreshBeforeRunTask> getId() {
-        return ourKey;
+    public String getId() {
+        return ID;
     }
 
-    @Nullable
-    @Override
-    public Image getIcon(@Nonnull RunConfiguration configuration) {
-        return Unity3dIconGroup.unity3d();
-    }
-
-    @Nonnull
     @Override
     public LocalizeValue getName() {
         return LocalizeValue.localizeTODO("UnityEditor refresh");
     }
 
     @Override
-    public boolean isConfigurable() {
-        return false;
+    public @Nullable Image getIcon(RunConfiguration configuration) {
+        return Unity3dIconGroup.unity3d();
     }
 
-    @Nullable
     @Override
-    public UnityRefreshBeforeRunTask createTask(RunConfiguration runConfiguration) {
-        return runConfiguration instanceof Unity3dTestConfiguration ? new UnityRefreshBeforeRunTask(ourKey) : null;
+    public Class<UnityRefreshBeforeRunTask> getStateClass() {
+        return UnityRefreshBeforeRunTask.class;
     }
 
-    @RequiredUIAccess
-    @Nonnull
     @Override
-    public CompletableFuture<Void> configureTask(RunConfiguration runConfiguration, UnityRefreshBeforeRunTask task) {
-        return CompletableFuture.failedFuture(new CancellationException());
+    public @Nullable UnityRefreshBeforeRunTask createTask(RunConfiguration configuration) {
+        return configuration instanceof Unity3dTestConfiguration ? new UnityRefreshBeforeRunTask() : null;
     }
 
-    @Nonnull
     @Override
-    public CompletableFuture<Void> executeTaskAsync(UIAccess uiAccess, DataContext context, RunConfiguration configuration, ExecutionEnvironment env, UnityRefreshBeforeRunTask task) {
+    public boolean isSingleton() {
+        return true;
+    }
+
+    @Override
+    public CompletableFuture<?> executeAsync(UIAccess uiAccess,
+                                             DataContext context,
+                                             RunConfiguration configuration,
+                                             ExecutionEnvironment env,
+                                             UnityRefreshBeforeRunTask task) {
         CompletableFuture<Void> result = new CompletableFuture<>();
 
         uiAccess.give(() -> {

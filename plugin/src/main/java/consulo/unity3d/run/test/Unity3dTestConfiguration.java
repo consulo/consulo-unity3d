@@ -20,7 +20,6 @@ import consulo.annotation.access.RequiredReadAction;
 import consulo.csharp.lang.CSharpFileType;
 import consulo.dotnet.debugger.impl.DotNetConfurationWithDefaultDebugFileType;
 import consulo.execution.configuration.*;
-import consulo.execution.configuration.ui.SettingsEditor;
 import consulo.execution.executor.Executor;
 import consulo.execution.runner.ExecutionEnvironment;
 import consulo.language.file.LanguageFileType;
@@ -29,12 +28,8 @@ import consulo.module.ModuleManager;
 import consulo.process.ExecutionException;
 import consulo.project.Project;
 import consulo.ui.annotation.RequiredUIAccess;
-import consulo.util.xml.serializer.InvalidDataException;
-import consulo.util.xml.serializer.WriteExternalException;
-import consulo.util.xml.serializer.XmlSerializer;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
-import org.jdom.Element;
 
 /**
  * @author VISTALL
@@ -46,23 +41,8 @@ public class Unity3dTestConfiguration extends LocatableConfigurationBase impleme
     }
 
     @Override
-    public void readExternal(Element element) throws InvalidDataException {
-        super.readExternal(element);
-
-        XmlSerializer.deserializeInto(this, element);
-    }
-
-    @Override
-    public void writeExternal(Element element) throws WriteExternalException {
-        super.writeExternal(element);
-
-        XmlSerializer.serializeInto(this, element);
-    }
-
-    @Nonnull
-    @Override
-    public SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
-        return new Unity3dTestConfigurationEditor();
+    protected Class<Unity3dTestConfigurationOptions> getOptionsClass() {
+        return Unity3dTestConfigurationOptions.class;
     }
 
     @Nullable

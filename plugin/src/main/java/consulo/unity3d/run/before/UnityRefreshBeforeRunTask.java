@@ -13,22 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package consulo.unity3d.run.before;
 
+import com.dslplatform.json.CompiledJson;
 import consulo.execution.BeforeRunTask;
-import consulo.util.dataholder.Key;
-
-import jakarta.annotation.Nonnull;
 
 /**
  * @author VISTALL
  * @since 21.01.2016
  */
-public class UnityRefreshBeforeRunTask extends BeforeRunTask<UnityRefreshBeforeRunTask>
-{
-	public UnityRefreshBeforeRunTask(@Nonnull Key<UnityRefreshBeforeRunTask> providerId)
-	{
-		super(providerId);
-	}
+@CompiledJson
+public class UnityRefreshBeforeRunTask extends BeforeRunTask {
 }

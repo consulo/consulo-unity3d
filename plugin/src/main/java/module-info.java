@@ -59,7 +59,9 @@ module consulo.unity3d {
     requires dd.plist;
 
     opens consulo.unity3d.usages to consulo.util.xml.serializer;
-    opens consulo.unity3d.run to consulo.util.xml.serializer;
+    opens consulo.unity3d.run to consulo.util.xml.serializer, consulo.execution.api;
+    opens consulo.unity3d.run.test to consulo.util.xml.serializer, consulo.execution.api;
+    opens consulo.unity3d.run.before to consulo.util.xml.serializer, consulo.execution.api;
     opens consulo.unity3d.editor to com.google.gson;
     opens consulo.unity3d.jsonApi to com.google.gson;
 }

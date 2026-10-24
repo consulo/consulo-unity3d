@@ -22,7 +22,7 @@ import consulo.csharp.lang.CSharpFileType;
 import consulo.dotnet.debugger.impl.DotNetConfurationWithDefaultDebugFileType;
 import consulo.execution.DefaultExecutionResult;
 import consulo.execution.configuration.*;
-import consulo.execution.configuration.ui.SettingsEditor;
+import consulo.execution.configuration.fragment.RunConfigurationFragment;
 import consulo.execution.executor.Executor;
 import consulo.execution.runner.ExecutionEnvironment;
 import consulo.language.file.LanguageFileType;
@@ -32,12 +32,10 @@ import consulo.process.ExecutionException;
 import consulo.process.NopProcessHandler;
 import consulo.project.Project;
 import consulo.unity3d.run.debugger.UnityDebugProcessInfo;
-import consulo.util.xml.serializer.InvalidDataException;
-import consulo.util.xml.serializer.WriteExternalException;
-import consulo.util.xml.serializer.XmlSerializer;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
-import org.jdom.Element;
+
+import java.util.List;
 
 /**
  * @author VISTALL
@@ -54,9 +52,6 @@ public class Unity3dAttachConfiguration extends LocatableConfigurationBase imple
         FROM_DIALOG
     }
 
-    private AttachTarget myAttachTarget = AttachTarget.UNITY_EDITOR;
-    private String myProcessName;
-
     // for attaching from attach action
     @Nullable
     private UnityDebugProcessInfo myForceUnityProcess;
@@ -69,46 +64,63 @@ public class Unity3dAttachConfiguration extends LocatableConfigurationBase imple
         super(project, factory, name);
     }
 
+    @Override
+    protected Class<Unity3dAttachConfigurationOptions> getOptionsClass() {
+        return Unity3dAttachConfigurationOptions.class;
+    }
+
+    @Override
+    public Unity3dAttachConfigurationOptions getOptions() {
+        return (Unity3dAttachConfigurationOptions) super.getOptions();
+    }
+
+    @Override
+    protected void convertLegacyState(LegacyRunConfigurationConverter converter) {
+        super.convertLegacyState(converter);
+
+        Unity3dAttachConfigurationLegacyState old = converter.readXml(Unity3dAttachConfigurationLegacyState.class);
+
+        Unity3dAttachConfigurationOptions options = new Unity3dAttachConfigurationOptions();
+        AttachTarget attachTarget = old.getAttachTarget();
+        options.setAttachTarget(attachTarget == null || attachTarget == AttachTarget.UNITY_EDITOR ? null : attachTarget.name());
+        options.setProcessName(old.getProcessName());
+        converter.setOptions(options);
+    }
+
+    @Override
+    public List<RunConfigurationFragment<?>> createFragments() {
+        return List.of(new Unity3dAttachTargetFragment());
+    }
+
     public void setAttachTarget(AttachTarget attachTarget) {
-        myAttachTarget = attachTarget;
+        getOptions().setAttachTarget(attachTarget == AttachTarget.UNITY_EDITOR ? null : attachTarget.name());
     }
 
     public AttachTarget getAttachTarget() {
-        return myAttachTarget;
+        String name = getOptions().getAttachTarget();
+        if (name != null) {
+            for (AttachTarget target : AttachTarget.values()) {
+                if (target.name().equals(name)) {
+                    return target;
+                }
+            }
+        }
+        return AttachTarget.UNITY_EDITOR;
     }
 
-    public void setProcessName(String processName) {
-        myProcessName = processName;
+    public void setProcessName(@Nullable String processName) {
+        getOptions().setProcessName(processName);
     }
 
+    @Nullable
     public String getProcessName() {
-        return myProcessName;
+        return getOptions().getProcessName();
     }
 
     @Nonnull
     @Override
     public LanguageFileType getDefaultDebuggerFileType() {
         return CSharpFileType.INSTANCE;
-    }
-
-    @Override
-    public void readExternal(Element element) throws InvalidDataException {
-        super.readExternal(element);
-
-        XmlSerializer.deserializeInto(this, element);
-    }
-
-    @Override
-    public void writeExternal(Element element) throws WriteExternalException {
-        super.writeExternal(element);
-
-        XmlSerializer.serializeInto(this, element);
-    }
-
-    @Nonnull
-    @Override
-    public SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
-        return new Unity3dConfigurationEditor();
     }
 
     @Nullable
