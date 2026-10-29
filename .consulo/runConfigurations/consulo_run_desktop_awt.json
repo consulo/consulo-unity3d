@@ -1,0 +1,34 @@
+{
+  "name": "consulo:run-desktop-awt",
+  "type": "MavenRunConfiguration",
+  "factoryName": "Maven",
+  "singleton": true,
+  "options": {
+    "goals": [
+      "consulo:run-desktop-awt-fork",
+      "-pl",
+      ":consulo.unity3d"
+    ],
+    "runnerSettings": {
+      "vmOptions": "--add-opens=java.desktop/sun.awt=ALL-UNNAMED --add-opens=java.desktop/sun.swing=ALL-UNNAMED --add-opens=java.desktop/sun.awt.image=ALL-UNNAMED --add-opens=java.desktop/sun.java2d=ALL-UNNAMED --add-opens=java.desktop/sun.font=ALL-UNNAMED --add-opens=java.desktop/java.awt=ALL-UNNAMED --add-opens=java.desktop/javax.swing=ALL-UNNAMED --add-opens=java.desktop/javax.swing.plaf.basic=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.desktop/javax.swing.text.html=ALL-UNNAMED --add-opens=java.desktop/java.awt.peer=ALL-UNNAMED --add-opens=java.desktop/java.awt.event=ALL-UNNAMED -Didea.ProcessCanceledException=disabled",
+      "mavenProperties": {},
+      "skipTests": false,
+      "jreName": null,
+      "passParentEnv": true,
+      "environmentProperties": {},
+      "runMavenInBackground": true
+    },
+    "workingDirectory": "$PROJECT_DIR$",
+    "resolveToWorkspace": true
+  },
+  "beforeRun": [
+    {
+      "id": "Maven.BeforeRunTask",
+      "state": {
+        "enabled": true,
+        "projectPath": "$PROJECT_DIR$/pom.xml",
+        "goal": "-T 1C package"
+      }
+    }
+  ]
+}

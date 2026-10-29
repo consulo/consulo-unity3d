@@ -39,6 +39,8 @@ import jakarta.annotation.Nullable;
 import jakarta.inject.Inject;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.function.Consumer;
 
 /**
@@ -83,8 +85,9 @@ public class Unity3dModuleImportProvider implements ModuleImportProvider<UnityMo
     }
 
     @Override
-    public boolean canImport(@Nonnull File fileOrDirectory) {
-        return fileOrDirectory.isDirectory() && new File(fileOrDirectory, "ProjectSettings/ProjectSettings.asset").exists();
+    public boolean canImport(@Nonnull Path fileOrDirectory) {
+        return Files.isDirectory(fileOrDirectory)
+            && Files.exists(fileOrDirectory.resolve("ProjectSettings/ProjectSettings.asset"));
     }
 
     @Override

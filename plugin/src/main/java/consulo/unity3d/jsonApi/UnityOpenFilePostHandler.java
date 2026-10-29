@@ -24,20 +24,15 @@ import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.WinDef;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.application.Application;
-import consulo.application.ui.wm.IdeFocusManager;
 import consulo.builtinWebServer.json.JsonPostRequestHandler;
-import consulo.codeEditor.Editor;
 import consulo.content.bundle.Sdk;
 import consulo.content.bundle.SdkTable;
 import consulo.content.bundle.SdkUtil;
-import consulo.fileEditor.FileEditorManager;
 import consulo.localize.LocalizeValue;
 import consulo.module.creation.ModuleCreationHelper;
 import consulo.module.creation.NewOrImportModuleUtil;
 import consulo.module.creation.importing.ModuleImportContext;
 import consulo.module.creation.importing.ModuleImportProvider;
-import consulo.navigation.OpenFileDescriptor;
-import consulo.navigation.OpenFileDescriptorFactory;
 import consulo.platform.Platform;
 import consulo.platform.PlatformOperatingSystem;
 import consulo.project.Project;
@@ -47,11 +42,9 @@ import consulo.project.startup.StartupManager;
 import consulo.project.ui.wm.IdeFrame;
 import consulo.project.ui.wm.WindowManager;
 import consulo.project.util.ProjectUtil;
-import consulo.ui.Alert;
 import consulo.ui.Alerts;
 import consulo.ui.UIAccess;
 import consulo.ui.UIAction;
-import consulo.ui.ex.awt.Messages;
 import consulo.ui.ex.awtUnsafe.TargetAWT;
 import consulo.unity3d.base.bundle.Unity3dBundleType;
 import consulo.unity3d.importing.Unity3dModuleImportProvider;
@@ -67,6 +60,7 @@ import jakarta.annotation.Nullable;
 import jakarta.inject.Inject;
 
 import java.io.File;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
@@ -100,10 +94,7 @@ public class UnityOpenFilePostHandler extends JsonPostRequestHandler<UnityOpenFi
             return JsonResponse.asError("unsupported-content-type");
         }
 
-        VirtualFile projectVirtualFile = LocalFileSystem.getInstance().findFileByPath(body.projectPath);
-        if (projectVirtualFile == null) {
-            return JsonResponse.asError("project-dir-not-exists");
-        }
+        Path projectVirtualFile = Path.of(body.projectPath);
 
         Project targetProject = null;
         Project[] openProjects = ProjectManager.getInstance().getOpenProjects();
@@ -122,7 +113,7 @@ public class UnityOpenFilePostHandler extends JsonPostRequestHandler<UnityOpenFi
             return JsonResponse.asSuccess(null);
         }
 
-        if (!new File(projectVirtualFile.getPath(), Project.DIRECTORY_STORE_FOLDER).exists()) {
+        if (!Files.exists(projectVirtualFile.resolve(Project.DIRECTORY_STORE_FOLDER))) {
             String sdkPath = Platform.current().os().isMac() ? body.editorPath : new File(body.editorPath).getParentFile().getParentFile().getPath();
 
             VirtualFile sdkFileHome = LocalFileSystem.getInstance().findFileByPath(sdkPath);
@@ -225,7 +216,7 @@ public class UnityOpenFilePostHandler extends JsonPostRequestHandler<UnityOpenFi
             UIAccess uiAccess = myApplication.getLastUIAccess();
 
             CompletableFuture<Project> result = ProjectManager.getInstance()
-                .openProjectAsync(projectVirtualFile.toNioPath(), uiAccess, new ProjectOpenContext());
+                .openProjectAsync(projectVirtualFile, uiAccess, new ProjectOpenContext());
 
             result.whenComplete((project, t) -> {
                 if (project != null) {
