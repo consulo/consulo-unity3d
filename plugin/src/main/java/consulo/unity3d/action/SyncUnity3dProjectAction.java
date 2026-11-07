@@ -25,7 +25,9 @@ import consulo.ui.ex.action.coroutine.ActionSafeReadLock;
 import consulo.unity3d.base.Unity3dIcons;
 import consulo.unity3d.base.module.Unity3dModuleExtensionUtil;
 import consulo.unity3d.base.module.Unity3dRootModuleExtension;
+import consulo.unity3d.icon.Unity3dIconGroup;
 import consulo.unity3d.importing.Unity3dProjectImporter;
+import consulo.unity3d.localize.Unity3dLocalize;
 import consulo.util.concurrent.coroutine.Coroutine;
 import consulo.virtualFileSystem.VirtualFile;
 import jakarta.annotation.Nonnull;
@@ -37,7 +39,7 @@ import jakarta.annotation.Nonnull;
 @ActionImpl(id = "SyncUnity3dProject")
 public class SyncUnity3dProjectAction extends AnAction implements AnActionWithAsyncUpdate {
     public SyncUnity3dProjectAction() {
-        super(Unity3dIcons.Unity3d);
+        super(Unity3dLocalize.actionSyncunity3dprojectText(), Unity3dLocalize.actionSyncunity3dprojectText(), Unity3dIconGroup.unity3d());
     }
 
     @Override

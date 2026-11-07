@@ -23,7 +23,6 @@
     <tags>
         <tag>game.framework</tag>
     </tags>
-    <localize>consulo.unity3d.Unity3dLocalize</localize>
 
     <depends>consulo.game.framework</depends>
     <depends>consulo.dotnet.mono</depends>

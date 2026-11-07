@@ -27,9 +27,8 @@ import consulo.ui.ex.action.DefaultActionGroup;
  * @since 18-Sep-22
  */
 @ActionImpl(id = "UnityProjectGroup", children = {
-		@ActionRef(type = AnSeparator.class),
-		@ActionRef(type = SyncUnity3dProjectAction.class)
+    @ActionRef(type = AnSeparator.class),
+    @ActionRef(type = SyncUnity3dProjectAction.class)
 }, parents = @ActionParentRef(@ActionRef(id = "ProjectViewPopupMenuSettingsGroup")))
-public class UnityProjectGroup extends DefaultActionGroup
-{
+public class UnityProjectGroup extends DefaultActionGroup {
 }
