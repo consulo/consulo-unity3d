@@ -330,7 +330,7 @@ public class UnityProjectImporterWithAsmDef {
                 newModulesModel.disposeModule(assembyModule);
             }
 
-            assembyModule = newModulesModel.newModule(assemblyContext.getName(), null);
+            assembyModule = newModulesModel.newModule(assemblyContext.getName(), (String) null);
             modules.add(assembyModule);
             final Module finalAssembyModule = assembyModule;
 

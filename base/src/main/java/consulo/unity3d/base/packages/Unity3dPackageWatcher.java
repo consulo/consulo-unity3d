@@ -28,12 +28,12 @@ import consulo.platform.Platform;
 import consulo.platform.PlatformOperatingSystem;
 import consulo.platform.PlatformUser;
 import consulo.util.io.FileUtil;
-import consulo.virtualFileSystem.LocalFileSystem;
-import consulo.virtualFileSystem.VirtualFileManager;
+import consulo.virtualFileSystem.FileWatchService;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
 import jakarta.annotation.Nonnull;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -55,16 +55,16 @@ public class Unity3dPackageWatcher implements Disposable
 		return Application.get().getInstance(Unity3dPackageWatcher.class);
 	}
 
-	private final LocalFileSystem myLocalFileSystem;
+	private final FileWatchService myFileWatchService;
 
-	private Set<LocalFileSystem.WatchRequest> myWatchRequests = Collections.emptySet();
+	private Set<FileWatchService.WatchRequest> myWatchRequests = Collections.emptySet();
 
 	private final List<String> myPackageDirPaths;
 
 	@Inject
-	public Unity3dPackageWatcher(VirtualFileManager virtualFileManager)
+	public Unity3dPackageWatcher(FileWatchService fileWatchService)
 	{
-		myLocalFileSystem = LocalFileSystem.get(virtualFileManager);
+		myFileWatchService = fileWatchService;
 
 		myPackageDirPaths = convertUserPathToPackagePaths();
 
@@ -73,7 +73,7 @@ public class Unity3dPackageWatcher implements Disposable
 			return;
 		}
 
-		myWatchRequests = myLocalFileSystem.addRootsToWatch(myPackageDirPaths, true);
+		myWatchRequests = myFileWatchService.addRootsToWatch(myPackageDirPaths.stream().map(Path::of).toList(), true);
 	}
 
 	@Nonnull
@@ -85,7 +85,7 @@ public class Unity3dPackageWatcher implements Disposable
 	@Override
 	public void dispose()
 	{
-		myLocalFileSystem.removeWatchedRoots(myWatchRequests);
+		myFileWatchService.removeWatchedRoots(myWatchRequests);
 	}
 
 	@Nonnull

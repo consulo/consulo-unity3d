@@ -296,7 +296,7 @@ public class Unity3dProjectImporter {
         Module temp = modifiableModuleModels.findModuleByName(moduleName);
         final Module module;
         if (temp == null) {
-            module = modifiableModuleModels.newModule(moduleName, null);
+            module = modifiableModuleModels.newModule(moduleName, (String) null);
         }
         else {
             module = temp;
@@ -413,7 +413,7 @@ public class Unity3dProjectImporter {
         Module temp = modifiableModuleModels.findModuleByName(moduleName);
         final Module module;
         if (temp == null) {
-            module = modifiableModuleModels.newModule(moduleName, null);
+            module = modifiableModuleModels.newModule(moduleName, (String) null);
         }
         else {
             module = temp;
