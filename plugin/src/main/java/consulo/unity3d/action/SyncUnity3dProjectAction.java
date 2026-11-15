@@ -18,6 +18,7 @@ package consulo.unity3d.action;
 
 import consulo.annotation.component.ActionImpl;
 import consulo.language.editor.CommonDataKeys;
+import consulo.module.extension.ModuleExtensionHelper;
 import consulo.project.Project;
 import consulo.ui.annotation.RequiredUIAccess;
 import consulo.ui.ex.action.*;
@@ -60,8 +61,13 @@ public class SyncUnity3dProjectAction extends AnAction implements AnActionWithAs
     @Override
     public Coroutine<?, ?> updateAsync(AnActionEvent e) {
         return ActionSafeReadLock.run(e, presentation -> {
+            // no module has the Unity root extension: the root module has none either
             Project project = e.getData(Project.KEY);
-            if (project == null || Unity3dModuleExtensionUtil.getRootModuleExtension(project) == null) {
+            presentation.setEnabledAndVisible(project != null && !project.isDisposed()
+                && ModuleExtensionHelper.getInstance(project).hasModuleExtension(Unity3dRootModuleExtension.class));
+        }, presentation -> {
+            Project project = e.getRequiredData(Project.KEY);
+            if (Unity3dModuleExtensionUtil.getRootModuleExtension(project) == null) {
                 presentation.setEnabledAndVisible(false);
                 return;
             }
